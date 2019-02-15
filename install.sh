@@ -230,23 +230,23 @@ install_tcb () {
     create_user_data_dir
     cd $HOME/tfc/
 
-    torsocks pip3 download -r /opt/tfc/requirements-venv.txt --require-hashes
-    torsocks pip3 download -r /opt/tfc/requirements.txt      --require-hashes
+    torsocks python3.6 -m pip download -r /opt/tfc/requirements-venv.txt --require-hashes
+    torsocks python3.6 -m pip download -r /opt/tfc/requirements.txt      --require-hashes
 
     kill_network
 
-    pip3 install virtualenv-16.4.0-py2.py3-none-any.whl
+    python3.6 -m pip install virtualenv-16.4.0-py2.py3-none-any.whl
     sudo python3.6 -m virtualenv /opt/tfc/venv_tcb --system-site-packages --never-download
 
     . /opt/tfc/venv_tcb/bin/activate
-    sudo pip3 install six-1.12.0-py2.py3-none-any.whl
-    sudo pip3 install pycparser-2.19.tar.gz
-    sudo pip3 install cffi-1.11.5-cp36-cp36m-manylinux1_x86_64.whl
-    sudo pip3 install argon2_cffi-19.1.0-cp34-abi3-manylinux1_x86_64.whl
-    sudo pip3 install PyNaCl-1.3.0-cp34-abi3-manylinux1_x86_64.whl
-    sudo pip3 install pyserial-3.4-py2.py3-none-any.whl
-    sudo pip3 install asn1crypto-0.24.0-py2.py3-none-any.whl
-    sudo pip3 install cryptography-2.5-cp34-abi3-manylinux1_x86_64.whl
+    sudo python3.6 -m pip install six-1.12.0-py2.py3-none-any.whl
+    sudo python3.6 -m pip install pycparser-2.19.tar.gz
+    sudo python3.6 -m pip install cffi-1.11.5-cp36-cp36m-manylinux1_x86_64.whl
+    sudo python3.6 -m pip install argon2_cffi-19.1.0-cp34-abi3-manylinux1_x86_64.whl
+    sudo python3.6 -m pip install PyNaCl-1.3.0-cp34-abi3-manylinux1_x86_64.whl
+    sudo python3.6 -m pip install pyserial-3.4-py2.py3-none-any.whl
+    sudo python3.6 -m pip install asn1crypto-0.24.0-py2.py3-none-any.whl
+    sudo python3.6 -m pip install cryptography-2.5-cp34-abi3-manylinux1_x86_64.whl
     deactivate
 
     sudo mv /opt/tfc/tfc.png                   /usr/share/pixmaps/
@@ -295,14 +295,14 @@ install_local_test () {
     #download_relay_tests
 
     echo -e '\n6\n'
-    torsocks pip3 install -r   /opt/tfc/requirements-venv.txt --require-hashes
+    torsocks python3.6 -m pip install -r   /opt/tfc/requirements-venv.txt --require-hashes
     echo -e '\n7\n'
     sudo python3.6 -m virtualenv /opt/tfc/venv_tfc              --system-site-packages
     echo -e '\n8\n'
 
     . /opt/tfc/venv_tfc/bin/activate
-    sudo torsocks pip3 install -r /opt/tfc/requirements.txt       --require-hashes
-    sudo torsocks pip3 install -r /opt/tfc/requirements-relay.txt --require-hashes
+    sudo torsocks python3.6 -m pip install -r /opt/tfc/requirements.txt       --require-hashes
+    sudo torsocks python3.6 -m pip install -r /opt/tfc/requirements-relay.txt --require-hashes
     deactivate
 
     echo -e '\n9\n'
@@ -331,13 +331,13 @@ install_developer () {
     torsocks git clone https://github.com/tfctesting/tfc.git
     cd $HOME/tfc/
 
-    torsocks pip3 install -r requirements-venv.txt --require-hashes
+    torsocks python3.6 -m pip install -r requirements-venv.txt --require-hashes
     python3.6 -m virtualenv venv_tfc --system-site-packages
 
     . /$HOME/tfc/venv_tfc/bin/activate
-    torsocks pip3 install -r requirements.txt       --require-hashes
-    torsocks pip3 install -r requirements-relay.txt --require-hashes
-    torsocks pip3 install -r requirements-dev.txt
+    torsocks python3.6 -m pip install -r requirements.txt       --require-hashes
+    torsocks python3.6 -m pip install -r requirements-relay.txt --require-hashes
+    torsocks python3.6 -m pip install -r requirements-dev.txt
     deactivate
 
     modify_terminator_font_size "" "${HOME}/tfc/launchers/terminator-config-dev"
@@ -372,14 +372,14 @@ install_relay_ubuntu () {
     #download_common_tests
     #download_relay_tests
 
-    torsocks pip3 install -r     /opt/tfc/requirements-venv.txt --require-hashes
+    torsocks python3.6 -m pip install -r     /opt/tfc/requirements-venv.txt --require-hashes
     echo -e '\n7\n'
     sudo python3.6 -m virtualenv /opt/tfc/venv_relay            --system-site-packages
     echo -e '\n8\n'
 
     . /opt/tfc/venv_relay/bin/activate
     echo -e '\n9\n'
-    sudo torsocks pip3 install -r /opt/tfc/requirements-relay.txt --require-hashes
+    sudo torsocks python3.6 -m pip install -r /opt/tfc/requirements-relay.txt --require-hashes
     echo -e '\n10\n'
     deactivate
 
