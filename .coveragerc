@@ -1,0 +1,14 @@
+# .coveragerc to control coverage.py
+[report]
+
+# Regexes for lines to exclude from consideration
+exclude_lines =
+
+    # Debugging code for third-party modules
+    pragma: no cover
+
+    # TYPE_CHECKING is True only during type checking
+    if typing.TYPE_CHECKING:
+
+    # Ignore Flask server init under standard operation
+    else:  \# not unittest
