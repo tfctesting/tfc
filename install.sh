@@ -22,7 +22,7 @@ dl_verify () {
     # by comparing its SHA512 hash against the hash pinned in this
     # installer file.
 
-    torsocks wget https://raw.githubusercontent.com/maqp/tfc/master/$2$3 -q
+    torsocks wget https://raw.githubusercontent.com/tfctest/tfc/master/$2$3 -q
 
     # Check the SHA512 hash of the downloaded file
     if sha512sum $3 | grep -Eo '^\w+' | cmp -s <(echo "$1"); then
