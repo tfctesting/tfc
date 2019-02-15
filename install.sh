@@ -282,10 +282,8 @@ install_local_test () {
 
     upgrade_tor
     echo -e '\n4\n'
-    sudo torsocks apt update
-    echo -e '\n5\n'
     sudo torsocks apt install libssl-dev python3-pip python3-setuptools python3-tk terminator -y
-    echo -e '\n6\n'
+    echo -e '\n5\n'
 
     download_venv
     download_common
@@ -296,23 +294,24 @@ install_local_test () {
     #download_tcb_tests
     #download_relay_tests
 
-    echo -e '\n7\n'
+    echo -e '\n6\n'
     torsocks pip3 install -r   /opt/tfc/requirements-venv.txt --require-hashes
-    echo -e '\n8\n'
+    echo -e '\n7\n'
     sudo python3 -m virtualenv /opt/tfc/venv_tfc              --system-site-packages
-    echo -e '\n9\n'
+    echo -e '\n8\n'
 
     . /opt/tfc/venv_tfc/bin/activate
     sudo torsocks pip3 install -r /opt/tfc/requirements.txt       --require-hashes
     sudo torsocks pip3 install -r /opt/tfc/requirements-relay.txt --require-hashes
     deactivate
 
-    echo -e '\n10\n'
+    echo -e '\n9\n'
     sudo mv /opt/tfc/tfc.png                                /usr/share/pixmaps/
     sudo mv /opt/tfc/launchers/TFC-Local-test.desktop       /usr/share/applications/
     sudo mv /opt/tfc/launchers/terminator-config-local-test /opt/tfc/
     modify_terminator_font_size "sudo" "/opt/tfc/terminator-config-local-test"
 
+    echo -e '\n10\n'
     sudo rm -r /opt/tfc/launchers/
     sudo rm    /opt/tfc/requirements.txt
     sudo rm    /opt/tfc/requirements-relay.txt
@@ -326,7 +325,6 @@ install_developer () {
     dpkg_check
 
     upgrade_tor
-    sudo torsocks apt update
     sudo torsocks apt install git libssl-dev python3-pip python3-setuptools python3-tk terminator -y
 
     cd $HOME
@@ -364,27 +362,25 @@ install_relay_ubuntu () {
     echo -e '\n3\n'
     upgrade_tor
     echo -e '\n4\n'
-    sudo torsocks apt update
-    echo -e '\n5\n'
     sudo torsocks apt install libssl-dev python3-pip python3-setuptools -y
-    echo -e '\n6\n'
+    echo -e '\n5\n'
 
     download_venv
     download_common
     download_relay
-    echo -e '\n7\n'
+    echo -e '\n6\n'
     #download_common_tests
     #download_relay_tests
 
     torsocks pip3 install -r     /opt/tfc/requirements-venv.txt --require-hashes
-    echo -e '\n8\n'
+    echo -e '\n7\n'
     sudo python3.6 -m virtualenv /opt/tfc/venv_relay            --system-site-packages
-    echo -e '\n9\n'
+    echo -e '\n8\n'
 
     . /opt/tfc/venv_relay/bin/activate
-    echo -e '\n10\n'
+    echo -e '\n9\n'
     sudo torsocks pip3 install -r /opt/tfc/requirements-relay.txt --require-hashes
-    echo -e '\n11\n'
+    echo -e '\n10\n'
     deactivate
 
     sudo mv /opt/tfc/tfc.png                  /usr/share/pixmaps/
@@ -536,6 +532,8 @@ upgrade_tor () {
         echo -e '\nTor-10\n'
         sudo apt install tor -y
         echo -e '\nTor-11\n'
+    else
+        sudo torsocks apt update
     fi
 }
 
