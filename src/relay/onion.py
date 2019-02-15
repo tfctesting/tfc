@@ -216,7 +216,10 @@ def onion_service(queues: Dict[bytes, 'Queue']) -> None:
             time.sleep(0.1)
 
             if queues[ONION_KEY_QUEUE].qsize() > 0:
-                queues[ONION_KEY_QUEUE].get()  # Discard re-sent private keys
+                _, c_code = queues[ONION_KEY_QUEUE].get()  # type: bytes, bytes
+
+                m_print(["Onion Service is already running.", '',
+                         f"Onion Service confirmation code (to Transmitter): {c_code.hex()}"], box=True)
 
             if queues[ONION_CLOSE_QUEUE].qsize() > 0:
                 command = queues[ONION_CLOSE_QUEUE].get()
