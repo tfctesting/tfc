@@ -328,7 +328,7 @@ install_developer () {
     sudo torsocks apt install git libssl-dev python3-pip python3-setuptools python3-tk terminator -y
 
     cd $HOME
-    torsocks git clone https://github.com/maqp/tfc.git
+    torsocks git clone https://github.com/tfctesting/tfc.git
     cd $HOME/tfc/
 
     torsocks pip3 install -r requirements-venv.txt --require-hashes
