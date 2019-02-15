@@ -236,7 +236,7 @@ install_tcb () {
     kill_network
 
     pip3 install virtualenv-16.4.0-py2.py3-none-any.whl
-    sudo python3 -m virtualenv /opt/tfc/venv_tcb --system-site-packages --never-download
+    sudo python3.6 -m virtualenv /opt/tfc/venv_tcb --system-site-packages --never-download
 
     . /opt/tfc/venv_tcb/bin/activate
     sudo pip3 install six-1.12.0-py2.py3-none-any.whl
@@ -297,7 +297,7 @@ install_local_test () {
     echo -e '\n6\n'
     torsocks pip3 install -r   /opt/tfc/requirements-venv.txt --require-hashes
     echo -e '\n7\n'
-    sudo python3 -m virtualenv /opt/tfc/venv_tfc              --system-site-packages
+    sudo python3.6 -m virtualenv /opt/tfc/venv_tfc              --system-site-packages
     echo -e '\n8\n'
 
     . /opt/tfc/venv_tfc/bin/activate
