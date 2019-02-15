@@ -274,12 +274,18 @@ install_tcb () {
 
 
 install_local_test () {
+    echo -e '\n1\n'
     create_install_dir
+    echo -e '\n2\n'
     dpkg_check
+    echo -e '\n3\n'
 
     upgrade_tor
+    echo -e '\n4\n'
     sudo torsocks apt update
+    echo -e '\n5\n'
     sudo torsocks apt install libssl-dev python3-pip python3-setuptools python3-tk terminator -y
+    echo -e '\n6\n'
 
     download_venv
     download_common
@@ -290,14 +296,18 @@ install_local_test () {
     #download_tcb_tests
     #download_relay_tests
 
+    echo -e '\n7\n'
     torsocks pip3 install -r   /opt/tfc/requirements-venv.txt --require-hashes
+    echo -e '\n8\n'
     sudo python3 -m virtualenv /opt/tfc/venv_tfc              --system-site-packages
+    echo -e '\n9\n'
 
     . /opt/tfc/venv_tfc/bin/activate
     sudo torsocks pip3 install -r /opt/tfc/requirements.txt       --require-hashes
     sudo torsocks pip3 install -r /opt/tfc/requirements-relay.txt --require-hashes
     deactivate
 
+    echo -e '\n10\n'
     sudo mv /opt/tfc/tfc.png                                /usr/share/pixmaps/
     sudo mv /opt/tfc/launchers/TFC-Local-test.desktop       /usr/share/applications/
     sudo mv /opt/tfc/launchers/terminator-config-local-test /opt/tfc/
@@ -347,24 +357,34 @@ install_developer () {
 
 
 install_relay_ubuntu () {
+    echo -e '\n1\n'
     create_install_dir
+    echo -e '\n2\n'
     dpkg_check
-
+    echo -e '\n3\n'
     upgrade_tor
+    echo -e '\n4\n'
     sudo torsocks apt update
+    echo -e '\n5\n'
     sudo torsocks apt install libssl-dev python3-pip python3-setuptools -y
+    echo -e '\n6\n'
 
     download_venv
     download_common
     download_relay
+    echo -e '\n7\n'
     #download_common_tests
     #download_relay_tests
 
     torsocks pip3 install -r     /opt/tfc/requirements-venv.txt --require-hashes
+    echo -e '\n8\n'
     sudo python3.6 -m virtualenv /opt/tfc/venv_relay            --system-site-packages
+    echo -e '\n9\n'
 
     . /opt/tfc/venv_relay/bin/activate
+    echo -e '\n10\n'
     sudo torsocks pip3 install -r /opt/tfc/requirements-relay.txt --require-hashes
+    echo -e '\n11\n'
     deactivate
 
     sudo mv /opt/tfc/tfc.png                  /usr/share/pixmaps/
@@ -481,29 +501,41 @@ upgrade_tor () {
     available=($(apt-cache policy tor |grep Candidate | awk '{print $2}' |head -c 5))
     required="0.3.5"
 
+    echo -e '\nTor-0\n'
     # If Ubuntu's repository does not provide 0.3.5, add Tor Project's repository
     if ! [[ "$(printf '%s\n' "$required" "$available" | sort -V | head -n1)" = "$required" ]]; then
 
+        echo -e '\nTor-1\n'
         sudo torsocks apt install apt-transport-tor -y
+        echo -e '\nTor-2\n'
 
         if [[ -f /etc/apt/sources.list.d/torproject.list ]]; then
+            echo -e '\nTor-3\n'
             sudo rm /etc/apt/sources.list.d/torproject.list
         fi
 
+        echo -e '\nTor-4\n'
         if [[ -f /etc/upstream-release/lsb-release ]]; then
             codename=($(cat /etc/upstream-release/lsb-release |grep DISTRIB_CODENAME |cut -c 18-))  # Linux Mint etc.
         else
             codename=($(lsb_release -a 2>/dev/null |grep Codename |awk '{print $2}'))  # *buntu
         fi
 
+        echo -e '\nTor-5\n'
         echo "deb tor://sdscoq7snqtznauu.onion/torproject.org ${codename} main" | sudo tee -a /etc/apt/sources.list.d/torproject.list
+        echo -e '\nTor-6\n'
         sudo cp -f /etc/apt/sources.list.d/torproject.list /etc/apt/sources.list.d/torproject.list.save
 
+        echo -e '\nTor-7\n'
         torsocks wget -O - -o /dev/null http://sdscoq7snqtznauu.onion/torproject.org/A3C4F0F979CAA22CDBA8F512EE8CBC9E886DDD89.asc | gpg --import
+        echo -e '\nTor-8\n'
         gpg --export A3C4F0F979CAA22CDBA8F512EE8CBC9E886DDD89 | sudo apt-key add -
 
+        echo -e '\nTor-9\n'
         sudo apt update
+        echo -e '\nTor-10\n'
         sudo apt install tor -y
+        echo -e '\nTor-11\n'
     fi
 }
 
@@ -663,6 +695,8 @@ set -e
 architecture_check
 root_check
 sudo_pwd='';
+
+echo -e '\n0\n'
 
 case $1 in
     tcb   ) install_tcb;;
