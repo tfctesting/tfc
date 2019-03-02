@@ -398,43 +398,41 @@ upgrade_tor () {
     available=($(apt-cache policy tor |grep Candidate | awk '{print $2}' |head -c 5))
     required="0.3.5"
 
-    echo -e '\nTor-0\n'
-    # If Ubuntu's repository does not provide 0.3.5, add Tor Project's repository
+    # If OS repository does not provide 0.3.5, add Tor Project's repository
     if ! [[ "$(printf '%s\n' "$required" "$available" | sort -V | head -n1)" = "$required" ]]; then
 
-        echo -e '\nTor-1\n'
         sudo torsocks apt install apt-transport-tor -y
-        echo -e '\nTor-2\n'
 
+        # Remove .list-file
         if [[ -f /etc/apt/sources.list.d/torproject.list ]]; then
-            echo -e '\nTor-3\n'
             sudo rm /etc/apt/sources.list.d/torproject.list
         fi
 
-        echo -e '\nTor-4\n'
+        # Set codename
         if [[ -f /etc/upstream-release/lsb-release ]]; then
             codename=($(cat /etc/upstream-release/lsb-release |grep DISTRIB_CODENAME |cut -c 18-))  # Linux Mint etc.
         else
             codename=($(lsb_release -a 2>/dev/null |grep Codename |awk '{print $2}'))  # *buntu
         fi
 
-        echo -e '\nTor-5\n'
+        # Add .list-file
         echo "deb tor://sdscoq7snqtznauu.onion/torproject.org ${codename} main" | sudo tee -a /etc/apt/sources.list.d/torproject.list
-        echo -e '\nTor-6\n'
         sudo cp -f /etc/apt/sources.list.d/torproject.list /etc/apt/sources.list.d/torproject.list.save
 
-        echo -e '\nTor-7\n'
+        # Import key
         torsocks wget -O - -o /dev/null http://sdscoq7snqtznauu.onion/torproject.org/A3C4F0F979CAA22CDBA8F512EE8CBC9E886DDD89.asc | gpg --import
-        echo -e '\nTor-8\n'
         gpg --export A3C4F0F979CAA22CDBA8F512EE8CBC9E886DDD89 | sudo apt-key add -
 
-        echo -e '\nTor-9\n'
         sudo apt update
-        echo -e '\nTor-10\n'
         sudo apt install tor -y
-        echo -e '\nTor-11\n'
+
     else
-        sudo torsocks apt update
+        if grep -q "tor://" -R /etc/apt/; then
+            sudo apt update
+        else
+            sudo torsocks apt update
+        fi
+
     fi
 }
 
