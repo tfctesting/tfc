@@ -107,12 +107,12 @@ install_tcb () {
     dpkg_check
 
     sudo apt update
-    sudo torsocks apt install libssl-dev python3-pip python3-setuptools python3-tk net-tools -y
+    sudo torsocks apt install git libssl-dev python3-pip python3-setuptools python3-tk net-tools -y
     sudo torsocks git clone https://github.com/tfctesting/tfc.git /opt/tfc
 
     verify_tcb_requirements_files
-    sudo torsocks python3.6 -m pip download --no-cache-dir --requirement /opt/tfc/requirements-venv.txt --require-hashes --dest /opt/tfc/
-    sudo torsocks python3.6 -m pip download --no-cache-dir --requirement /opt/tfc/requirements.txt      --require-hashes --dest /opt/tfc/
+    sudo torsocks python3.6 -m pip download --no-cache-dir -r /opt/tfc/requirements-venv.txt --require-hashes -d /opt/tfc/
+    sudo torsocks python3.6 -m pip download --no-cache-dir -r /opt/tfc/requirements.txt      --require-hashes -d /opt/tfc/
 
     # kill_network  # TODO: Enable
 
@@ -149,6 +149,8 @@ install_tcb () {
     sudo rm    /opt/tfc/dd.py
     sudo rm    /opt/tfc/relay.py
     sudo rm    /opt/tfc/requirements.txt
+    sudo rm    /opt/tfc/requirements-dev.txt
+    sudo rm    /opt/tfc/requirements-relay.txt
     sudo rm    /opt/tfc/requirements-venv.txt
     sudo rm    /opt/tfc/virtualenv-16.4.3-py2.py3-none-any.whl
     sudo rm    /opt/tfc/six-1.12.0-py2.py3-none-any.whl
@@ -496,8 +498,10 @@ create_install_dir () {
 
 
 create_user_data_dir () {
-    if [[ -d "$HOME/tfc" ]]; then
-        mv $HOME/tfc tfc_backup_at_$(date +%Y-%m-%d_%H-%M-%S)
+    if [[ -d "$HOME/tfc" ]]; then                                                 # If directory exists
+        if ! [[ -z "$(ls -A $HOME/tfc/)" ]]; then                                 # If directory is not empty
+            mv $HOME/tfc $HOME/tfc_userdata_backup_at_$(date +%Y-%m-%d_%H-%M-%S)  # Move to timestamped directory
+        fi
     fi
     mkdir -p $HOME/tfc 2>/dev/null
 }
