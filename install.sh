@@ -103,14 +103,14 @@ compare_digest 39a7b3e4457d9aa6d53cb53d38c3ed9adbd9e3250008b4e79b5a174b9227fd0fa
 }
 
 process_tcb_dependencies () {
-    sudo $1 opt/tfc/six-1.12.0-py2.py3-none-any.whl
-    sudo $1 opt/tfc/pycparser-2.19.tar.gz
-    sudo $1 opt/tfc/cffi-1.12.2-cp36-cp36m-manylinux1_x86_64.whl
-    sudo $1 opt/tfc/argon2_cffi-19.1.0-cp34-abi3-manylinux1_x86_64.whl
-    sudo $1 opt/tfc/PyNaCl-1.3.0-cp34-abi3-manylinux1_x86_64.whl
-    sudo $1 opt/tfc/pyserial-3.4-py2.py3-none-any.whl
-    sudo $1 opt/tfc/asn1crypto-0.24.0-py2.py3-none-any.whl
-    sudo $1 opt/tfc/cryptography-2.6.1-cp34-abi3-manylinux1_x86_64.whl
+    sudo $1 /opt/tfc/six-1.12.0-py2.py3-none-any.whl
+    sudo $1 /opt/tfc/pycparser-2.19.tar.gz
+    sudo $1 /opt/tfc/cffi-1.12.2-cp36-cp36m-manylinux1_x86_64.whl
+    sudo $1 /opt/tfc/argon2_cffi-19.1.0-cp34-abi3-manylinux1_x86_64.whl
+    sudo $1 /opt/tfc/PyNaCl-1.3.0-cp34-abi3-manylinux1_x86_64.whl
+    sudo $1 /opt/tfc/pyserial-3.4-py2.py3-none-any.whl
+    sudo $1 /opt/tfc/asn1crypto-0.24.0-py2.py3-none-any.whl
+    sudo $1 /opt/tfc/cryptography-2.6.1-cp34-abi3-manylinux1_x86_64.whl
 }
 
 
@@ -593,8 +593,6 @@ set -e
 architecture_check
 root_check
 sudo_pwd='';
-
-echo -e '\n0\n'
 
 case $1 in
     tcb   ) install_tcb;;
