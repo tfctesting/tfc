@@ -24,7 +24,7 @@ TFC     = 'TFC'
 TXP     = 'Transmitter'
 RXP     = 'Receiver'
 RP      = 'Relay'
-VERSION = '1.19.02'
+VERSION = '1.19.03'
 
 
 """Identifiers
