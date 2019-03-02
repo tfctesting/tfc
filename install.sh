@@ -120,7 +120,7 @@ install_tcb () {
 
     verify_files
 
-    python3.6 -m pip install virtualenv-16.4.3-py2.py3-none-any.whl
+    python3.6 -m pip install /opt/tfc/virtualenv-16.4.3-py2.py3-none-any.whl
     sudo python3.6 -m virtualenv /opt/tfc/venv_tcb --system-site-packages --never-download
 
     . /opt/tfc/venv_tcb/bin/activate
