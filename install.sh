@@ -114,7 +114,7 @@ install_tcb () {
     sudo torsocks python3.6 -m pip download --no-cache-dir -r /opt/tfc/requirements-venv.txt --require-hashes -d /opt/tfc/
     sudo torsocks python3.6 -m pip download --no-cache-dir -r /opt/tfc/requirements.txt      --require-hashes -d /opt/tfc/
 
-    # kill_network  # TODO: Enable
+    kill_network
 
     create_user_data_dir
 
@@ -169,48 +169,54 @@ install_tcb () {
 
 
 install_local_test () {
-    echo -e '\n1\n'
-    create_install_dir
-    echo -e '\n2\n'
     dpkg_check
-    echo -e '\n3\n'
 
+    sudo apt update
+    sudo torsocks apt install git libssl-dev python3-pip python3-setuptools python3-tk net-tools -y
+    sudo torsocks git clone https://github.com/tfctesting/tfc.git /opt/tfc
+
+    verify_tcb_requirements_files
+
+    # Diversion
+    sudo torsocks python3.6 -m pip download --no-cache-dir -r /opt/tfc/requirements-venv.txt --require-hashes -d /opt/tfc/
+    sudo torsocks python3.6 -m pip download --no-cache-dir -r /opt/tfc/requirements.txt      --require-hashes -d /opt/tfc/
+
+    # At this point it's safest to distinguish from TCB installation
     upgrade_tor
-    echo -e '\n4\n'
-    sudo torsocks apt install libssl-dev python3-pip python3-setuptools python3-tk terminator -y
-    echo -e '\n5\n'
 
-    download_venv
-    download_common
-    download_tcb
-    download_relay
-    download_local_test_specific
-    #download_common_tests
-    #download_tcb_tests
-    #download_relay_tests
-
-    echo -e '\n6\n'
-    torsocks python3.6 -m pip install -r   /opt/tfc/requirements-venv.txt --require-hashes
-    echo -e '\n7\n'
+    torsocks python3.6 -m pip install -r /opt/tfc/requirements-venv.txt --require-hashes
     sudo python3.6 -m virtualenv /opt/tfc/venv_tfc              --system-site-packages
-    echo -e '\n8\n'
 
     . /opt/tfc/venv_tfc/bin/activate
     sudo torsocks python3.6 -m pip install -r /opt/tfc/requirements.txt       --require-hashes
     sudo torsocks python3.6 -m pip install -r /opt/tfc/requirements-relay.txt --require-hashes
     deactivate
 
-    echo -e '\n9\n'
     sudo mv /opt/tfc/tfc.png                                /usr/share/pixmaps/
     sudo mv /opt/tfc/launchers/TFC-Local-test.desktop       /usr/share/applications/
     sudo mv /opt/tfc/launchers/terminator-config-local-test /opt/tfc/
     modify_terminator_font_size "sudo" "/opt/tfc/terminator-config-local-test"
 
-    echo -e '\n10\n'
+    sudo rm -r /opt/tfc/.git/
     sudo rm -r /opt/tfc/launchers/
+    sudo rm -r /opt/tfc/tests/
+    sudo rm    /opt/tfc/install.sh
+    sudo rm    /opt/tfc/install.sh.asc
+    sudo rm    /opt/tfc/pubkey.asc
+    sudo rm    /opt/tfc/README.md
     sudo rm    /opt/tfc/requirements.txt
     sudo rm    /opt/tfc/requirements-relay.txt
     sudo rm    /opt/tfc/requirements-venv.txt
+
+    sudo rm    /opt/tfc/virtualenv-16.4.3-py2.py3-none-any.whl
+    sudo rm    /opt/tfc/six-1.12.0-py2.py3-none-any.whl
+    sudo rm    /opt/tfc/pycparser-2.19.tar.gz
+    sudo rm    /opt/tfc/cffi-1.12.2-cp36-cp36m-manylinux1_x86_64.whl
+    sudo rm    /opt/tfc/argon2_cffi-19.1.0-cp34-abi3-manylinux1_x86_64.whl
+    sudo rm    /opt/tfc/PyNaCl-1.3.0-cp34-abi3-manylinux1_x86_64.whl
+    sudo rm    /opt/tfc/pyserial-3.4-py2.py3-none-any.whl
+    sudo rm    /opt/tfc/asn1crypto-0.24.0-py2.py3-none-any.whl
+    sudo rm    /opt/tfc/cryptography-2.6.1-cp34-abi3-manylinux1_x86_64.whl
 
     install_complete "Installation of TFC for local testing is now complete."
 }
