@@ -124,14 +124,14 @@ install_tcb () {
     sudo python3.6 -m virtualenv /opt/tfc/venv_tcb --system-site-packages --never-download
 
     . /opt/tfc/venv_tcb/bin/activate
-    sudo python3.6 -m pip install six-1.12.0-py2.py3-none-any.whl
-    sudo python3.6 -m pip install pycparser-2.19.tar.gz
-    sudo python3.6 -m pip install cffi-1.12.2-cp36-cp36m-manylinux1_x86_64.whl
-    sudo python3.6 -m pip install argon2_cffi-19.1.0-cp34-abi3-manylinux1_x86_64.whl
-    sudo python3.6 -m pip install PyNaCl-1.3.0-cp34-abi3-manylinux1_x86_64.whl
-    sudo python3.6 -m pip install pyserial-3.4-py2.py3-none-any.whl
-    sudo python3.6 -m pip install asn1crypto-0.24.0-py2.py3-none-any.whl
-    sudo python3.6 -m pip install cryptography-2.6.1-cp34-abi3-manylinux1_x86_64.whl
+    sudo python3.6 -m pip install /opt/tfc/six-1.12.0-py2.py3-none-any.whl
+    sudo python3.6 -m pip install /opt/tfc/pycparser-2.19.tar.gz
+    sudo python3.6 -m pip install /opt/tfc/cffi-1.12.2-cp36-cp36m-manylinux1_x86_64.whl
+    sudo python3.6 -m pip install /opt/tfc/argon2_cffi-19.1.0-cp34-abi3-manylinux1_x86_64.whl
+    sudo python3.6 -m pip install /opt/tfc/PyNaCl-1.3.0-cp34-abi3-manylinux1_x86_64.whl
+    sudo python3.6 -m pip install /opt/tfc/pyserial-3.4-py2.py3-none-any.whl
+    sudo python3.6 -m pip install /opt/tfc/asn1crypto-0.24.0-py2.py3-none-any.whl
+    sudo python3.6 -m pip install /opt/tfc/cryptography-2.6.1-cp34-abi3-manylinux1_x86_64.whl
     deactivate
 
     sudo mv /opt/tfc/tfc.png                   /usr/share/pixmaps/
