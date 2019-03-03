@@ -206,7 +206,6 @@ install_local_test () {
     sudo torsocks python3.6 -m pip download --no-cache-dir -r /opt/tfc/requirements-venv.txt --require-hashes -d /opt/tfc/
     sudo torsocks python3.6 -m pip download --no-cache-dir -r /opt/tfc/requirements.txt      --require-hashes -d /opt/tfc/
 
-    # At this point it's safest to distinguish from TCB installation
     upgrade_tor
 
     sudo torsocks apt install terminator -y
@@ -289,7 +288,6 @@ install_relay_ubuntu () {
     sudo torsocks python3.6 -m pip download --no-cache-dir -r /opt/tfc/requirements-venv.txt --require-hashes -d /opt/tfc/
     sudo torsocks python3.6 -m pip download --no-cache-dir -r /opt/tfc/requirements.txt      --require-hashes -d /opt/tfc/
 
-    # At this point it's safest to distinguish from TCB installation
     upgrade_tor
 
     torsocks python3.6 -m pip install -r /opt/tfc/requirements-venv.txt --require-hashes
