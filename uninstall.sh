@@ -1,4 +1,4 @@
-    #!/usr/bin/env bash
+#!/usr/bin/env bash
 
 # TFC - Onion-routed, endpoint secure messaging system
 # Copyright (C) 2013-2019  Markus Ottela
@@ -28,12 +28,14 @@ yn_prompt () {
 
 }
 
+
 remove_prompt () {
     echo ''
     if [[ $(dpkg-query -W -f='${Status}' '$1' 2>/dev/null | grep -c "ok installed") -eq 0 ]]; then
         yn_prompt "Remove ${1} ?" "sudo apt -y remove ${1}"
     fi
 }
+
 
 sudo rm -f /usr/share/pixmaps/tfc.png
 sudo rm -f /usr/share/applications/TFC-Dev.desktop
@@ -59,5 +61,6 @@ remove_prompt "python3-setuptools"
 remove_prompt "python3-tk"
 remove_prompt "terminator"
 remove_prompt "tor"
+
 echo ''
 echo "TFC has been uninstalled."
