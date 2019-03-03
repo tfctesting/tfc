@@ -216,7 +216,7 @@ def onion_service(queues: Dict[bytes, 'Queue']) -> None:
             time.sleep(0.1)
 
             if queues[ONION_KEY_QUEUE].qsize() > 0:
-                _, c_code = queues[ONION_KEY_QUEUE].get()  # type: bytes, bytes
+                _, c_code = queues[ONION_KEY_QUEUE].get()
 
                 m_print(["Onion Service is already running.", '',
                          f"Onion Service confirmation code (to Transmitter): {c_code.hex()}"], box=True)
