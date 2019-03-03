@@ -18,7 +18,7 @@
 
 
 compare_digest () {
-    # Compare the SHA512 digest of TFC file against pinned digest in this installer.
+    # Compare the SHA512 digest of TFC file against the digest pinned in this installer.
     if sha512sum /opt/tfc/$2$3 | grep -Eo '^\w+' | cmp -s <(echo "$1"); then
         echo OK - Pinned SHA512 hash matched file /opt/tfc/$2$3
     else
@@ -102,20 +102,47 @@ compare_digest 22e8ba63c1391233612155099f5f9017d33918180f35c2552e31213862c76e304
 compare_digest 39a7b3e4457d9aa6d53cb53d38c3ed9adbd9e3250008b4e79b5a174b9227fd0fac6dad30e6e9b8fe3d635b25b2d4dfc049804df48d04f5dfcc1016b2e0a42577 src/transmitter/ windows.py
 }
 
+
+# PIP dependency file names
+ARGON2=argon2_cffi-19.1.0-cp34-abi3-manylinux1_x86_64.whl
+ASN1CRYPTO=asn1crypto-0.24.0-py2.py3-none-any.whl
+CERTIFI=certifi-2018.11.29-py2.py3-none-any.whl
+CFFI=cffi-1.12.2-cp36-cp36m-manylinux1_x86_64.whl
+CHARDET=chardet-3.0.4-py2.py3-none-any.whl
+CLICK=Click-7.0-py2.py3-none-any.whl
+CRYPTOGRAPHY=cryptography-2.6.1-cp34-abi3-manylinux1_x86_64.whl
+FLASK=Flask-1.0.2-py2.py3-none-any.whl
+IDNA=idna-2.8-py2.py3-none-any.whl
+ITSDANGEROUS=itsdangerous-1.1.0-py2.py3-none-any.whl
+JINJA2=Jinja2-2.10-py2.py3-none-any.whl
+MARKUPSAFE=MarkupSafe-1.1.1-cp36-cp36m-manylinux1_x86_64.whl
+PYCPARSER=pycparser-2.19.tar.gz
+PYNACL=PyNaCl-1.3.0-cp34-abi3-manylinux1_x86_64.whl
+PYSERIAL=pyserial-3.4-py2.py3-none-any.whl
+PYSOCKS=PySocks-1.6.8.tar.gz
+REQUESTS=requests-2.21.0-py2.py3-none-any.whl
+SIX=six-1.12.0-py2.py3-none-any.whl
+STEM=stem-1.7.1.tar.gz
+URLLIB3=urllib3-1.24.1-py2.py3-none-any.whl
+VIRTUALENV=virtualenv-16.4.3-py2.py3-none-any.whl
+WERKZEUG=Werkzeug-0.14.1-py2.py3-none-any.whl
+
+
 process_tcb_dependencies () {
-    sudo $1 /opt/tfc/six-1.12.0-py2.py3-none-any.whl
-    sudo $1 /opt/tfc/pycparser-2.19.tar.gz
-    sudo $1 /opt/tfc/cffi-1.12.2-cp36-cp36m-manylinux1_x86_64.whl
-    sudo $1 /opt/tfc/argon2_cffi-19.1.0-cp34-abi3-manylinux1_x86_64.whl
-    sudo $1 /opt/tfc/PyNaCl-1.3.0-cp34-abi3-manylinux1_x86_64.whl
-    sudo $1 /opt/tfc/pyserial-3.4-py2.py3-none-any.whl
-    sudo $1 /opt/tfc/asn1crypto-0.24.0-py2.py3-none-any.whl
-    sudo $1 /opt/tfc/cryptography-2.6.1-cp34-abi3-manylinux1_x86_64.whl
+    sudo $1 /opt/tfc/${SIX}
+    sudo $1 /opt/tfc/${PYCPARSER}
+    sudo $1 /opt/tfc/${CFFI}
+    sudo $1 /opt/tfc/${ARGON2}
+    sudo $1 /opt/tfc/${PYNACL}
+    sudo $1 /opt/tfc/${PYSERIAL}
+    sudo $1 /opt/tfc/${ASN1CRYPTO}
+    sudo $1 /opt/tfc/${CRYPTOGRAPHY}
 }
 
 
 install_tcb () {
     dpkg_check
+    check_rm_existing_installation
 
     sudo apt update
     sudo torsocks apt install git libssl-dev python3-pip python3-setuptools python3-tk net-tools -y
@@ -131,7 +158,7 @@ install_tcb () {
 
     verify_files
 
-    python3.6 -m pip install /opt/tfc/virtualenv-16.4.3-py2.py3-none-any.whl
+    sudo python3.6 -m pip install /opt/tfc/${VIRTUALENV}
     sudo python3.6 -m virtualenv /opt/tfc/venv_tcb --system-site-packages --never-download
 
     . /opt/tfc/venv_tcb/bin/activate
@@ -157,7 +184,7 @@ install_tcb () {
     sudo rm    /opt/tfc/requirements-dev.txt
     sudo rm    /opt/tfc/requirements-relay.txt
     sudo rm    /opt/tfc/requirements-venv.txt
-    sudo rm    /opt/tfc/virtualenv-16.4.3-py2.py3-none-any.whl
+    sudo rm    /opt/tfc/${VIRTUALENV}
     process_tcb_dependencies "rm"
 
     add_serial_permissions
@@ -168,6 +195,7 @@ install_tcb () {
 
 install_local_test () {
     dpkg_check
+    check_rm_existing_installation
 
     sudo apt update
     sudo torsocks apt install git libssl-dev python3-pip python3-setuptools python3-tk net-tools -y
@@ -207,7 +235,7 @@ install_local_test () {
     sudo rm    /opt/tfc/requirements-dev.txt
     sudo rm    /opt/tfc/requirements-relay.txt
     sudo rm    /opt/tfc/requirements-venv.txt
-    sudo rm    /opt/tfc/virtualenv-16.4.3-py2.py3-none-any.whl
+    sudo rm    /opt/tfc/${VIRTUALENV}
     process_tcb_dependencies "rm"
 
     install_complete "Installation of TFC for local testing is now complete."
@@ -249,6 +277,7 @@ install_developer () {
 
 install_relay_ubuntu () {
     dpkg_check
+    check_rm_existing_installation
 
     sudo apt update
     sudo torsocks apt install git libssl-dev python3-pip python3-setuptools python3-tk net-tools -y
@@ -287,7 +316,7 @@ install_relay_ubuntu () {
     sudo rm    /opt/tfc/requirements-relay.txt
     sudo rm    /opt/tfc/requirements-venv.txt
     sudo rm    /opt/tfc/tfc.py
-    sudo rm    /opt/tfc/virtualenv-16.4.3-py2.py3-none-any.whl
+    sudo rm    /opt/tfc/${VIRTUALENV}
     process_tcb_dependencies "rm"
 
     add_serial_permissions
@@ -302,62 +331,93 @@ install_relay_tails () {
     # Cache password so that Debian doesn't keep asking
     # for it during install (it won't be stored on disk).
     read_sudo_pwd
-    create_install_dir
 
-    echo ${sudo_pwd} | sudo -S apt update
-    echo ${sudo_pwd} | sudo -S apt install libssl-dev python3-pip python3-setuptools -y
-
-    download_common
-    download_relay
-    #download_common_tests
-    #download_relay_tests
+    t_sudo apt update
+    t_sudo apt install git libssl-dev python3-pip python3-setuptools -y
+    t_sudo git clone https://github.com/tfctesting/tfc.git /opt/tfc
 
     create_user_data_dir
-    cd $HOME/tfc/
 
-    torsocks pip3 download -r /opt/tfc/requirements-relay.txt --require-hashes
+    t_sudo python3.6 -m pip download --no-cache-dir -r /opt/tfc/requirements-relay.txt --require-hashes -d /opt/tfc/
 
     # Pyserial
-    echo ${sudo_pwd} | sudo -S python3.6 -m pip install pyserial-3.4-py2.py3-none-any.whl
+    t_sudo python3.6 -m pip install /opt/tfc/${PYSERIAL}
 
     # Stem
-    echo ${sudo_pwd} | sudo -S python3.6 -m pip install stem-1.7.1.tar.gz
+    t_sudo python3.6 -m pip install /opt/tfc/${STEM}
 
     # PySocks
-    echo ${sudo_pwd} | sudo -S python3.6 -m pip install PySocks-1.6.8.tar.gz
+    t_sudo python3.6 -m pip install /opt/tfc/${PYSOCKS}
 
     # Requests
-    echo ${sudo_pwd} | sudo -S python3.6 -m pip install urllib3-1.24.1-py2.py3-none-any.whl
-    echo ${sudo_pwd} | sudo -S python3.6 -m pip install idna-2.8-py2.py3-none-any.whl
-    echo ${sudo_pwd} | sudo -S python3.6 -m pip install chardet-3.0.4-py2.py3-none-any.whl
-    echo ${sudo_pwd} | sudo -S python3.6 -m pip install certifi-2018.11.29-py2.py3-none-any.whl
-    echo ${sudo_pwd} | sudo -S python3.6 -m pip install requests-2.21.0-py2.py3-none-any.whl
+    t_sudo python3.6 -m pip install /opt/tfc/${URLLIB3}
+    t_sudo python3.6 -m pip install /opt/tfc/${IDNA}
+    t_sudo python3.6 -m pip install /opt/tfc/${CHARDET}
+    t_sudo python3.6 -m pip install /opt/tfc/${CERTIFI}
+    t_sudo python3.6 -m pip install /opt/tfc/${REQUESTS}
 
     # Flask
-    echo ${sudo_pwd} | sudo -S python3.6 -m pip install Werkzeug-0.14.1-py2.py3-none-any.whl
-    echo ${sudo_pwd} | sudo -S python3.6 -m pip install MarkupSafe-1.1.0-cp36-cp36m-manylinux1_x86_64.whl
-    echo ${sudo_pwd} | sudo -S python3.6 -m pip install Jinja2-2.10-py2.py3-none-any.whl
-    echo ${sudo_pwd} | sudo -S python3.6 -m pip install itsdangerous-1.1.0-py2.py3-none-any.whl
-    echo ${sudo_pwd} | sudo -S python3.6 -m pip install Click-7.0-py2.py3-none-any.whl
-    echo ${sudo_pwd} | sudo -S python3.6 -m pip install Flask-1.0.2-py2.py3-none-any.whl
+    t_sudo python3.6 -m pip install /opt/tfc/${WERKZEUG}
+    t_sudo python3.6 -m pip install /opt/tfc/${MARKUPSAFE}
+    t_sudo python3.6 -m pip install /opt/tfc/${JINJA2}
+    t_sudo python3.6 -m pip install /opt/tfc/${ITSDANGEROUS}
+    t_sudo python3.6 -m pip install /opt/tfc/${CLICK}
+    t_sudo python3.6 -m pip install /opt/tfc/${FLASK}
 
     # Cryptography
-    echo ${sudo_pwd} | sudo -S python3.6 -m pip install six-1.12.0-py2.py3-none-any.whl
-    echo ${sudo_pwd} | sudo -S python3.6 -m pip install asn1crypto-0.24.0-py2.py3-none-any.whl
-    echo ${sudo_pwd} | sudo -S python3.6 -m pip install pycparser-2.19.tar.gz
-    echo ${sudo_pwd} | sudo -S python3.6 -m pip install cffi-1.12.2-cp36-cp36m-manylinux1_x86_64.whl
-    echo ${sudo_pwd} | sudo -S python3.6 -m pip install cryptography-2.5-cp34-abi3-manylinux1_x86_64.whl
+    t_sudo python3.6 -m pip install /opt/tfc/${SIX}
+    t_sudo python3.6 -m pip install /opt/tfc/${ASN1CRYPTO}
+    t_sudo python3.6 -m pip install /opt/tfc/${PYCPARSER}
+    t_sudo python3.6 -m pip install /opt/tfc/${CFFI}
+    t_sudo python3.6 -m pip install /opt/tfc/${CRYPTOGRAPHY}
 
     cd $HOME
     rm -r $HOME/tfc
 
-    echo ${sudo_pwd} | sudo -S mv /opt/tfc/tfc.png                        /usr/share/pixmaps/
-    echo ${sudo_pwd} | sudo -S mv /opt/tfc/launchers/TFC-RP-Tails.desktop /usr/share/applications/
+    t_sudo mv /opt/tfc/tfc.png                        /usr/share/pixmaps/
+    t_sudo mv /opt/tfc/launchers/TFC-RP-Tails.desktop /usr/share/applications/
 
-    echo ${sudo_pwd} | sudo -S rm -r /opt/tfc/launchers/
-    echo ${sudo_pwd} | sudo -S rm    /opt/tfc/requirements-relay.txt
+    t_sudo rm -r /opt/tfc/.git/
+    t_sudo rm -r /opt/tfc/launchers/
+    t_sudo rm -r /opt/tfc/src/receiver/
+    t_sudo rm -r /opt/tfc/src/transmitter/
+    t_sudo rm -r /opt/tfc/tests/
+    t_sudo rm    /opt/tfc/dd.py
+    t_sudo rm    /opt/tfc/install.sh
+    t_sudo rm    /opt/tfc/install.sh.asc
+    t_sudo rm    /opt/tfc/pubkey.asc
+    t_sudo rm    /opt/tfc/README.md
+    t_sudo rm    /opt/tfc/requirements.txt
+    t_sudo rm    /opt/tfc/requirements-dev.txt
+    t_sudo rm    /opt/tfc/requirements-relay.txt
+    t_sudo rm    /opt/tfc/requirements-venv.txt
+    t_sudo rm    /opt/tfc/tfc.py
+    t_sudo rm    /opt/tfc/${PYSERIAL}
+    t_sudo rm    /opt/tfc/${STEM}
+    t_sudo rm    /opt/tfc/${PYSOCKS}
+    t_sudo rm    /opt/tfc/${URLLIB3}
+    t_sudo rm    /opt/tfc/${IDNA}
+    t_sudo rm    /opt/tfc/${CHARDET}
+    t_sudo rm    /opt/tfc/${CERTIFI}
+    t_sudo rm    /opt/tfc/${REQUESTS}
+    t_sudo rm    /opt/tfc/${WERKZEUG}
+    t_sudo rm    /opt/tfc/${MARKUPSAFE}
+    t_sudo rm    /opt/tfc/${JINJA2}
+    t_sudo rm    /opt/tfc/${ITSDANGEROUS}
+    t_sudo rm    /opt/tfc/${CLICK}
+    t_sudo rm    /opt/tfc/${FLASK}
+    t_sudo rm    /opt/tfc/${SIX}
+    t_sudo rm    /opt/tfc/${ASN1CRYPTO}
+    t_sudo rm    /opt/tfc/${PYCPARSER}
+    t_sudo rm    /opt/tfc/${CFFI}
+    t_sudo rm    /opt/tfc/${CRYPTOGRAPHY}
 
     install_complete "Installation of the TFC Relay configuration is now complete."
+}
+
+t_sudo () {
+    # Execute command as root on Tails
+    echo ${sudo_pwd} | sudo -S $@
 }
 
 
@@ -372,7 +432,7 @@ install_relay () {
 
 read_sudo_pwd () {
     read -s -p "[sudo] password for ${USER}: " sudo_pwd
-    until (echo ${sudo_pwd} | sudo -S echo '' 2>/dev/null)
+    until (t_sudo echo '' 2>/dev/null)
     do
         echo -e '\nSorry, try again.'
         read -s -p "[sudo] password for ${USER}: " sudo_pwd
@@ -482,20 +542,18 @@ c_echo () {
 }
 
 
-create_install_dir () {
+check_rm_existing_installation () {
     if [[ ${sudo_pwd} ]]; then
         # Tails
         if [[ -d "/opt/tfc" ]]; then
-            echo ${sudo_pwd} | sudo -S rm -r /opt/tfc
+            t_sudo rm -r /opt/tfc
         fi
-        echo ${sudo_pwd} | sudo -S mkdir -p /opt/tfc 2>/dev/null
 
     else
         # *buntu
         if [[ -d "/opt/tfc" ]]; then
             sudo rm -r /opt/tfc
         fi
-        sudo mkdir -p /opt/tfc 2>/dev/null
     fi
 }
 
