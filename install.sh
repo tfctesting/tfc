@@ -475,6 +475,7 @@ upgrade_tor () {
         fi
 
         # Add .list-file
+        # The authenticity of the Onion URL can be confirmed from https://www.torproject.org/docs/debian.html.en#apt-over-tor
         echo "deb tor://sdscoq7snqtznauu.onion/torproject.org ${codename} main" | sudo tee -a /etc/apt/sources.list.d/torproject.list
         sudo cp -f /etc/apt/sources.list.d/torproject.list /etc/apt/sources.list.d/torproject.list.save
 
