@@ -186,6 +186,9 @@ install_tcb () {
     sudo rm    /opt/tfc/requirements-relay.txt
     sudo rm    /opt/tfc/requirements-venv.txt
     sudo rm    /opt/tfc/${VIRTUALENV}
+    sudo rm    /opt/install.sh
+    sudo rm    /opt/install.sh.asc
+    sudo rm    /opt/pubkey.asc
     process_tcb_dependencies "rm"
 
     add_serial_permissions
@@ -236,6 +239,9 @@ install_local_test () {
     sudo rm    /opt/tfc/requirements-relay.txt
     sudo rm    /opt/tfc/requirements-venv.txt
     sudo rm    /opt/tfc/${VIRTUALENV}
+    sudo rm    /opt/install.sh
+    sudo rm    /opt/install.sh.asc
+    sudo rm    /opt/pubkey.asc
     process_tcb_dependencies "rm"
 
     install_complete "Installation of TFC for local testing is now complete."
@@ -316,6 +322,9 @@ install_relay_ubuntu () {
     sudo rm    /opt/tfc/requirements-venv.txt
     sudo rm    /opt/tfc/tfc.py
     sudo rm    /opt/tfc/${VIRTUALENV}
+    sudo rm    /opt/install.sh
+    sudo rm    /opt/install.sh.asc
+    sudo rm    /opt/pubkey.asc
     process_tcb_dependencies "rm"
 
     add_serial_permissions
@@ -410,6 +419,9 @@ install_relay_tails () {
     t_sudo rm    /opt/tfc/${PYCPARSER}
     t_sudo rm    /opt/tfc/${CFFI}
     t_sudo rm    /opt/tfc/${CRYPTOGRAPHY}
+    t_sudo rm    /opt/install.sh
+    t_sudo rm    /opt/install.sh.asc
+    t_sudo rm    /opt/pubkey.asc
 
     install_complete "Installation of the TFC Relay configuration is now complete."
 }
