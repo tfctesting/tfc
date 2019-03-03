@@ -282,6 +282,10 @@ install_developer () {
 
     chmod a+rwx -R $HOME/tfc/
 
+    sudo rm -f /opt/install.sh
+    sudo rm -f /opt/install.sh.asc
+    sudo rm -f /opt/pubkey.asc
+
     add_serial_permissions
 
     install_complete "Installation of the TFC dev environment is now complete."
