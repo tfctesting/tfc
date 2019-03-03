@@ -254,6 +254,10 @@ install_local_test () {
 install_developer () {
     dpkg_check
 
+    if [[ -d "$HOME/tfc/" ]]; then
+        sudo rm -r $HOME/tfc/
+    fi
+
     upgrade_tor
     sudo torsocks apt install git libssl-dev python3-pip python3-setuptools python3-tk terminator -y
 
