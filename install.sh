@@ -477,7 +477,12 @@ check_tails_tor_version () {
 
 kill_network () {
     for interface in /sys/class/net/*; do
-        sudo ifconfig `basename ${interface}` down
+	    name=`basename ${interface}`
+        if [[ $name != "lo" ]]
+            then
+                echo "Closing network interace ${name}"
+                sudo ifconfig ${name} down
+        fi
     done
 
     clear
