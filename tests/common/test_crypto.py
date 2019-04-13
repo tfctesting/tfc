@@ -1,4 +1,4 @@
-#!/usr/bin/env python3.6
+#!/usr/bin/env python3.7
 # -*- coding: utf-8 -*-
 
 """
@@ -317,6 +317,7 @@ class TestCSPRNG(unittest.TestCase):
     def test_invalid_entropy_raises_critical_error(self, _):
         with self.assertRaises(SystemExit):
             csprng()
+        with self.assertRaises(SystemExit):
             csprng()
 
     @mock.patch('src.common.crypto.blake2b', side_effect=[(SYMMETRIC_KEY_LENGTH-1) * b'a',
@@ -324,6 +325,7 @@ class TestCSPRNG(unittest.TestCase):
     def test_invalid_blake2b_digest_raises_critical_error(self, _):
         with self.assertRaises(SystemExit):
             csprng()
+        with self.assertRaises(SystemExit):
             csprng()
 
 class TestCheckKernelEntropy(unittest.TestCase):

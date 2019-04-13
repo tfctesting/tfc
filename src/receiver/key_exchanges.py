@@ -1,4 +1,4 @@
-#!/usr/bin/env python3.6
+#!/usr/bin/env python3.7
 # -*- coding: utf-8 -*-
 
 """
@@ -64,6 +64,8 @@ def process_local_key(ts:            'datetime',
                       ) -> None:
     """Decrypt local key packet and add local contact/keyset."""
     bootstrap = not key_list.has_local_keyset()
+    plaintext = None
+
     try:
         packet_hash = blake2b(packet)
 
@@ -111,6 +113,10 @@ def process_local_key(ts:            'datetime',
                     raise FunctionReturn("Error: Incorrect key decryption key.", delay=1)
 
             break
+
+        # This catches PyCharm's weird claim that plaintext might be referenced before assignment
+        if plaintext is None:  # pragma: no cover
+            raise FunctionReturn("Error: Could not decrypt local key.")
 
         # Add local contact to contact list database
         contact_list.add_contact(LOCAL_PUBKEY,

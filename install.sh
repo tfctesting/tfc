@@ -107,7 +107,7 @@ compare_digest 39a7b3e4457d9aa6d53cb53d38c3ed9adbd9e3250008b4e79b5a174b9227fd0fa
 # PIP dependency file names
 ARGON2=argon2_cffi-19.1.0-cp34-abi3-manylinux1_x86_64.whl
 ASN1CRYPTO=asn1crypto-0.24.0-py2.py3-none-any.whl
-CERTIFI=certifi-2018.11.29-py2.py3-none-any.whl
+CERTIFI=certifi-2019.3.9-py2.py3-none-any.whl
 CFFI=cffi-1.12.2-cp36-cp36m-manylinux1_x86_64.whl
 CHARDET=chardet-3.0.4-py2.py3-none-any.whl
 CLICK=Click-7.0-py2.py3-none-any.whl
@@ -115,7 +115,7 @@ CRYPTOGRAPHY=cryptography-2.6.1-cp34-abi3-manylinux1_x86_64.whl
 FLASK=Flask-1.0.2-py2.py3-none-any.whl
 IDNA=idna-2.8-py2.py3-none-any.whl
 ITSDANGEROUS=itsdangerous-1.1.0-py2.py3-none-any.whl
-JINJA2=Jinja2-2.10-py2.py3-none-any.whl
+JINJA2=Jinja2-2.10.1-py2.py3-none-any.whl
 MARKUPSAFE=MarkupSafe-1.1.1-cp36-cp36m-manylinux1_x86_64.whl
 PYCPARSER=pycparser-2.19.tar.gz
 PYNACL=PyNaCl-1.3.0-cp34-abi3-manylinux1_x86_64.whl
@@ -126,7 +126,7 @@ SIX=six-1.12.0-py2.py3-none-any.whl
 STEM=stem-1.7.1.tar.gz
 URLLIB3=urllib3-1.24.1-py2.py3-none-any.whl
 VIRTUALENV=virtualenv-16.4.3-py2.py3-none-any.whl
-WERKZEUG=Werkzeug-0.14.1-py2.py3-none-any.whl
+WERKZEUG=Werkzeug-0.15.2-py2.py3-none-any.whl
 
 
 process_tcb_dependencies () {
@@ -150,8 +150,8 @@ install_tcb () {
     sudo torsocks git clone https://github.com/tfctesting/tfc.git /opt/tfc
 
     verify_tcb_requirements_files
-    sudo torsocks python3.6 -m pip download --no-cache-dir -r /opt/tfc/requirements-venv.txt --require-hashes -d /opt/tfc/
-    sudo torsocks python3.6 -m pip download --no-cache-dir -r /opt/tfc/requirements.txt      --require-hashes -d /opt/tfc/
+    sudo torsocks python3.7 -m pip download --no-cache-dir -r /opt/tfc/requirements-venv.txt --require-hashes -d /opt/tfc/
+    sudo torsocks python3.7 -m pip download --no-cache-dir -r /opt/tfc/requirements.txt      --require-hashes -d /opt/tfc/
 
     kill_network
 
@@ -159,11 +159,11 @@ install_tcb () {
 
     create_user_data_dir
 
-    sudo python3.6 -m pip install /opt/tfc/${VIRTUALENV}
-    sudo python3.6 -m virtualenv /opt/tfc/venv_tcb --system-site-packages --never-download
+    sudo python3.7 -m pip install /opt/tfc/${VIRTUALENV}
+    sudo python3.7 -m virtualenv /opt/tfc/venv_tcb --system-site-packages --never-download
 
     . /opt/tfc/venv_tcb/bin/activate
-    process_tcb_dependencies "python3.6 -m pip install"
+    process_tcb_dependencies "python3.7 -m pip install"
     deactivate
 
     sudo mv /opt/tfc/tfc.png                   /usr/share/pixmaps/
@@ -207,21 +207,19 @@ install_local_test () {
 
     verify_tcb_requirements_files
 
-    sudo torsocks python3.6 -m pip download --no-cache-dir -r /opt/tfc/requirements-venv.txt --require-hashes -d /opt/tfc/
-    sudo torsocks python3.6 -m pip download --no-cache-dir -r /opt/tfc/requirements.txt      --require-hashes -d /opt/tfc/
+    sudo torsocks python3.7 -m pip download --no-cache-dir -r /opt/tfc/requirements-venv.txt --require-hashes -d /opt/tfc/
+    sudo torsocks python3.7 -m pip download --no-cache-dir -r /opt/tfc/requirements.txt      --require-hashes -d /opt/tfc/
 
     verify_files
 
-    upgrade_tor
-
     sudo torsocks apt install terminator -y
 
-    torsocks python3.6 -m pip install -r /opt/tfc/requirements-venv.txt --require-hashes
-    sudo python3.6 -m virtualenv /opt/tfc/venv_tfc --system-site-packages
+    torsocks python3.7 -m pip install -r /opt/tfc/requirements-venv.txt --require-hashes
+    sudo python3.7 -m virtualenv /opt/tfc/venv_tfc --system-site-packages
 
     . /opt/tfc/venv_tfc/bin/activate
-    sudo torsocks python3.6 -m pip install -r /opt/tfc/requirements.txt       --require-hashes
-    sudo torsocks python3.6 -m pip install -r /opt/tfc/requirements-relay.txt --require-hashes
+    sudo torsocks python3.7 -m pip install -r /opt/tfc/requirements.txt       --require-hashes
+    sudo torsocks python3.7 -m pip install -r /opt/tfc/requirements-relay.txt --require-hashes
     deactivate
 
     sudo mv /opt/tfc/tfc.png                                /usr/share/pixmaps/
@@ -258,20 +256,19 @@ install_developer () {
         sudo rm -r $HOME/tfc/
     fi
 
-    upgrade_tor
     sudo torsocks apt install git libssl-dev python3-pip python3-setuptools python3-tk terminator -y
 
     cd $HOME
     torsocks git clone https://github.com/tfctesting/tfc.git
     cd $HOME/tfc/
 
-    torsocks python3.6 -m pip install -r requirements-venv.txt --require-hashes
-    python3.6 -m virtualenv venv_tfc --system-site-packages
+    torsocks python3.7 -m pip install -r requirements-venv.txt --require-hashes
+    python3.7 -m virtualenv venv_tfc --system-site-packages
 
     . /$HOME/tfc/venv_tfc/bin/activate
-    torsocks python3.6 -m pip install -r requirements.txt       --require-hashes
-    torsocks python3.6 -m pip install -r requirements-relay.txt --require-hashes
-    torsocks python3.6 -m pip install -r requirements-dev.txt
+    torsocks python3.7 -m pip install -r requirements.txt       --require-hashes
+    torsocks python3.7 -m pip install -r requirements-relay.txt --require-hashes
+    torsocks python3.7 -m pip install -r requirements-dev.txt
     deactivate
 
     modify_terminator_font_size "" "${HOME}/tfc/launchers/terminator-config-dev"
@@ -302,18 +299,16 @@ install_relay_ubuntu () {
 
     verify_tcb_requirements_files
 
-    sudo torsocks python3.6 -m pip download --no-cache-dir -r /opt/tfc/requirements-venv.txt --require-hashes -d /opt/tfc/
-    sudo torsocks python3.6 -m pip download --no-cache-dir -r /opt/tfc/requirements.txt      --require-hashes -d /opt/tfc/
+    sudo torsocks python3.7 -m pip download --no-cache-dir -r /opt/tfc/requirements-venv.txt --require-hashes -d /opt/tfc/
+    sudo torsocks python3.7 -m pip download --no-cache-dir -r /opt/tfc/requirements.txt      --require-hashes -d /opt/tfc/
 
     verify_files
 
-    upgrade_tor
-
-    torsocks python3.6 -m pip install -r /opt/tfc/requirements-venv.txt --require-hashes
-    sudo python3.6 -m virtualenv /opt/tfc/venv_relay --system-site-packages
+    torsocks python3.7 -m pip install -r /opt/tfc/requirements-venv.txt --require-hashes
+    sudo python3.7 -m virtualenv /opt/tfc/venv_relay --system-site-packages
 
     . /opt/tfc/venv_relay/bin/activate
-    sudo torsocks python3.6 -m pip install -r /opt/tfc/requirements-relay.txt --require-hashes
+    sudo torsocks python3.7 -m pip install -r /opt/tfc/requirements-relay.txt --require-hashes
     deactivate
 
     sudo mv /opt/tfc/tfc.png                  /usr/share/pixmaps/
@@ -362,38 +357,38 @@ install_relay_tails () {
 
     create_user_data_dir
 
-    t_sudo python3.6 -m pip download --no-cache-dir -r /opt/tfc/requirements-relay.txt --require-hashes -d /opt/tfc/
+    t_sudo python3.7 -m pip download --no-cache-dir -r /opt/tfc/requirements-relay.txt --require-hashes -d /opt/tfc/
 
     # Pyserial
-    t_sudo python3.6 -m pip install /opt/tfc/${PYSERIAL}
+    t_sudo python3.7 -m pip install /opt/tfc/${PYSERIAL}
 
     # Stem
-    t_sudo python3.6 -m pip install /opt/tfc/${STEM}
+    t_sudo python3.7 -m pip install /opt/tfc/${STEM}
 
     # PySocks
-    t_sudo python3.6 -m pip install /opt/tfc/${PYSOCKS}
+    t_sudo python3.7 -m pip install /opt/tfc/${PYSOCKS}
 
     # Requests
-    t_sudo python3.6 -m pip install /opt/tfc/${URLLIB3}
-    t_sudo python3.6 -m pip install /opt/tfc/${IDNA}
-    t_sudo python3.6 -m pip install /opt/tfc/${CHARDET}
-    t_sudo python3.6 -m pip install /opt/tfc/${CERTIFI}
-    t_sudo python3.6 -m pip install /opt/tfc/${REQUESTS}
+    t_sudo python3.7 -m pip install /opt/tfc/${URLLIB3}
+    t_sudo python3.7 -m pip install /opt/tfc/${IDNA}
+    t_sudo python3.7 -m pip install /opt/tfc/${CHARDET}
+    t_sudo python3.7 -m pip install /opt/tfc/${CERTIFI}
+    t_sudo python3.7 -m pip install /opt/tfc/${REQUESTS}
 
     # Flask
-    t_sudo python3.6 -m pip install /opt/tfc/${WERKZEUG}
-    t_sudo python3.6 -m pip install /opt/tfc/${MARKUPSAFE}
-    t_sudo python3.6 -m pip install /opt/tfc/${JINJA2}
-    t_sudo python3.6 -m pip install /opt/tfc/${ITSDANGEROUS}
-    t_sudo python3.6 -m pip install /opt/tfc/${CLICK}
-    t_sudo python3.6 -m pip install /opt/tfc/${FLASK}
+    t_sudo python3.7 -m pip install /opt/tfc/${WERKZEUG}
+    t_sudo python3.7 -m pip install /opt/tfc/${MARKUPSAFE}
+    t_sudo python3.7 -m pip install /opt/tfc/${JINJA2}
+    t_sudo python3.7 -m pip install /opt/tfc/${ITSDANGEROUS}
+    t_sudo python3.7 -m pip install /opt/tfc/${CLICK}
+    t_sudo python3.7 -m pip install /opt/tfc/${FLASK}
 
     # Cryptography
-    t_sudo python3.6 -m pip install /opt/tfc/${SIX}
-    t_sudo python3.6 -m pip install /opt/tfc/${ASN1CRYPTO}
-    t_sudo python3.6 -m pip install /opt/tfc/${PYCPARSER}
-    t_sudo python3.6 -m pip install /opt/tfc/${CFFI}
-    t_sudo python3.6 -m pip install /opt/tfc/${CRYPTOGRAPHY}
+    t_sudo python3.7 -m pip install /opt/tfc/${SIX}
+    t_sudo python3.7 -m pip install /opt/tfc/${ASN1CRYPTO}
+    t_sudo python3.7 -m pip install /opt/tfc/${PYCPARSER}
+    t_sudo python3.7 -m pip install /opt/tfc/${CFFI}
+    t_sudo python3.7 -m pip install /opt/tfc/${CRYPTOGRAPHY}
 
     cd $HOME
     rm -r $HOME/tfc
@@ -476,50 +471,6 @@ check_tails_tor_version () {
         clear
         echo -e "\nError: This Tails includes Tor $included but Tor $required is required. Exiting.\n" 1>&2
         exit 1
-    fi
-}
-
-
-upgrade_tor () {
-    available=($(apt-cache policy tor |grep Candidate | awk '{print $2}' |head -c 5))
-    required="0.3.5"
-
-    # If OS repository does not provide 0.3.5, add Tor Project's repository
-    if ! [[ "$(printf '%s\n' "$required" "$available" | sort -V | head -n1)" = "$required" ]]; then
-
-        sudo torsocks apt install apt-transport-tor -y
-
-        # Remove .list-file
-        if [[ -f /etc/apt/sources.list.d/torproject.list ]]; then
-            sudo rm /etc/apt/sources.list.d/torproject.list
-        fi
-
-        # Set codename
-        if [[ -f /etc/upstream-release/lsb-release ]]; then
-            codename=($(cat /etc/upstream-release/lsb-release |grep DISTRIB_CODENAME |cut -c 18-))  # Linux Mint etc.
-        else
-            codename=($(lsb_release -a 2>/dev/null |grep Codename |awk '{print $2}'))  # *buntu
-        fi
-
-        # Add .list-file
-        # The authenticity of the Onion URL for deb.torproject.org can be confirmed from https://www.torproject.org/docs/debian.html.en#apt-over-tor
-        echo "deb tor://sdscoq7snqtznauu.onion/torproject.org ${codename} main" | sudo tee -a /etc/apt/sources.list.d/torproject.list
-        sudo cp -f /etc/apt/sources.list.d/torproject.list /etc/apt/sources.list.d/torproject.list.save
-
-        # Import key
-        torsocks wget -O - -o /dev/null http://sdscoq7snqtznauu.onion/torproject.org/A3C4F0F979CAA22CDBA8F512EE8CBC9E886DDD89.asc | gpg --import
-        gpg --export A3C4F0F979CAA22CDBA8F512EE8CBC9E886DDD89 | sudo apt-key add -
-
-        sudo apt update
-        sudo apt install tor -y
-
-    else
-        if grep -q "tor://" -R /etc/apt/; then
-            sudo apt update
-        else
-            sudo torsocks apt update
-        fi
-
     fi
 }
 

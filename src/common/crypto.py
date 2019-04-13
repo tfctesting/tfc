@@ -1,4 +1,4 @@
-#!/usr/bin/env python3.6
+#!/usr/bin/env python3.7
 # -*- coding: utf-8 -*-
 
 """
@@ -87,7 +87,7 @@ def blake2b(message:     bytes,                        # Message to hash
         o 128-bit collision/preimage/second-preimage resistance against
           Grover's algorithm running on a quantum Turing machine.
 
-        o The algorithm is bundled in Python3.6's hashlib.
+        o The algorithm is bundled in Python3.7's hashlib.
 
         o Compared to SHA3-256, the algorithm runs faster on CPUs which
           means better hash ratchet performance.
@@ -102,8 +102,8 @@ def blake2b(message:     bytes,                        # Message to hash
     The correctness of the BLAKE2b implementation* is tested by TFC unit
     tests. The testing is done in limited scope by using an official KAT.
 
-    * https://github.com/python/cpython/tree/3.6/Modules/_blake2
-      https://github.com/python/cpython/blob/3.6/Lib/hashlib.py
+    * https://github.com/python/cpython/tree/3.7/Modules/_blake2
+      https://github.com/python/cpython/blob/3.7/Lib/hashlib.py
     """
     return hashlib.blake2b(message, digest_size=digest_size, key=key, salt=salt, person=person).digest()
 
@@ -389,7 +389,7 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH) -> bytes:
 
     Since Python 3.6.0, `os.urandom` is a wrapper for best available
     CSPRNG. The 3.17 and earlier versions of Linux kernel do not support
-    the GETRANDOM call, and Python 3.6's `os.urandom` will in those
+    the GETRANDOM call, and Python 3.7's `os.urandom` will in those
     cases fall back to non-blocking `/dev/urandom` that is not secure on
     live distros as they have low entropy at the start of the session.
 
@@ -437,12 +437,12 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH) -> bytes:
     entropy = os.getrandom(key_length, flags=0)
 
     if len(entropy) != key_length:
-        raise CriticalError("GETRANDOM returned invalid amount of entropy.")
+        raise CriticalError(f"GETRANDOM returned invalid amount of entropy ({len(entropy)} bytes).")
 
     compressed = blake2b(entropy, digest_size=key_length)
 
     if len(compressed) != key_length:
-        raise CriticalError("Invalid final key size.")
+        raise CriticalError(f"Invalid final key size ({len(compressed)} bytes).")
 
     return compressed
 

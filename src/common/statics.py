@@ -1,4 +1,4 @@
-#!/usr/bin/env python3.6
+#!/usr/bin/env python3.7
 # -*- coding: utf-8 -*-
 
 """
@@ -24,7 +24,7 @@ TFC     = 'TFC'
 TXP     = 'Transmitter'
 RXP     = 'Receiver'
 RP      = 'Relay'
-VERSION = '1.19.03'
+VERSION = '1.19.04'
 
 
 """Identifiers

@@ -1,4 +1,4 @@
-#!/usr/bin/env python3.6
+#!/usr/bin/env python3.7
 # -*- coding: utf-8 -*-
 
 """
@@ -266,7 +266,7 @@ def start_key_exchange(onion_pub_key: bytes,          # Public key of contact's 
 
     This function first creates the X448 key pair. It then outputs the
     public key to Relay Program on Networked Computer, that passes the
-    public key to contact's Relay Program. When Contact's public key
+    public key to contact's Relay Program. When contact's public key
     reaches the user's Relay Program, the user will manually copy the
     key into their Transmitter Program.
 
