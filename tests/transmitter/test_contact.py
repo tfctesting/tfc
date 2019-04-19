@@ -236,6 +236,15 @@ class TestChangeNick(TFCTestCase):
         # Test
         self.assert_fr("Error: Nick must be printable.", change_nick, UserInput("nick Alice\x01"), window, *self.args)
 
+    def test_no_contact_raises_fr(self):
+        # Setup
+        window = TxWindow(type=WIN_TYPE_CONTACT,
+                          contact=create_contact('Bob'))
+        window.contact = None
+
+        # Test
+        self.assert_fr("Error: Window does not have contact.", change_nick, UserInput("nick Alice\x01"), window, *self.args)
+
     def test_successful_nick_change(self):
         # Setup
         window = TxWindow(name='Alice',
