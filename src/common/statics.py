@@ -379,7 +379,7 @@ STATIC          = 'static'
 TRAFFIC_MASKING = 'traffic_masking'
 
 
-"""Default folders"""
+"""Default directories"""
 DIR_USER_DATA  = 'user_data/'
 DIR_RECV_FILES = 'received_files/'
 DIR_TFC        = 'tfc/'
@@ -448,7 +448,6 @@ WIPE                         = 'WIPE'
 
 
 """Static values"""
-
 # Serial interface
 BAUDS_PER_BYTE        = 10
 SERIAL_RX_MIN_TIMEOUT = 0.05
@@ -493,6 +492,7 @@ ONION_ADDRESS_CHECKSUM_LENGTH = 2
 ONION_ADDRESS_LENGTH          = 56
 
 # Misc
+BITS_PER_BYTE        = 8
 MAX_INT              = 2 ** 64 - 1
 B58_CHECKSUM_LENGTH  = 4
 TRUNC_ADDRESS_LENGTH = 5

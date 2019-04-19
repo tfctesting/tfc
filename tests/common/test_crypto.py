@@ -265,13 +265,21 @@ class TestXChaCha20Poly1305(unittest.TestCase):
 
 
 class TestBytePadding(unittest.TestCase):
+    """Unittests of the cryptography library are available at
+        https://github.com/pyca/cryptography/blob/master/tests/hazmat/primitives/test_padding.py
+    """
 
     def test_padding_length_is_divisible_by_packet_length(self):
+        padded_bytestrings = []
+
         for length in range(1000):
             string = length * b'm'
             padded = byte_padding(string)
             self.assertIsInstance(padded, bytes)
             self.assertEqual(len(padded) % PADDING_LENGTH, 0)
+
+            padded_bytestrings.append(len(padded))
+        self.assertNotEqual(len(list(set(padded_bytestrings))), 1)
 
     def test_packet_length_equal_to_padding_size_adds_dummy_block(self):
         string = PADDING_LENGTH * b'm'
