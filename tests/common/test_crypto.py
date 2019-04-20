@@ -99,7 +99,7 @@ class TestArgon2KDF(unittest.TestCase):
         self.assertEqual(key.hex(), '7e12cb75695277c0ab974e4ae943b87da08e36dd065aca8de3ca009125ae8953')
 
     def test_argon2d_kdf(self):
-        key = argon2_kdf('password', ARGON2_SALT_LENGTH*b'a', rounds=1, memory=100)
+        key = argon2_kdf('password', ARGON2_SALT_LENGTH*b'a', time_cost=1, memory_cost=100)
         self.assertIsInstance(key, bytes)
         self.assertEqual(len(key), SYMMETRIC_KEY_LENGTH)
 

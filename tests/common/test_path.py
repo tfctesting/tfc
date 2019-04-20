@@ -87,10 +87,10 @@ class TestCompleter(unittest.TestCase):
     def test_completer(self):
         # Test path
         completer = Completer(get_file=False)
-        self.assertEqual(completer.complete_path('/bin/'),   [])
-        self.assertEqual(completer.path_complete(['/bin']),  [])
-        self.assertEqual(completer.path_complete(),          [])
-        self.assertEqual(completer.complete_path(''),        [])
+        self.assertEqual(completer.complete_path('/bin/'),   ['/bin/X11/'])
+        self.assertEqual(completer.path_complete(['/bin']),  ['/bin/X11/'])
+        self.assertEqual(completer.path_complete(),          ['./X11/'])
+        self.assertEqual(completer.complete_path(''),        ['X11/'])
         self.assertEqual(completer.complete_path('/bin/sh'), ['/bin/sh '])
         self.assertNotEqual(completer.listdir('/etc/'),      [])
 

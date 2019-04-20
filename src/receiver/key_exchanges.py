@@ -298,7 +298,7 @@ def key_ex_psk_rx(packet:       bytes,
         try:
             password = MasterKey.get_password("PSK password")
             phase("Deriving the key decryption key", head=2)
-            kdk = argon2_kdf(password, salt, rounds=ARGON2_ROUNDS, memory=ARGON2_MIN_MEMORY)
+            kdk = argon2_kdf(password, salt, time_cost=ARGON2_PSK_TIME_COST, memory_cost=ARGON2_PSK_MEMORY_COST)
             psk = auth_and_decrypt(ct_tag, kdk)
             phase(DONE)
             break

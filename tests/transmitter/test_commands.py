@@ -22,7 +22,8 @@ along with TFC. If not, see <https://www.gnu.org/licenses/>.
 import os
 import unittest
 
-from unittest import mock
+from unittest      import mock
+from unittest.mock import MagicMock
 
 from src.common.db_logs  import write_log_entry
 from src.common.encoding import bool_to_bytes
@@ -474,9 +475,9 @@ class TestChangeMasterKey(TFCTestCase):
         self.assert_fr("Error: Invalid target system 't'.",
                        change_master_key, UserInput("passwd t"), *self.args)
 
+    @mock.patch('os.popen',        return_value=MagicMock(read=MagicMock(return_value='foo\nMemFree 200')))
     @mock.patch('getpass.getpass', return_value='a')
     @mock.patch('time.sleep',      return_value=None)
-    @mock.patch('src.common.db_masterkey.ARGON2_MIN_MEMORY',       1000)
     @mock.patch('src.common.db_masterkey.MIN_KEY_DERIVATION_TIME', 0.01)
     def test_transmitter_command(self, *_):
         # Setup

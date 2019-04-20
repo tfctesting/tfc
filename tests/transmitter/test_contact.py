@@ -78,7 +78,7 @@ class TestAddNewContact(TFCTestCase):
     @mock.patch('builtins.input',  side_effect=[nick_to_onion_address("Alice"), 'Alice_', 'psk', '.'])
     @mock.patch('getpass.getpass', return_value='test_password')
     @mock.patch('time.sleep',      return_value=None)
-    @mock.patch('src.transmitter.key_exchanges.ARGON2_MIN_MEMORY',       1000)
+    @mock.patch('src.transmitter.key_exchanges.ARGON2_PSK_MEMORY_COST',  200)
     @mock.patch('src.transmitter.key_exchanges.MIN_KEY_DERIVATION_TIME', 0.01)
     def test_standard_nick_psk_kex(self, *_):
         self.onion_service.account = nick_to_onion_address('Bob').encode()

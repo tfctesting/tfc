@@ -109,12 +109,12 @@ def blake2b(message:     bytes,                        # Message to hash
     return hashlib.blake2b(message, digest_size=digest_size, key=key, salt=salt, person=person).digest()
 
 
-def argon2_kdf(password:    str,                      # Password to derive the key from
-               salt:        bytes,                    # Salt to derive the key from
-               rounds:      int = ARGON2_ROUNDS,      # Number of iterations
-               memory:      int = ARGON2_MIN_MEMORY,  # Amount of memory to use (in bytes)
-               parallelism: int = 1                   # Number of threads to use
-               ) -> bytes:                            # The derived key
+def argon2_kdf(password:    str,                           # Password to derive the key from
+               salt:        bytes,                         # Salt to derive the key from
+               time_cost:   int = ARGON2_PSK_TIME_COST,    # Number of iterations
+               memory_cost: int = ARGON2_PSK_MEMORY_COST,  # Amount of memory to use (in bytes)
+               parallelism: int = 2                        # Number of threads to use
+               ) -> bytes:                                 # The derived key
     """Derive an encryption key from password and salt using Argon2d.
 
     Argon2 is a key derivation function (KDF) designed by Alex Biryukov,
@@ -159,8 +159,8 @@ def argon2_kdf(password:    str,                      # Password to derive the k
 
     key = argon2.low_level.hash_secret_raw(secret=password.encode(),
                                            salt=salt,
-                                           time_cost=rounds,
-                                           memory_cost=memory,
+                                           time_cost=time_cost,
+                                           memory_cost=memory_cost,
                                            parallelism=parallelism,
                                            hash_len=SYMMETRIC_KEY_LENGTH,
                                            type=argon2.Type.D)  # type: bytes

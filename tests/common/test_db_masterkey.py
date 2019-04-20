@@ -23,7 +23,8 @@ import os
 import os.path
 import unittest
 
-from unittest import mock
+from unittest      import mock
+from unittest.mock import MagicMock
 
 from src.common.db_masterkey import MasterKey
 from src.common.misc         import ensure_dir
@@ -56,10 +57,10 @@ class TestMasterKey(unittest.TestCase):
             with self.assertRaises(SystemExit):
                 _ = MasterKey(self.operation, local_test=False)
 
-    @mock.patch('src.common.db_masterkey.ARGON2_MIN_MEMORY',       100)
-    @mock.patch('src.common.db_masterkey.ARGON2_ROUNDS',           1)
     @mock.patch('src.common.db_masterkey.MIN_KEY_DERIVATION_TIME', 0.1)
+    @mock.patch('src.common.db_masterkey.MAX_KEY_DERIVATION_TIME', 1.1)
     @mock.patch('os.path.isfile',  side_effect=[KeyboardInterrupt, False, True])
+    @mock.patch('os.popen',        return_value=MagicMock(read=MagicMock(return_value='foo\nMemFree 200')))
     @mock.patch('getpass.getpass', side_effect=input_list)
     @mock.patch('time.sleep',      return_value=None)
     def test_master_key_generation_and_load(self, *_):
