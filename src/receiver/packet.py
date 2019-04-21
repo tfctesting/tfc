@@ -355,8 +355,8 @@ class Packet(object):
         padded  = b''.join([p[ASSEMBLY_PACKET_HEADER_LENGTH:] for p in self.assembly_pt_list])
         payload = rm_padding_bytes(padded)
 
-        fields      = 3 if len(self.assembly_pt_list) > 1 else 2
-        *_, payload = separate_headers(payload, fields * [ENCODED_INTEGER_LENGTH])
+        no_fields   = 3 if len(self.assembly_pt_list) > 1 else 2
+        *_, payload = separate_headers(payload, no_fields * [ENCODED_INTEGER_LENGTH])
 
         process_assembled_file(ts, payload, onion_pub_key, self.contact.nick, self.settings, window_list)
 

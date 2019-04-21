@@ -307,8 +307,8 @@ class TestKeyExPSKRx(TFCTestCase):
         # Test
         self.assert_fr("Error: The PSK data in the file was invalid.", key_ex_psk_rx, *self.args)
 
-    @mock.patch('time.sleep',      return_value=None)
-    @mock.patch('builtins.input',  return_value=file_name)
+    @mock.patch('time.sleep',     return_value=None)
+    @mock.patch('builtins.input', return_value=file_name)
     def test_permission_error_raises_fr(self, *_):
         # Setup
         with open(self.file_name, 'wb+') as f:
@@ -324,7 +324,7 @@ class TestKeyExPSKRx(TFCTestCase):
             self.assertEqual("Error: No read permission for the PSK file.", inst.message)
         self.assertTrue(e_raised)
 
-    @mock.patch('src.receiver.key_exchanges.ARGON2_PSK_TIME_COST',     1)
+    @mock.patch('src.receiver.key_exchanges.ARGON2_PSK_TIME_COST',   1)
     @mock.patch('src.receiver.key_exchanges.ARGON2_PSK_MEMORY_COST', 100)
     @mock.patch('getpass.getpass', side_effect=['invalid', 'password'])
     @mock.patch('time.sleep',      return_value=None)
@@ -348,7 +348,7 @@ class TestKeyExPSKRx(TFCTestCase):
         # Test
         self.assert_fr("Error: Received invalid keys from contact.", key_ex_psk_rx, *self.args)
 
-    @mock.patch('src.receiver.key_exchanges.ARGON2_PSK_TIME_COST',     1)
+    @mock.patch('src.receiver.key_exchanges.ARGON2_PSK_TIME_COST',   1)
     @mock.patch('src.receiver.key_exchanges.ARGON2_PSK_MEMORY_COST', 100)
     @mock.patch('time.sleep',      return_value=None)
     @mock.patch('builtins.input',  return_value=file_name)
@@ -374,7 +374,7 @@ class TestKeyExPSKRx(TFCTestCase):
         self.assertEqual(keyset.rx_mk, rx_key)
         self.assertEqual(keyset.rx_hk, rx_hek)
 
-    @mock.patch('src.receiver.key_exchanges.ARGON2_PSK_TIME_COST',     1)
+    @mock.patch('src.receiver.key_exchanges.ARGON2_PSK_TIME_COST',   1)
     @mock.patch('src.receiver.key_exchanges.ARGON2_PSK_MEMORY_COST', 100)
     @mock.patch('subprocess.Popen')
     @mock.patch('time.sleep',      return_value=None)
@@ -402,7 +402,7 @@ class TestKeyExPSKRx(TFCTestCase):
         self.assertEqual(keyset.rx_mk, rx_key)
         self.assertEqual(keyset.rx_hk, rx_hek)
 
-    @mock.patch('src.receiver.key_exchanges.ARGON2_PSK_TIME_COST',     1)
+    @mock.patch('src.receiver.key_exchanges.ARGON2_PSK_TIME_COST',   1)
     @mock.patch('src.receiver.key_exchanges.ARGON2_PSK_MEMORY_COST', 100)
     @mock.patch('subprocess.Popen')
     @mock.patch('time.sleep',      return_value=None)
