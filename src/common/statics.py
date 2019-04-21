@@ -501,9 +501,9 @@ TRUNC_ADDRESS_LENGTH = 5
 ARGON_2_MIN_MEMORY_COST = 8
 ARGON2_SALT_LENGTH      = 32
 ARGON2_PSK_TIME_COST    = 25
-ARGON2_PSK_MEMORY_COST  = 512 * 1024 # kibibytes
-MIN_KEY_DERIVATION_TIME = 3.0        # seconds
-MAX_KEY_DERIVATION_TIME = 4.0        # seconds
+ARGON2_PSK_MEMORY_COST  = 512 * 1024  # kibibytes
+MIN_KEY_DERIVATION_TIME = 3.0         # seconds
+MAX_KEY_DERIVATION_TIME = 4.0         # seconds
 
 # Cryptographic field sizes
 TFC_PRIVATE_KEY_LENGTH           = 56
