@@ -181,8 +181,8 @@ class MasterKey(object):
                 # the search to continue into wrong branch. In such situation the search is restarted. The binary search
                 # is problematic with tight key derivation time target ranges, so if the search keeps restarting,
                 # increasing MAX_KEY_DERIVATION_TIME (and thus expanding the range) will help finding suitable
-                # memory_cost value faster. Increasing MAX_KEY_DERIVATION_TIME affects security positively and user
-                # experience negatively.
+                # memory_cost value faster. Increasing MAX_KEY_DERIVATION_TIME slightly affects security (positively)
+                # and user experience (negatively).
                 if middle == lower_bound or middle == upper_bound:
                     lower_bound = ARGON_2_MIN_MEMORY_COST
                     upper_bound = memory_cost
