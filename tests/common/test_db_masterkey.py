@@ -75,6 +75,17 @@ class TestMasterKey(unittest.TestCase):
         self.assertIsInstance(master_key2.master_key, bytes)
         self.assertEqual(master_key.master_key, master_key2.master_key)
 
+    @mock.patch('src.common.db_masterkey.MasterKey.timed_key_derivation', MagicMock(side_effect=10 * [(32*b'b', 5.0)]
+                                                                                                   + [(32*b'a', 2.5),
+                                                                                                      (32*b'a', 2.5),
+                                                                                                      (32*b'a', 3.0)]))
+    @mock.patch('os.path.isfile',  side_effect=[False, True])
+    @mock.patch('os.popen',        return_value=MagicMock(read=MagicMock(return_value='foo\nMemFree 200')))
+    @mock.patch('getpass.getpass', side_effect=input_list)
+    @mock.patch('time.sleep',      return_value=None)
+    def test_kd_binary_serach(self, *_):
+        MasterKey(self.operation, local_test=True)
+
 
 if __name__ == '__main__':
     unittest.main(exit=False)
