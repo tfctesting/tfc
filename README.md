@@ -7,6 +7,6 @@
 
 # Do not use this repository.
 
-#### The code in this repository is not stable and it is signed with an insecurely stored key.
+### The code in this repository is not stable and it is signed with an insecurely stored key.
 
-#### Use the [official repository](https://github.com/maqp/tfc/) instead.
+### Use the [official repository](https://github.com/maqp/tfc/) instead.
