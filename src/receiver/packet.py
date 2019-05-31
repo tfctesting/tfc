@@ -122,9 +122,8 @@ def decrypt_assembly_packet(packet:        bytes,          # Assembly packet cip
         raise FunctionReturn(f"Warning! Received {p_type} {direction} {nick} had an invalid MAC.", window=local_window)
 
     # Update message key and harac
-    keyset.update_mk(key_dir,
-                     blake2b(message_key + int_to_bytes(stored_harac + offset), digest_size=SYMMETRIC_KEY_LENGTH),
-                     offset + 1)
+    new_key = blake2b(message_key + int_to_bytes(stored_harac + offset), digest_size=SYMMETRIC_KEY_LENGTH)
+    keyset.update_mk(key_dir, new_key, offset + 1)
 
     return assembly_packet
 

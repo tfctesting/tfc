@@ -23,7 +23,8 @@ import multiprocessing
 import os
 import unittest
 
-from unittest import mock
+from unittest      import mock
+from unittest.mock import MagicMock
 
 import argon2
 import nacl.exceptions
@@ -285,6 +286,16 @@ class TestBytePadding(unittest.TestCase):
         string = PADDING_LENGTH * b'm'
         padded = byte_padding(string)
         self.assertEqual(len(padded), 2*PADDING_LENGTH)
+
+    @mock.patch("cryptography.hazmat.primitives.padding.PKCS7",
+                return_value=MagicMock(
+                    padder=MagicMock(return_value=MagicMock(
+                        update=MagicMock(return_value=b'a'),
+                        finalize=MagicMock(return_value=PADDING_LENGTH*b'a')))))
+    def test_invalid_padding_length_raises_critical_error(self, _):
+        string = b'test_string'
+        with self.assertRaises(SystemExit):
+            byte_padding(string)
 
 
 class TestRmPaddingBytes(unittest.TestCase):

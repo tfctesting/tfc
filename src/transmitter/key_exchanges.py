@@ -266,9 +266,9 @@ def start_key_exchange(onion_pub_key: bytes,          # Public key of contact's 
 
     This function first creates the X448 key pair. It then outputs the
     public key to Relay Program on Networked Computer, that passes the
-    public key to contact's Relay Program. When contact's public key
-    reaches the user's Relay Program, the user will manually copy the
-    key into their Transmitter Program.
+    public key to contact's Relay Program where it is displayed. When
+    the contact's public key reaches the user's Relay Program, the user
+    will manually type the key into their Transmitter Program.
 
     The X448 shared secret is used to create unidirectional message and
     header keys, that will be used in forward secret communication. This
@@ -360,7 +360,7 @@ def start_key_exchange(onion_pub_key: bytes,          # Public key of contact's 
         # screen of Networked Computer: Public keys can not be derived
         # from the fingerprints due to preimage resistance of BLAKE2b,
         # and fingerprints can not be derived from public key without
-        # the X448 shared secret. Using the context variable ensures
+        # the X448 shared key. Using the context variable ensures
         # fingerprints are distinct from derived message and header keys.
         tx_fp = blake2b(tfc_public_key_user,    dh_shared_key, person=b'fingerprint', digest_size=FINGERPRINT_LENGTH)
         rx_fp = blake2b(tfc_public_key_contact, dh_shared_key, person=b'fingerprint', digest_size=FINGERPRINT_LENGTH)

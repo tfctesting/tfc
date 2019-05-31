@@ -302,7 +302,7 @@ def group_rm_group(group_name:   str,
     raise FunctionReturn(f"Removed group '{group_name}'.", head=0, delay=1, tail_clear=True, bold=True)
 
 
-def rename_group(new_name:     str,
+def group_rename(new_name:     str,
                  window:       'TxWindow',
                  contact_list: 'ContactList',
                  group_list:   'GroupList',

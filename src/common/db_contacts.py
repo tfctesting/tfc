@@ -282,7 +282,8 @@ class ContactList(Iterable, Sized):
              nick_bytes) = separate_headers(block,
                                             [ONION_SERVICE_PUBLIC_KEY_LENGTH]
                                             + 2*[FINGERPRINT_LENGTH]
-                                            + 4*[ENCODED_BOOLEAN_LENGTH])
+                                            + [KEX_STATUS_LENGTH]
+                                            + 3*[ENCODED_BOOLEAN_LENGTH])
 
             self.contacts.append(Contact(onion_pub_key =onion_pub_key,
                                          tx_fingerprint=tx_fingerprint,

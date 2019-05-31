@@ -193,13 +193,13 @@ def print_key(message:    str,                              # Instructive messag
 
     Local key encryption keys:
 
-     A   B   C   D   E   F   G   H   I   J   K   L   M   N   O   P   Q
-    5Ka 52G yNz vjF nM4 2jw Duu rWo 7di zgi Y8g iiy yGd 78L cCx mwQ mWV
+         A   B   C   D   E   F   G   H   I   J   K   L   M   N   O   P   Q
+        5Ka 52G yNz vjF nM4 2jw Duu rWo 7di zgi Y8g iiy yGd 78L cCx mwQ mWV
 
     X448 public keys:
 
-       A       B       C       D       E       F       H       H       I       J       K       L
-    4EcuqaD ddsdsuc gBX2PY2 qR8hReA aeSN2oh JB9w5Cv q6BQjDa PPgzSvW 932aHio sT42SKJ Gu2PpS1 Za3Xrao
+           A       B       C       D       E       F       H       H       I       J       K       L
+        4EcuqaD ddsdsuc gBX2PY2 qR8hReA aeSN2oh JB9w5Cv q6BQjDa PPgzSvW 932aHio sT42SKJ Gu2PpS1 Za3Xrao
     """
     b58key = b58encode(key_bytes, public_key)
     if settings.local_testing_mode:

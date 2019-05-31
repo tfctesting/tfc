@@ -246,7 +246,7 @@ def g_msg_manager(queues: 'QueueDict', unittest: bool = False) -> None:
     """Show group management messages according to contact list state.
 
     This process keeps track of existing contacts for whom there's a
-    page_loader process. When a group management message from a contact
+    `client` process. When a group management message from a contact
     is received, existing contacts are displayed under "known contacts",
     and non-existing contacts are displayed under "unknown contacts".
     """
@@ -349,7 +349,8 @@ def c_req_manager(queues: 'QueueDict', unittest: bool = False) -> None:
                     continue
 
                 if show_requests:
-                    m_print(["New contact request from an unknown TFC account:", purp_onion_address], box=True)
+                    ts_fmt = datetime.now().strftime('%b %d - %H:%M:%S.%f')[:-4]
+                    m_print([f"{ts_fmt} - New contact request from an unknown TFC account:", purp_onion_address], box=True)
                 contact_requests.append(onion_pub_key)
 
             if unittest and queues[UNITTEST_QUEUE].qsize() != 0:

@@ -113,7 +113,7 @@ def argon2_kdf(password:    str,                           # Password to derive 
                salt:        bytes,                         # Salt to derive the key from
                time_cost:   int = ARGON2_PSK_TIME_COST,    # Number of iterations
                memory_cost: int = ARGON2_PSK_MEMORY_COST,  # Amount of memory to use (in bytes)
-               parallelism: int = 2                        # Number of threads to use
+               parallelism: int = ARGON2_PSK_PARALLELISM   # Number of threads to use
                ) -> bytes:                                 # The derived key
     """Derive an encryption key from password and salt using Argon2d.
 
@@ -198,10 +198,7 @@ class X448(object):
     """
     @staticmethod
     def generate_private_key() -> 'X448PrivateKey':
-        """Generate the X448 private key.
-
-        The size of the private key is 56 bytes (448 bits).
-        """
+        """Generate the X448 private key."""
         return X448PrivateKey.generate()
 
     @staticmethod
@@ -364,7 +361,7 @@ def byte_padding(bytestring: bytes  # Bytestring to be padded
     bytestring  = padder.update(bytestring)
     bytestring += padder.finalize()
 
-    if len(bytestring) % PADDING_LENGTH != 0:  # pragma: no cover
+    if len(bytestring) % PADDING_LENGTH != 0:
         raise CriticalError("Invalid padding length.")
 
     return bytestring

@@ -245,6 +245,15 @@ def log_command(user_input:   'UserInput',
 
     Transmitter Program processes sent, Receiver Program sent and
     received, messages of all participants in the active window.
+
+    Having the capability to export the log file from the encrypted
+    database is a bad idea, but as it's required by the GDPR
+    (https://gdpr-info.eu/art-20-gdpr/), it should be done as securely
+    as possible.
+
+    Therefore, before allowing export, TFC will ask for the master
+    password to ensure no unauthorized user who gains momentary
+    access to the system can the export logs from the database.
     """
     cmd            = user_input.plaintext.split()[0]
     export, header = dict(export =(True,  LOG_EXPORT),
@@ -265,6 +274,7 @@ def log_command(user_input:   'UserInput',
     if export:
         if not yes(f"Export logs for '{window.name}' in plaintext?", abort=False):
             raise FunctionReturn("Log file export aborted.", tail_clear=True, head=0, delay=1)
+        master_key.load_master_key()
 
     queue_command(command, settings, queues)
 

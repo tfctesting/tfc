@@ -62,11 +62,11 @@ class Group(Iterable, Sized):
                    ID must be considered public information, they are
                    random. For more details on Destination Computer
                    exfiltration attacks, refer to TFC's documentation
-                   regarding Security Design. Identification of groups
-                   via a separate group ID allows the user to choose the
-                   name for the group which is useful because users do
-                   not need to take into account what names their
-                   contacts have chosen for their groups.
+                   on Security Design. Identification of groups via a
+                   separate group ID allows the user to choose the name
+                   for the group which is useful because users do not
+                   need to take into account what names their contacts
+                   have chosen for their groups.
 
     log_messages:  This setting defines whether the Receiver Program
                    writes the assembly packets of a successfully
@@ -196,7 +196,7 @@ class GroupList(Iterable, Sized):
     per group can be changed by editing the `max_number_of_groups` and
     `max_number_of_group_members` settings respectively. Deviating from
     the default settings can, however, in theory, reveal to a physical
-    attacker, the user has more than 50 groups or more than 50 members
+    attacker the user has more than 50 groups or more than 50 members
     in a group.
 
     The GroupList object also provides handy methods with human-readable
@@ -324,7 +324,7 @@ class GroupList(Iterable, Sized):
         Adjust TFC's settings automatically if loaded group database was
         stored using larger database setting values.
 
-        If settings had to be adjusted, return True so
+        If settings had to be adjusted, return True so the method
         `self._load_groups` knows to write changes to a new database.
         """
         update_db = False

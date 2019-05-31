@@ -102,7 +102,7 @@ def queue_message(user_input: 'UserInput',
            because it's unlikely a user will ever have that many groups.
 
         2) 16-byte group message ID. This random ID is not important for
-           the receiver. Instead, it is used by the sender's Receiver
+           the recipient. Instead, it is used by the sender's Receiver
            Program to detect what group messages are copies sent to other
            members of the group (these will be ignored from ephemeral and
            persistent message log). The message ID space was chosen so

@@ -32,6 +32,7 @@ from src.common.statics      import *
 
 from tests.utils import cd_unittest, cleanup
 
+KL = SYMMETRIC_KEY_LENGTH
 
 class TestMasterKey(unittest.TestCase):
     input_list = ['password', 'different_password',  # Invalid new password pair
@@ -75,10 +76,10 @@ class TestMasterKey(unittest.TestCase):
         self.assertIsInstance(master_key2.master_key, bytes)
         self.assertEqual(master_key.master_key, master_key2.master_key)
 
-    @mock.patch('src.common.db_masterkey.MasterKey.timed_key_derivation', MagicMock(side_effect=10 * [(32*b'b', 5.0)]
-                                                                                                   + [(32*b'a', 2.5),
-                                                                                                      (32*b'a', 2.5),
-                                                                                                      (32*b'a', 3.0)]))
+    @mock.patch('src.common.db_masterkey.MasterKey.timed_key_derivation', MagicMock(side_effect=10 * [(KL*b'b', 5.0)]
+                                                                                                   + [(KL*b'a', 2.5),
+                                                                                                      (KL*b'a', 2.5),
+                                                                                                      (KL*b'a', 3.0)]))
     @mock.patch('os.path.isfile',  side_effect=[False, True])
     @mock.patch('os.popen',        return_value=MagicMock(read=MagicMock(return_value='foo\nMemFree 200')))
     @mock.patch('getpass.getpass', side_effect=input_list)

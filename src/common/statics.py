@@ -24,7 +24,7 @@ TFC     = 'TFC'
 TXP     = 'Transmitter'
 RXP     = 'Receiver'
 RP      = 'Relay'
-VERSION = '1.19.04'
+VERSION = '1.19.06'
 
 
 """Identifiers
@@ -386,6 +386,7 @@ DIR_TFC        = 'tfc/'
 
 
 """Key exchange status states"""
+KEX_STATUS_LENGTH     = 1
 KEX_STATUS_NONE       = b'\xa0'
 KEX_STATUS_PENDING    = b'\xa1'
 KEX_STATUS_UNVERIFIED = b'\xa2'
@@ -502,6 +503,7 @@ ARGON_2_MIN_MEMORY_COST = 8
 ARGON2_SALT_LENGTH      = 32
 ARGON2_PSK_TIME_COST    = 25
 ARGON2_PSK_MEMORY_COST  = 512 * 1024  # kibibytes
+ARGON2_PSK_PARALLELISM  = 2
 MIN_KEY_DERIVATION_TIME = 3.0         # seconds
 MAX_KEY_DERIVATION_TIME = 4.0         # seconds
 

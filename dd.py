@@ -165,7 +165,7 @@ def main() -> None:
     for p in process_list:
         p.start()
 
-    monitor_processes(process_list, NC, {EXIT_QUEUE: Queue()}, error_exit_code=0)
+    monitor_processes(process_list, NC, queues={EXIT_QUEUE: Queue()}, error_exit_code=0)
 
 
 if __name__ == '__main__':

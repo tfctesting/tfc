@@ -240,7 +240,7 @@ class TestContactList(TFCTestCase):
         self.assertIs(self.contact_list.get_contact_by_pub_key(nick_to_pub_key('Bob')),
                       self.contact_list.get_contact_by_address_or_nick('Bob'))
 
-    def test_get_contact_by_address_or_nick_returns_same_contact_with_address_and_nick(self):
+    def test_get_contact_by_address_or_nick_returns_the_same_contact_object_with_address_and_nick(self):
         for selector in [nick_to_onion_address('Bob'), 'Bob']:
             self.assertIsInstance(self.contact_list.get_contact_by_address_or_nick(selector), Contact)
 

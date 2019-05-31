@@ -149,7 +149,17 @@ def log_command(cmd_data:     bytes,
                 settings:     'Settings',
                 master_key:   'MasterKey'
                 ) -> None:
-    """Display or export log file for the active window."""
+    """Display or export log file for the active window.
+
+    Having the capability to export the log file from the encrypted
+    database is a bad idea, but as it's required by the GDPR
+    (https://gdpr-info.eu/art-20-gdpr/), it should be done as securely
+    as possible.
+
+    Therefore, before allowing export, TFC will ask for the master
+    password to ensure no unauthorized user who gains momentary
+    access to the system can the export logs from the database.
+    """
     export          = ts is not None
     ser_no_msg, uid = separate_header(cmd_data, ENCODED_INTEGER_LENGTH)
     no_messages     = bytes_to_int(ser_no_msg)
@@ -157,6 +167,7 @@ def log_command(cmd_data:     bytes,
     access_logs(window, contact_list, group_list, settings, master_key, msg_to_load=no_messages, export=export)
 
     if export:
+        master_key.load_master_key()
         local_win = window_list.get_local_window()
         local_win.add_new(ts, f"Exported log file of {window.type} '{window.name}'.", output=True)
 

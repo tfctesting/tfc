@@ -195,7 +195,8 @@ class TestExitTFC(unittest.TestCase):
 
 class TestLogCommand(TFCTestCase):
 
-    def setUp(self):
+    @mock.patch("getpass.getpass", return_value='test_password')
+    def setUp(self, _):
         self.unittest_dir = cd_unittest()
         self.window       = TxWindow(name='Alice',
                                      uid=nick_to_pub_key('Alice'))
@@ -238,10 +239,15 @@ class TestLogCommand(TFCTestCase):
         self.assert_fr("Log file export aborted.",
                        log_command, UserInput('export'), *self.args)
 
-    @mock.patch('time.sleep',     return_value=None)
-    @mock.patch('builtins.input', return_value='Yes')
+    @mock.patch("getpass.getpass", side_effect=3*['test_password']
+                                               + ['invalid_password']
+                                               + ['test_password'])
+    @mock.patch('time.sleep',      return_value=None)
+    @mock.patch('builtins.input',  return_value='Yes')
     def test_successful_export_command(self, *_):
         # Setup
+        from src.common.db_masterkey import MasterKey
+        self.master_key  = MasterKey(operation=NC, local_test=True)
         self.window.type = WIN_TYPE_CONTACT
         self.window.uid  = nick_to_pub_key('Alice')
         whisper_header   = bool_to_bytes(False)

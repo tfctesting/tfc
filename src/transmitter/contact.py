@@ -31,7 +31,7 @@ from src.common.misc       import ignored, validate_key_exchange, validate_nick,
 from src.common.output     import m_print
 from src.common.statics    import *
 
-from src.transmitter.commands_g    import rename_group
+from src.transmitter.commands_g    import group_rename
 from src.transmitter.key_exchanges import create_pre_shared_key, start_key_exchange
 from src.transmitter.packet        import queue_command, queue_to_nc
 
@@ -196,7 +196,7 @@ def change_nick(user_input:   'UserInput',
         raise FunctionReturn("Error: No nick specified.", head_clear=True)
 
     if window.type == WIN_TYPE_GROUP:
-        rename_group(nick, window, contact_list, group_list, settings, queues)
+        group_rename(nick, window, contact_list, group_list, settings, queues)
 
     if window.contact is None:
         raise FunctionReturn("Error: Window does not have contact.")

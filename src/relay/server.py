@@ -171,6 +171,6 @@ def flask_server(queues:               'QueueDict',
 
     if unittest:
         return app
-    else:  # not unittest
+    else:  # pragma: no cover
         app.run()
         return None

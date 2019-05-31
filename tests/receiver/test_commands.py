@@ -152,7 +152,9 @@ class TestExitTFC(unittest.TestCase):
 
 class TestLogCommand(TFCTestCase):
 
-    def setUp(self):
+    @mock.patch("getpass.getpass", return_value='test_password')
+    def setUp(self, _):
+        from src.common.db_masterkey import MasterKey
         self.unittest_dir      = cd_unittest()
         self.cmd_data          = int_to_bytes(1) + nick_to_pub_key("Bob")
         self.ts                = datetime.now()
@@ -164,7 +166,7 @@ class TestLogCommand(TFCTestCase):
         self.contact_list      = ContactList(nicks=['Alice', 'Bob'])
         self.group_list        = GroupList()
         self.settings          = Settings()
-        self.master_key        = MasterKey()
+        self.master_key        = MasterKey(operation=NC, local_test=True)
         self.args              = (self.ts, self.window_list, self.contact_list,
                                   self.group_list, self.settings, self.master_key)
 
@@ -179,8 +181,9 @@ class TestLogCommand(TFCTestCase):
     def test_print(self):
         self.assert_fr(f"No log database available.", log_command, self.cmd_data, *self.args)
 
-    @mock.patch('struct.pack', return_value=bytes.fromhex('08ceae02'))
-    def test_export(self, _):
+    @mock.patch("getpass.getpass", side_effect=['invalid_password','test_password'])
+    @mock.patch('struct.pack',     return_value=bytes.fromhex('08ceae02'))
+    def test_export(self, *_):
         # Setup
         for p in assembly_packet_creator(MESSAGE, 'A short message'):
             write_log_entry(p, nick_to_pub_key("Bob"), self.settings, self.master_key, origin=ORIGIN_CONTACT_HEADER)

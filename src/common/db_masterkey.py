@@ -102,7 +102,7 @@ class MasterKey(object):
 
         3) The maximum amount of memory (m) is what the system has to
            offer. For hard-drive encryption purposes, the recommendation
-           is 6GB. TFC will use that amount (or even more) if available.
+           is 6GiB. TFC will use that amount (or even more) if available.
            However, on less powerful systems, it will settle for less.
 
         4) For key derivation time (x), the value is set to at least 3

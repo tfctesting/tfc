@@ -168,7 +168,7 @@ def main() -> None:
                     Process(target=client_scheduler, args=(queues, gateway, url_token_private_key)),
                     Process(target=g_msg_manager,    args=(queues,                               )),
                     Process(target=c_req_manager,    args=(queues,                               )),
-                    Process(target=flask_server,     args=(queues,           url_token_public_key)),
+                    Process(target=flask_server,     args=(queues,          url_token_public_key )),
                     Process(target=onion_service,    args=(queues,                               )),
                     Process(target=relay_command,    args=(queues, gateway, sys.stdin.fileno())  )]
 
