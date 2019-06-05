@@ -66,10 +66,10 @@ def animate(argv: str) -> None:
     animation_length = 16
     for i in range(animation_length):
         clear_screen()
-        draw_frame(argv, 'Data flow', high=(i % 2 == 0))
+        draw_frame(argv, DATA_FLOW, high=(i % 2 == 0))
         time.sleep(0.04)
     clear_screen()
-    draw_frame(argv, 'Idle')
+    draw_frame(argv, IDLE)
 
 
 def rx_loop(io_queue:     'Queue',  # Queue through which to push datagrams through
@@ -93,7 +93,7 @@ def tx_loop(io_queue:      'Queue',  # Queue through which to push datagrams thr
             argv:          str       # Arguments for simulator position/orientation
             ) -> None:
     """Send queued datagrams to a receiving program."""
-    draw_frame(argv, 'Idle')
+    draw_frame(argv, IDLE)
 
     while True:
         try:
