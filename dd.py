@@ -32,33 +32,33 @@ from src.common.output  import clear_screen
 from src.common.statics import *
 
 
-def draw_frame(argv:    str,          # Arguments for simulator position/orientation
+def draw_frame(argv:    str,          # Arguments for the simulator position/orientation
                message: str,          # Status message to print
                high:    bool = False  # Determines the signal's state (high/low)
                ) -> None:
     """Draw a data diode animation frame."""
-    l, r, blink, arrow = dict(scnclr=('Tx', 'Rx', '>', '→'),
-                              scncrl=('Rx', 'Tx', '<', '←'),
-                              ncdclr=('Rx', 'Tx', '<', '←'),
-                              ncdcrl=('Tx', 'Rx', '>', '→'))[argv]
+    l, indicator, arrow, r = dict(ncdclr=('Rx', '<', '←', 'Tx'),
+                                  scnclr=('Tx', '>', '→', 'Rx'),
+                                  ncdcrl=('Tx', '>', '→', 'Rx'),
+                                  scncrl=('Rx', '<', '←', 'Tx'))[argv]
 
-    arrow = arrow if message != 'Idle' else ' '
-    blink = blink if high              else ' '
+    indicator = indicator if high            else ' '
+    arrow     = arrow     if message != IDLE else ' '
 
     offset_from_center = 4
     print(((get_terminal_height() // 2) - offset_from_center) * '\n')
 
     terminal_width = get_terminal_width()
 
-    def c_print(msg: str) -> None:
-        """Print string in the center of the screen."""
-        print(msg.center(terminal_width))
+    def c_print(string: str) -> None:
+        """Print string on the center of the screen."""
+        print(string.center(terminal_width))
 
     c_print(message)
     c_print(arrow)
-    c_print(  "────╮ " +  ' '  +  " ╭────" )
-    c_print(f" {l} │ " + blink + f" │ {r} ")
-    c_print(  "────╯ " +  ' '  +  " ╰────" )
+    c_print(  "────╮ " +    ' '    +  " ╭────" )
+    c_print(f" {l} │ " + indicator + f" │ {r} ")
+    c_print(  "────╯ " +    ' '    +  " ╰────" )
 
 
 def animate(argv: str) -> None:

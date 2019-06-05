@@ -115,6 +115,15 @@ EVENT = '-!-'
 ME    = 'Me'
 
 
+"""Data diode simulator identifiers"""
+IDLE      = 'Idle'
+DATA_FLOW = 'Data flow'
+SCNCLR    = 'scnclr'
+SCNCRL    = 'scncrl'
+NCDCLR    = 'ncdclr'
+NCDCRL    = 'ncdcrl'
+
+
 """VT100 codes
 
 VT100 codes are used to control printing to the terminal. These make 
