@@ -21,8 +21,12 @@ along with TFC. If not, see <https://www.gnu.org/licenses/>.
 
 import unittest
 
+from multiprocessing import Queue
+from unittest        import mock
+from unittest.mock   import MagicMock
+
 from src.common.statics import *
-from dd                 import draw_frame
+from dd                 import animate, draw_frame, rx_loop
 
 from tests.utils import TFCTestCase
 
@@ -90,6 +94,31 @@ class TestDrawFrame(TFCTestCase):
                                   Rx │   │ Tx                                   
                                  ────╯   ╰────                                  
 """, draw_frame, argv, IDLE, high=False)
+
+
+class TestAnimate(unittest.TestCase):
+
+    @mock.patch("time.sleep", lambda _: None)
+    def test_animation(self):
+        for arg in [SCNCLR, SCNCRL, NCDCLR, NCDCRL]:
+            self.assertIsNone(animate(arg))
+
+
+class TestRxLoop(unittest.TestCase):
+
+    @mock.patch("multiprocessing.connection.Listener", return_value=MagicMock(
+        accept=MagicMock(return_value=MagicMock(
+            recv=MagicMock(side_effect=[b'data', b'data', KeyboardInterrupt, EOFError])))))
+    def test_rx_loop(self, _):
+
+        queue = Queue()
+
+        with self.assertRaises(SystemExit):
+            rx_loop(queue, RP_LISTEN_SOCKET)
+        self.assertEqual(queue.qsize(), 2)
+
+        while queue.qsize() != 0:
+            self.assertEqual(queue.get(), b'data')
 
 
 if __name__ == '__main__':
