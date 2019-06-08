@@ -47,7 +47,7 @@ if typing.TYPE_CHECKING:
 def client_scheduler(queues:                'QueueDict',
                      gateway:               'Gateway',
                      url_token_private_key: X448PrivateKey,
-                     unittest:              bool = False
+                     unit_test:             bool = False
                      ) -> None:
     """Manage `client` processes."""
     proc_dict = dict()  # type: Dict[bytes, Process]
@@ -87,7 +87,7 @@ def client_scheduler(queues:                'QueueDict',
                         proc_dict.pop(onion_pub_key)
                         rp_print(f"Removed {pub_key_to_short_address(onion_pub_key)}", bold=True)
 
-            if unittest and queues[UNITTEST_QUEUE].qsize() != 0:
+            if unit_test and queues[UNIT_TEST_QUEUE].qsize() != 0:
                 break
 
 
@@ -97,7 +97,7 @@ def client(onion_pub_key:         bytes,
            tor_port:              str,
            gateway:               'Gateway',
            onion_addr_user:       str,
-           unittest:              bool = False
+           unit_test:             bool = False
            ) -> None:
     """Load packets from contact's Onion Service."""
     url_token   = ''
@@ -172,7 +172,7 @@ def client(onion_pub_key:         bytes,
 
             get_data_loop(onion_addr, url_token, short_addr, onion_pub_key, queues, session, gateway)
 
-            if unittest:
+            if unit_test:
                 break
 
 
@@ -242,7 +242,9 @@ def get_data_loop(onion_addr:    str,
             break
 
 
-def g_msg_manager(queues: 'QueueDict', unittest: bool = False) -> None:
+def g_msg_manager(queues:    'QueueDict',
+                  unit_test: bool = False
+                  ) -> None:
     """Show group management messages according to contact list state.
 
     This process keeps track of existing contacts for whom there's a
@@ -308,11 +310,13 @@ def g_msg_manager(queues: 'QueueDict', unittest: bool = False) -> None:
                          "Unless you remove the contact from the group, they",
                          "can still read messages you send to the group."], box=True)
 
-            if unittest and queues[UNITTEST_QUEUE].qsize() != 0:
+            if unit_test and queues[UNIT_TEST_QUEUE].qsize() != 0:
                 break
 
 
-def c_req_manager(queues: 'QueueDict', unittest: bool = False) -> None:
+def c_req_manager(queues:    'QueueDict',
+                  unit_test: bool = False
+                  ) -> None:
     """Manage incoming contact requests."""
     existing_contacts = []  # type: List[bytes]
     contact_requests  = []  # type: List[bytes]
@@ -353,5 +357,5 @@ def c_req_manager(queues: 'QueueDict', unittest: bool = False) -> None:
                     m_print([f"{ts_fmt} - New contact request from an unknown TFC account:", purp_onion_address], box=True)
                 contact_requests.append(onion_pub_key)
 
-            if unittest and queues[UNITTEST_QUEUE].qsize() != 0:
+            if unit_test and queues[UNIT_TEST_QUEUE].qsize() != 0:
                 break

@@ -47,9 +47,9 @@ if typing.TYPE_CHECKING:
     from multiprocessing import Queue
 
 
-def gateway_loop(queues:   Dict[bytes, 'Queue'],
-                 gateway:  'Gateway',
-                 unittest: bool = False
+def gateway_loop(queues:    Dict[bytes, 'Queue'],
+                 gateway:   'Gateway',
+                 unit_test: bool = False
                  ) -> None:
     """Load data from serial interface or socket into a queue.
 
@@ -64,7 +64,7 @@ def gateway_loop(queues:   Dict[bytes, 'Queue'],
     while True:
         with ignored(EOFError, KeyboardInterrupt):
             queue.put((datetime.now(), gateway.read()))
-            if unittest:
+            if unit_test:
                 break
 
 

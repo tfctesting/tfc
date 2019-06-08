@@ -95,12 +95,12 @@ def ignored(*exceptions):
         pass
 
 
-def cd_unittest():
-    """Change working directory to one for unittests.
+def cd_unit_test():
+    """Change working directory to one for unit tests.
 
-    Separate working directory for unittests protects existing user data.
+    Separate working directory for unit tests protects existing user data.
     """
-    name = f"unittest_{(os.urandom(16)).hex()}/"
+    name = f"unit_test_{(os.urandom(16)).hex()}/"
     try:
         os.mkdir(name)
     except FileExistsError:
@@ -110,7 +110,7 @@ def cd_unittest():
 
 
 def cleanup(name):
-    """Remove unittest related directory."""
+    """Remove unit test related directory."""
     os.chdir("..")
     shutil.rmtree(f"{name}/")
 
@@ -374,9 +374,9 @@ def gen_queue_dict() -> Dict[bytes, Queue]:
                     TOR_DATA_QUEUE,
                     EXIT_QUEUE]
 
-    unittest_queue = [UNITTEST_QUEUE]
+    unit_test_queue = [UNIT_TEST_QUEUE]
 
-    queue_list = set(transmitter_queues + receiver_queues + relay_queues + unittest_queue)
+    queue_list = set(transmitter_queues + receiver_queues + relay_queues + unit_test_queue)
     queue_dict = dict()
 
     for q in queue_list:

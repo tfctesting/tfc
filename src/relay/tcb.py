@@ -58,9 +58,9 @@ def queue_to_flask(packet:        Union[bytes, str],
     rp_print(f"{p_type} to contact {pub_key_to_short_address(onion_pub_key)}", ts)
 
 
-def src_incoming(queues:   'QueueDict',
-                 gateway:  'Gateway',
-                 unittest: bool = False
+def src_incoming(queues:    'QueueDict',
+                 gateway:   'Gateway',
+                 unit_test: bool = False
                  ) -> None:
     """\
     Redirect datagrams received from Source Computer to appropriate queues.
@@ -115,7 +115,7 @@ def src_incoming(queues:   'QueueDict',
                             GROUP_MSG_EXIT_GROUP_HEADER]:
                 process_group_management_message(ts, packet, header, messages_to_flask)
 
-            if unittest:
+            if unit_test:
                 break
 
 
@@ -165,9 +165,9 @@ def process_group_management_message(ts:                'datetime',
             queue_to_flask(packet_str, onion_pub_key, messages_to_flask, ts, header)
 
 
-def dst_outgoing(queues:   'QueueDict',
-                 gateway:  'Gateway',
-                 unittest: bool = False
+def dst_outgoing(queues:    'QueueDict',
+                 gateway:   'Gateway',
+                 unit_test: bool = False
                  ) -> None:
     """Output packets from queues to Destination Computer.
 
@@ -190,7 +190,7 @@ def dst_outgoing(queues:   'QueueDict',
             if m_queue.qsize() != 0:
                 gateway.write(m_queue.get())
 
-            if unittest and queues[UNITTEST_QUEUE].qsize() > 0:
+            if unit_test and queues[UNIT_TEST_QUEUE].qsize() > 0:
                 break
 
         except (EOFError, KeyboardInterrupt):

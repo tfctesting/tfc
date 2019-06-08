@@ -39,7 +39,7 @@ if typing.TYPE_CHECKING:
 
 def flask_server(queues:               'QueueDict',
                  url_token_public_key: str,
-                 unittest:             bool = False
+                 unit_test:            bool = False
                  ) -> Optional[Flask]:
     """Run Flask web server for outgoing messages.
 
@@ -169,7 +169,7 @@ def flask_server(queues:               'QueueDict',
     log = logging.getLogger('werkzeug')
     log.setLevel(logging.ERROR)
 
-    if unittest:
+    if unit_test:
         return app
     else:  # pragma: no cover
         app.run()

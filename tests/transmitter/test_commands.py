@@ -37,7 +37,7 @@ from src.transmitter.packet   import split_to_assembly_packets
 
 from tests.mock_classes import ContactList, create_contact, Gateway, GroupList, MasterKey, OnionService, Settings
 from tests.mock_classes import TxWindow, UserInput
-from tests.utils        import assembly_packet_creator, cd_unittest, cleanup, group_name_to_group_id
+from tests.utils        import assembly_packet_creator, cd_unit_test, cleanup, group_name_to_group_id
 from tests.utils        import gen_queue_dict, nick_to_onion_address, nick_to_pub_key, tear_queues, TFCTestCase
 
 
@@ -197,18 +197,18 @@ class TestLogCommand(TFCTestCase):
 
     @mock.patch("getpass.getpass", return_value='test_password')
     def setUp(self, _):
-        self.unittest_dir = cd_unittest()
-        self.window       = TxWindow(name='Alice',
-                                     uid=nick_to_pub_key('Alice'))
-        self.contact_list = ContactList()
-        self.group_list   = GroupList()
-        self.settings     = Settings()
-        self.queues       = gen_queue_dict()
-        self.master_key   = MasterKey()
-        self.args         = self.window, self.contact_list, self.group_list, self.settings, self.queues, self.master_key
+        self.unit_test_dir = cd_unit_test()
+        self.window        = TxWindow(name='Alice',
+                                      uid=nick_to_pub_key('Alice'))
+        self.contact_list  = ContactList()
+        self.group_list    = GroupList()
+        self.settings      = Settings()
+        self.queues        = gen_queue_dict()
+        self.master_key    = MasterKey()
+        self.args          = self.window, self.contact_list, self.group_list, self.settings, self.queues, self.master_key
 
     def tearDown(self):
-        cleanup(self.unittest_dir)
+        cleanup(self.unit_test_dir)
         tear_queues(self.queues)
 
     def test_invalid_export(self):
@@ -450,19 +450,19 @@ class TestPrintRecipients(TFCTestCase):
 class TestChangeMasterKey(TFCTestCase):
 
     def setUp(self):
-        self.unittest_dir  = cd_unittest()
-        self.contact_list  = ContactList()
-        self.group_list    = GroupList()
-        self.settings      = Settings()
-        self.queues        = gen_queue_dict()
-        self.master_key    = MasterKey()
-        self.onion_service = OnionService(master_key=self.master_key,
-                                          file_name=f'{DIR_USER_DATA}/unittest')
-        self.args          = (self.contact_list, self.group_list, self.settings,
-                              self.queues, self.master_key, self.onion_service)
+        self.unit_test_dir  = cd_unit_test()
+        self.contact_list   = ContactList()
+        self.group_list     = GroupList()
+        self.settings       = Settings()
+        self.queues         = gen_queue_dict()
+        self.master_key     = MasterKey()
+        self.onion_service  = OnionService(master_key=self.master_key,
+                                           file_name=f'{DIR_USER_DATA}/unittest')
+        self.args           = (self.contact_list, self.group_list, self.settings,
+                               self.queues, self.master_key, self.onion_service)
 
     def tearDown(self):
-        cleanup(self.unittest_dir)
+        cleanup(self.unit_test_dir)
         tear_queues(self.queues)
 
     def test_raises_fr_during_traffic_masking(self):
@@ -509,18 +509,18 @@ class TestChangeMasterKey(TFCTestCase):
 class TestRemoveLog(TFCTestCase):
 
     def setUp(self):
-        self.unittest_dir = cd_unittest()
-        self.contact_list = ContactList(nicks=['Alice'])
-        self.group_list   = GroupList(groups=['test_group'])
-        self.settings     = Settings()
-        self.queues       = gen_queue_dict()
-        self.master_key   = MasterKey()
-        self.file_name    = f'{DIR_USER_DATA}{self.settings.software_operation}_logs'
-        self.args         = self.contact_list, self.group_list, self.settings, self.queues, self.master_key
+        self.unit_test_dir = cd_unit_test()
+        self.contact_list  = ContactList(nicks=['Alice'])
+        self.group_list    = GroupList(groups=['test_group'])
+        self.settings      = Settings()
+        self.queues        = gen_queue_dict()
+        self.master_key    = MasterKey()
+        self.file_name     = f'{DIR_USER_DATA}{self.settings.software_operation}_logs'
+        self.args          = self.contact_list, self.group_list, self.settings, self.queues, self.master_key
 
     def tearDown(self):
         tear_queues(self.queues)
-        cleanup(self.unittest_dir)
+        cleanup(self.unit_test_dir)
 
     def test_missing_contact_raises_fr(self):
         self.assert_fr("Error: No contact/group specified.",

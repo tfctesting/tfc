@@ -37,7 +37,7 @@ from src.common.statics    import *
 from src.receiver.key_exchanges import key_ex_ecdhe, key_ex_psk_rx, key_ex_psk_tx, local_key_rdy, process_local_key
 
 from tests.mock_classes import Contact, ContactList, KeyList, KeySet, Settings, WindowList
-from tests.utils        import cd_unittest, cleanup, nick_to_short_address, nick_to_pub_key, tear_queue, TFCTestCase
+from tests.utils        import cd_unit_test, cleanup, nick_to_short_address, nick_to_pub_key, tear_queue, TFCTestCase
 from tests.utils        import UNDECODABLE_UNICODE
 
 
@@ -280,18 +280,18 @@ class TestKeyExPSKRx(TFCTestCase):
     file_name = f"{nick_to_short_address('User')}.psk - give to {nick_to_short_address('Alice')}"
 
     def setUp(self):
-        self.unittest_dir = cd_unittest()
-        self.packet       = b'\x00' + nick_to_pub_key("Alice")
-        self.ts           = datetime.now()
-        self.window_list  = WindowList( nicks=['Alice', LOCAL_ID])
-        self.contact_list = ContactList(nicks=['Alice', LOCAL_ID])
-        self.key_list     = KeyList(    nicks=['Alice', LOCAL_ID])
-        self.settings     = Settings(disable_gui_dialog=True)
-        self.file_name    = self.file_name
-        self.args         = self.packet, self.ts, self.window_list, self.contact_list, self.key_list, self.settings
+        self.unit_test_dir = cd_unit_test()
+        self.packet        = b'\x00' + nick_to_pub_key("Alice")
+        self.ts            = datetime.now()
+        self.window_list   = WindowList( nicks=['Alice', LOCAL_ID])
+        self.contact_list  = ContactList(nicks=['Alice', LOCAL_ID])
+        self.key_list      = KeyList(    nicks=['Alice', LOCAL_ID])
+        self.settings      = Settings(disable_gui_dialog=True)
+        self.file_name     = self.file_name
+        self.args          = self.packet, self.ts, self.window_list, self.contact_list, self.key_list, self.settings
 
     def tearDown(self):
-        cleanup(self.unittest_dir)
+        cleanup(self.unit_test_dir)
 
     def test_unknown_account_raises_fr(self):
         self.assert_fr(f"Error: Unknown account '{nick_to_short_address('Bob')}'.",

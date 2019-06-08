@@ -58,7 +58,7 @@ class TestRelayCommand(unittest.TestCase):
             self.queues[SRC_TO_RELAY_QUEUE].put(UNENCRYPTED_SCREEN_CLEAR)
 
         threading.Thread(target=queue_delayer).start()
-        self.assertIsNone(relay_command(self.queues, self.gateway, stdin_fd=1, unittest=True))
+        self.assertIsNone(relay_command(self.queues, self.gateway, stdin_fd=1, unit_test=True))
 
 
 class TestProcessCommand(TFCTestCase):

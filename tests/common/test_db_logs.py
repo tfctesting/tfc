@@ -33,7 +33,7 @@ from src.common.encoding    import bytes_to_timestamp
 from src.common.statics     import *
 
 from tests.mock_classes import create_contact, GroupList, MasterKey, RxWindow, Settings
-from tests.utils        import assembly_packet_creator, cd_unittest, cleanup, group_name_to_group_id, nick_to_pub_key
+from tests.utils        import assembly_packet_creator, cd_unit_test, cleanup, group_name_to_group_id, nick_to_pub_key
 from tests.utils        import nick_to_short_address, tear_queues, TFCTestCase, gen_queue_dict
 
 TIMESTAMP_BYTES  = bytes.fromhex('08ceae02')
@@ -43,10 +43,10 @@ STATIC_TIMESTAMP = bytes_to_timestamp(TIMESTAMP_BYTES).strftime('%H:%M:%S.%f')[:
 class TestLogWriterLoop(unittest.TestCase):
 
     def setUp(self):
-        self.unittest_dir = cd_unittest()
+        self.unit_test_dir = cd_unit_test()
 
     def tearDown(self):
-        cleanup(self.unittest_dir)
+        cleanup(self.unit_test_dir)
 
     def test_function_logs_normal_data(self):
         # Setup
@@ -64,7 +64,7 @@ class TestLogWriterLoop(unittest.TestCase):
                 queues[LOG_PACKET_QUEUE].put(p)
                 time.sleep(0.02)
 
-            queues[UNITTEST_QUEUE].put(EXIT)
+            queues[UNIT_TEST_QUEUE].put(EXIT)
             time.sleep(0.02)
 
             queues[LOG_PACKET_QUEUE].put((
@@ -73,7 +73,7 @@ class TestLogWriterLoop(unittest.TestCase):
 
         # Test
         threading.Thread(target=queue_delayer).start()
-        log_writer_loop(queues, settings, unittest=True)
+        log_writer_loop(queues, settings, unit_test=True)
         self.assertEqual(os.path.getsize(f'{DIR_USER_DATA}{settings.software_operation}_logs'), 2*LOG_ENTRY_LENGTH)
 
         # Teardown
@@ -97,7 +97,7 @@ class TestLogWriterLoop(unittest.TestCase):
                 queues[LOG_PACKET_QUEUE].put(p)
                 time.sleep(0.02)
 
-            queues[UNITTEST_QUEUE].put(EXIT)
+            queues[UNIT_TEST_QUEUE].put(EXIT)
             time.sleep(0.02)
 
             queues[LOG_PACKET_QUEUE].put(
@@ -106,7 +106,7 @@ class TestLogWriterLoop(unittest.TestCase):
 
         # Test
         threading.Thread(target=queue_delayer).start()
-        log_writer_loop(queues, settings, unittest=True)
+        log_writer_loop(queues, settings, unit_test=True)
         self.assertEqual(os.path.getsize(f'{DIR_USER_DATA}{settings.software_operation}_logs'), 3*LOG_ENTRY_LENGTH)
 
         # Teardown
@@ -136,7 +136,7 @@ class TestLogWriterLoop(unittest.TestCase):
                     (nick_to_pub_key('Alice'), F_S_HEADER + bytes(PADDING_LENGTH), True, True, master_key))
                 time.sleep(0.02)
 
-            queues[UNITTEST_QUEUE].put(EXIT)
+            queues[UNIT_TEST_QUEUE].put(EXIT)
             time.sleep(0.02)
 
             queues[LOG_PACKET_QUEUE].put(
@@ -145,7 +145,7 @@ class TestLogWriterLoop(unittest.TestCase):
 
         # Test
         threading.Thread(target=queue_delayer).start()
-        log_writer_loop(queues, settings, unittest=True)
+        log_writer_loop(queues, settings, unit_test=True)
         self.assertEqual(os.path.getsize(f'{DIR_USER_DATA}{settings.software_operation}_logs'), 3*LOG_ENTRY_LENGTH)
 
         # Teardown
@@ -176,7 +176,7 @@ class TestLogWriterLoop(unittest.TestCase):
                 queues[LOG_PACKET_QUEUE].put(noise_tuple)  # Not logged because logging_state is False
                 time.sleep(0.02)
 
-            queues[UNITTEST_QUEUE].put(EXIT)
+            queues[UNIT_TEST_QUEUE].put(EXIT)
 
             queues[LOG_SETTING_QUEUE].put(True)
             queues[LOG_PACKET_QUEUE].put(noise_tuple)  # Log third packet
@@ -184,7 +184,7 @@ class TestLogWriterLoop(unittest.TestCase):
         # Test
         threading.Thread(target=queue_delayer).start()
 
-        log_writer_loop(queues, settings, unittest=True)
+        log_writer_loop(queues, settings, unit_test=True)
         self.assertEqual(os.path.getsize(f'{DIR_USER_DATA}{settings.software_operation}_logs'), 3*LOG_ENTRY_LENGTH)
 
         # Teardown
@@ -194,13 +194,13 @@ class TestLogWriterLoop(unittest.TestCase):
 class TestWriteLogEntry(unittest.TestCase):
 
     def setUp(self):
-        self.unittest_dir = cd_unittest()
-        self.master_key   = MasterKey()
-        self.settings     = Settings()
-        self.log_file     = f'{DIR_USER_DATA}{self.settings.software_operation}_logs'
+        self.unit_test_dir = cd_unit_test()
+        self.master_key    = MasterKey()
+        self.settings      = Settings()
+        self.log_file      = f'{DIR_USER_DATA}{self.settings.software_operation}_logs'
 
     def tearDown(self):
-        cleanup(self.unittest_dir)
+        cleanup(self.unit_test_dir)
 
     def test_oversize_packet_raises_critical_error(self):
         # Setup
@@ -220,13 +220,13 @@ class TestWriteLogEntry(unittest.TestCase):
 class TestAccessHistoryAndPrintLogs(TFCTestCase):
 
     def setUp(self):
-        self.unittest_dir = cd_unittest()
-        self.master_key   = MasterKey()
-        self.settings     = Settings()
-        self.window       = RxWindow(type=WIN_TYPE_CONTACT,
-                                     uid=nick_to_pub_key('Alice'),
-                                     name='Alice',
-                                     type_print='contact')
+        self.unit_test_dir = cd_unit_test()
+        self.master_key    = MasterKey()
+        self.settings      = Settings()
+        self.window        = RxWindow(type=WIN_TYPE_CONTACT,
+                                      uid=nick_to_pub_key('Alice'),
+                                      name='Alice',
+                                      type_print='contact')
 
         self.contact_list          = ContactList(self.master_key, self.settings)
         self.contact_list.contacts = list(map(create_contact, ['Alice', 'Charlie']))
@@ -250,7 +250,7 @@ class TestAccessHistoryAndPrintLogs(TFCTestCase):
                     "s neque a facilisis. Mauris id tortor placerat, aliquam dolor ac, venenatis arcu.")
 
     def tearDown(self):
-        cleanup(self.unittest_dir)
+        cleanup(self.unit_test_dir)
 
     def test_missing_log_file_raises_fr(self):
         self.assert_fr("No log database available.", access_logs, *self.args)
@@ -509,7 +509,7 @@ Log file of message(s) to/from group test_group
 class TestReEncrypt(TFCTestCase):
 
     def setUp(self):
-        self.unittest_dir  = cd_unittest()
+        self.unit_test_dir = cd_unit_test()
         self.old_key       = MasterKey()
         self.new_key       = MasterKey(master_key=os.urandom(SYMMETRIC_KEY_LENGTH))
         self.settings      = Settings()
@@ -517,7 +517,7 @@ class TestReEncrypt(TFCTestCase):
         self.time          = STATIC_TIMESTAMP
 
     def tearDown(self):
-        cleanup(self.unittest_dir)
+        cleanup(self.unit_test_dir)
 
     def test_missing_log_database_raises_fr(self):
         self.assert_fr(f"Error: Could not find log database.",
@@ -569,7 +569,7 @@ Log file of message(s) sent to contact Alice
 class TestRemoveLog(TFCTestCase):
 
     def setUp(self):
-        self.unittest_dir  = cd_unittest()
+        self.unit_test_dir = cd_unit_test()
         self.master_key    = MasterKey()
         self.settings      = Settings()
         self.time          = STATIC_TIMESTAMP
@@ -591,7 +591,7 @@ class TestRemoveLog(TFCTestCase):
                     "s neque a facilisis. Mauris id tortor placerat, aliquam dolor ac, venenatis arcu.")
 
     def tearDown(self):
-        cleanup(self.unittest_dir)
+        cleanup(self.unit_test_dir)
 
     def test_missing_log_file_raises_fr(self):
         self.assert_fr("No log database available.", remove_logs, *self.args, nick_to_pub_key('Alice'))

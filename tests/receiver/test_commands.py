@@ -38,31 +38,31 @@ from src.receiver.commands import process_command, remove_log, reset_screen, win
 
 from tests.mock_classes import ContactList, Gateway, group_name_to_group_id, GroupList, KeyList, MasterKey
 from tests.mock_classes import nick_to_pub_key, RxWindow, Settings, WindowList
-from tests.utils        import assembly_packet_creator, cd_unittest, cleanup, ignored, nick_to_short_address, tear_queue
+from tests.utils        import assembly_packet_creator, cd_unit_test, cleanup, ignored, nick_to_short_address, tear_queue
 from tests.utils        import TFCTestCase
 
 
 class TestProcessCommand(TFCTestCase):
 
     def setUp(self):
-        self.unittest_dir = cd_unittest()
-        self.ts           = datetime.now()
-        self.settings     = Settings()
-        self.master_key   = MasterKey()
-        self.group_list   = GroupList()
-        self.exit_queue   = Queue()
-        self.gateway      = Gateway()
-        self.window_list  = WindowList(nicks=[LOCAL_ID])
-        self.contact_list = ContactList(nicks=[LOCAL_ID])
-        self.packet_list  = PacketList(self.settings, self.contact_list)
-        self.key_list     = KeyList(nicks=[LOCAL_ID])
-        self.key_set      = self.key_list.get_keyset(LOCAL_PUBKEY)
+        self.unit_test_dir = cd_unit_test()
+        self.ts            = datetime.now()
+        self.settings      = Settings()
+        self.master_key    = MasterKey()
+        self.group_list    = GroupList()
+        self.exit_queue    = Queue()
+        self.gateway       = Gateway()
+        self.window_list   = WindowList(nicks=[LOCAL_ID])
+        self.contact_list  = ContactList(nicks=[LOCAL_ID])
+        self.packet_list   = PacketList(self.settings, self.contact_list)
+        self.key_list      = KeyList(nicks=[LOCAL_ID])
+        self.key_set       = self.key_list.get_keyset(LOCAL_PUBKEY)
 
         self.args = (self.window_list, self.packet_list, self.contact_list, self.key_list, self.group_list,
                      self.settings, self.master_key, self.gateway, self.exit_queue)
 
     def tearDown(self):
-        cleanup(self.unittest_dir)
+        cleanup(self.unit_test_dir)
 
     def test_incomplete_command_raises_fr(self):
         packet = assembly_packet_creator(COMMAND, b'test_command', s_header_override=C_L_HEADER, encrypt_packet=True)[0]
@@ -155,12 +155,12 @@ class TestLogCommand(TFCTestCase):
     @mock.patch("getpass.getpass", return_value='test_password')
     def setUp(self, _):
         from src.common.db_masterkey import MasterKey
-        self.unittest_dir      = cd_unittest()
+        self.unit_test_dir     = cd_unit_test()
         self.cmd_data          = int_to_bytes(1) + nick_to_pub_key("Bob")
         self.ts                = datetime.now()
         self.window_list       = WindowList(nicks=['Alice', 'Bob'])
         self.window            = self.window_list.get_window(nick_to_pub_key("Bob"))
-        self.window.type_print = 'contact'
+        self.window.type_print = WIN_TYPE_CONTACT
         self.window.name       = 'Bob'
         self.window.type       = WIN_TYPE_CONTACT
         self.contact_list      = ContactList(nicks=['Alice', 'Bob'])
@@ -174,7 +174,7 @@ class TestLogCommand(TFCTestCase):
         self.time  = datetime.fromtimestamp(time_float).strftime("%H:%M:%S.%f")[:-4]
 
     def tearDown(self):
-        cleanup(self.unittest_dir)
+        cleanup(self.unit_test_dir)
         with ignored(OSError):
             os.remove('Unittest - Plaintext log (None)')
 
@@ -206,15 +206,15 @@ Log file of 1 most recent message(s) sent to contact Bob
 class TestRemoveLog(TFCTestCase):
 
     def setUp(self):
-        self.unittest_dir = cd_unittest()
-        self.win_name     = nick_to_pub_key("Alice")
-        self.contact_list = ContactList()
-        self.group_list   = GroupList()
-        self.settings     = Settings()
-        self.master_key   = MasterKey()
+        self.unit_test_dir = cd_unit_test()
+        self.win_name      = nick_to_pub_key("Alice")
+        self.contact_list  = ContactList()
+        self.group_list    = GroupList()
+        self.settings      = Settings()
+        self.master_key    = MasterKey()
 
     def tearDown(self):
-        cleanup(self.unittest_dir)
+        cleanup(self.unit_test_dir)
 
     def test_remove_log_file(self):
         self.assert_fr(f"No log database available.",
@@ -224,19 +224,19 @@ class TestRemoveLog(TFCTestCase):
 class TestChMasterKey(TFCTestCase):
 
     def setUp(self):
-        self.unittest_dir = cd_unittest()
-        self.ts           = datetime.now()
-        self.master_key   = MasterKey()
-        self.settings     = Settings()
-        self.contact_list = ContactList(nicks=[LOCAL_ID])
-        self.window_list  = WindowList(nicks=[LOCAL_ID])
-        self.group_list   = GroupList()
-        self.key_list     = KeyList()
-        self.args         = (self.ts, self.window_list, self.contact_list, self.group_list, 
-                             self.key_list, self.settings, self.master_key)
+        self.unit_test_dir = cd_unit_test()
+        self.ts            = datetime.now()
+        self.master_key    = MasterKey()
+        self.settings      = Settings()
+        self.contact_lis   = ContactList(nicks=[LOCAL_ID])
+        self.window_list   = WindowList(nicks=[LOCAL_ID])
+        self.group_list    = GroupList()
+        self.key_list      = KeyList()
+        self.args          = (self.ts, self.window_list, self.contact_list, self.group_list,
+                              self.key_list, self.settings, self.master_key)
 
     def tearDown(self):
-        cleanup(self.unittest_dir)
+        cleanup(self.unit_test_dir)
 
     @mock.patch('getpass.getpass', return_value='a')
     @mock.patch('time.sleep',      return_value=None)
@@ -367,8 +367,8 @@ class TestChContactSetting(TFCTestCase):
         bob                         = self.contact_list.get_contact_by_address_or_nick("Bob")
 
         # Test
-        for attr, header in [('log_messages', CH_LOGGING),
-                             ('notifications', CH_NOTIFY),
+        for attr, header in [('log_messages',   CH_LOGGING),
+                             ('notifications',  CH_NOTIFY),
                              ('file_reception', CH_FILE_RECV)]:
             for s in [ENABLE, ENABLE, DISABLE, DISABLE]:
                 cmd_data = s + nick_to_pub_key("Bob")
@@ -383,8 +383,8 @@ class TestChContactSetting(TFCTestCase):
         self.window.window_contacts = self.group_list.get_group('test_group').members
 
         # Test
-        for attr, header in [('log_messages', CH_LOGGING),
-                             ('notifications', CH_NOTIFY),
+        for attr, header in [('log_messages',   CH_LOGGING),
+                             ('notifications',  CH_NOTIFY),
                              ('file_reception', CH_FILE_RECV)]:
             for s in [ENABLE, ENABLE, DISABLE, DISABLE]:
                 cmd_data = s + group_name_to_group_id('test_group')
@@ -405,8 +405,8 @@ class TestChContactSetting(TFCTestCase):
         self.window.window_contacts = self.contact_list.contacts
 
         # Test
-        for attr, header in [('log_messages', CH_LOGGING),
-                             ('notifications', CH_NOTIFY),
+        for attr, header in [('log_messages',   CH_LOGGING),
+                             ('notifications',  CH_NOTIFY),
                              ('file_reception', CH_FILE_RECV)]:
             for s in [ENABLE, ENABLE, DISABLE, DISABLE]:
                 cmd_data = s.upper() + US_BYTE
@@ -426,16 +426,16 @@ class TestChContactSetting(TFCTestCase):
 class TestContactRemove(TFCTestCase):
 
     def setUp(self):
-        self.unittest_dir = cd_unittest()
-        self.ts           = datetime.now()
-        self.window_list  = WindowList()
-        self.cmd_data     = nick_to_pub_key("Bob")
-        self.settings     = Settings()
-        self.master_key   = MasterKey()
-        self.args         = self.cmd_data, self.ts, self.window_list
+        self.unit_test_dir = cd_unit_test()
+        self.ts            = datetime.now()
+        self.window_list   = WindowList()
+        self.cmd_data      = nick_to_pub_key("Bob")
+        self.settings      = Settings()
+        self.master_key    = MasterKey()
+        self.args          = self.cmd_data, self.ts, self.window_list
 
     def tearDown(self):
-        cleanup(self.unittest_dir)
+        cleanup(self.unit_test_dir)
 
     def test_no_contact_raises_fr(self):
         # Setup

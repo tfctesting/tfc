@@ -38,10 +38,10 @@ if typing.TYPE_CHECKING:
     from src.common.gateway import Gateway
     QueueDict = Dict[bytes, Queue]
 
-def relay_command(queues:   'QueueDict',
-                  gateway:  'Gateway',
-                  stdin_fd: int,
-                  unittest: bool = False
+def relay_command(queues:    'QueueDict',
+                  gateway:   'Gateway',
+                  stdin_fd:  int,
+                  unit_test: bool = False
                   ) -> None:
     """Process Relay Program commands."""
     sys.stdin      = os.fdopen(stdin_fd)
@@ -55,7 +55,7 @@ def relay_command(queues:   'QueueDict',
             command = queue_from_src.get()
             process_command(command, gateway, queues)
 
-            if unittest:
+            if unit_test:
                 break
 
 

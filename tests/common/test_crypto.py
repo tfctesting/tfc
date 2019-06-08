@@ -266,7 +266,7 @@ class TestXChaCha20Poly1305(unittest.TestCase):
 
 
 class TestBytePadding(unittest.TestCase):
-    """Unittests of the cryptography library are available at
+    """Unit tests of the cryptography library are available at
         https://github.com/pyca/cryptography/blob/master/tests/hazmat/primitives/test_padding.py
     """
 

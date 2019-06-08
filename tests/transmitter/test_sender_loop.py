@@ -49,12 +49,12 @@ class TestSenderLoop(unittest.TestCase):
         queues[WINDOW_SELECT_QUEUE].put(window.window_contacts)
         queues[SENDER_MODE_QUEUE].put(settings)
         queue_command(b'test', settings, queues)  # Output command
-        self.assertIsNone(sender_loop(queues, settings, gateway, key_list, unittest=True))
+        self.assertIsNone(sender_loop(queues, settings, gateway, key_list, unit_test=True))
         self.assertEqual(len(gateway.packets), 1)
 
         settings.traffic_masking = False
         queues[SENDER_MODE_QUEUE].put(settings)
-        self.assertIsNone(sender_loop(queues, settings, gateway, key_list, unittest=True))  # Output Alice and Bob again
+        self.assertIsNone(sender_loop(queues, settings, gateway, key_list, unit_test=True))  # Output Alice and Bob again
         self.assertEqual(len(gateway.packets), 1)
 
 

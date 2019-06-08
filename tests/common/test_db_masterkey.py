@@ -30,7 +30,7 @@ from src.common.db_masterkey import MasterKey
 from src.common.misc         import ensure_dir
 from src.common.statics      import *
 
-from tests.utils import cd_unittest, cleanup
+from tests.utils import cd_unit_test, cleanup
 
 KL = SYMMETRIC_KEY_LENGTH
 
@@ -41,12 +41,12 @@ class TestMasterKey(unittest.TestCase):
                   'password']                        # Valid   login password
 
     def setUp(self):
-        self.unittest_dir = cd_unittest()
-        self.operation    = TX
-        self.file_name    = f"{DIR_USER_DATA}{self.operation}_login_data"
+        self.unit_test_dir = cd_unit_test()
+        self.operation     = TX
+        self.file_name     = f"{DIR_USER_DATA}{self.operation}_login_data"
 
     def tearDown(self):
-        cleanup(self.unittest_dir)
+        cleanup(self.unit_test_dir)
 
     @mock.patch('time.sleep', return_value=None)
     def test_invalid_data_in_db_raises_critical_error(self, _):

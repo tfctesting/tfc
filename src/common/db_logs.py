@@ -50,9 +50,9 @@ if typing.TYPE_CHECKING:
 MsgTuple = Tuple[datetime, str, bytes, bytes, bool, bool]
 
 
-def log_writer_loop(queues:   Dict[bytes, 'Queue'],  # Dictionary of queues
-                    settings: 'Settings',            # Settings object
-                    unittest: bool = False           # When True, exits the loop when UNITTEST_QUEUE is no longer empty.
+def log_writer_loop(queues:    Dict[bytes, 'Queue'],  # Dictionary of queues
+                    settings:  'Settings',            # Settings object
+                    unit_test: bool = False           # When True, exits the loop when UNIT_TEST_QUEUE is no longer empty.
                     ) -> None:
     """Write assembly packets to log database.
 
@@ -133,7 +133,7 @@ def log_writer_loop(queues:   Dict[bytes, 'Queue'],  # Dictionary of queues
 
             write_log_entry(assembly_packet, onion_pub_key, settings, master_key)
 
-            if unittest and queues[UNITTEST_QUEUE].qsize() != 0:
+            if unit_test and queues[UNIT_TEST_QUEUE].qsize() != 0:
                 break
 
 

@@ -407,9 +407,9 @@ KEX_STATUS_LOCAL_KEY  = b'\xa6'
 
 """Queue dictionary keys"""
 # Common
-EXIT_QUEUE     = b'exit'
-GATEWAY_QUEUE  = b'gateway'
-UNITTEST_QUEUE = b'unittest'
+EXIT_QUEUE      = b'exit'
+GATEWAY_QUEUE   = b'gateway'
+UNIT_TEST_QUEUE = b'unit_test'
 
 # Transmitter
 MESSAGE_PACKET_QUEUE    = b'message_packet'

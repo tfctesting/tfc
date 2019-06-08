@@ -30,7 +30,7 @@ from src.transmitter.commands_g import group_add_member, group_create, group_rm_
 from src.transmitter.commands_g import process_group_command, group_rename
 
 from tests.mock_classes import create_group, Contact, ContactList, GroupList, MasterKey, Settings, UserInput, TxWindow
-from tests.utils        import cd_unittest, cleanup, gen_queue_dict, nick_to_pub_key, tear_queues, TFCTestCase
+from tests.utils        import cd_unit_test, cleanup, gen_queue_dict, nick_to_pub_key, tear_queues, TFCTestCase
 
 
 class TestProcessGroupCommand(TFCTestCase):
@@ -206,17 +206,17 @@ class TestGroupAddMember(TFCTestCase):
 class TestGroupRmMember(TFCTestCase):
 
     def setUp(self):
-        self.unittest_dir = cd_unittest()
-        self.user_input   = UserInput()
-        self.contact_list = ContactList(nicks=['Alice', 'Bob'])
-        self.group_list   = GroupList(groups=["test_group"])
-        self.settings     = Settings()
-        self.queues       = gen_queue_dict()
-        self.master_key   = MasterKey()
-        self.args         = self.contact_list, self.group_list, self.settings, self.queues, self.settings
+        self.unit_test_dir = cd_unit_test()
+        self.user_input    = UserInput()
+        self.contact_list  = ContactList(nicks=['Alice', 'Bob'])
+        self.group_list    = GroupList(groups=["test_group"])
+        self.settings      = Settings()
+        self.queues        = gen_queue_dict()
+        self.master_key    = MasterKey()
+        self.args          = self.contact_list, self.group_list, self.settings, self.queues, self.settings
 
     def tearDown(self):
-        cleanup(self.unittest_dir)
+        cleanup(self.unit_test_dir)
         tear_queues(self.queues)
 
     @mock.patch('time.sleep',     return_value=None)
@@ -239,17 +239,17 @@ class TestGroupRmMember(TFCTestCase):
 class TestGroupRmGroup(TFCTestCase):
 
     def setUp(self):
-        self.unittest_dir = cd_unittest()
-        self.user_input   = UserInput()
-        self.contact_list = ContactList(nicks=['Alice', 'Bob'])
-        self.group_list   = GroupList(groups=['test_group'])
-        self.settings     = Settings()
-        self.queues       = gen_queue_dict()
-        self.master_key   = MasterKey()
-        self.args         = self.contact_list, self.group_list, self.settings, self.queues, self.settings
+        self.unit_test_dir = cd_unit_test()
+        self.user_input    = UserInput()
+        self.contact_list  = ContactList(nicks=['Alice', 'Bob'])
+        self.group_list    = GroupList(groups=['test_group'])
+        self.settings      = Settings()
+        self.queues        = gen_queue_dict()
+        self.master_key    = MasterKey()
+        self.args          = self.contact_list, self.group_list, self.settings, self.queues, self.settings
 
     def tearDown(self):
-        cleanup(self.unittest_dir)
+        cleanup(self.unit_test_dir)
         tear_queues(self.queues)
 
     @mock.patch('time.sleep',     return_value=None)

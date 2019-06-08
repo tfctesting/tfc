@@ -37,9 +37,9 @@ if typing.TYPE_CHECKING:
     from src.common.gateway import Gateway
 
 
-def receiver_loop(queues:   Dict[bytes, 'Queue'],
-                  gateway:  'Gateway',
-                  unittest: bool = False
+def receiver_loop(queues:    Dict[bytes, 'Queue'],
+                  gateway:   'Gateway',
+                  unit_test: bool = False
                   ) -> None:
     """Decode received packets and forward them to packet queues."""
     gateway_queue = queues[GATEWAY_QUEUE]
@@ -68,5 +68,5 @@ def receiver_loop(queues:   Dict[bytes, 'Queue'],
                           COMMAND_DATAGRAM_HEADER, LOCAL_KEY_DATAGRAM_HEADER]:
                 queues[header].put((ts, payload))
 
-            if unittest:
+            if unit_test:
                 break

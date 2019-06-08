@@ -71,7 +71,7 @@ class HideRunTime(object):
 
 def noise_loop(queues:       'QueueDict',
                contact_list: Optional['ContactList'] = None,
-               unittest:     bool                    = False
+               unit_test:    bool                    = False
                ) -> None:
     """Generate noise packets for traffic masking.
 
@@ -100,5 +100,5 @@ def noise_loop(queues:       'QueueDict',
                 queue.put(content)
             time.sleep(0.1)
 
-            if unittest:
+            if unit_test:
                 break

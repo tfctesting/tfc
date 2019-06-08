@@ -31,7 +31,7 @@ from src.transmitter.contact import add_new_contact, change_nick, contact_settin
 
 from tests.mock_classes import ContactList, create_contact, create_group, Group, GroupList, MasterKey, OnionService
 from tests.mock_classes import Settings, TxWindow, UserInput
-from tests.utils        import cd_unittest, cleanup, gen_queue_dict, group_name_to_group_id, ignored
+from tests.utils        import cd_unit_test, cleanup, gen_queue_dict, group_name_to_group_id, ignored
 from tests.utils        import nick_to_onion_address, nick_to_pub_key, tear_queues, TFCTestCase, VALID_ECDHE_PUB_KEY
 
 
@@ -96,17 +96,17 @@ class TestAddNewContact(TFCTestCase):
 class TestRemoveContact(TFCTestCase):
 
     def setUp(self):
-        self.unittest_dir = cd_unittest()
-        self.contact_list = ContactList(nicks=['Alice'])
-        self.group_list   = GroupList(groups=['test_group'])
-        self.settings     = Settings()
-        self.queues       = gen_queue_dict()
-        self.master_key   = MasterKey()
-        self.pub_key      = nick_to_pub_key('Alice')
-        self.args         = self.contact_list, self.group_list, self.settings, self.queues, self.master_key
+        self.unit_test_dir = cd_unit_test()
+        self.contact_list  = ContactList(nicks=['Alice'])
+        self.group_list    = GroupList(groups=['test_group'])
+        self.settings      = Settings()
+        self.queues        = gen_queue_dict()
+        self.master_key    = MasterKey()
+        self.pub_key       = nick_to_pub_key('Alice')
+        self.args          = self.contact_list, self.group_list, self.settings, self.queues, self.master_key
 
     def tearDown(self):
-        cleanup(self.unittest_dir)
+        cleanup(self.unit_test_dir)
         tear_queues(self.queues)
 
     def test_contact_removal_during_traffic_masking_raises_fr(self):

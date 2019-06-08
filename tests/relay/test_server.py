@@ -46,7 +46,7 @@ class TestFlaskServer(unittest.TestCase):
         packet3               = b"packet3"
 
         # Test
-        app = flask_server(queues, url_token_public_key, unittest=True)
+        app = flask_server(queues, url_token_public_key, unit_test=True)
 
         with app.test_client() as c:
             # Test root domain returns public key of server.
