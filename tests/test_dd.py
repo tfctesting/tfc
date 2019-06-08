@@ -101,9 +101,9 @@ class TestDrawFrame(TFCTestCase):
 
 class TestAnimate(unittest.TestCase):
 
-    @mock.patch('time.sleep', lambda _: None)
-    def test_animation(self):
-        for arg in [SCNCLR, SCNCRL, NCDCLR, NCDCRL]:
+    @mock.patch('time.sleep', return_value=MagicMock)
+    def test_animation(self, _):
+        for arg in [SCNCLR, NCDCLR, SCNCRL, NCDCRL]:
             self.assertIsNone(animate(arg))
 
 
