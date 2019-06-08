@@ -137,7 +137,7 @@ def process_arguments() -> Tuple[str, int, int]:
         sys.exit(1)
 
 
-def main(queues: Dict[bytes, Queue] = None) -> None:
+def main(queues: Dict[bytes, Queue]) -> None:
     """
     Read the argument from the command line and launch the data diode simulator.
 
@@ -169,11 +169,8 @@ def main(queues: Dict[bytes, Queue] = None) -> None:
     for p in process_list:
         p.start()
 
-    if queues is None:
-        queues = {EXIT_QUEUE: Queue()}
-
-    monitor_processes(process_list, NC, queues=queues, error_exit_code=0)
+    monitor_processes(process_list, NC, queues, error_exit_code=0)
 
 
-if __name__ == '__main__':
-    main()
+if __name__ == '__main__':  # pragma: no cover
+    main({EXIT_QUEUE: Queue()})

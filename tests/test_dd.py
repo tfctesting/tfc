@@ -126,19 +126,24 @@ class TestRxLoop(unittest.TestCase):
 
 class TestTxLoop(unittest.TestCase):
 
+    def setUp(self) -> None:
+        self.o_sleep = time.sleep
+
+    def tearDown(self) -> None:
+        time.sleep = self.o_sleep
+
     @mock.patch('time.sleep',                        lambda _: None)
-    @mock.patch('multiprocessing.connection.Client', return_value=MagicMock(side_effect=[socket.error, MagicMock]))
+    @mock.patch('multiprocessing.connection.Client', side_effect=[socket.error, MagicMock(send=MagicMock)])
     def test_tx_loop(self, *_):
         # Setup
         queue = Queue()
 
         def queue_delayer():
-            time.sleep(0.01)
+            self.o_sleep(0.1)
             queue.put(b'test_packet')
         threading.Thread(target=queue_delayer).start()
 
         # Test
-        self.assertEqual(queue.qsize(), 1)
         tx_loop(queue, DST_LISTEN_SOCKET, NCDCLR, unit_test=True)
         self.assertEqual(queue.qsize(), 0)
 
