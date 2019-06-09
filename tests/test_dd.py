@@ -150,17 +150,17 @@ class TestTxLoop(unittest.TestCase):
 
 class TestProcessArguments(unittest.TestCase):
 
-    def test_invalid_parameters_exit(self, *_):
-        for parameter in ['', 'invalid']:
-            with mock.patch('sys.argv', ['dd.py', parameter]):
+    def test_invalid_arguments_exit(self, *_):
+        for argument in ['', 'invalid']:
+            with mock.patch('sys.argv', ['dd.py', argument]):
                 with self.assertRaises(SystemExit):
                     process_arguments()
 
-    def test_valid_parameters(self, *_):
-        for parameter in [SCNCLR, SCNCRL, NCDCLR, NCDCRL]:
-            with mock.patch('sys.argv', ['dd.py', parameter]):
-                param, input_socket, output_socket = process_arguments()
-                self.assertEqual(param, parameter)
+    def test_valid_arguments(self, *_):
+        for argument in [SCNCLR, SCNCRL, NCDCLR, NCDCRL]:
+            with mock.patch('sys.argv', ['dd.py', argument]):
+                arg, input_socket, output_socket = process_arguments()
+                self.assertEqual(arg, argument)
                 self.assertIsInstance(input_socket,  int)
                 self.assertIsInstance(output_socket, int)
 
