@@ -65,7 +65,7 @@ class TestDrawFrame(TFCTestCase):
                                  ────╮   ╭────                                  
                                   Tx │   │ Rx                                   
                                  ────╯   ╰────                                  
-""", draw_frame, argv, IDLE, high=False)
+""", draw_frame, argv, IDLE)
 
     def test_right_to_left_oriented_data_diode_frames(self):
 
@@ -96,7 +96,7 @@ class TestDrawFrame(TFCTestCase):
                                  ────╮   ╭────                                  
                                   Rx │   │ Tx                                   
                                  ────╯   ╰────                                  
-""", draw_frame, argv, IDLE, high=False)
+""", draw_frame, argv, IDLE)
 
 
 class TestAnimate(unittest.TestCase):
