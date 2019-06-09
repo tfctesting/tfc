@@ -152,13 +152,13 @@ class TestProcessArguments(unittest.TestCase):
 
     def test_invalid_parameters_exit(self, *_):
         for parameter in ['', 'invalid']:
-            with mock.patch("sys.argv", ['dd.py', parameter]):
+            with mock.patch('sys.argv', ['dd.py', parameter]):
                 with self.assertRaises(SystemExit):
                     process_arguments()
 
     def test_valid_parameters(self, *_):
         for parameter in [SCNCLR, SCNCRL, NCDCLR, NCDCRL]:
-            with mock.patch("sys.argv", ['dd.py', parameter]):
+            with mock.patch('sys.argv', ['dd.py', parameter]):
                 param, input_socket, output_socket = process_arguments()
                 self.assertEqual(param, parameter)
                 self.assertIsInstance(input_socket,  int)
