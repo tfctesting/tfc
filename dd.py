@@ -45,14 +45,13 @@ def draw_frame(argv:    str,          # Arguments for the simulator position/ori
     indicator = indicator if high            else ' '
     arrow     = arrow     if message != IDLE else ' '
 
-    offset_from_center = 4
-    print(((get_terminal_height() // 2) - offset_from_center) * '\n')
-
     terminal_width = get_terminal_width()
 
     def c_print(string: str) -> None:
         """Print string on the center of the screen."""
         print(string.center(terminal_width))
+
+    print(((get_terminal_height() // 2) - DD_OFFSET_FROM_CENTER) * '\n')
 
     c_print(message)
     c_print(arrow)
