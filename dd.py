@@ -63,11 +63,11 @@ def draw_frame(argv:    str,          # Arguments for the simulator position/ori
 
 def animate(argv: str) -> None:
     """Animate the data diode transmission indicator."""
-    animation_length = 16
-    for i in range(animation_length):
+    for i in range(DD_ANIMATION_LENGTH):
         clear_screen()
         draw_frame(argv, DATA_FLOW, high=(i % 2 == 0))
         time.sleep(0.04)
+
     clear_screen()
     draw_frame(argv, IDLE)
 
