@@ -129,7 +129,7 @@ def process_arguments() -> Tuple[str, int, int]:
         clear_screen()
         print(f"\nUsage: python3.7 dd.py [OPTION]\n\n"
               f"\nMandatory arguments"
-              f"\n Argument  Simulate data diodes between..."
+              f"\n Argument  Simulate data diode between..."
               f"\n   {SCNCLR}    Source Computer    and Networked Computer   (left to right)"
               f"\n   {SCNCRL}    Source Computer    and Networked Computer   (right to left)"
               f"\n   {NCDCLR}    Networked Computer and Destination Computer (left to right)"
