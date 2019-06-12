@@ -139,7 +139,7 @@ def process_arguments() -> Tuple[str, int, int]:
 
 
 def main(queues: Dict[bytes, Queue]) -> None:
-    """
+    """\
     Read the argument from the command line and launch the data diode simulator.
 
     This application is the data diode simulator program used to
