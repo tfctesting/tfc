@@ -228,7 +228,7 @@ class TestChMasterKey(TFCTestCase):
         self.ts            = datetime.now()
         self.master_key    = MasterKey()
         self.settings      = Settings()
-        self.contact_lis   = ContactList(nicks=[LOCAL_ID])
+        self.contact_list  = ContactList(nicks=[LOCAL_ID])
         self.window_list   = WindowList(nicks=[LOCAL_ID])
         self.group_list    = GroupList()
         self.key_list      = KeyList()

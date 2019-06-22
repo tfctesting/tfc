@@ -28,10 +28,11 @@ from multiprocessing import Queue
 from unittest        import mock
 from unittest.mock   import MagicMock
 
-from src.common.statics import *
+from src.common.statics import DATA_FLOW, DST_LISTEN_SOCKET, EXIT, EXIT_QUEUE, IDLE, NCDCLR, NCDCRL, RP_LISTEN_SOCKET
+from src.common.statics import SCNCLR, SCNCRL
 from dd                 import animate, draw_frame, main, process_arguments, rx_loop, tx_loop
 
-from tests.utils import TFCTestCase
+from tests.utils import tear_queue, TFCTestCase
 
 
 class TestDrawFrame(TFCTestCase):
@@ -109,19 +110,23 @@ class TestAnimate(unittest.TestCase):
 
 class TestRxLoop(unittest.TestCase):
 
+    def setUp(self) -> None:
+        self.queue = Queue()
+
+    def tearDown(self) -> None:
+        tear_queue(self.queue)
+
     @mock.patch('multiprocessing.connection.Listener', return_value=MagicMock(
         accept=MagicMock(return_value=MagicMock(
             recv=MagicMock(side_effect=[b'test_data', b'test_data', KeyboardInterrupt, EOFError])))))
     def test_rx_loop(self, _):
 
-        queue = Queue()
-
         with self.assertRaises(SystemExit):
-            rx_loop(queue, RP_LISTEN_SOCKET)
+            rx_loop(self.queue, RP_LISTEN_SOCKET)
 
-        self.assertEqual(queue.qsize(), 2)
-        while queue.qsize() != 0:
-            self.assertEqual(queue.get(), b'test_data')
+        self.assertEqual(self.queue.qsize(), 2)
+        while self.queue.qsize() != 0:
+            self.assertEqual(self.queue.get(), b'test_data')
 
 
 class TestTxLoop(unittest.TestCase):
@@ -167,11 +172,17 @@ class TestProcessArguments(unittest.TestCase):
 
 class TestMain(unittest.TestCase):
 
+    def setUp(self) -> None:
+        self.queue = Queue()
+
+    def tearDown(self) -> None:
+        tear_queue(self.queue)
+
     @mock.patch('time.sleep', lambda _: None)
     @mock.patch('sys.argv',   ['dd.py', SCNCLR])
     def test_main(self, *_):
         # Setup
-        queues = {EXIT_QUEUE: Queue()}
+        queues = {EXIT_QUEUE: self.queue}
 
         def queue_delayer():
             time.sleep(0.1)
