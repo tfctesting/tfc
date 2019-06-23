@@ -167,6 +167,8 @@ class MasterKey(object):
 
         # If the key derivation time is too long, we do a binary search on the amount
         # of memory to use until we hit the desired key derivation time range.
+        middle = None
+
         if kd_time > MAX_KEY_DERIVATION_TIME:
 
             lower_bound = ARGON_2_MIN_MEMORY_COST
@@ -193,6 +195,8 @@ class MasterKey(object):
 
                 elif kd_time > MAX_KEY_DERIVATION_TIME:
                     upper_bound = middle
+
+        memory_cost = middle if middle is not None else memory_cost
 
         # Store values to database
         ensure_dir(DIR_USER_DATA)

@@ -246,8 +246,6 @@ class TestLogCommand(TFCTestCase):
     @mock.patch('builtins.input', return_value='Yes')
     @mock.patch('src.common.db_masterkey.MIN_KEY_DERIVATION_TIME', 0.001)
     @mock.patch('src.common.db_masterkey.MAX_KEY_DERIVATION_TIME', 0.005)
-    @mock.patch('os.popen', return_value=MagicMock(read=MagicMock(return_value=MagicMock(
-        splitlines=MagicMock(return_value=["MemFree 200"])))))
     def test_successful_export_command(self, *_):
         # Setup
         from src.common.db_masterkey import MasterKey

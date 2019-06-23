@@ -21,6 +21,7 @@ along with TFC. If not, see <https://www.gnu.org/licenses/>.
 
 import os
 import struct
+import time
 import unittest
 
 from datetime        import datetime
@@ -40,6 +41,8 @@ from tests.mock_classes import ContactList, Gateway, group_name_to_group_id, Gro
 from tests.mock_classes import nick_to_pub_key, RxWindow, Settings, WindowList
 from tests.utils        import assembly_packet_creator, cd_unit_test, cleanup, ignored, nick_to_short_address, tear_queue
 from tests.utils        import TFCTestCase
+
+timestamp = time.time()
 
 
 class TestProcessCommand(TFCTestCase):
@@ -150,88 +153,79 @@ class TestExitTFC(unittest.TestCase):
         self.assertIsNone(exit_tfc(self.exit_queue))
         self.assertEqual(self.exit_queue.qsize(), 1)
 
-# TODO
-# class TestLogCommand(TFCTestCase):
-#
-#     def setUp(self, *_):
-#         self.unit_test_dir = cd_unit_test()
-#
-#     def tearDown(self):
-#         cleanup(self.unit_test_dir)
-#         with ignored(OSError):
-#             os.remove('Unittest - Plaintext log (None)')
-#
-#     @mock.patch("getpass.getpass", return_value='test_password')
-#     @mock.patch("src.receiver.commands.MIN_KEY_DERIVATION_TIME", 0.001)
-#     @mock.patch("src.receiver.commands.MAX_KEY_DERIVATION_TIME", 0.005)
-#     @mock.patch('os.popen', return_value=MagicMock(read=MagicMock(return_value=MagicMock(
-#         splitlines=MagicMock(return_value=["MemFree 128"])))))
-#     def test_print(self, *_):
-#
-#         self.cmd_data          = int_to_bytes(1) + nick_to_pub_key("Bob")
-#         self.ts                = datetime.now()
-#         self.window_list       = WindowList(nicks=['Alice', 'Bob'])
-#         self.window            = self.window_list.get_window(nick_to_pub_key("Bob"))
-#         self.window.type_print = WIN_TYPE_CONTACT
-#         self.window.name       = 'Bob'
-#         self.window.type       = WIN_TYPE_CONTACT
-#         self.contact_list      = ContactList(nicks=['Alice', 'Bob'])
-#         self.group_list        = GroupList()
-#         self.settings          = Settings()
-#
-#         time_float = struct.unpack('<L', bytes.fromhex('08ceae02'))[0]
-#         self.time  = datetime.fromtimestamp(time_float).strftime("%H:%M:%S.%f")[:-4]
-#         master_key = MasterKey(operation=NC, local_test=True)
-#         args       = (self.ts, self.window_list, self.contact_list, self.group_list, self.settings, master_key)
-#
-#         self.assert_fr(f"No log database available.", log_command, self.cmd_data, *args)
-#
-#     @mock.patch("src.common.db_masterkey.MIN_KEY_DERIVATION_TIME", 0.001)
-#     @mock.patch("src.common.db_masterkey.MAX_KEY_DERIVATION_TIME", 0.005)
-#     @mock.patch("getpass.getpass", side_effect=['test_password', 'test_password', 'invalid_password','test_password'])
-#     @mock.patch('struct.pack',     return_value=bytes.fromhex('08ceae02'))
-#     @mock.patch('os.popen',        return_value=MagicMock(read=MagicMock(return_value=MagicMock(
-#                                                   splitlines=MagicMock(return_value=["MemFree 128"])))))
-#     def test_export(self, *_):
-#         # Setup
-#         from src.common.db_masterkey import MasterKey
-#         master_key = MasterKey(operation=NC, local_test=True)
-#
-#         self.ts                = datetime.now()
-#         self.window_list       = WindowList(nicks=['Alice', 'Bob'])
-#         self.window            = self.window_list.get_window(nick_to_pub_key("Bob"))
-#         self.window.type_print = WIN_TYPE_CONTACT
-#         self.window.name       = 'Bob'
-#         self.window.type       = WIN_TYPE_CONTACT
-#         self.contact_list      = ContactList(nicks=['Alice', 'Bob'])
-#         self.group_list        = GroupList()
-#         self.settings          = Settings()
-#         self.cmd_data          = int_to_bytes(1) + nick_to_pub_key("Bob")
-#
-#         time_float = struct.unpack('<L', bytes.fromhex('08ceae02'))[0]
-#         self.time  = datetime.fromtimestamp(time_float).strftime("%H:%M:%S.%f")[:-4]
-#         args       = (self.ts, self.window_list, self.contact_list, self.group_list, self.settings, master_key)
-#
-#         # Store message plaintext to log database
-#         for p in assembly_packet_creator(MESSAGE, 'A short message'):
-#             write_log_entry(p, nick_to_pub_key("Bob"), self.settings, master_key, origin=ORIGIN_CONTACT_HEADER)
-#
-#         # Test
-#         self.assertIsNone(log_command(self.cmd_data, *args))
-#
-#         with open('Transmitter - Plaintext log (Bob)') as f:
-#             data = f.read()
-#
-#         self.assertEqual(data, f"""\
-# Log file of 1 most recent message(s) sent to contact Bob
-# ════════════════════════════════════════════════════════════════════════════════
-# {self.time} Bob: A short message
-# <End of log file>
-#
-# """)
 
+class TestLogCommand(TFCTestCase):
 
+    def setUp(self, *_):
 
+        self.unit_test_dir = cd_unit_test()
+        self.time_float    = time.time()
+
+    def tearDown(self):
+        cleanup(self.unit_test_dir)
+        with ignored(OSError):
+            os.remove('Unittest - Plaintext log (None)')
+
+    def test_print(self, *_):
+        self.cmd_data          = int_to_bytes(1) + nick_to_pub_key("Bob")
+        self.ts                = datetime.now()
+        self.window_list       = WindowList(nicks=['Alice', 'Bob'])
+        self.window            = self.window_list.get_window(nick_to_pub_key("Bob"))
+        self.window.type_print = WIN_TYPE_CONTACT
+        self.window.name       = 'Bob'
+        self.window.type       = WIN_TYPE_CONTACT
+        self.contact_list      = ContactList(nicks=['Alice', 'Bob'])
+        self.group_list        = GroupList()
+        self.settings          = Settings()
+
+        time_float = struct.unpack('<L', bytes.fromhex('08ceae02'))[0]
+        self.time  = datetime.fromtimestamp(time_float).strftime("%H:%M:%S.%f")[:-4]
+        master_key = MasterKey(operation=NC, local_test=True)
+        args       = (self.ts, self.window_list, self.contact_list, self.group_list, self.settings, master_key)
+
+        self.assert_fr(f"No log database available.", log_command, self.cmd_data, *args)
+
+    @mock.patch("src.common.db_masterkey.MIN_KEY_DERIVATION_TIME", 0.001)
+    @mock.patch("src.common.db_masterkey.MAX_KEY_DERIVATION_TIME", 0.005)
+    @mock.patch("getpass.getpass", side_effect=['test_password', 'test_password', 'invalid_password','test_password', 'test_password'])
+    @mock.patch('time.time',  return_value=timestamp)
+    @mock.patch('time.sleep', return_value=None)
+    def test_export(self, *_):
+        # Setup
+        from src.common.db_masterkey import MasterKey
+        master_key = MasterKey(operation=NC, local_test=True)
+
+        self.ts                = datetime.now()
+        self.contact_list      = ContactList(nicks=['Alice', 'Bob'])
+        self.window_list       = WindowList(nicks=['Alice', 'Bob'])
+        self.window            = self.window_list.get_window(nick_to_pub_key("Bob"))
+        self.window.type       = WIN_TYPE_CONTACT
+        self.window.type_print = WIN_TYPE_CONTACT
+        self.window.name       = 'Bob'
+        self.group_list        = GroupList()
+        self.settings          = Settings()
+
+        self.time     = datetime.fromtimestamp(timestamp).strftime("%H:%M:%S.%f")[:-6]+'00'
+        self.cmd_data = int_to_bytes(1) + nick_to_pub_key("Bob")
+        args          = (self.ts, self.window_list, self.contact_list, self.group_list, self.settings, master_key)
+
+        # Store message plaintext to log database
+        for p in assembly_packet_creator(MESSAGE, 'A short message'):
+            write_log_entry(p, nick_to_pub_key("Bob"), self.settings, master_key, origin=ORIGIN_CONTACT_HEADER)
+
+        # Test
+        self.assertIsNone(log_command(self.cmd_data, *args))
+
+        with open('Transmitter - Plaintext log (Bob)') as f:
+            data = f.read()
+
+        self.assertEqual(data, f"""\
+Log file of 1 most recent message(s) sent to contact Bob
+════════════════════════════════════════════════════════════════════════════════
+{self.time} Bob: A short message
+<End of log file>
+
+""")
 
 
 class TestRemoveLog(TFCTestCase):
