@@ -381,7 +381,7 @@ def start_key_exchange(onion_pub_key: bytes,          # Public key of contact's 
                      "unless fingerprints are verified! To re-verify",
                      "the contact, use the command '/verify'.",
                      '', "Press <enter> to continue."],
-                    manual_proceed=True, box=True, head=2)
+                    manual_proceed=True, box=True, head=2, tail=1)
             kex_status = KEX_STATUS_UNVERIFIED
 
         # Send keys to the Receiver Program

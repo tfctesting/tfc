@@ -96,7 +96,8 @@ def flask_server(queues:               'QueueDict',
             while queues[URL_TOKEN_QUEUE].qsize() > 0:
                 onion_pub_key, url_token = queues[URL_TOKEN_QUEUE].get()
 
-                # Delete old URL token for contact when their URL token pub key changes.
+                # To keep dictionary compact, delete old key when new
+                # one with matching value (onion_pub_key) is received.
                 for ut in list(pub_key_dict.keys()):
                     if pub_key_dict[ut] == onion_pub_key:
                         del pub_key_dict[ut]

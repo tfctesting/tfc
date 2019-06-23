@@ -160,7 +160,7 @@ def client(onion_pub_key:         bytes,
                         raise ValueError
 
                     shared_secret = url_token_private_key.exchange(X448PublicKey.from_public_bytes(public_key))
-                    url_token     = hashlib.blake2b(shared_secret, digest_size=SYMMETRIC_KEY_LENGTH).hexdigest()
+                    url_token     = hashlib.blake2b(shared_secret, digest_size=URL_TOKEN_LENGTH).hexdigest()
                 except (TypeError, ValueError):
                     continue
 

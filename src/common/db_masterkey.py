@@ -91,7 +91,7 @@ class MasterKey(object):
 
             https://tools.ietf.org/html/draft-irtf-cfrg-argon2-04#section-4
 
-        1) For Argon 2 type (y), Argon2d has is selected because the
+        1) For Argon2 type (y), Argon2d was selected because the
            adversary does not have side channel access to the
            data-diode separated devices that run the algorithm.
 

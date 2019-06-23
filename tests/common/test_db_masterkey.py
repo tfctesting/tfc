@@ -61,7 +61,6 @@ class TestMasterKey(unittest.TestCase):
     @mock.patch('src.common.db_masterkey.MIN_KEY_DERIVATION_TIME', 0.01)
     @mock.patch('src.common.db_masterkey.MAX_KEY_DERIVATION_TIME', 0.1)
     @mock.patch('os.path.isfile',  side_effect=[KeyboardInterrupt, False, True])
-    @mock.patch('os.popen',        return_value=MagicMock(read=MagicMock(return_value='foo\nMemFree 200')))
     @mock.patch('getpass.getpass', side_effect=input_list)
     @mock.patch('time.sleep',      return_value=None)
     def test_master_key_generation_and_load(self, *_):
@@ -76,12 +75,11 @@ class TestMasterKey(unittest.TestCase):
         self.assertIsInstance(master_key2.master_key, bytes)
         self.assertEqual(master_key.master_key, master_key2.master_key)
 
-    @mock.patch('src.common.db_masterkey.MasterKey.timed_key_derivation', MagicMock(side_effect=10 * [(KL*b'b', 5.0)]
+    @mock.patch('src.common.db_masterkey.MasterKey.timed_key_derivation', MagicMock(side_effect=20 * [(KL*b'b', 5.0)]
                                                                                                    + [(KL*b'a', 2.5),
                                                                                                       (KL*b'a', 2.5),
                                                                                                       (KL*b'a', 3.0)]))
     @mock.patch('os.path.isfile',  side_effect=[False, True])
-    @mock.patch('os.popen',        return_value=MagicMock(read=MagicMock(return_value='foo\nMemFree 200')))
     @mock.patch('getpass.getpass', side_effect=input_list)
     @mock.patch('time.sleep',      return_value=None)
     def test_kd_binary_serach(self, *_):

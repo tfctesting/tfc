@@ -274,14 +274,23 @@ def log_command(user_input:   'UserInput',
     if export:
         if not yes(f"Export logs for '{window.name}' in plaintext?", abort=False):
             raise FunctionReturn("Log file export aborted.", tail_clear=True, head=0, delay=1)
-        master_key.load_master_key()
 
-    queue_command(command, settings, queues)
+        queue_command(command, settings, queues)
 
-    access_logs(window, contact_list, group_list, settings, master_key, msg_to_load, export)
+        try:
+            purp_master_key = master_key.load_master_key()
+        except KeyboardInterrupt:
+            raise FunctionReturn("Log file export aborted.", tail_clear=True, head=2, delay=1)
 
-    if export:
-        raise FunctionReturn(f"Exported log file of {window.type} '{window.name}'.", head_clear=True)
+        if purp_master_key == master_key.master_key:
+            access_logs(window, contact_list, group_list, settings, master_key, msg_to_load, export=True)
+
+            raise FunctionReturn(f"Exported log file of {window.type} '{window.name}'.", head_clear=True)
+
+    else:
+        queue_command(command, settings, queues)
+
+        access_logs(window, contact_list, group_list, settings, master_key, msg_to_load)
 
 
 def send_onion_service_key(contact_list:  'ContactList',

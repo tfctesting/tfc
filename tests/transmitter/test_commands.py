@@ -239,17 +239,29 @@ class TestLogCommand(TFCTestCase):
         self.assert_fr("Log file export aborted.",
                        log_command, UserInput('export'), *self.args)
 
+    @mock.patch('time.sleep',      return_value=None)
+    @mock.patch('builtins.input',  return_value='Yes')
+    @mock.patch('getpass.getpass', side_effect=['test_password', 'test_password', KeyboardInterrupt])
+    @mock.patch('src.common.db_masterkey.MIN_KEY_DERIVATION_TIME', 0.1)
+    @mock.patch('src.common.db_masterkey.MAX_KEY_DERIVATION_TIME', 1.0)
+    def test_keyboard_interrupt_raises_fr(self, *_):
+        from src.common.db_masterkey import MasterKey
+        self.master_key = MasterKey(operation=TX, local_test=True)
+        self.assert_fr("Log file export aborted.",
+                       log_command, UserInput('export'), *self.args)
+
+
     @mock.patch("getpass.getpass", side_effect=3*['test_password']
                                                + ['invalid_password']
                                                + ['test_password'])
     @mock.patch('time.sleep',     return_value=None)
     @mock.patch('builtins.input', return_value='Yes')
-    @mock.patch('src.common.db_masterkey.MIN_KEY_DERIVATION_TIME', 0.001)
-    @mock.patch('src.common.db_masterkey.MAX_KEY_DERIVATION_TIME', 0.005)
+    @mock.patch('src.common.db_masterkey.MIN_KEY_DERIVATION_TIME', 0.1)
+    @mock.patch('src.common.db_masterkey.MAX_KEY_DERIVATION_TIME', 1.0)
     def test_successful_export_command(self, *_):
         # Setup
         from src.common.db_masterkey import MasterKey
-        self.master_key  = MasterKey(operation=NC, local_test=True)
+        self.master_key  = MasterKey(operation=TX, local_test=True)
         self.window.type = WIN_TYPE_CONTACT
         self.window.uid  = nick_to_pub_key('Alice')
         whisper_header   = bool_to_bytes(False)
