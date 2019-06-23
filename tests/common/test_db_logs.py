@@ -38,7 +38,7 @@ from tests.utils        import nick_to_short_address, tear_queues, TFCTestCase, 
 
 TIMESTAMP_BYTES  = bytes.fromhex('08ceae02')
 STATIC_TIMESTAMP = bytes_to_timestamp(TIMESTAMP_BYTES).strftime('%H:%M:%S.%f')[:-TIMESTAMP_LENGTH]
-
+SLEEP_DELAY      = 0.02
 
 class TestLogWriterLoop(unittest.TestCase):
 
@@ -62,14 +62,14 @@ class TestLogWriterLoop(unittest.TestCase):
                       (nick_to_pub_key('Alice'), F_S_HEADER + bytes(PADDING_LENGTH), True,  True,  master_key), 
                       (nick_to_pub_key('Alice'), M_S_HEADER + bytes(PADDING_LENGTH), True,  False, master_key)]:
                 queues[LOG_PACKET_QUEUE].put(p)
-                time.sleep(0.02)
+                time.sleep(SLEEP_DELAY)
 
             queues[UNIT_TEST_QUEUE].put(EXIT)
-            time.sleep(0.02)
+            time.sleep(SLEEP_DELAY)
 
             queues[LOG_PACKET_QUEUE].put((
                 nick_to_pub_key('Alice'), M_S_HEADER + bytes(PADDING_LENGTH), True, False, master_key))
-            time.sleep(0.02)
+            time.sleep(SLEEP_DELAY)
 
         # Test
         threading.Thread(target=queue_delayer).start()
@@ -95,14 +95,14 @@ class TestLogWriterLoop(unittest.TestCase):
                       (nick_to_pub_key('Alice'), F_S_HEADER + bytes(PADDING_LENGTH), True,  True,  master_key), 
                       (nick_to_pub_key('Alice'), M_S_HEADER + bytes(PADDING_LENGTH), True,  False, master_key)]:
                 queues[LOG_PACKET_QUEUE].put(p)
-                time.sleep(0.02)
+                time.sleep(SLEEP_DELAY)
 
             queues[UNIT_TEST_QUEUE].put(EXIT)
-            time.sleep(0.02)
+            time.sleep(SLEEP_DELAY)
 
             queues[LOG_PACKET_QUEUE].put(
                 (nick_to_pub_key('Alice'), P_N_HEADER + bytes(PADDING_LENGTH), True, True, master_key))
-            time.sleep(0.02)
+            time.sleep(SLEEP_DELAY)
 
         # Test
         threading.Thread(target=queue_delayer).start()
@@ -126,22 +126,22 @@ class TestLogWriterLoop(unittest.TestCase):
                       (nick_to_pub_key('Alice'), F_S_HEADER + bytes(PADDING_LENGTH), True,  True,  master_key)]:
 
                 queues[LOG_PACKET_QUEUE].put(p)
-                time.sleep(0.02)
+                time.sleep(SLEEP_DELAY)
 
             queues[LOGFILE_MASKING_QUEUE].put(True)  # Start logging noise packets
-            time.sleep(0.02)
+            time.sleep(SLEEP_DELAY)
 
             for _ in range(2):
                 queues[LOG_PACKET_QUEUE].put(
                     (nick_to_pub_key('Alice'), F_S_HEADER + bytes(PADDING_LENGTH), True, True, master_key))
-                time.sleep(0.02)
+                time.sleep(SLEEP_DELAY)
 
             queues[UNIT_TEST_QUEUE].put(EXIT)
-            time.sleep(0.02)
+            time.sleep(SLEEP_DELAY)
 
             queues[LOG_PACKET_QUEUE].put(
                 (nick_to_pub_key('Alice'), M_S_HEADER + bytes(PADDING_LENGTH), True, False, master_key))
-            time.sleep(0.02)
+            time.sleep(SLEEP_DELAY)
 
         # Test
         threading.Thread(target=queue_delayer).start()
@@ -164,17 +164,17 @@ class TestLogWriterLoop(unittest.TestCase):
             """Place packets to log into queue after delay."""
             for _ in range(5):
                 queues[LOG_PACKET_QUEUE].put(noise_tuple)  # Not logged because logging_state is False by default
-                time.sleep(0.02)
+                time.sleep(SLEEP_DELAY)
 
             queues[LOG_SETTING_QUEUE].put(True)
             for _ in range(2):
                 queues[LOG_PACKET_QUEUE].put(noise_tuple)  # Log two packets
-                time.sleep(0.02)
+                time.sleep(SLEEP_DELAY)
 
             queues[LOG_SETTING_QUEUE].put(False)
             for _ in range(3):
                 queues[LOG_PACKET_QUEUE].put(noise_tuple)  # Not logged because logging_state is False
-                time.sleep(0.02)
+                time.sleep(SLEEP_DELAY)
 
             queues[UNIT_TEST_QUEUE].put(EXIT)
 

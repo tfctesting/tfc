@@ -152,6 +152,8 @@ class TestTxLoop(unittest.TestCase):
         tx_loop(queue, DST_LISTEN_SOCKET, NCDCLR, unit_test=True)
         self.assertEqual(queue.qsize(), 0)
 
+        tear_queue(queue)
+
 
 class TestProcessArguments(unittest.TestCase):
 

@@ -105,7 +105,7 @@ class TestArgon2KDF(unittest.TestCase):
         self.assertEqual(len(key), SYMMETRIC_KEY_LENGTH)
 
     def test_invalid_salt_length_raises_critical_error(self):
-        for salt_length in [v for v in range(1000) if v != ARGON2_SALT_LENGTH]:
+        for salt_length in [v for v in (0, ARGON2_SALT_LENGTH-1, ARGON2_SALT_LENGTH+1, 1000)]:
             with self.assertRaises(SystemExit):
                 argon2_kdf('password', salt_length * b'a')
 
@@ -140,7 +140,7 @@ class TestX448(unittest.TestCase):
 
     def test_incorrect_public_key_length_raises_critical_error(self):
         sk = X448PrivateKey.generate()
-        for key in [key_len * b'a' for key_len in range(1, 100) if key_len != TFC_PUBLIC_KEY_LENGTH]:
+        for key in [key_len * b'a' for key_len in (1, TFC_PUBLIC_KEY_LENGTH-1, TFC_PUBLIC_KEY_LENGTH+1, 1000)]:
             with self.assertRaises(SystemExit):
                 X448.shared_key(sk, key)
 
