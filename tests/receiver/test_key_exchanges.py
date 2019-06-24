@@ -79,6 +79,7 @@ class TestProcessLocalKey(TFCTestCase):
     @mock.patch('tkinter.Tk',     return_value=MagicMock())
     @mock.patch('time.sleep',     return_value=None)
     @mock.patch('builtins.input', side_effect=['5KfgdgUvseWfNkoUPWSvxMPNStu5wBBxyjz1zpZtLEjk7ZvwEAT', b58encode(kek)])
+    @mock.patch('os.system',      return_value=None)
     def test_successful_local_key_processing_with_existing_local_key(self, *_):
         self.assert_fr("Error: Incorrect key decryption key.", process_local_key, self.ts, self.packet, *self.args)
         self.assertIsNone(process_local_key(self.ts, self.packet, *self.args))
@@ -86,6 +87,7 @@ class TestProcessLocalKey(TFCTestCase):
     @mock.patch('tkinter.Tk',     return_value=MagicMock())
     @mock.patch('time.sleep',     return_value=None)
     @mock.patch('builtins.input', return_value=b58encode(kek))
+    @mock.patch('os.system',      return_value=None)
     def test_successful_local_key_processing_existing_bootstrap(self, *_):
         # Setup
         self.key_list.keysets = []

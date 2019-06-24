@@ -78,6 +78,7 @@ class TestLocalKey(TFCTestCase):
                                                SYMMETRIC_KEY_LENGTH*b'a',
                                                SYMMETRIC_KEY_LENGTH*b'a'])
     @mock.patch('os.urandom',     return_value=CONFIRM_CODE_LENGTH*b'a')
+    @mock.patch('os.system',      return_value=None)
     def test_new_local_key(self, *_):
         # Setup
         self.settings.nc_bypass_messages = False
