@@ -239,11 +239,13 @@ class TestLogCommand(TFCTestCase):
         self.assert_fr("Log file export aborted.",
                        log_command, UserInput('export'), *self.args)
 
-    @mock.patch('time.sleep',      return_value=None)
-    @mock.patch('builtins.input',  return_value='Yes')
-    @mock.patch('getpass.getpass', side_effect=['test_password', 'test_password', KeyboardInterrupt])
     @mock.patch('src.common.db_masterkey.MIN_KEY_DERIVATION_TIME', 0.1)
     @mock.patch('src.common.db_masterkey.MAX_KEY_DERIVATION_TIME', 1.0)
+    @mock.patch('os.popen',                  return_value=MagicMock(read=MagicMock(return_value=MagicMock(splitlines=MagicMock(return_value=["MemFree 10240"])))))
+    @mock.patch("multiprocessing.cpu_count", return_value=1)
+    @mock.patch('time.sleep',                return_value=None)
+    @mock.patch('builtins.input',            return_value='Yes')
+    @mock.patch('getpass.getpass',           side_effect=['test_password', 'test_password', KeyboardInterrupt])
     def test_keyboard_interrupt_raises_fr(self, *_):
         from src.common.db_masterkey import MasterKey
         self.master_key = MasterKey(operation=TX, local_test=True)
@@ -251,13 +253,13 @@ class TestLogCommand(TFCTestCase):
                        log_command, UserInput('export'), *self.args)
 
 
-    @mock.patch("getpass.getpass", side_effect=3*['test_password']
-                                               + ['invalid_password']
-                                               + ['test_password'])
-    @mock.patch('time.sleep',     return_value=None)
-    @mock.patch('builtins.input', return_value='Yes')
     @mock.patch('src.common.db_masterkey.MIN_KEY_DERIVATION_TIME', 0.1)
     @mock.patch('src.common.db_masterkey.MAX_KEY_DERIVATION_TIME', 1.0)
+    @mock.patch('os.popen',                  return_value=MagicMock(read=MagicMock(return_value=MagicMock(splitlines=MagicMock(return_value=["MemFree 10240"])))))
+    @mock.patch("multiprocessing.cpu_count", return_value=1)
+    @mock.patch("getpass.getpass",           side_effect=3*['test_password'] + ['invalid_password'] + ['test_password'])
+    @mock.patch('time.sleep',                return_value=None)
+    @mock.patch('builtins.input',            return_value='Yes')
     def test_successful_export_command(self, *_):
         # Setup
         from src.common.db_masterkey import MasterKey

@@ -42,8 +42,6 @@ from tests.mock_classes import nick_to_pub_key, RxWindow, Settings, WindowList
 from tests.utils        import assembly_packet_creator, cd_unit_test, cleanup, ignored, nick_to_short_address, tear_queue
 from tests.utils        import TFCTestCase
 
-timestamp = time.time()
-
 
 class TestProcessCommand(TFCTestCase):
 
@@ -185,10 +183,12 @@ class TestLogCommand(TFCTestCase):
 
         self.assert_fr(f"No log database available.", log_command, self.cmd_data, *args)
 
-    @mock.patch("src.common.db_masterkey.MIN_KEY_DERIVATION_TIME", 0.1)
-    @mock.patch("src.common.db_masterkey.MAX_KEY_DERIVATION_TIME", 1.0)
-    @mock.patch('time.sleep', return_value=None)
-    @mock.patch('getpass.getpass', side_effect=['test_password', 'test_password', KeyboardInterrupt])
+    @mock.patch('src.common.db_masterkey.MIN_KEY_DERIVATION_TIME', 0.1)
+    @mock.patch('src.common.db_masterkey.MAX_KEY_DERIVATION_TIME', 1.0)
+    @mock.patch('multiprocessing.cpu_count', return_value=1)
+    @mock.patch('time.sleep',                return_value=None)
+    @mock.patch('getpass.getpass',           side_effect=['test_password', 'test_password', KeyboardInterrupt])
+    @mock.patch('os.popen',                  return_value=MagicMock(read=MagicMock(return_value=MagicMock(splitlines=MagicMock(return_value=["MemFree 10240"])))))
     def test_keyboard_interrupt_during_export_pwd_entry_raises_fr(self, *_):
         # Setup
         from src.common.db_masterkey import MasterKey
@@ -211,15 +211,17 @@ class TestLogCommand(TFCTestCase):
 
         self.assert_fr(f"Log file export aborted.", log_command, self.cmd_data, *args)
 
-    @mock.patch("src.common.db_masterkey.MIN_KEY_DERIVATION_TIME", 0.1)
-    @mock.patch("src.common.db_masterkey.MAX_KEY_DERIVATION_TIME", 1.0)
-    @mock.patch("getpass.getpass", side_effect=['test_password', 'test_password', 'invalid_password','test_password', 'test_password'])
-    @mock.patch('time.time',  return_value=timestamp)
-    @mock.patch('time.sleep', return_value=None)
+    @mock.patch('src.common.db_masterkey.MIN_KEY_DERIVATION_TIME', 0.1)
+    @mock.patch('src.common.db_masterkey.MAX_KEY_DERIVATION_TIME', 1.0)
+    @mock.patch('multiprocessing.cpu_count', return_value=1)
+    @mock.patch("getpass.getpass",           return_value='test_password')
+    @mock.patch('time.time',                 return_value=1561335313.0)
+    @mock.patch('time.sleep',                return_value=None)
+    @mock.patch('os.popen',                  return_value=MagicMock(read=MagicMock(return_value=MagicMock(splitlines=MagicMock(return_value=["MemFree 10240"])))))
     def test_export(self, *_):
         # Setup
         from src.common.db_masterkey import MasterKey
-        master_key = MasterKey(operation=RX, local_test=True)
+        master_key = MasterKey(operation=RX, local_test=False)
 
         self.ts                = datetime.now()
         self.contact_list      = ContactList(nicks=['Alice', 'Bob'])
@@ -229,9 +231,9 @@ class TestLogCommand(TFCTestCase):
         self.window.type_print = WIN_TYPE_CONTACT
         self.window.name       = 'Bob'
         self.group_list        = GroupList()
-        self.settings          = Settings()
+        self.settings          = Settings(software_operation=RX)
 
-        self.time     = datetime.fromtimestamp(timestamp).strftime("%H:%M:%S.%f")[:-6]+'00'
+        self.time     = datetime.fromtimestamp(1561335313.0).strftime("%H:%M:%S.%f")[:-6]+'00'
         self.cmd_data = int_to_bytes(1) + nick_to_pub_key("Bob")
         args          = (self.ts, self.window_list, self.contact_list, self.group_list, self.settings, master_key)
 
@@ -242,11 +244,11 @@ class TestLogCommand(TFCTestCase):
         # Test
         self.assertIsNone(log_command(self.cmd_data, *args))
 
-        with open('Transmitter - Plaintext log (Bob)') as f:
+        with open('Receiver - Plaintext log (Bob)') as f:
             data = f.read()
 
         self.assertEqual(data, f"""\
-Log file of 1 most recent message(s) sent to contact Bob
+Log file of 1 most recent message(s) to/from contact Bob
 ════════════════════════════════════════════════════════════════════════════════
 {self.time} Bob: A short message
 <End of log file>
@@ -289,11 +291,12 @@ class TestChMasterKey(TFCTestCase):
     def tearDown(self):
         cleanup(self.unit_test_dir)
 
-    @mock.patch('getpass.getpass', return_value='a')
-    @mock.patch('time.sleep',      return_value=None)
-    @mock.patch('os.popen',        return_value=MagicMock(read=MagicMock(return_value='foo\nMemFree 200')))
     @mock.patch('src.common.db_masterkey.MIN_KEY_DERIVATION_TIME', 0.1)
     @mock.patch('src.common.db_masterkey.MIN_KEY_DERIVATION_TIME', 1.0)
+    @mock.patch('os.popen',                  return_value=MagicMock(read=MagicMock(return_value=MagicMock(splitlines=MagicMock(return_value=["MemFree 10240"])))))
+    @mock.patch('multiprocessing.cpu_count', return_value=1)
+    @mock.patch('getpass.getpass',           return_value='a')
+    @mock.patch('time.sleep',                return_value=None)
     def test_master_key_change(self, *_):
         # Setup
         write_log_entry(F_S_HEADER + bytes(PADDING_LENGTH), nick_to_pub_key("Alice"), self.settings, self.master_key)

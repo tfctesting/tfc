@@ -75,10 +75,11 @@ class TestMasterKey(unittest.TestCase):
         self.assertIsInstance(master_key2.master_key, bytes)
         self.assertEqual(master_key.master_key, master_key2.master_key)
 
-    @mock.patch('src.common.db_masterkey.MasterKey.timed_key_derivation', MagicMock(side_effect=20 * [(KL*b'b', 5.0)]
-                                                                                                   + [(KL*b'a', 2.5),
-                                                                                                      (KL*b'a', 2.5),
-                                                                                                      (KL*b'a', 3.0)]))
+    @mock.patch('src.common.db_masterkey.MasterKey.timed_key_derivation',
+                MagicMock(side_effect=        [(KL*b'a', 0.01)]
+                                      + 100 * [(KL*b'b',  5.0)]
+                                      +   2 * [(KL*b'a',  2.5)]
+                                      +       [(KL*b'a',  3.0)]))
     @mock.patch('os.path.isfile',  side_effect=[False, True])
     @mock.patch('getpass.getpass', side_effect=input_list)
     @mock.patch('time.sleep',      return_value=None)
