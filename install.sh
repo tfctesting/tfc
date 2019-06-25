@@ -30,7 +30,7 @@ compare_digest () {
 
 verify_tcb_requirements_files () {
 compare_digest a52d96aa42f4aa00958e3778d8048f31ae64d7b602a4998d88ff4649328df3c53b73e529a6e672058c609ff31009d71e98838a634c4b71550742c6cdc6c3cfbb '' requirements.txt
-compare_digest 48fb1ea4513c522d3b6e305d4777e3156b4fae14b542db5b0618d2ab891577cb4d15ccddac6898ae4eb67fd36742ee83e270e3c09bb118c5470360363fb6802a '' requirements-venv.txt
+compare_digest 68939117a092fa4aff34e678d554bf9c86da84f9c757cc2db2932379bac0c10becbedd05a7ba8869672cd66c4160e55d843290063f550d634d4e8484b6d180b3 '' requirements-venv.txt
 }
 
 verify_files () {
@@ -39,7 +39,7 @@ compare_digest d361e5e8201481c6346ee6a886592c51265112be550d5224f1a7a6e116255c2f1
 compare_digest 04bc1b0bf748da3f3a69fda001a36b7e8ed36901fa976d6b9a4da0847bb0dcaf20cdeb884065ecb45b80bd520df9a4ebda2c69154696c63d9260a249219ae68a '' LICENSE-3RD-PARTY
 compare_digest a490b12ea5e3920b3091838be3956756dba9833b5b155d90a4daff4543fd1e783d08997707eda6542c631569a3adf3ba2038f382795e808ec3a7c12c8c80a6aa '' relay.py
 compare_digest 2865708ab24c3ceeaf0a6ec382fb7c331fdee52af55a111c1afb862a336dd757d597f91b94267da009eb74bbc77d01bf78824474fa6f0aa820cd8c62ddb72138 '' requirements-dev.txt
-compare_digest eae592a0303662f9e2549a8c2f7df24dc1bb94af7d1bbc9a421b5effd3602bf0a8349b5b79f7f9536e2e99e25e5fa35b4a7a652975d0b967dd3be3c6e4068dba '' requirements-relay.txt
+compare_digest 55d0bcd6ba90ba5a7e433366d1a2b688c4c93f9a4bb9a6859934c0375190d1540916cfcbfe7a6220c828e2fd26ae0bb21a3c15fff1a419eac8e23879b4078b20 '' requirements-relay.txt
 compare_digest 6d93d5513f66389778262031cbba95e1e38138edaec66ced278db2c2897573247d1de749cf85362ec715355c5dfa5c276c8a07a394fd5cf9b45c7a7ae6249a66 '' tfc.png
 compare_digest d30e4ea7758a2fa3b704f61b0bec3c78af7830f5b1518473bf629660de4c5138df043a2542f174d790b4bda282edb1f8b536913bb9d9f62fb0c6faf87f255ee0 '' tfc.py
 compare_digest 7a3d7b58081c0cd8981f9c7f058b7f35384e43b44879f242ebf43f94cec910bab0e40bd2f7fc1a2f7b87ebc8098357f43b5cede8948bd684be4c6d2deaf1a409 '' uninstall.sh
@@ -107,7 +107,7 @@ compare_digest a22b4eb71fa2b56d61a27193987b5755bc5eeec8011d99ea7813c830a4cb38f89
 # PIP dependency file names
 ARGON2=argon2_cffi-19.1.0-cp34-abi3-manylinux1_x86_64.whl
 ASN1CRYPTO=asn1crypto-0.24.0-py2.py3-none-any.whl
-CERTIFI=certifi-2019.3.9-py2.py3-none-any.whl
+CERTIFI=certifi-2019.6.16-py2.py3-none-any.whl
 CFFI=cffi-1.12.3-cp37-cp37m-manylinux1_x86_64.whl
 CHARDET=chardet-3.0.4-py2.py3-none-any.whl
 CLICK=Click-7.0-py2.py3-none-any.whl
@@ -125,7 +125,7 @@ REQUESTS=requests-2.22.0-py2.py3-none-any.whl
 SIX=six-1.12.0-py2.py3-none-any.whl
 STEM=stem-1.7.1.tar.gz
 URLLIB3=urllib3-1.25.3-py2.py3-none-any.whl
-VIRTUALENV=virtualenv-16.6.0-py2.py3-none-any.whl
+VIRTUALENV=virtualenv-16.6.1-py2.py3-none-any.whl
 WERKZEUG=Werkzeug-0.15.4-py2.py3-none-any.whl
 
 
@@ -141,17 +141,28 @@ process_tcb_dependencies () {
 }
 
 
-install_tcb () {
+steps_before_network_kill () {
+    # These steps are identical in TCB/Relay/Local test configurations. This makes
+    # it harder to distinguish from network traffic when the user is installing
+    # TFC for Source or Destination computer: By the time `kill_network` is run,
+    # it's too late to compromise the TCB. Hopefully this forces adversaries to
+    # attempt compromise of more endpoints during installation, which increases
+    # their chances of getting caught.
     dpkg_check
     check_rm_existing_installation
 
-    sudo apt update
+    sudo torsocks apt update
     sudo torsocks apt install git libssl-dev python3-pip python3-setuptools python3-tk net-tools -y
     sudo torsocks git clone https://github.com/tfctesting/tfc.git /opt/tfc
 
     verify_tcb_requirements_files
     sudo torsocks python3.7 -m pip download --no-cache-dir -r /opt/tfc/requirements-venv.txt --require-hashes -d /opt/tfc/
     sudo torsocks python3.7 -m pip download --no-cache-dir -r /opt/tfc/requirements.txt      --require-hashes -d /opt/tfc/
+}
+
+
+install_tcb () {
+    steps_before_network_kill
 
     kill_network
 
@@ -198,17 +209,7 @@ install_tcb () {
 
 
 install_local_test () {
-    dpkg_check
-    check_rm_existing_installation
-
-    sudo apt update
-    sudo torsocks apt install git libssl-dev python3-pip python3-setuptools python3-tk net-tools -y
-    sudo torsocks git clone https://github.com/tfctesting/tfc.git /opt/tfc
-
-    verify_tcb_requirements_files
-
-    sudo torsocks python3.7 -m pip download --no-cache-dir -r /opt/tfc/requirements-venv.txt --require-hashes -d /opt/tfc/
-    sudo torsocks python3.7 -m pip download --no-cache-dir -r /opt/tfc/requirements.txt      --require-hashes -d /opt/tfc/
+    steps_before_network_kill
 
     verify_files
 
@@ -253,7 +254,8 @@ install_developer () {
     dpkg_check
 
     if [[ -d "$HOME/tfc/" ]]; then
-        sudo rm -r $HOME/tfc/
+        backup_dir="$HOME/tfc_backup_at_$(date +%Y-%m-%d_%H-%M-%S)"
+        mv $HOME/tfc ${backup_dir} 2>/dev/null
     fi
 
     sudo torsocks apt install git libssl-dev python3-pip python3-setuptools python3-tk terminator -y
@@ -290,17 +292,7 @@ install_developer () {
 
 
 install_relay_ubuntu () {
-    dpkg_check
-    check_rm_existing_installation
-
-    sudo apt update
-    sudo torsocks apt install git libssl-dev python3-pip python3-setuptools python3-tk net-tools -y
-    sudo torsocks git clone https://github.com/tfctesting/tfc.git /opt/tfc
-
-    verify_tcb_requirements_files
-
-    sudo torsocks python3.7 -m pip download --no-cache-dir -r /opt/tfc/requirements-venv.txt --require-hashes -d /opt/tfc/
-    sudo torsocks python3.7 -m pip download --no-cache-dir -r /opt/tfc/requirements.txt      --require-hashes -d /opt/tfc/
+    steps_before_network_kill
 
     verify_files
 
@@ -480,7 +472,7 @@ kill_network () {
 	    name=`basename ${interface}`
         if [[ $name != "lo" ]]
             then
-                echo "Closing network interace ${name}"
+                echo "Closing network interface ${name}"
                 sudo ifconfig ${name} down
         fi
     done
