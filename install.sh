@@ -18,7 +18,8 @@
 
 
 compare_digest () {
-    # Compare the SHA512 digest of TFC file against the digest pinned in this installer.
+    # Compare the SHA512 digest of TFC file against the digest pinned in
+    # this installer.
     if sha512sum /opt/tfc/$2$3 | grep -Eo '^\w+' | cmp -s <(echo "$1"); then
         echo OK - Pinned SHA512 hash matched file /opt/tfc/$2$3
     else
@@ -148,12 +149,13 @@ process_tcb_dependencies () {
 
 
 steps_before_network_kill () {
-    # These steps are identical in TCB/Relay/Local test configurations. This makes
-    # it harder to distinguish from network traffic when the user is installing
-    # TFC for Source or Destination computer: By the time `kill_network` is run,
-    # it's too late to compromise the TCB. Hopefully this forces adversaries to
-    # attempt compromise of more endpoints during installation, which increases
-    # their chances of getting caught.
+    # These steps are identical in TCB/Relay/Local test configurations.
+    # This makes it harder to distinguish from network traffic when the
+    # user is installing TFC for Source or Destination computer: By the
+    # time `kill_network` is run, it's too late to compromise the TCB.
+    # Hopefully this forces adversaries to attempt compromise of more
+    # endpoints during installation, which increases their chances of
+    # getting caught.
     dpkg_check
     check_rm_existing_installation
 
@@ -170,9 +172,9 @@ steps_before_network_kill () {
 install_tcb () {
     # Install TFC for Source/Destination Computer.
     #
-    # The installer configuration first downloads all necessary
-    # files. It then disconnects the computer from network,
-    # before completing the rest of the installation steps.
+    # The installer configuration first downloads all necessary files.
+    # It then disconnects the computer from network, before completing
+    # the rest of the installation steps.
     steps_before_network_kill
 
     kill_network
@@ -267,11 +269,10 @@ install_local_test () {
 install_developer () {
     # Install TFC in development configuration.
     #
-    # Note that this configuration will install TFC into
-    # $HOME/tfc/, and the permissions will allow any program
-    # with user-level privileges to modify the source files.
-    # For more secure use on a single computer, select local
-    # testing installation configuration.
+    # Note that this configuration will install TFC into $HOME/tfc/, and
+    # the permissions will allow any program with user-level privileges
+    # to modify the source files. For more secure use on a single
+    # computer, select local testing installation configuration.
     dpkg_check
 
     create_user_data_dir
@@ -355,7 +356,8 @@ install_relay_ubuntu () {
 
 
 install_relay_tails () {
-    # Install TFC Relay configuration on Networked Computer running Tails live distro.
+    # Install TFC Relay configuration on Networked Computer running
+    # Tails live distro.
     check_tails_tor_version
 
     read_sudo_pwd
@@ -468,8 +470,8 @@ install_relay () {
 
 
 read_sudo_pwd () {
-    # Cache the sudo password so that Debian doesn't keep asking
-    # for it during the installation (it won't be stored on disk).
+    # Cache the sudo password so that Debian doesn't keep asking for it
+    # during the installation (it won't be stored on disk).
     read -s -p "[sudo] password for ${USER}: " sudo_pwd
     until (t_sudo echo '' 2>/dev/null)
     do
@@ -609,7 +611,8 @@ install_complete () {
 
 
 dpkg_check () {
-    # Check if the software manager is busy, and if, wait until it completes.
+    # Check if the software manager is busy, and if, wait until it
+    # completes.
     i=0
     tput sc
     while sudo fuser /var/lib/dpkg/lock >/dev/null 2>&1 ; do
@@ -629,8 +632,8 @@ dpkg_check () {
 
 
 arg_error () {
-    # Print help message if the user launches the
-    # installer with missing or invalid argument.
+    # Print help message if the user launches the installer with missing
+    # or invalid argument.
     clear
     echo -e "\nUsage: bash install.sh [OPTION]\n"
     echo    "Mandatory arguments"
