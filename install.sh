@@ -475,7 +475,7 @@ kill_network () {
         name=`basename ${interface}`
         if [[ $name != "lo" ]]
             then
-                echo "Closing network interface ${name}"
+                echo "Disabling network interface ${name}"
                 sudo ifconfig ${name} down
         fi
     done
@@ -608,7 +608,7 @@ arg_error () {
 }
 
 
-root_check() {
+root_check () {
     if [[ !$EUID -ne 0 ]]; then
         clear
         echo -e "\nError: This installer must not be run as root. Exiting.\n" 1>&2
@@ -629,7 +629,7 @@ architecture_check () {
 set -e
 architecture_check
 root_check
-sudo_pwd='';
+sudo_pwd=''
 
 case $1 in
     tcb   ) install_tcb;;
