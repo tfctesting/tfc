@@ -213,6 +213,8 @@ install_local_test () {
 
     verify_files
 
+    create_user_data_dir
+
     sudo torsocks apt install terminator -y
 
     torsocks python3.7 -m pip install -r /opt/tfc/requirements-venv.txt --require-hashes
@@ -253,10 +255,7 @@ install_local_test () {
 install_developer () {
     dpkg_check
 
-    if [[ -d "$HOME/tfc/" ]]; then
-        backup_dir="$HOME/tfc_backup_at_$(date +%Y-%m-%d_%H-%M-%S)"
-        mv $HOME/tfc ${backup_dir} 2>/dev/null
-    fi
+    create_user_data_dir
 
     sudo torsocks apt install git libssl-dev python3-pip python3-setuptools python3-tk terminator -y
 
@@ -267,7 +266,7 @@ install_developer () {
     torsocks python3.7 -m pip install -r requirements-venv.txt --require-hashes
     python3.7 -m virtualenv venv_tfc --system-site-packages
 
-    . /$HOME/tfc/venv_tfc/bin/activate
+    . $HOME/tfc/venv_tfc/bin/activate
     torsocks python3.7 -m pip install -r requirements.txt       --require-hashes
     torsocks python3.7 -m pip install -r requirements-relay.txt --require-hashes
     torsocks python3.7 -m pip install -r requirements-dev.txt
@@ -295,6 +294,8 @@ install_relay_ubuntu () {
     steps_before_network_kill
 
     verify_files
+
+    create_user_data_dir
 
     torsocks python3.7 -m pip install -r /opt/tfc/requirements-venv.txt --require-hashes
     sudo python3.7 -m virtualenv /opt/tfc/venv_relay --system-site-packages
@@ -469,7 +470,7 @@ check_tails_tor_version () {
 
 kill_network () {
     for interface in /sys/class/net/*; do
-	    name=`basename ${interface}`
+        name=`basename ${interface}`
         if [[ $name != "lo" ]]
             then
                 echo "Closing network interface ${name}"
@@ -513,7 +514,7 @@ add_serial_permissions () {
 
 
 c_echo () {
-    # Justify printed text to center of terminal
+    # Justify printed text to the center of the terminal
     printf "%*s\n" $(( ( $(echo $1 | wc -c ) + 80 ) / 2 )) "$1"
 }
 
@@ -607,9 +608,9 @@ arg_error () {
 
 root_check() {
     if [[ !$EUID -ne 0 ]]; then
-       clear
-       echo -e "\nError: This installer must not be run as root. Exiting.\n" 1>&2
-       exit 1
+        clear
+        echo -e "\nError: This installer must not be run as root. Exiting.\n" 1>&2
+        exit 1
     fi
 }
 
