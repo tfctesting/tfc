@@ -431,6 +431,7 @@ install_relay_tails () {
     install_complete "Installation of the TFC Relay configuration is now complete."
 }
 
+
 t_sudo () {
     # Execute command as root on Tails
     echo ${sudo_pwd} | sudo -S $@
