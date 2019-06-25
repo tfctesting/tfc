@@ -19,6 +19,7 @@
 
 compare_digest () {
     # Compare the SHA512 digest of TFC file against the digest pinned in this installer.
+
     if sha512sum /opt/tfc/$2$3 | grep -Eo '^\w+' | cmp -s <(echo "$1"); then
         echo OK - Pinned SHA512 hash matched file /opt/tfc/$2$3
     else
@@ -29,12 +30,17 @@ compare_digest () {
 
 
 verify_tcb_requirements_files () {
+# To minimize the time TCB installer configuration stays online, only
+# the requirements files are authenticated between downloads.
+
 compare_digest a52d96aa42f4aa00958e3778d8048f31ae64d7b602a4998d88ff4649328df3c53b73e529a6e672058c609ff31009d71e98838a634c4b71550742c6cdc6c3cfbb '' requirements.txt
 compare_digest 68939117a092fa4aff34e678d554bf9c86da84f9c757cc2db2932379bac0c10becbedd05a7ba8869672cd66c4160e55d843290063f550d634d4e8484b6d180b3 '' requirements-venv.txt
 }
 
 
 verify_files () {
+# Verify the authenticity of the rest of the TFC source files.
+
 compare_digest 9d18d052fc7eb0837f00f618b391ec47951fe130c8a420db841499d335cbd83122df3138c69e2b0ebc1505d1834e670cac28ccfed0c3f3441e23824266991623 '' dd.py
 compare_digest d361e5e8201481c6346ee6a886592c51265112be550d5224f1a7a6e116255c2f1ab8788df579d9b8372ed7bfd19bac4b6e70e00b472642966ab5b319b99a2686 '' LICENSE
 compare_digest 04bc1b0bf748da3f3a69fda001a36b7e8ed36901fa976d6b9a4da0847bb0dcaf20cdeb884065ecb45b80bd520df9a4ebda2c69154696c63d9260a249219ae68a '' LICENSE-3RD-PARTY
@@ -131,6 +137,9 @@ WERKZEUG=Werkzeug-0.15.4-py2.py3-none-any.whl
 
 
 process_tcb_dependencies () {
+    # Manage TCB dependencies in batch. The command
+    # that uses the files is passed as a parameter.
+
     sudo $1 /opt/tfc/${SIX}
     sudo $1 /opt/tfc/${PYCPARSER}
     sudo $1 /opt/tfc/${CFFI}
@@ -149,6 +158,7 @@ steps_before_network_kill () {
     # it's too late to compromise the TCB. Hopefully this forces adversaries to
     # attempt compromise of more endpoints during installation, which increases
     # their chances of getting caught.
+
     dpkg_check
     check_rm_existing_installation
 
@@ -163,6 +173,12 @@ steps_before_network_kill () {
 
 
 install_tcb () {
+    # Install TFC for Source/Destination Computer.
+    #
+    # The installer configuration first downloads all necessary
+    # files. It then disconnects the computer from network,
+    # before completing the rest of the installation steps.
+
     steps_before_network_kill
 
     kill_network
@@ -210,6 +226,8 @@ install_tcb () {
 
 
 install_local_test () {
+    # Install TFC for local testing on a single computer.
+
     steps_before_network_kill
 
     verify_files
@@ -254,6 +272,14 @@ install_local_test () {
 
 
 install_developer () {
+    # Install TFC in development configuration.
+    #
+    # Note that this configuration will install TFC into
+    # $HOME/tfc/, and the permissions will allow any program
+    # with user-level privileges to modify the source files.
+    # For more secure use on a single computer, select local
+    # testing installation configuration.
+
     dpkg_check
 
     create_user_data_dir
@@ -292,6 +318,8 @@ install_developer () {
 
 
 install_relay_ubuntu () {
+    # Install TFC Relay configuration on Networked Computer.
+
     steps_before_network_kill
 
     verify_files
@@ -336,10 +364,10 @@ install_relay_ubuntu () {
 
 
 install_relay_tails () {
+    # Install TFC Relay configuration on Networked Computer running Tails live distro.
+
     check_tails_tor_version
 
-    # Cache password so that Debian doesn't keep asking
-    # for it during install (it won't be stored on disk).
     read_sudo_pwd
 
     t_sudo apt update
@@ -434,11 +462,14 @@ install_relay_tails () {
 
 t_sudo () {
     # Execute command as root on Tails
+
     echo ${sudo_pwd} | sudo -S $@
 }
 
 
 install_relay () {
+    # Determine the Networked Computer OS for Relay Program installation.
+
     if [[ "$(lsb_release -a 2>/dev/null | grep Tails)" ]]; then
         install_relay_tails
     else
@@ -448,6 +479,9 @@ install_relay () {
 
 
 read_sudo_pwd () {
+    # Cache the sudo password so that Debian doesn't keep asking
+    # for it during the installation (it won't be stored on disk).
+
     read -s -p "[sudo] password for ${USER}: " sudo_pwd
     until (t_sudo echo '' 2>/dev/null)
     do
@@ -459,6 +493,8 @@ read_sudo_pwd () {
 
 
 check_tails_tor_version () {
+    # Check that the Tails distro is running Tor 0.3.5 or newer.
+
     included=($(tor --version |awk '{print $3}' |head -c 5))
     required="0.3.5"
 
@@ -471,6 +507,8 @@ check_tails_tor_version () {
 
 
 kill_network () {
+    # Kill network interfaces to protect the TCB from remote compromise.
+
     for interface in /sys/class/net/*; do
         name=`basename ${interface}`
         if [[ $name != "lo" ]]
@@ -492,6 +530,8 @@ kill_network () {
 
 
 add_serial_permissions () {
+    # Enable serial interface for user-level programs.
+
     clear
     c_echo ''
     c_echo "Setting serial permissions. If available, please connect the"
@@ -517,11 +557,14 @@ add_serial_permissions () {
 
 c_echo () {
     # Justify printed text to the center of the terminal
+
     printf "%*s\n" $(( ( $(echo $1 | wc -c ) + 80 ) / 2 )) "$1"
 }
 
 
 check_rm_existing_installation () {
+    # Remove TFC installation directory if TFC is already installed.
+
     if [[ ${sudo_pwd} ]]; then
         # Tails
         if [[ -d "/opt/tfc" ]]; then
@@ -538,9 +581,11 @@ check_rm_existing_installation () {
 
 
 create_user_data_dir () {
-    if [[ -d "$HOME/tfc" ]]; then                                                 # If directory exists
-        if ! [[ -z "$(ls -A $HOME/tfc/)" ]]; then                                 # If directory is not empty
-            mv $HOME/tfc $HOME/tfc_userdata_backup_at_$(date +%Y-%m-%d_%H-%M-%S)  # Move to timestamped directory
+    # Backup TFC user data directory if it exists and has files in it.
+
+    if [[ -d "$HOME/tfc" ]]; then
+        if ! [[ -z "$(ls -A $HOME/tfc/)" ]]; then
+            mv $HOME/tfc $HOME/tfc_userdata_backup_at_$(date +%Y-%m-%d_%H-%M-%S)
         fi
     fi
     mkdir -p $HOME/tfc 2>/dev/null
@@ -548,8 +593,10 @@ create_user_data_dir () {
 
 
 modify_terminator_font_size () {
+    # Adjust terminator font size for local testing configurations.
+
     width=$(get_screen_width)
-    # Defaults in terminator config file are for 1920 pixels wide screens
+    # Defaults in terminator config file are for 1920 pixel wide screens.
     if (( $width < 1600 )); then
         $1 sed -i -e 's/font                = Monospace 11/font                = Monospace 8/g'     $2  # Normal config
         $1 sed -i -e 's/font                = Monospace 10.5/font                = Monospace 7/g'   $2  # Data Diode config
@@ -561,11 +608,15 @@ modify_terminator_font_size () {
 
 
 get_screen_width () {
+    # Output the width of the screen resolution.
+
     xdpyinfo | grep dimensions | sed -r 's/^[^0-9]*([0-9]+).*$/\1/'
 }
 
 
 install_complete () {
+    # Notify the user that the installation is complete.
+
     clear
     c_echo ''
     c_echo "$*"
@@ -579,6 +630,8 @@ install_complete () {
 
 
 dpkg_check () {
+    # Check if the software manager is busy, and if, wait until it completes.
+
     i=0
     tput sc
     while sudo fuser /var/lib/dpkg/lock >/dev/null 2>&1 ; do
@@ -598,6 +651,9 @@ dpkg_check () {
 
 
 arg_error () {
+    # Print help message if the user launches the
+    # installer with missing or invalid argument.
+
     clear
     echo -e "\nUsage: bash install.sh [OPTION]\n"
     echo    "Mandatory arguments"
@@ -609,6 +665,8 @@ arg_error () {
 
 
 root_check () {
+    # Check that the installer was not launched as root.
+
     if [[ !$EUID -ne 0 ]]; then
         clear
         echo -e "\nError: This installer must not be run as root. Exiting.\n" 1>&2
@@ -618,6 +676,8 @@ root_check () {
 
 
 architecture_check () {
+    # Check that the OS is 64-bit, and not 32-bit.
+
     if ! [[ "$(uname -m 2>/dev/null | grep x86_64)" ]]; then
         clear
         echo -e "\nError: Invalid system architecture. Exiting.\n" 1>&2
