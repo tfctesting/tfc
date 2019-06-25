@@ -241,17 +241,17 @@ class Packet(object):
         if self.type == FILE:
             self.new_file_packet()
             try:
-                lh, no_p_bytes, time_bytes, size_bytes, _ \
+                lh, no_p_bytes, time_bytes, size_bytes, name_us_data \
                     = separate_headers(packet, [ASSEMBLY_PACKET_HEADER_LENGTH] + 3*[ENCODED_INTEGER_LENGTH])
 
                 self.packets = bytes_to_int(no_p_bytes)  # added by transmitter.packet.split_to_assembly_packets
                 self.time    = str(timedelta(seconds=bytes_to_int(time_bytes)))
                 self.size    = readable_size(bytes_to_int(size_bytes))
-                self.name    = packet.split(US_BYTE)[0].decode()
+                self.name    = name_us_data.split(US_BYTE, 1)[0].decode()
 
                 m_print([f'Receiving file from {self.contact.nick}:',
                          f'{self.name} ({self.size})',
-                         f'ETA {self.time} ({self.packets} packets)'], bold=True)
+                         f'ETA {self.time} ({self.packets} packets)'], bold=True, head=1, tail=1)
 
             except (struct.error, UnicodeError, ValueError):
                 self.add_masking_packet_to_log_file()

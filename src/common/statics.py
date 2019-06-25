@@ -265,17 +265,18 @@ Program, it could most likely also access any decryption keys used by
 the Relay Program.
 """
 UNENCRYPTED_COMMAND_HEADER_LENGTH = 2
-UNENCRYPTED_SCREEN_CLEAR          = b'UC'
-UNENCRYPTED_SCREEN_RESET          = b'UR'
-UNENCRYPTED_EXIT_COMMAND          = b'UX'
-UNENCRYPTED_EC_RATIO              = b'UE'
-UNENCRYPTED_BAUDRATE              = b'UB'
-UNENCRYPTED_WIPE_COMMAND          = b'UW'
-UNENCRYPTED_ADD_NEW_CONTACT       = b'UN'
-UNENCRYPTED_ADD_EXISTING_CONTACT  = b'UA'
-UNENCRYPTED_REM_CONTACT           = b'UD'
-UNENCRYPTED_ONION_SERVICE_DATA    = b'UO'
-UNENCRYPTED_MANAGE_CONTACT_REQ    = b'UM'
+
+UNENCRYPTED_SCREEN_CLEAR         = b'UC'
+UNENCRYPTED_SCREEN_RESET         = b'UR'
+UNENCRYPTED_EXIT_COMMAND         = b'UX'
+UNENCRYPTED_EC_RATIO             = b'UE'
+UNENCRYPTED_BAUDRATE             = b'UB'
+UNENCRYPTED_WIPE_COMMAND         = b'UW'
+UNENCRYPTED_ADD_NEW_CONTACT      = b'UN'
+UNENCRYPTED_ADD_EXISTING_CONTACT = b'UA'
+UNENCRYPTED_REM_CONTACT          = b'UD'
+UNENCRYPTED_ONION_SERVICE_DATA   = b'UO'
+UNENCRYPTED_MANAGE_CONTACT_REQ   = b'UM'
 
 
 """Encrypted command headers
@@ -287,31 +288,32 @@ command. These headers tell the Receiver Program to which function the
 provided parameters (if any) must be redirected.
 """
 ENCRYPTED_COMMAND_HEADER_LENGTH = 2
-LOCAL_KEY_RDY                   = b'LI'
-WIN_ACTIVITY                    = b'SA'
-WIN_SELECT                      = b'WS'
-CLEAR_SCREEN                    = b'SC'
-RESET_SCREEN                    = b'SR'
-EXIT_PROGRAM                    = b'EX'
-LOG_DISPLAY                     = b'LD'
-LOG_EXPORT                      = b'LE'
-LOG_REMOVE                      = b'LR'
-CH_MASTER_KEY                   = b'MK'
-CH_NICKNAME                     = b'NC'
-CH_SETTING                      = b'CS'
-CH_LOGGING                      = b'CL'
-CH_FILE_RECV                    = b'CF'
-CH_NOTIFY                       = b'CN'
-GROUP_CREATE                    = b'GC'
-GROUP_ADD                       = b'GA'
-GROUP_REMOVE                    = b'GR'
-GROUP_DELETE                    = b'GD'
-GROUP_RENAME                    = b'GN'
-KEY_EX_ECDHE                    = b'KE'
-KEY_EX_PSK_TX                   = b'KT'
-KEY_EX_PSK_RX                   = b'KR'
-CONTACT_REM                     = b'CR'
-WIPE_USR_DATA                   = b'WD'
+
+LOCAL_KEY_RDY = b'LI'
+WIN_ACTIVITY  = b'SA'
+WIN_SELECT    = b'WS'
+CLEAR_SCREEN  = b'SC'
+RESET_SCREEN  = b'SR'
+EXIT_PROGRAM  = b'EX'
+LOG_DISPLAY   = b'LD'
+LOG_EXPORT    = b'LE'
+LOG_REMOVE    = b'LR'
+CH_MASTER_KEY = b'MK'
+CH_NICKNAME   = b'NC'
+CH_SETTING    = b'CS'
+CH_LOGGING    = b'CL'
+CH_FILE_RECV  = b'CF'
+CH_NOTIFY     = b'CN'
+GROUP_CREATE  = b'GC'
+GROUP_ADD     = b'GA'
+GROUP_REMOVE  = b'GR'
+GROUP_DELETE  = b'GD'
+GROUP_RENAME  = b'GN'
+KEY_EX_ECDHE  = b'KE'
+KEY_EX_PSK_TX = b'KT'
+KEY_EX_PSK_RX = b'KR'
+CONTACT_REM   = b'CR'
+WIPE_USR_DATA = b'WD'
 
 
 """Origin headers
@@ -497,7 +499,7 @@ CONFIRM_CODE_LENGTH     = 1
 PACKET_CHECKSUM_LENGTH  = 16
 
 # Onion address format
-ONION_ADDRESS_CHECKSUM_ID     = b".onion checksum"
+ONION_ADDRESS_CHECKSUM_ID     = b'.onion checksum'
 ONION_SERVICE_VERSION         = b'\x03'
 ONION_SERVICE_VERSION_LENGTH  = 1
 ONION_ADDRESS_CHECKSUM_LENGTH = 2
