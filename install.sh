@@ -135,8 +135,8 @@ WERKZEUG=Werkzeug-0.15.4-py2.py3-none-any.whl
 
 
 process_tcb_dependencies () {
-    # Manage TCB dependencies in batch. The command
-    # that uses the files is passed as a parameter.
+    # Manage TCB dependencies in batch. The command that uses the files
+    # is passed as a parameter.
     sudo $1 /opt/tfc/${SIX}
     sudo $1 /opt/tfc/${PYCPARSER}
     sudo $1 /opt/tfc/${CFFI}
