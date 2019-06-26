@@ -547,7 +547,7 @@ add_serial_permissions () {
 
 
 c_echo () {
-    # Justify printed text to the center of the terminal
+    # Justify printed text to the center of the terminal.
     printf "%*s\n" $(( ( $(echo $1 | wc -c ) + 80 ) / 2 )) "$1"
 }
 
