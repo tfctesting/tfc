@@ -363,7 +363,7 @@ install_relay_tails () {
     read_sudo_pwd
 
     t_sudo apt update
-    t_sudo apt install git libssl-dev python3-pip python3-setuptools -y
+    t_sudo apt install git libssl-dev python3-pip python3-setuptools -y || true  # Ignore error in case packet's can not be persistently installed
 
     cd $HOME/
     git clone https://github.com/tfctesting/tfc.git
