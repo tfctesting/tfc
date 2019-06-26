@@ -577,8 +577,11 @@ create_user_data_dir () {
 
 modify_terminator_font_size () {
     # Adjust terminator font size for local testing configurations.
+    #
+    # The default font sizes in terminator config file are for 1920px
+    # wide screens. The lowest resolution (width) supported is 1366px.
     width=$(get_screen_width)
-    # Defaults in terminator config file are for 1920 pixel wide screens.
+
     if (( $width < 1600 )); then
         $1 sed -i -e 's/font                = Monospace 11/font                = Monospace 8/g'     $2  # Normal config
         $1 sed -i -e 's/font                = Monospace 10.5/font                = Monospace 7/g'   $2  # Data diode config
