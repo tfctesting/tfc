@@ -136,7 +136,7 @@ WERKZEUG=Werkzeug-0.15.4-py2.py3-none-any.whl
 
 process_tcb_dependencies () {
     # Manage TCB dependencies in batch. The command that uses the files
-    # is passed as a parameter.
+    # is passed to the function as a parameter.
     sudo $1 /opt/tfc/${SIX}
     sudo $1 /opt/tfc/${PYCPARSER}
     sudo $1 /opt/tfc/${CFFI}
@@ -267,12 +267,14 @@ install_local_test () {
 
 
 install_developer () {
-    # Install TFC in development configuration.
+    # Install TFC development configuration.
     #
-    # Note that this configuration will install TFC into $HOME/tfc/, and
-    # the permissions will allow any program with user-level privileges
-    # to modify the source files. For more secure use on a single
-    # computer, select local testing installation configuration.
+    # This configuration will install TFC into `$HOME/tfc/`. This allows
+    # you (the user) to easily make edits to the source between runs.
+    # Note that it also means, that any malicious program with
+    # user-level privileges is also able to modify the source files. For
+    # more secure use on a single computer, select the local testing
+    # install configuration.
     dpkg_check
 
     create_user_data_dir
@@ -357,7 +359,7 @@ install_relay_ubuntu () {
 
 install_relay_tails () {
     # Install TFC Relay configuration on Networked Computer running
-    # Tails live distro.
+    # Tails live distro (https://tails.boum.org/).
     check_tails_tor_version
 
     read_sudo_pwd
@@ -457,14 +459,13 @@ install_relay_tails () {
 
 
 t_sudo () {
-    # Execute command as root on Tails
+    # Execute command as root on Tails.
     echo ${sudo_pwd} | sudo -S $@
 }
 
 
 install_relay () {
     # Determine the Networked Computer OS for Relay Program installation.
-
     if [[ "$(lsb_release -a 2>/dev/null | grep Tails)" ]]; then
         install_relay_tails
     else
