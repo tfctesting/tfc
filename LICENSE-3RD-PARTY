@@ -19,6 +19,7 @@ by the TFC installer.
 
         - The IDNA library, Copyright © 2013-2019, Kim Davies
           (https://github.com/kjd/idna)
+          (See 3rd party licenses at https://github.com/kjd/idna/blob/master/LICENSE.rst)
 
         - The Flask web application framework, Copyright © 2010, the Pallets team
           (https://github.com/pallets/flask)
