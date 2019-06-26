@@ -364,7 +364,11 @@ install_relay_tails () {
 
     t_sudo apt update
     t_sudo apt install git libssl-dev python3-pip python3-setuptools -y
-    t_sudo git clone https://github.com/tfctesting/tfc.git /opt/tfc
+
+    cd $HOME/
+    git clone https://github.com/tfctesting/tfc.git
+    t_sudo mv $HOME/tfc/ /opt/tfc/
+    cd /opt/tfc
 
     verify_tcb_requirements_files
     verify_files
