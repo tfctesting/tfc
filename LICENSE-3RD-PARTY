@@ -5,46 +5,46 @@ by the TFC installer.
                             BSD 3-Clause License
 
         applies to:
-        - The pySerial library, Copyright © 2001-2017, Chris Liechti <cliechti@gmx.net>
-          (https://github.com/pyserial/pyserial)
+        - The Click CLI toolkit, Copyright © 2014, the Pallets team
+          (https://github.com/pallets/click)
+          (See 3rd party licenses at https://github.com/pallets/click/blob/master/LICENSE.rst)
 
         - The cryptography library, Copyright © Individual contributors
           (https://github.com/pyca/cryptography)
 
-        - The pycparser C parser, Copyright © 2008-2017, Eli Bendersky
-          (https://github.com/eliben/pycparser)
-
-        - The PySocks proxy client, Copyright © 2006, Dan-Haim
-          (https://github.com/Anorov/PySocks)
+        - The Flask web application framework, Copyright © 2010, the Pallets team
+          (https://github.com/pallets/flask)
 
         - The Internationalized Domain Names in Applications (IDNA) library, Copyright © 2013-2018, Kim Davies
           (https://github.com/kjd/idna)
           (See 3rd party licenses at https://github.com/kjd/idna/blob/master/LICENSE.rst)
 
-        - The Flask web application framework, Copyright © 2010, the Pallets team
-          (https://github.com/pallets/flask)
-
-        - The Click CLI toolkit, Copyright © 2014, the Pallets team
-          (https://github.com/pallets/click)
-          (See 3rd party licenses at https://github.com/pallets/click/blob/master/LICENSE.rst)
-
         - The itsdangerous library, Copyright © 2011, the Pallets team
           (https://github.com/pallets/itsdangerous)
+
+        - The Jinja2 template engine, Copyright © 2009, the Jinja Team, see AUTHORS for more details.
+          (https://github.com/pallets/jinja)
 
         - The MarkupSafe library, Copyright © 2010, the Pallets team
           (https://github.com/pallets/markupsafe)
 
-        - The Werkzeug library, Copyright © 2007, the Pallets team
-          (https://github.com/pallets/werkzeug)
+        - The pycparser C parser, Copyright © 2008-2017, Eli Bendersky
+          (https://github.com/eliben/pycparser)
 
-        - The Jinja2 template engine, Copyright © 2009, the Jinja Team, see AUTHORS for more details.
-          (https://github.com/pallets/jinja)
+        - The pySerial library, Copyright © 2001-2017, Chris Liechti <cliechti@gmx.net>
+          (https://github.com/pyserial/pyserial)
+
+        - The PySocks proxy client, Copyright © 2006, Dan-Haim
+          (https://github.com/Anorov/PySocks)
 
         - The Tor application, Copyright © 2001-2004, Roger Dingledine
                                Copyright © 2004-2006, Roger Dingledine, Nick Mathewson
                                Copyright © 2007-2019, The Tor Project, Inc.
           (https://torproject.org)
           (See the Tor licence and 3rd party licences at https://gitweb.torproject.org/tor.git/tree/LICENSE)
+
+        - The Werkzeug library, Copyright © 2007, the Pallets team
+          (https://github.com/pallets/werkzeug)
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -96,6 +96,9 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
           (https://github.com/python/mypy)
           (See 3rd party licenses at https://github.com/python/mypy/blob/master/LICENSE)
 
+        - The pip package installer, Copyright © 2008-2019, The pip developers (see AUTHORS.txt file)
+          (https://github.com/pypa/pip)
+
         - The pytest framework, Copyright © 2004-2019, Holger Krekel and others
           (https://github.com/pytest-dev/pytest)
 
@@ -104,6 +107,9 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
         - The pytest-xdist plugin, Copyright © Individual contributors
           (https://github.com/pytest-dev/pytest-xdist)
+
+        - The Setuptools build system, Copyright © 2016, Jason R Coombs <jaraco@jaraco.com>
+          (https://github.com/pypa/setuptools)
 
         - The Six library, Copyright © 2010-2019, Benjamin Peterson
           (https://github.com/benjaminp/six)
@@ -115,12 +121,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                Copyright © 2009, Ian Bicking, The Open Planning Project
                                Copyright © 2011-2016, The virtualenv developers
           (https://github.com/pypa/virtualenv)
-
-        - The pip package installer, Copyright © 2008-2019, The pip developers (see AUTHORS.txt file)
-          (https://github.com/pypa/pip)
-
-        - The Setuptools build system, Copyright © 2016, Jason R Coombs <jaraco@jaraco.com>
-          (https://github.com/pypa/setuptools)
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -175,14 +175,14 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  of this license document, but changing it is not allowed.
 
         applies to:
+        - The Git application, Copyright © Linus Torvalds
+          (https://git.kernel.org/pub/scm/git/git.git/tree/)
+
         - The net-tools application, Copyright 1996 © Bernd Eckenfels
           (https://sourceforge.net/projects/net-tools/)
 
         - The Terminator application, Copyright © Stephen Boddy, Chris Jones
           (https://launchpad.net/~gnome-terminator)
-
-        - The Git application, Copyright © Linus Torvalds
-          (https://git.kernel.org/pub/scm/git/git.git/tree/)
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
