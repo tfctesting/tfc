@@ -38,7 +38,7 @@ compare_digest 68939117a092fa4aff34e678d554bf9c86da84f9c757cc2db2932379bac0c10be
 
 
 verify_files () {
-# Verify the authenticity of the rest of the TFC source files.
+# Verify the authenticity of the rest of the TFC files.
 compare_digest 9d18d052fc7eb0837f00f618b391ec47951fe130c8a420db841499d335cbd83122df3138c69e2b0ebc1505d1834e670cac28ccfed0c3f3441e23824266991623 '' dd.py
 compare_digest d361e5e8201481c6346ee6a886592c51265112be550d5224f1a7a6e116255c2f1ab8788df579d9b8372ed7bfd19bac4b6e70e00b472642966ab5b319b99a2686 '' LICENSE
 compare_digest 04bc1b0bf748da3f3a69fda001a36b7e8ed36901fa976d6b9a4da0847bb0dcaf20cdeb884065ecb45b80bd520df9a4ebda2c69154696c63d9260a249219ae68a '' LICENSE-3RD-PARTY
