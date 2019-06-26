@@ -2467,16 +2467,16 @@ Library.
            Copyright © Guido van Rossum <guido@cwi.nl> and others.
 
         applies to:
-        - The CPython3.7 programming language, Copyright © 2001-2019, Python Software Foundation.
-                                               All Rights Reserved.
-
-                                               Copyright © 2000, BeOpen.com.
+        - The CPython3.7 programming language, Copyright © 1991-1995, Stichting Mathematisch Centrum, Amsterdam.
                                                All Rights Reserved.
 
                                                Copyright © 1995-2001, Corporation for National Research Initiatives.
                                                All Rights Reserved.
 
-                                               Copyright © 1991-1995, Stichting Mathematisch Centrum, Amsterdam.
+                                               Copyright © 2000, BeOpen.com.
+                                               All Rights Reserved.
+
+                                               Copyright © 2001-2019, Python Software Foundation.
                                                All Rights Reserved.
           (https://www.python.org/)
 
