@@ -363,7 +363,7 @@ install_relay_tails () {
     read_sudo_pwd
 
     t_sudo apt update
-    t_sudo apt install git libssl-dev python3-pip python3-setuptools -y || true  # Ignore error in case packet's can not be persistently installed
+    t_sudo apt install git libssl-dev python3-pip python3-setuptools -y || true  # Ignore error in case packets can not be persistently installed
 
     cd $HOME/
     git clone https://github.com/tfctesting/tfc.git
@@ -503,10 +503,9 @@ kill_network () {
     # Kill network interfaces to protect the TCB from remote compromise.
     for interface in /sys/class/net/*; do
         name=`basename ${interface}`
-        if [[ $name != "lo" ]]
-            then
-                echo "Disabling network interface ${name}"
-                sudo ifconfig ${name} down
+        if [[ $name != "lo" ]]; then
+            echo "Disabling network interface ${name}"
+            sudo ifconfig ${name} down
         fi
     done
 
@@ -554,16 +553,11 @@ c_echo () {
 
 check_rm_existing_installation () {
     # Remove TFC installation directory if TFC is already installed.
-    if [[ ${sudo_pwd} ]]; then
-        # Tails
-        if [[ -d "/opt/tfc" ]]; then
-            t_sudo rm -r /opt/tfc
-        fi
-
-    else
-        # *buntu
-        if [[ -d "/opt/tfc" ]]; then
-            sudo rm -r /opt/tfc
+    if [[ -d "/opt/tfc" ]]; then
+        if [[ ${sudo_pwd} ]]; then
+            t_sudo rm -r /opt/tfc  # Tails
+        else
+            sudo rm -r /opt/tfc    # *buntu
         fi
     fi
 }
@@ -586,10 +580,10 @@ modify_terminator_font_size () {
     # Defaults in terminator config file are for 1920 pixel wide screens.
     if (( $width < 1600 )); then
         $1 sed -i -e 's/font                = Monospace 11/font                = Monospace 8/g'     $2  # Normal config
-        $1 sed -i -e 's/font                = Monospace 10.5/font                = Monospace 7/g'   $2  # Data Diode config
+        $1 sed -i -e 's/font                = Monospace 10.5/font                = Monospace 7/g'   $2  # Data diode config
     elif (( $width < 1920 )); then
         $1 sed -i -e 's/font                = Monospace 11/font                = Monospace 9/g'     $2  # Normal config
-        $1 sed -i -e 's/font                = Monospace 10.5/font                = Monospace 8.5/g' $2  # Data Diode config
+        $1 sed -i -e 's/font                = Monospace 10.5/font                = Monospace 8.5/g' $2  # Data diode config
     fi
 }
 
