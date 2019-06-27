@@ -17,7 +17,7 @@
 # along with TFC. If not, see <https://www.gnu.org/licenses/>.
 
 
-yn_prompt () {
+function yn_prompt {
     echo "${1} (Y/N): "
     read -s -n 1 REPLY
 
@@ -29,7 +29,7 @@ yn_prompt () {
 }
 
 
-remove_prompt () {
+function remove_prompt {
     echo ''
     if [[ $(dpkg-query -W -f='${Status}' '$1' 2>/dev/null | grep -c "ok installed") -eq 0 ]]; then
         yn_prompt "Remove ${1} ?" "sudo apt -y remove ${1}"
