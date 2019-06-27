@@ -31,7 +31,10 @@ from cryptography.hazmat.primitives.serialization   import Encoding, PublicForma
 from src.common.gateway import Gateway, gateway_loop
 from src.common.misc    import ensure_dir, monitor_processes, process_arguments
 from src.common.output  import print_title
-from src.common.statics import *
+from src.common.statics import C_REQ_MGR_QUEUE, CONTACT_KEY_QUEUE, CONTACT_REQ_QUEUE, DIR_TFC, DST_COMMAND_QUEUE
+from src.common.statics import DST_MESSAGE_QUEUE, EXIT_QUEUE, F_REQ_MGMT_QUEUE, F_TO_FLASK_QUEUE, GATEWAY_QUEUE
+from src.common.statics import GROUP_MGMT_QUEUE, GROUP_MSG_QUEUE, M_TO_FLASK_QUEUE, NC, ONION_CLOSE_QUEUE
+from src.common.statics import ONION_KEY_QUEUE, SRC_TO_RELAY_QUEUE, TOR_DATA_QUEUE, URL_TOKEN_QUEUE
 
 from src.relay.client   import c_req_manager, client_scheduler, g_msg_manager
 from src.relay.commands import relay_command
