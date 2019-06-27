@@ -208,13 +208,13 @@ class TxWindow(Iterable, Sized):
     def deselect(self) -> None:
         """Deselect active window."""
         self.window_contacts = []
-        self.contact         = None  # type: Optional[Contact]
-        self.group           = None  # type: Optional[Group]
-        self.name            = ''    # type: str
-        self.uid             = b''   # type: bytes
-        self.log_messages    = None  # type: Optional[bool]
-        self.type            = ''    # type: str
-        self.type_print      = None  # type: Optional[str]
+        self.contact         = None
+        self.group           = None
+        self.name            = ''
+        self.uid             = b''
+        self.log_messages    = None
+        self.type            = ''
+        self.type_print      = None
 
     def is_selected(self) -> bool:
         """Return True if a window is selected, else False."""
