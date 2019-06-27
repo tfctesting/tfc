@@ -148,6 +148,65 @@ process_tcb_dependencies () {
 }
 
 
+process_tails_dependencies () {
+    # Manage Tails dependencies in batch. The command that uses the
+    # files is passed to the function as a parameter.
+
+    # Pyserial
+    t_sudo $1 /opt/tfc/${PYSERIAL}
+
+    # Stem
+    t_sudo $1 /opt/tfc/${STEM}
+
+    # PySocks
+    t_sudo $1 /opt/tfc/${PYSOCKS}
+
+    # Requests
+    t_sudo $1 /opt/tfc/${URLLIB3}
+    t_sudo $1 /opt/tfc/${IDNA}
+    t_sudo $1 /opt/tfc/${CHARDET}
+    t_sudo $1 /opt/tfc/${CERTIFI}
+    t_sudo $1 /opt/tfc/${REQUESTS}
+
+    # Flask
+    t_sudo $1 /opt/tfc/${WERKZEUG}
+    t_sudo $1 /opt/tfc/${MARKUPSAFE}
+    t_sudo $1 /opt/tfc/${JINJA2}
+    t_sudo $1 /opt/tfc/${ITSDANGEROUS}
+    t_sudo $1 /opt/tfc/${CLICK}
+    t_sudo $1 /opt/tfc/${FLASK}
+
+    # Cryptography
+    t_sudo $1 /opt/tfc/${SIX}
+    t_sudo $1 /opt/tfc/${ASN1CRYPTO}
+    t_sudo $1 /opt/tfc/${PYCPARSER}
+    t_sudo $1 /opt/tfc/${CFFI}
+    t_sudo $1 /opt/tfc/${CRYPTOGRAPHY}
+}
+
+
+remove_common_files () {
+    # Remove files that become unnecessary after installation.
+    $1 rm -r /opt/tfc/.git/
+    $1 rm -r /opt/tfc/launchers/
+    $1 rm -r /opt/tfc/tests/
+    $1 rm    /opt/tfc/.coveragerc
+    $1 rm    /opt/tfc/.travis.yml
+    $1 rm    /opt/tfc/install.sh
+    $1 rm    /opt/tfc/install.sh.asc
+    $1 rm    /opt/tfc/pubkey.asc
+    $1 rm    /opt/tfc/pytest.ini
+    $1 rm    /opt/tfc/README.md
+    $1 rm    /opt/tfc/requirements.txt
+    $1 rm    /opt/tfc/requirements-dev.txt
+    $1 rm    /opt/tfc/requirements-relay.txt
+    $1 rm    /opt/tfc/requirements-venv.txt
+    $1 rm -f /opt/install.sh
+    $1 rm -f /opt/install.sh.asc
+    $1 rm -f /opt/pubkey.asc
+}
+
+
 steps_before_network_kill () {
     # These steps are identical in TCB/Relay/Local test configurations.
     # This makes it harder to distinguish from network traffic when the
@@ -180,7 +239,6 @@ install_tcb () {
     kill_network
 
     verify_files
-
     create_user_data_dir
 
     sudo python3.7 -m pip install /opt/tfc/${VIRTUALENV}
@@ -195,28 +253,12 @@ install_tcb () {
     sudo mv /opt/tfc/launchers/TFC-RxP.desktop /usr/share/applications/
 
     # Remove unnecessary files
-    sudo rm -r /opt/tfc/.git/
-    sudo rm -r /opt/tfc/launchers/
-    sudo rm -r /opt/tfc/src/relay/
-    sudo rm -r /opt/tfc/tests/
-    sudo rm    /opt/tfc/.coveragerc
-    sudo rm    /opt/tfc/.travis.yml
-    sudo rm    /opt/tfc/dd.py
-    sudo rm    /opt/tfc/install.sh
-    sudo rm    /opt/tfc/install.sh.asc
-    sudo rm    /opt/tfc/pubkey.asc
-    sudo rm    /opt/tfc/pytest.ini
-    sudo rm    /opt/tfc/README.md
-    sudo rm    /opt/tfc/relay.py
-    sudo rm    /opt/tfc/requirements.txt
-    sudo rm    /opt/tfc/requirements-dev.txt
-    sudo rm    /opt/tfc/requirements-relay.txt
-    sudo rm    /opt/tfc/requirements-venv.txt
-    sudo rm    /opt/tfc/${VIRTUALENV}
-    sudo rm -f /opt/install.sh
-    sudo rm -f /opt/install.sh.asc
-    sudo rm -f /opt/pubkey.asc
+    remove_common_files      "sudo"
     process_tcb_dependencies "rm"
+    sudo rm -r /opt/tfc/src/relay/
+    sudo rm    /opt/tfc/dd.py
+    sudo rm    /opt/tfc/relay.py
+    sudo rm    /opt/tfc/${VIRTUALENV}
 
     add_serial_permissions
 
@@ -229,7 +271,6 @@ install_local_test () {
     steps_before_network_kill
 
     verify_files
-
     create_user_data_dir
 
     sudo torsocks apt install terminator -y
@@ -248,25 +289,9 @@ install_local_test () {
     modify_terminator_font_size "sudo" "/opt/tfc/terminator-config-local-test"
 
     # Remove unnecessary files
-    sudo rm -r /opt/tfc/.git/
-    sudo rm -r /opt/tfc/launchers/
-    sudo rm -r /opt/tfc/tests/
-    sudo rm    /opt/tfc/.coveragerc
-    sudo rm    /opt/tfc/.travis.yml
-    sudo rm    /opt/tfc/install.sh
-    sudo rm    /opt/tfc/install.sh.asc
-    sudo rm    /opt/tfc/pubkey.asc
-    sudo rm    /opt/tfc/pytest.ini
-    sudo rm    /opt/tfc/README.md
-    sudo rm    /opt/tfc/requirements.txt
-    sudo rm    /opt/tfc/requirements-dev.txt
-    sudo rm    /opt/tfc/requirements-relay.txt
-    sudo rm    /opt/tfc/requirements-venv.txt
-    sudo rm    /opt/tfc/${VIRTUALENV}
-    sudo rm -f /opt/install.sh
-    sudo rm -f /opt/install.sh.asc
-    sudo rm -f /opt/pubkey.asc
+    remove_common_files      "sudo"
     process_tcb_dependencies "rm"
+    sudo rm /opt/tfc/${VIRTUALENV}
 
     install_complete "Installation of TFC for local testing is now complete."
 }
@@ -287,12 +312,10 @@ install_developer () {
 
     sudo torsocks apt install git libssl-dev python3-pip python3-setuptools python3-tk terminator -y
 
-    cd $HOME
-    torsocks git clone https://github.com/tfctesting/tfc.git
-    cd $HOME/tfc/
+    torsocks git clone https://github.com/tfctesting/tfc.git $HOME/tfc
 
-    torsocks python3.7 -m pip install -r requirements-venv.txt --require-hashes
-    python3.7 -m virtualenv venv_tfc --system-site-packages
+    torsocks python3.7 -m pip install -r $HOME/tfc/requirements-venv.txt --require-hashes
+    python3.7 -m virtualenv $HOME/tfc/venv_tfc --system-site-packages
 
     . $HOME/tfc/venv_tfc/bin/activate
     torsocks python3.7 -m pip install -r requirements.txt       --require-hashes
@@ -300,14 +323,13 @@ install_developer () {
     torsocks python3.7 -m pip install -r requirements-dev.txt
     deactivate
 
-    modify_terminator_font_size "" "${HOME}/tfc/launchers/terminator-config-dev"
-
     sudo cp $HOME/tfc/tfc.png                   /usr/share/pixmaps/
     sudo cp $HOME/tfc/launchers/TFC-Dev.desktop /usr/share/applications/
     sudo sed -i "s|\$HOME|${HOME}|g"            /usr/share/applications/TFC-Dev.desktop
-
+    modify_terminator_font_size "" "${HOME}/tfc/launchers/terminator-config-dev"
     chmod a+rwx -R $HOME/tfc/
 
+    # Remove unnecessary files
     sudo rm -f /opt/install.sh
     sudo rm -f /opt/install.sh.asc
     sudo rm -f /opt/pubkey.asc
@@ -323,7 +345,6 @@ install_relay_ubuntu () {
     steps_before_network_kill
 
     verify_files
-
     create_user_data_dir
 
     torsocks python3.7 -m pip install -r /opt/tfc/requirements-venv.txt --require-hashes
@@ -336,29 +357,14 @@ install_relay_ubuntu () {
     sudo mv /opt/tfc/tfc.png                  /usr/share/pixmaps/
     sudo mv /opt/tfc/launchers/TFC-RP.desktop /usr/share/applications/
 
-    sudo rm -r /opt/tfc/.git/
-    sudo rm -r /opt/tfc/launchers/
+    # Remove unnecessary files
+    remove_common_files      "sudo"
+    process_tcb_dependencies "rm"
     sudo rm -r /opt/tfc/src/receiver/
     sudo rm -r /opt/tfc/src/transmitter/
-    sudo rm -r /opt/tfc/tests/
-    sudo rm    /opt/tfc/.coveragerc
-    sudo rm    /opt/tfc/.travis.yml
     sudo rm    /opt/tfc/dd.py
-    sudo rm    /opt/tfc/install.sh
-    sudo rm    /opt/tfc/install.sh.asc
-    sudo rm    /opt/tfc/pubkey.asc
-    sudo rm    /opt/tfc/pytest.ini
-    sudo rm    /opt/tfc/README.md
-    sudo rm    /opt/tfc/requirements.txt
-    sudo rm    /opt/tfc/requirements-dev.txt
-    sudo rm    /opt/tfc/requirements-relay.txt
-    sudo rm    /opt/tfc/requirements-venv.txt
     sudo rm    /opt/tfc/tfc.py
     sudo rm    /opt/tfc/${VIRTUALENV}
-    sudo rm -f /opt/install.sh
-    sudo rm -f /opt/install.sh.asc
-    sudo rm -f /opt/pubkey.asc
-    process_tcb_dependencies "rm"
 
     add_serial_permissions
 
@@ -376,95 +382,26 @@ install_relay_tails () {
     t_sudo apt update
     t_sudo apt install git libssl-dev python3-pip python3-setuptools -y || true  # Ignore error in case packets can not be persistently installed
 
-    cd $HOME/
-    git clone https://github.com/tfctesting/tfc.git
+    git clone https://github.com/tfctesting/tfc.git $HOME/tfc
     t_sudo mv $HOME/tfc/ /opt/tfc/
-    cd /opt/tfc
 
     verify_tcb_requirements_files
     verify_files
-
     create_user_data_dir
 
     t_sudo python3.7 -m pip download --no-cache-dir -r /opt/tfc/requirements-relay.txt --require-hashes -d /opt/tfc/
 
-    # Pyserial
-    t_sudo python3.7 -m pip install /opt/tfc/${PYSERIAL}
-
-    # Stem
-    t_sudo python3.7 -m pip install /opt/tfc/${STEM}
-
-    # PySocks
-    t_sudo python3.7 -m pip install /opt/tfc/${PYSOCKS}
-
-    # Requests
-    t_sudo python3.7 -m pip install /opt/tfc/${URLLIB3}
-    t_sudo python3.7 -m pip install /opt/tfc/${IDNA}
-    t_sudo python3.7 -m pip install /opt/tfc/${CHARDET}
-    t_sudo python3.7 -m pip install /opt/tfc/${CERTIFI}
-    t_sudo python3.7 -m pip install /opt/tfc/${REQUESTS}
-
-    # Flask
-    t_sudo python3.7 -m pip install /opt/tfc/${WERKZEUG}
-    t_sudo python3.7 -m pip install /opt/tfc/${MARKUPSAFE}
-    t_sudo python3.7 -m pip install /opt/tfc/${JINJA2}
-    t_sudo python3.7 -m pip install /opt/tfc/${ITSDANGEROUS}
-    t_sudo python3.7 -m pip install /opt/tfc/${CLICK}
-    t_sudo python3.7 -m pip install /opt/tfc/${FLASK}
-
-    # Cryptography
-    t_sudo python3.7 -m pip install /opt/tfc/${SIX}
-    t_sudo python3.7 -m pip install /opt/tfc/${ASN1CRYPTO}
-    t_sudo python3.7 -m pip install /opt/tfc/${PYCPARSER}
-    t_sudo python3.7 -m pip install /opt/tfc/${CFFI}
-    t_sudo python3.7 -m pip install /opt/tfc/${CRYPTOGRAPHY}
-
-    cd $HOME
-    rm -r $HOME/tfc
+    process_tails_dependencies "python3.7 -m pip install"
 
     t_sudo mv /opt/tfc/tfc.png                        /usr/share/pixmaps/
     t_sudo mv /opt/tfc/launchers/TFC-RP-Tails.desktop /usr/share/applications/
 
-    t_sudo rm -r /opt/tfc/.git/
-    t_sudo rm -r /opt/tfc/launchers/
+    remove_common_files        "t_sudo"
+    process_tails_dependencies "rm"
     t_sudo rm -r /opt/tfc/src/receiver/
     t_sudo rm -r /opt/tfc/src/transmitter/
-    t_sudo rm -r /opt/tfc/tests/
-    t_sudo rm    /opt/tfc/.coveragerc
-    t_sudo rm    /opt/tfc/.travis.yml
     t_sudo rm    /opt/tfc/dd.py
-    t_sudo rm    /opt/tfc/install.sh
-    t_sudo rm    /opt/tfc/install.sh.asc
-    t_sudo rm    /opt/tfc/pubkey.asc
-    t_sudo rm    /opt/tfc/pytest.ini
-    t_sudo rm    /opt/tfc/README.md
-    t_sudo rm    /opt/tfc/requirements.txt
-    t_sudo rm    /opt/tfc/requirements-dev.txt
-    t_sudo rm    /opt/tfc/requirements-relay.txt
-    t_sudo rm    /opt/tfc/requirements-venv.txt
     t_sudo rm    /opt/tfc/tfc.py
-    t_sudo rm    /opt/tfc/${PYSERIAL}
-    t_sudo rm    /opt/tfc/${STEM}
-    t_sudo rm    /opt/tfc/${PYSOCKS}
-    t_sudo rm    /opt/tfc/${URLLIB3}
-    t_sudo rm    /opt/tfc/${IDNA}
-    t_sudo rm    /opt/tfc/${CHARDET}
-    t_sudo rm    /opt/tfc/${CERTIFI}
-    t_sudo rm    /opt/tfc/${REQUESTS}
-    t_sudo rm    /opt/tfc/${WERKZEUG}
-    t_sudo rm    /opt/tfc/${MARKUPSAFE}
-    t_sudo rm    /opt/tfc/${JINJA2}
-    t_sudo rm    /opt/tfc/${ITSDANGEROUS}
-    t_sudo rm    /opt/tfc/${CLICK}
-    t_sudo rm    /opt/tfc/${FLASK}
-    t_sudo rm    /opt/tfc/${SIX}
-    t_sudo rm    /opt/tfc/${ASN1CRYPTO}
-    t_sudo rm    /opt/tfc/${PYCPARSER}
-    t_sudo rm    /opt/tfc/${CFFI}
-    t_sudo rm    /opt/tfc/${CRYPTOGRAPHY}
-    t_sudo rm -f /opt/install.sh
-    t_sudo rm -f /opt/install.sh.asc
-    t_sudo rm -f /opt/pubkey.asc
 
     install_complete "Installation of the TFC Relay configuration is now complete."
 }
