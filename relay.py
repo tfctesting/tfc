@@ -31,8 +31,8 @@ from cryptography.hazmat.primitives.serialization   import Encoding, PublicForma
 from src.common.gateway import Gateway, gateway_loop
 from src.common.misc    import ensure_dir, monitor_processes, process_arguments
 from src.common.output  import print_title
-from src.common.statics import C_REQ_STATE_QUEUE, CONTACT_MGMT_QUEUE, CONTACT_REQ_QUEUE, DIR_TFC, DST_COMMAND_QUEUE
-from src.common.statics import DST_MESSAGE_QUEUE, EXIT_QUEUE, C_REQ_MGMT_QUEUE, F_TO_FLASK_QUEUE, GATEWAY_QUEUE
+from src.common.statics import C_REQ_MGMT_QUEUE, C_REQ_STATE_QUEUE, CONTACT_MGMT_QUEUE, CONTACT_REQ_QUEUE, DIR_TFC
+from src.common.statics import DST_COMMAND_QUEUE, DST_MESSAGE_QUEUE, EXIT_QUEUE, F_TO_FLASK_QUEUE, GATEWAY_QUEUE
 from src.common.statics import GROUP_MGMT_QUEUE, GROUP_MSG_QUEUE, M_TO_FLASK_QUEUE, NC, ONION_CLOSE_QUEUE
 from src.common.statics import ONION_KEY_QUEUE, SRC_TO_RELAY_QUEUE, TOR_DATA_QUEUE, URL_TOKEN_QUEUE
 
@@ -114,15 +114,15 @@ def main() -> None:
                     ┗━━  ━━  ━━  ━━  ━━  ━━  ━━  ━━  ━━  ━━  ━━  ━━  ━━  ━━  ━━  ━━  ━━  ━━ ━━┛
 
 
-    The image above gives a rough overview of the structure of the Relay
-    Program. The Relay Program acts as a protocol converter that reads
-    datagrams from the Source Computer. Outgoing message/file/public key
-    datagrams are made available in the user's Tor v3 Onion Service.
-    Copies of sent message datagrams as well as datagrams from contacts'
-    Onion Services are forwarded to the Destination Computer.
-    The Relay-to-Relay encrypted datagrams from contacts such as contact
-    requests, public keys and group management messages are displayed by
-    the Relay Program.
+    The diagram above gives a rough overview of the structure of the
+    Relay Program. The Relay Program acts as a protocol converter that
+    reads datagrams from the Source Computer. Outgoing
+    message/file/public key datagrams are made available in the user's
+    Tor v3 Onion Service. Copies of sent message datagrams as well as
+    datagrams from contacts' Onion Services are forwarded to the
+    Destination Computer. The Relay-to-Relay encrypted datagrams from
+    contacts such as contact requests, public keys and group management
+    messages are displayed by the Relay Program.
 
     Outgoing message datagrams are loaded by contacts from the user's
     Flask web server. To request messages intended for them, each

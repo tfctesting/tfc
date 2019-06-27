@@ -26,7 +26,7 @@ from src.common.statics import *
 
 from src.relay.server import flask_server
 
-from tests.utils import gen_queue_dict, nick_to_onion_address, nick_to_pub_key
+from tests.utils import gen_queue_dict, nick_to_onion_address, nick_to_pub_key, tear_queues
 
 
 class TestFlaskServer(unittest.TestCase):
@@ -86,6 +86,9 @@ class TestFlaskServer(unittest.TestCase):
         with app.test_client() as c:
             resp = c.get(f'/{url_token}/files/')
             self.assertEqual(b'', resp.data)
+
+        # Teardown
+        tear_queues(queues)
 
 
 if __name__ == '__main__':
