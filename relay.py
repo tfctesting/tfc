@@ -92,7 +92,7 @@ def main() -> None:
       Source ───▶|─────(── gateway_loop ─> src_incoming ─> flask_server <─┐
     Computer        ┃  |                            |                     |                   ┃
                        |                            |                     |
-                    ┃  |    (Local keys, commands   |                     |                   ┃
+                    ┃  |    (Local keys, commands,  |                     |                   ┃
                        |    and copies of messages)┄|                     |
                     ┃  |             ┊              ↓                     |                   ┃
  Destination <──|◀─────(────────────────────── dst_outgoing               |
@@ -143,7 +143,7 @@ def main() -> None:
 
     url_token_private_key = X448PrivateKey.generate()
     url_token_public_key  = url_token_private_key.public_key().public_bytes(encoding=Encoding.Raw,
-                                                                            format=PublicFormat.Raw).hex()
+                                                                            format=PublicFormat.Raw).hex()  # type: str
 
     queues = \
         {GATEWAY_QUEUE:      Queue(),  # All     datagrams           from `gateway_loop`          to `src_incoming`
