@@ -318,9 +318,9 @@ install_developer () {
     python3.7 -m virtualenv $HOME/tfc/venv_tfc --system-site-packages
 
     . $HOME/tfc/venv_tfc/bin/activate
-    torsocks python3.7 -m pip install -r requirements.txt       --require-hashes
-    torsocks python3.7 -m pip install -r requirements-relay.txt --require-hashes
-    torsocks python3.7 -m pip install -r requirements-dev.txt
+    torsocks python3.7 -m pip install -r $HOME/tfc/requirements.txt       --require-hashes
+    torsocks python3.7 -m pip install -r $HOME/tfc/requirements-relay.txt --require-hashes
+    torsocks python3.7 -m pip install -r $HOME/tfc/requirements-dev.txt
     deactivate
 
     sudo cp $HOME/tfc/tfc.png                   /usr/share/pixmaps/
