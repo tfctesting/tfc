@@ -172,7 +172,7 @@ def manage_contact_req(command: bytes,
     enabled = bytes_to_bool(command)
     if notify:
         m_print(f"Contact requests are have been {('enabled' if enabled else 'disabled')}.", head=1, tail=1)
-    queues[C_REQ_MGR_QUEUE].put(enabled)
+    queues[C_REQ_STATE_QUEUE].put(enabled)
 
 
 def add_contact(command:  bytes,
@@ -182,26 +182,26 @@ def add_contact(command:  bytes,
     """Add clients to Relay Program.
 
     The queues are read by
-        relay.client.client_manager()
+        relay.client.client_scheduler()
         relay.client.group_manager() and
-        relay.client.f_req_manager()
+        relay.client.c_req_manager()
     """
-    queues[CONTACT_KEY_QUEUE].put((RP_ADD_CONTACT_HEADER, command, existing))
+    queues[CONTACT_MGMT_QUEUE].put((RP_ADD_CONTACT_HEADER, command, existing))
     queues[GROUP_MGMT_QUEUE].put((RP_ADD_CONTACT_HEADER, command))
-    queues[F_REQ_MGMT_QUEUE].put((RP_ADD_CONTACT_HEADER, command))
+    queues[C_REQ_C_LIST_QUEUE].put((RP_ADD_CONTACT_HEADER, command))
 
 
 def remove_contact(command: bytes, queues: 'QueueDict') -> None:
     """Remove clients from Relay Program.
 
     The queues are read by
-        relay.client.client_manager()
+        relay.client.client_scheduler()
         relay.client.group_manager() and
-        relay.client.f_req_manager()
+        relay.client.c_req_manager()
     """
-    queues[CONTACT_KEY_QUEUE].put((RP_REMOVE_CONTACT_HEADER, command, False))
+    queues[CONTACT_MGMT_QUEUE].put((RP_REMOVE_CONTACT_HEADER, command, False))
     queues[GROUP_MGMT_QUEUE].put((RP_REMOVE_CONTACT_HEADER, command))
-    queues[F_REQ_MGMT_QUEUE].put((RP_REMOVE_CONTACT_HEADER, command))
+    queues[C_REQ_C_LIST_QUEUE].put((RP_REMOVE_CONTACT_HEADER, command))
 
 
 def add_onion_data(command: bytes, queues: 'QueueDict') -> None:

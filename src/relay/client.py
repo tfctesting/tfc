@@ -63,10 +63,10 @@ def client_scheduler(queues:                'QueueDict',
     while True:
         with ignored(EOFError, KeyboardInterrupt):
 
-            while queues[CONTACT_KEY_QUEUE].qsize() == 0:
+            while queues[CONTACT_MGMT_QUEUE].qsize() == 0:
                 time.sleep(0.1)
 
-            command, ser_public_keys, is_existing_contact = queues[CONTACT_KEY_QUEUE].get()
+            command, ser_public_keys, is_existing_contact = queues[CONTACT_MGMT_QUEUE].get()
 
             onion_pub_keys = split_byte_string(ser_public_keys, ONION_SERVICE_PUBLIC_KEY_LENGTH)
 
@@ -321,16 +321,16 @@ def c_req_manager(queues:    'QueueDict',
     existing_contacts = []  # type: List[bytes]
     contact_requests  = []  # type: List[bytes]
 
-    packet_queue  = queues[CONTACT_REQ_QUEUE]
-    contact_queue = queues[F_REQ_MGMT_QUEUE]
-    setting_queue = queues[C_REQ_MGR_QUEUE]
+    request_queue = queues[CONTACT_REQ_QUEUE]
+    contact_queue = queues[C_REQ_C_LIST_QUEUE]
+    setting_queue = queues[C_REQ_STATE_QUEUE]
     show_requests = True
 
     while True:
         with ignored(EOFError, KeyboardInterrupt):
-            while packet_queue.qsize() == 0:
+            while request_queue.qsize() == 0:
                 time.sleep(0.1)
-            purp_onion_address = packet_queue.get()
+            purp_onion_address = request_queue.get()
 
             while setting_queue.qsize() != 0:
                 show_requests = setting_queue.get()

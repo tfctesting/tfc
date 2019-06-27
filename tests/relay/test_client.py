@@ -332,15 +332,15 @@ class TestClientScheduler(unittest.TestCase):
             time.sleep(0.1)
             queues[TOR_DATA_QUEUE].put(
                 ('1234', nick_to_onion_address('Alice')))
-            queues[CONTACT_KEY_QUEUE].put(
+            queues[CONTACT_MGMT_QUEUE].put(
                 (RP_ADD_CONTACT_HEADER, b''.join([nick_to_pub_key('Alice'), nick_to_pub_key('Bob')]), True))
             time.sleep(0.1)
-            queues[CONTACT_KEY_QUEUE].put(
+            queues[CONTACT_MGMT_QUEUE].put(
                 (RP_REMOVE_CONTACT_HEADER, b''.join([nick_to_pub_key('Alice'), nick_to_pub_key('Bob')]), True))
             time.sleep(0.1)
             queues[UNIT_TEST_QUEUE].put(EXIT)
             time.sleep(0.1)
-            queues[CONTACT_KEY_QUEUE].put((EXIT, EXIT, EXIT))
+            queues[CONTACT_MGMT_QUEUE].put((EXIT, EXIT, EXIT))
 
         threading.Thread(target=queue_delayer).start()
 
@@ -357,7 +357,7 @@ class TestContactRequestManager(unittest.TestCase):
         def queue_delayer():
             """Place messages to queue one at a time."""
             time.sleep(0.1)
-            queues[F_REQ_MGMT_QUEUE].put(
+            queues[C_REQ_C_LIST_QUEUE].put(
                 (RP_ADD_CONTACT_HEADER, b''.join(list(map(nick_to_pub_key, ['Alice', 'Bob'])))))
             time.sleep(0.1)
 
@@ -374,12 +374,12 @@ class TestContactRequestManager(unittest.TestCase):
             time.sleep(0.1)
 
             # Remove Alice
-            queues[F_REQ_MGMT_QUEUE].put((RP_REMOVE_CONTACT_HEADER, nick_to_pub_key('Alice')))
+            queues[C_REQ_C_LIST_QUEUE].put((RP_REMOVE_CONTACT_HEADER, nick_to_pub_key('Alice')))
             time.sleep(0.1)
 
             # Load settings from queue
-            queues[C_REQ_MGR_QUEUE].put(False)
-            queues[C_REQ_MGR_QUEUE].put(True)
+            queues[C_REQ_STATE_QUEUE].put(False)
+            queues[C_REQ_STATE_QUEUE].put(True)
 
             # Test that request from Alice is accepted
             queues[CONTACT_REQ_QUEUE].put((nick_to_onion_address('Alice')))
