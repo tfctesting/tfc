@@ -199,11 +199,14 @@ install_tcb () {
     sudo rm -r /opt/tfc/launchers/
     sudo rm -r /opt/tfc/src/relay/
     sudo rm -r /opt/tfc/tests/
+    sudo rm    /opt/tfc/.coveragerc
+    sudo rm    /opt/tfc/.travis.yml
+    sudo rm    /opt/tfc/dd.py
     sudo rm    /opt/tfc/install.sh
     sudo rm    /opt/tfc/install.sh.asc
     sudo rm    /opt/tfc/pubkey.asc
+    sudo rm    /opt/tfc/pytest.ini
     sudo rm    /opt/tfc/README.md
-    sudo rm    /opt/tfc/dd.py
     sudo rm    /opt/tfc/relay.py
     sudo rm    /opt/tfc/requirements.txt
     sudo rm    /opt/tfc/requirements-dev.txt
@@ -248,9 +251,12 @@ install_local_test () {
     sudo rm -r /opt/tfc/.git/
     sudo rm -r /opt/tfc/launchers/
     sudo rm -r /opt/tfc/tests/
+    sudo rm    /opt/tfc/.coveragerc
+    sudo rm    /opt/tfc/.travis.yml
     sudo rm    /opt/tfc/install.sh
     sudo rm    /opt/tfc/install.sh.asc
     sudo rm    /opt/tfc/pubkey.asc
+    sudo rm    /opt/tfc/pytest.ini
     sudo rm    /opt/tfc/README.md
     sudo rm    /opt/tfc/requirements.txt
     sudo rm    /opt/tfc/requirements-dev.txt
@@ -335,10 +341,13 @@ install_relay_ubuntu () {
     sudo rm -r /opt/tfc/src/receiver/
     sudo rm -r /opt/tfc/src/transmitter/
     sudo rm -r /opt/tfc/tests/
+    sudo rm    /opt/tfc/.coveragerc
+    sudo rm    /opt/tfc/.travis.yml
     sudo rm    /opt/tfc/dd.py
     sudo rm    /opt/tfc/install.sh
     sudo rm    /opt/tfc/install.sh.asc
     sudo rm    /opt/tfc/pubkey.asc
+    sudo rm    /opt/tfc/pytest.ini
     sudo rm    /opt/tfc/README.md
     sudo rm    /opt/tfc/requirements.txt
     sudo rm    /opt/tfc/requirements-dev.txt
@@ -421,10 +430,13 @@ install_relay_tails () {
     t_sudo rm -r /opt/tfc/src/receiver/
     t_sudo rm -r /opt/tfc/src/transmitter/
     t_sudo rm -r /opt/tfc/tests/
+    t_sudo rm    /opt/tfc/.coveragerc
+    t_sudo rm    /opt/tfc/.travis.yml
     t_sudo rm    /opt/tfc/dd.py
     t_sudo rm    /opt/tfc/install.sh
     t_sudo rm    /opt/tfc/install.sh.asc
     t_sudo rm    /opt/tfc/pubkey.asc
+    t_sudo rm    /opt/tfc/pytest.ini
     t_sudo rm    /opt/tfc/README.md
     t_sudo rm    /opt/tfc/requirements.txt
     t_sudo rm    /opt/tfc/requirements-dev.txt
