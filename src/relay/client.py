@@ -322,7 +322,7 @@ def c_req_manager(queues:    'QueueDict',
     contact_requests  = []  # type: List[bytes]
 
     request_queue = queues[CONTACT_REQ_QUEUE]
-    contact_queue = queues[C_REQ_C_LIST_QUEUE]
+    contact_queue = queues[C_REQ_MGMT_QUEUE]
     setting_queue = queues[C_REQ_STATE_QUEUE]
     show_requests = True
 

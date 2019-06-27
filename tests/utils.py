@@ -367,7 +367,7 @@ def gen_queue_dict() -> Dict[bytes, Queue]:
                     URL_TOKEN_QUEUE,
                     GROUP_MSG_QUEUE,
                     CONTACT_REQ_QUEUE,
-                    C_REQ_C_LIST_QUEUE,
+                    C_REQ_MGMT_QUEUE,
                     GROUP_MGMT_QUEUE,
                     ONION_CLOSE_QUEUE,
                     ONION_KEY_QUEUE,

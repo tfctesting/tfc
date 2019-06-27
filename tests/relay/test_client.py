@@ -357,7 +357,7 @@ class TestContactRequestManager(unittest.TestCase):
         def queue_delayer():
             """Place messages to queue one at a time."""
             time.sleep(0.1)
-            queues[C_REQ_C_LIST_QUEUE].put(
+            queues[C_REQ_MGMT_QUEUE].put(
                 (RP_ADD_CONTACT_HEADER, b''.join(list(map(nick_to_pub_key, ['Alice', 'Bob'])))))
             time.sleep(0.1)
 
@@ -374,7 +374,7 @@ class TestContactRequestManager(unittest.TestCase):
             time.sleep(0.1)
 
             # Remove Alice
-            queues[C_REQ_C_LIST_QUEUE].put((RP_REMOVE_CONTACT_HEADER, nick_to_pub_key('Alice')))
+            queues[C_REQ_MGMT_QUEUE].put((RP_REMOVE_CONTACT_HEADER, nick_to_pub_key('Alice')))
             time.sleep(0.1)
 
             # Load settings from queue

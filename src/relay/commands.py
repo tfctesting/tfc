@@ -183,12 +183,12 @@ def add_contact(command:  bytes,
 
     The queues are read by
         relay.client.client_scheduler()
-        relay.client.group_manager() and
+        relay.client.g_msg_manager() and
         relay.client.c_req_manager()
     """
     queues[CONTACT_MGMT_QUEUE].put((RP_ADD_CONTACT_HEADER, command, existing))
     queues[GROUP_MGMT_QUEUE].put((RP_ADD_CONTACT_HEADER, command))
-    queues[C_REQ_C_LIST_QUEUE].put((RP_ADD_CONTACT_HEADER, command))
+    queues[C_REQ_MGMT_QUEUE].put((RP_ADD_CONTACT_HEADER, command))
 
 
 def remove_contact(command: bytes, queues: 'QueueDict') -> None:
@@ -196,12 +196,12 @@ def remove_contact(command: bytes, queues: 'QueueDict') -> None:
 
     The queues are read by
         relay.client.client_scheduler()
-        relay.client.group_manager() and
+        relay.client.g_msg_manager() and
         relay.client.c_req_manager()
     """
     queues[CONTACT_MGMT_QUEUE].put((RP_REMOVE_CONTACT_HEADER, command, False))
     queues[GROUP_MGMT_QUEUE].put((RP_REMOVE_CONTACT_HEADER, command))
-    queues[C_REQ_C_LIST_QUEUE].put((RP_REMOVE_CONTACT_HEADER, command))
+    queues[C_REQ_MGMT_QUEUE].put((RP_REMOVE_CONTACT_HEADER, command))
 
 
 def add_onion_data(command: bytes, queues: 'QueueDict') -> None:

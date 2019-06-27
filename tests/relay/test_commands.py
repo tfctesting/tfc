@@ -197,7 +197,7 @@ class TestAddContact(unittest.TestCase):
 
             self.assertIsNone(add_contact(command, True, self.queues))
             self.assertEqual(self.queues[CONTACT_MGMT_QUEUE].qsize(), 1)
-            for q in [GROUP_MGMT_QUEUE, C_REQ_C_LIST_QUEUE]:
+            for q in [GROUP_MGMT_QUEUE, C_REQ_MGMT_QUEUE]:
                 command = self.queues[q].get()
                 self.assertEqual(command,
                                  (RP_ADD_CONTACT_HEADER, b''.join([nick_to_pub_key('Alice'), nick_to_pub_key('Bob')])))
@@ -224,7 +224,7 @@ class TestRemContact(unittest.TestCase):
                               False)
                              )
 
-            for q in [GROUP_MGMT_QUEUE, C_REQ_C_LIST_QUEUE]:
+            for q in [GROUP_MGMT_QUEUE, C_REQ_MGMT_QUEUE]:
                 command = self.queues[q].get()
                 self.assertEqual(command, (RP_REMOVE_CONTACT_HEADER,
                                            b''.join([nick_to_pub_key('Alice'), nick_to_pub_key('Bob')])))

@@ -32,7 +32,7 @@ from src.common.gateway import Gateway, gateway_loop
 from src.common.misc    import ensure_dir, monitor_processes, process_arguments
 from src.common.output  import print_title
 from src.common.statics import C_REQ_STATE_QUEUE, CONTACT_MGMT_QUEUE, CONTACT_REQ_QUEUE, DIR_TFC, DST_COMMAND_QUEUE
-from src.common.statics import DST_MESSAGE_QUEUE, EXIT_QUEUE, C_REQ_C_LIST_QUEUE, F_TO_FLASK_QUEUE, GATEWAY_QUEUE
+from src.common.statics import DST_MESSAGE_QUEUE, EXIT_QUEUE, C_REQ_MGMT_QUEUE, F_TO_FLASK_QUEUE, GATEWAY_QUEUE
 from src.common.statics import GROUP_MGMT_QUEUE, GROUP_MSG_QUEUE, M_TO_FLASK_QUEUE, NC, ONION_CLOSE_QUEUE
 from src.common.statics import ONION_KEY_QUEUE, SRC_TO_RELAY_QUEUE, TOR_DATA_QUEUE, URL_TOKEN_QUEUE
 
@@ -157,12 +157,12 @@ def main() -> None:
          URL_TOKEN_QUEUE:    Queue(),  # URL tokens                  from `client`                to `flask_server`
          GROUP_MSG_QUEUE:    Queue(),  # Group management messages   from `client`                to `g_msg_manager`
          CONTACT_REQ_QUEUE:  Queue(),  # Contact requests            from `flask_server`          to `c_req_manager`
-         C_REQ_C_LIST_QUEUE: Queue(),  # Contact list management     from `relay_command`         to `c_req_manager`
+         C_REQ_MGMT_QUEUE:   Queue(),  # Contact list management     from `relay_command`         to `c_req_manager`
          GROUP_MGMT_QUEUE:   Queue(),  # Contact list management     from `relay_command`         to `g_msg_manager`
          ONION_CLOSE_QUEUE:  Queue(),  # Onion Service close command from `relay_command`         to `onion_service`
          ONION_KEY_QUEUE:    Queue(),  # Onion Service private key   from `relay_command`         to `onion_service`
          TOR_DATA_QUEUE:     Queue(),  # Open port for Tor           from `onion_service`         to `client_scheduler`
-         EXIT_QUEUE:         Queue()  # EXIT/WIPE signal            from `relay_command`         to `main`
+         EXIT_QUEUE:         Queue()   # EXIT/WIPE signal            from `relay_command`         to `main`
          }  # type: Dict[bytes, Queue]
 
     process_list = [Process(target=gateway_loop,     args=(queues, gateway                       )),

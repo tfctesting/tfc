@@ -206,9 +206,9 @@ def onion_service(queues: Dict[bytes, 'Queue']) -> None:
 
             if queues[ONION_CLOSE_QUEUE].qsize() > 0:
                 command = queues[ONION_CLOSE_QUEUE].get()
-                queues[EXIT_QUEUE].put(command)
                 tor.controller.remove_hidden_service(response.service_id)
                 tor.stop()
+                queues[EXIT_QUEUE].put(command)
                 break
 
         except (EOFError, KeyboardInterrupt):
