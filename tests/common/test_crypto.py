@@ -81,16 +81,16 @@ class TestBLAKE2b(unittest.TestCase):
         with open(self.kat_file_name) as f:
             file_data = f.read()
 
-        trimmed = file_data[2:-1]        # Remove empty lines from the start and the end of the file
-        vectors = trimmed.split('\n\n')  # Each tuple of test vectors is separated with an empty line
+        trimmed_data = file_data[2:-1]             # Remove empty lines from the start and the end of the file.
+        test_vectors = trimmed_data.split('\n\n')  # Each tuple of test vectors is separated with an empty line.
 
-        self.assertEqual(len(set(vectors)), 256)
+        self.assertEqual(len(set(test_vectors)), 256)
 
-        for vector in vectors:
+        for test_vector in test_vectors:
 
             # Each value is hex-encoded, and has a tab-separated name
             # (in, key, hash) prepended to it that must be separated.
-            message, key, digest = [bytes.fromhex(i.split('\t')[1]) for i in vector.split('\n')]
+            message, key, digest = [bytes.fromhex(line.split('\t')[1]) for line in test_vector.split('\n')]
 
             purp_digest = blake2b(message, key, digest_size=BLAKE2_DIGEST_LENGTH_MAX)
 
@@ -128,7 +128,7 @@ class TestArgon2KDF(unittest.TestCase):
         # Test
         number_of_tests = 256
 
-        for i in range(1, number_of_tests+1):
+        for _ in range(number_of_tests):
 
             password = os.urandom(16).hex()
             salt     = os.urandom(8).hex()
