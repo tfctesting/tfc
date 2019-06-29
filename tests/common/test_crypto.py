@@ -49,8 +49,8 @@ class TestBLAKE2b(unittest.TestCase):
     it's hard to know whether the algorithm is implemented correctly.
 
     Known answer test (KAT) (aka test vector) contains known correct
-    values of output under some known input. With each successful KAT it
-    becomes more and more certain that the implementation of the
+    output value under some known input value. With each successful KAT
+    it becomes more and more certain that the implementation of the
     function is correct (on the other hand, any failing test indicates a
     problem within the implementation).
 
