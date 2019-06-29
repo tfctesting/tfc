@@ -63,7 +63,7 @@ def blake2b(message:     bytes,                        # Message to hash
 
     BLAKE2 is the successor of SHA3-finalist BLAKE*, designed by
     Jean-Philippe Aumasson, Samuel Neves, Zooko Wilcox-O'Hearn and
-    Christian Winnerlein. The hash function is based on the ChaCha20
+    Christian Winnerlein. The hash function is based on the ChaCha
     stream cipher, designed by djb.
 
     * BLAKE was designed by Jean-Philippe Aumasson, Luca Henzen,
@@ -75,18 +75,14 @@ def blake2b(message:     bytes,                        # Message to hash
 
     The reasons for using BLAKE2b in TFC include
 
-        o BLAKE received* more in-depth cryptanalysis than Keccak (SHA3):
+        o BLAKE received more in-depth cryptanalysis[1] than Keccak (SHA3):
 
           "Keccak received a significant amount of cryptanalysis,
            although not quite the depth of analysis applied to BLAKE,
-           Grøstl, or Skein."
-           (https://nvlpubs.nist.gov/nistpubs/ir/2012/NIST.IR.7896.pdf  # p. 13)
+           Grøstl, or Skein."[2]
 
-          * https://blake2.net/#cr
-
-        o BLAKE shares design elements with SHA-2 that has 16 years of
-          cryptanalysis behind it.
-          (https://en.wikipedia.org/wiki/SHA-2#Cryptanalysis_and_validation)
+        o BLAKE shares design elements with SHA-2 that has 11 years of
+          cryptanalysis behind it[3].
 
         o 128-bit collision/preimage/second-preimage resistance against
           Grover's algorithm running on a quantum Turing machine.
@@ -96,18 +92,28 @@ def blake2b(message:     bytes,                        # Message to hash
         o Compared to SHA3-256, the algorithm runs faster on CPUs which
           means better hash ratchet performance.
 
+          "The ARX-based algorithms, BLAKE and Skein, perform extremely
+           well in software."[2]
+
         o Compared to SHA3-256, the algorithm runs slower on ASICs which
           means attacks by high-budget adversaries are slower.
+
+          "Keccak has a clear advantage in throughput/area performance
+           in hardware implementations."[2]
 
     Note that while the default length of BLAKE2b (the implementation
     optimized for AMD64 systems) digest is 512 bits, the digest size is
     truncated to 256 bits for the use in TFC.
 
-    The correctness of the BLAKE2b implementation* is tested by TFC unit
-    tests. The testing is done in limited scope by using an official KAT.
+    The correctness of the BLAKE2b implementation[4] is tested by TFC
+    unit tests. The testing is done with the complete suite of BLAKE2b
+    known answer tests (KATs).
 
-    * https://github.com/python/cpython/tree/3.7/Modules/_blake2
-      https://github.com/python/cpython/blob/3.7/Lib/hashlib.py
+     [1] https://blake2.net/#cr
+     [2] https://nvlpubs.nist.gov/nistpubs/ir/2012/NIST.IR.7896.pdf  # p. 13
+     [3] https://en.wikipedia.org/wiki/SHA-2#Cryptanalysis_and_validation
+     [4] https://github.com/python/cpython/tree/3.7/Modules/_blake2
+         https://github.com/python/cpython/blob/3.7/Lib/hashlib.py
     """
     return hashlib.blake2b(message, digest_size=digest_size, key=key, salt=salt, person=person).digest()
 
