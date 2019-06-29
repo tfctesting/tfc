@@ -82,7 +82,7 @@ def blake2b(message:     bytes,                        # Message to hash
            Grøstl, or Skein."[2]
 
         o BLAKE shares design elements with SHA-2 that has 11 years of
-          cryptanalysis behind it[3].
+          cryptanalysis[3] behind it.
 
         o 128-bit collision/preimage/second-preimage resistance against
           Grover's algorithm running on a quantum Turing machine.
