@@ -21,6 +21,7 @@ along with TFC. If not, see <https://www.gnu.org/licenses/>.
 
 import multiprocessing
 import os
+import random
 import subprocess
 import unittest
 
@@ -97,41 +98,70 @@ class TestBLAKE2b(unittest.TestCase):
 
 
 class TestArgon2KDF(unittest.TestCase):
+    """\
+    Similar to normal cryptographic hash functions, a password hashing
+    function also generates unpredictable values (secret keys). The IETF
+    test vectors[1] require parameters that the argon2_cffi library does
+    not provide.
+        To generate the test vectors, this application downloads and
+    compiles the official command-line utility[2]. It then generates
+    random parameters, and compares the output of the argon2_cffi
+    function to the output of the command-line utility.
 
-    def test_argon2d_kat(self):
-        """Run sanity check with an official Argon2 KAT:
+    [1] https://tools.ietf.org/html/draft-irtf-cfrg-argon2-03#section-6.1
+    [2] https://github.com/P-H-C/phc-winner-argon2#command-line-utility
+    """
 
-        The official Argon2 implementation is at
-           https://github.com/P-H-C/phc-winner-argon2#command-line-utility
+    def setUp(self) -> None:
+        self.unittest_dir = cd_unit_test()
 
-        To reproduce the test vector, run
-            $ wget https://github.com/P-H-C/phc-winner-argon2/archive/master.zip
-            $ unzip master.zip
-            $ cd phc-winner-argon2-master/
-            $ make
-            $ echo -n "password" | ./argon2 somesalt -t 1 -m 16 -p 4 -l 32 -d
+    def tearDown(self) -> None:
+        cleanup(self.unittest_dir)
 
-        Expected output
-            Type:          Argon2d
-            Iterations:    1
-            Memory:        65536 KiB
-            Parallelism:   4
-            Hash:          7e12cb75695277c0ab974e4ae943b87da08e36dd065aca8de3ca009125ae8953
-            Encoded:       $argon2d$v=19$m=65536,t=1,p=4$c29tZXNhbHQ$fhLLdWlSd8Crl05K6UO4faCONt0GWsqN48oAkSWuiVM
-            0.231 seconds
-            Verification ok
-        """
-        key = argon2.low_level.hash_secret_raw(secret=b'password',
-                                               salt=b'somesalt',
-                                               time_cost=1,
-                                               memory_cost=65536,
-                                               parallelism=4,
-                                               hash_len=32,
-                                               type=argon2.Type.D)
+    def test_argon2_using_official_command_line_utility(self):
+        # Setup
+        subprocess.Popen(f'wget https://github.com/P-H-C/phc-winner-argon2/archive/master.zip', shell=True).wait()
+        subprocess.Popen(f'unzip master.zip',                                                   shell=True).wait()
+        os.chdir('phc-winner-argon2-master/')
+        subprocess.Popen(f'make', shell=True).wait()
 
-        self.assertEqual(key.hex(), '7e12cb75695277c0ab974e4ae943b87da08e36dd065aca8de3ca009125ae8953')
+        # Test
+        number_of_tests = 256
 
-    def test_argon2d_kdf(self):
+        for i in range(1, number_of_tests+1):
+
+            password = os.urandom(16).hex()
+            salt     = os.urandom(8).hex()
+
+            parallelism = random.SystemRandom().randint(1, multiprocessing.cpu_count())
+            time_cost   = random.SystemRandom().randint(1, 3)
+            memory_cost = random.SystemRandom().randint(7, 15)
+
+            output = subprocess.check_output(
+                f'echo -n "{password}" | ./argon2 {salt} '
+                f'-t {time_cost} '
+                f'-m {memory_cost} '
+                f'-p {parallelism} '
+                f'-l {SYMMETRIC_KEY_LENGTH} '
+                f'-d',
+                shell=True).decode()  # type: str
+
+            key_test_vector = output.split('\n')[4].split('\t')[-1]
+
+            key = argon2.low_level.hash_secret_raw(secret=password.encode(),
+                                                   salt=salt.encode(),
+                                                   time_cost=time_cost,
+                                                   memory_cost=2**memory_cost,
+                                                   parallelism=parallelism,
+                                                   hash_len=SYMMETRIC_KEY_LENGTH,
+                                                   type=argon2.Type.D).hex()
+
+            self.assertEqual(key, key_test_vector)
+
+        # Teardown
+        os.chdir('..')
+
+    def test_argon2d_kdf_key_type_and_length(self):
         key = argon2_kdf('password', ARGON2_SALT_LENGTH*b'a', time_cost=1, memory_cost=100)
         self.assertIsInstance(key, bytes)
         self.assertEqual(len(key), SYMMETRIC_KEY_LENGTH)
