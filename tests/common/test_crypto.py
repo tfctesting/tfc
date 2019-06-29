@@ -79,16 +79,21 @@ class TestBLAKE2b(unittest.TestCase):
 
         with open(self.kat_file_name) as f:
             file_data = f.read()
-            trimmed   = file_data[2:-1]        # Remove empty lines from the start and end of the file
-            vectors   = trimmed.split('\n\n')  # Each tuple of test vectors is separated with an empty line
 
-            self.assertEqual(len(set(vectors)), 256)
+        trimmed = file_data[2:-1]        # Remove empty lines from the start and the end of the file
+        vectors = trimmed.split('\n\n')  # Each tuple of test vectors is separated with an empty line
 
-            for vector in vectors:
-                message, key, digest = [bytes.fromhex(i.split('\t')[1]) for i in vector.split('\n')]
-                purp_digest          = blake2b(message, key, digest_size=BLAKE2_DIGEST_LENGTH_MAX)
+        self.assertEqual(len(set(vectors)), 256)
 
-                self.assertEqual(purp_digest, digest)
+        for vector in vectors:
+
+            # Each value is hex-encoded, and has a tab-separated name
+            # (in, key, hash) prepended to it that must be separated.
+            message, key, digest = [bytes.fromhex(i.split('\t')[1]) for i in vector.split('\n')]
+
+            purp_digest = blake2b(message, key, digest_size=BLAKE2_DIGEST_LENGTH_MAX)
+
+            self.assertEqual(purp_digest, digest)
 
 
 class TestArgon2KDF(unittest.TestCase):
