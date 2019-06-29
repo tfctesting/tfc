@@ -35,7 +35,8 @@ from cryptography.hazmat.primitives.asymmetric.x448 import X448PrivateKey
 
 from src.common.crypto  import argon2_kdf, auth_and_decrypt, blake2b, byte_padding, check_kernel_entropy
 from src.common.crypto  import check_kernel_version, csprng, encrypt_and_sign, rm_padding_bytes, X448
-from src.common.statics import *
+from src.common.statics import ARGON2_SALT_LENGTH, BLAKE2_DIGEST_LENGTH_MAX, ENTROPY_THRESHOLD, PADDING_LENGTH
+from src.common.statics import SYMMETRIC_KEY_LENGTH, TFC_PUBLIC_KEY_LENGTH, XCHACHA20_NONCE_LENGTH
 
 
 class TestBLAKE2b(unittest.TestCase):
