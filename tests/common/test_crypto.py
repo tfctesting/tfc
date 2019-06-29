@@ -121,10 +121,10 @@ class TestArgon2KDF(unittest.TestCase):
 
     def test_argon2_using_official_command_line_utility(self):
         # Setup
-        subprocess.Popen(f'wget https://github.com/P-H-C/phc-winner-argon2/archive/master.zip', shell=True).wait()
-        subprocess.Popen(f'unzip master.zip',                                                   shell=True).wait()
+        subprocess.Popen('wget https://github.com/P-H-C/phc-winner-argon2/archive/master.zip', shell=True).wait()
+        subprocess.Popen('unzip master.zip',                                                   shell=True).wait()
         os.chdir('phc-winner-argon2-master/')
-        subprocess.Popen(f'make', shell=True).wait()
+        subprocess.Popen('make', shell=True).wait()
 
         # Test
         number_of_tests = 256
