@@ -57,12 +57,14 @@ class TestBLAKE2b(unittest.TestCase):
         message = key = bytes.fromhex(
             '000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f'
             '202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f')
+
         digest = bytes.fromhex(
             '65676d800617972fbd87e4b9514e1c67402b7a331096d3bfac22f1abb95374ab'
             'c942f16e9ab0ead33b87c91968a6e509e119ff07787b3ef483e1dcdccf6e3022')
 
-        self.assertEqual(blake2b(message, key, digest_size=len(digest)),
-                         digest)
+        purp_digest = blake2b(message, key, digest_size=len(digest))
+
+        self.assertEqual(purp_digest, digest)
 
 
 class TestArgon2KDF(unittest.TestCase):
