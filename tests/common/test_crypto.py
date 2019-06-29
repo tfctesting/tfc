@@ -21,6 +21,7 @@ along with TFC. If not, see <https://www.gnu.org/licenses/>.
 
 import multiprocessing
 import os
+import subprocess
 import unittest
 
 from unittest      import mock
@@ -38,33 +39,56 @@ from src.common.crypto  import check_kernel_version, csprng, encrypt_and_sign, r
 from src.common.statics import ARGON2_SALT_LENGTH, BLAKE2_DIGEST_LENGTH_MAX, ENTROPY_THRESHOLD, PADDING_LENGTH
 from src.common.statics import SYMMETRIC_KEY_LENGTH, TFC_PUBLIC_KEY_LENGTH, XCHACHA20_NONCE_LENGTH
 
+from tests.utils import cd_unit_test, cleanup
+
 
 class TestBLAKE2b(unittest.TestCase):
+    """\
+    Because hash values of secure hash functions are unpredictable
+    (i.e. indistinguishable from output of a truly random function),
+    it's hard to know whether the algorithm is implemented correctly.
 
-    def test_blake2b_kat(self):
-        """Run sanity check with an official BLAKE2b KAT:
-            https://github.com/BLAKE2/BLAKE2/blob/master/testvectors/blake2b-kat.txt#L259
+    Known answer test (KAT) (aka test vector) contains known correct
+    values of output under some known input. With each successful KAT it
+    becomes more and more certain that the implementation of the
+    function is correct (on the other hand, any failing test indicates a
+    problem within the implementation).
 
-            in:   000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f
-                  202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f
+    TFC does it's best to verify the BLAKE2b implementation is correct
+    by using the full suite of BLAKE2b KATs available in the official
+    BLAKE2 GitHub repository:
 
-            key:  000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f
-                  202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f
+       https://github.com/BLAKE2/BLAKE2/blob/master/testvectors/blake2b-kat.txt
+    """
 
-            hash: 65676d800617972fbd87e4b9514e1c67402b7a331096d3bfac22f1abb95374ab
-                  c942f16e9ab0ead33b87c91968a6e509e119ff07787b3ef483e1dcdccf6e3022
-        """
-        message = key = bytes.fromhex(
-            '000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f'
-            '202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f')
+    def setUp(self) -> None:
+        self.unittest_dir  = cd_unit_test()
+        self.kat_file_name = 'blake2b-kat.txt'
+        self.kat_url       = 'https://raw.githubusercontent.com/BLAKE2/BLAKE2/master/testvectors/blake2b-kat.txt'
 
-        digest = bytes.fromhex(
-            '65676d800617972fbd87e4b9514e1c67402b7a331096d3bfac22f1abb95374ab'
-            'c942f16e9ab0ead33b87c91968a6e509e119ff07787b3ef483e1dcdccf6e3022')
+        subprocess.Popen(f"wget {self.kat_url} -O {self.kat_file_name}", shell=True).wait()
 
-        purp_digest = blake2b(message, key, digest_size=len(digest))
+        # Verify downloaded data is the same as when creating this test.
+        self.assertEqual(blake2b(open(self.kat_file_name, 'rb').read()).hex(),
+                         'ea28264d8101799846e61d1cbb43ff937cb5860af3028bb87dbf9861283ec500')
 
-        self.assertEqual(purp_digest, digest)
+    def tearDown(self) -> None:
+        cleanup(self.unittest_dir)
+
+    def test_blake2b_known_answer_tests(self):
+
+        with open(self.kat_file_name) as f:
+            file_data = f.read()
+            trimmed   = file_data[2:-1]        # Remove empty lines from the start and end of the file
+            vectors   = trimmed.split('\n\n')  # Each tuple of test vectors is separated with an empty line
+
+            self.assertEqual(len(set(vectors)), 256)
+
+            for vector in vectors:
+                message, key, digest = [bytes.fromhex(i.split('\t')[1]) for i in vector.split('\n')]
+                purp_digest          = blake2b(message, key, digest_size=BLAKE2_DIGEST_LENGTH_MAX)
+
+                self.assertEqual(purp_digest, digest)
 
 
 class TestArgon2KDF(unittest.TestCase):
