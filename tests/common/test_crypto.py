@@ -66,7 +66,7 @@ class TestBLAKE2b(unittest.TestCase):
         self.kat_file_name = 'blake2b-kat.txt'
         self.kat_url       = 'https://raw.githubusercontent.com/BLAKE2/BLAKE2/master/testvectors/blake2b-kat.txt'
 
-        subprocess.Popen(f"wget {self.kat_url} -O {self.kat_file_name}", shell=True).wait()
+        subprocess.Popen(f'wget {self.kat_url} -O {self.kat_file_name}', shell=True).wait()
 
         # Verify downloaded data is the same as when creating this test.
         self.assertEqual(blake2b(open(self.kat_file_name, 'rb').read()).hex(),
