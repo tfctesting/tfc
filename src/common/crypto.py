@@ -158,7 +158,9 @@ def argon2_kdf(password:    str,                           # Password to derive 
     is at rest. In such situation, Argon2d is the most secure option.
 
     The correctness of the Argon2d implementation* is tested by TFC unit
-    tests. The testing is done in limited scope by using an official KAT.
+    tests. The testing is done by comparing the output with the output
+    of the reference command-line implementation under randomized
+    parameters.
 
     * https://github.com/P-H-C/phc-winner-argon2
       https://github.com/hynek/argon2_cffi
