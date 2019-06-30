@@ -235,14 +235,14 @@ class TestX448(unittest.TestCase):
         party from being able to force shared key to preselected value.
         This also applies to X448.
             While it's not clear how this type of attack could be
-        leveraged in the context of secure messaging, there is
+        leveraged in the context of secure messaging where both parties
+        strive for confidentiality, and where easier ways to break the
+        confidentiality of the conversation exist, there is
           1) no harm in doing the check and
           2) no need to trouble ourselves with whether it's needed as
              the pyca/cryptography implementation already checks for
-             zero shared keys.
-
-        In this test we merely check that the pyca/cryptography library
-        validates shared secrets.
+             zero shared keys. This test merely verifies that the check
+             takes place.
 
         [1] https://research.kudelskisecurity.com/2017/04/25/should-ecdh-keys-be-validated/
         [2] https://vnhacker.blogspot.com/2015/09/why-not-validating-curve25519-public.html
