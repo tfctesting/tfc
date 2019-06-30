@@ -90,13 +90,13 @@ def blake2b(message:     bytes,                        # Message to hash
         o The algorithm is bundled in Python3.7's hashlib.
 
         o Compared to SHA3-256, the algorithm runs faster on CPUs which
-          means better hash ratchet performance.
+          means better hash ratchet performance:
 
           "The ARX-based algorithms, BLAKE and Skein, perform extremely
            well in software."[2]
 
         o Compared to SHA3-256, the algorithm runs slower on ASICs which
-          means attacks by high-budget adversaries are slower.
+          means attacks by high-budget adversaries are slower:
 
           "Keccak has a clear advantage in throughput/area performance
            in hardware implementations."[2]
