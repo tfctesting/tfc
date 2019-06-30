@@ -62,7 +62,7 @@ def blake2b(message:     bytes,                        # Message to hash
     """Generate BLAKE2b digest (i.e. cryptographic hash) of a message.
 
     BLAKE2 is the successor of SHA3-finalist BLAKE*, designed by
-    Jean-Philippe Aumasson, Samuel Neves, Zooko Wilcox-O'Hearn and
+    Jean-Philippe Aumasson, Samuel Neves, Zooko Wilcox-O'Hearn, and
     Christian Winnerlein. The hash function is based on the ChaCha
     stream cipher, designed by djb.
 
