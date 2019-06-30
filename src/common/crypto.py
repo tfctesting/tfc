@@ -215,7 +215,7 @@ class X448(object):
         o NIST has announced X448 will be included in the SP 800-186.[2]
 
         o Its public keys do not require validation as long as the
-          public key is not zero.
+          resulting shared secret is not zero.
 
           "[X448] is actually two curves, where any patterns of bits
            will be interpreted as a point on one of the curves or on the
@@ -250,14 +250,12 @@ class X448(object):
     def shared_key(private_key: 'X448PrivateKey', public_key: bytes) -> bytes:
         """Derive the X448 shared key.
 
-        The validation of the shared secret is handled by the
-        pyca/cryptography library.
-
-        Because the raw bits of the X448 shared secret might not be
-        uniformly distributed in the keyspace (i.e. bits might have bias
-        towards 0 or 1), the raw shared secret is passed through a
-        computational extractor (BLAKE2b CSPRF) to ensure uniformly
-        random shared key.
+        The pyca/cryptography library verifies that the shared secret is
+        not zero. However, because the raw bits of the X448 shared
+        secret might not be uniformly distributed in the keyspace (i.e.
+        bits might have bias towards 0 or 1), the raw shared secret is
+        passed through a computational extractor (BLAKE2b CSPRF) to
+        ensure uniformly random shared key.
         """
         if len(public_key) != TFC_PUBLIC_KEY_LENGTH:
             raise CriticalError("Invalid public key length.")
