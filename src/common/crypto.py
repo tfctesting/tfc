@@ -186,25 +186,52 @@ class X448(object):
 
     The reasons for using X448 in TFC include
 
-        o It meets the criterion for a safe curve.[1]
+        o It meets the criterion for a SafeCurve[1]:
 
-        o NIST has announced X448 will be included in the SP 800-186.[2]
+          ECDLP security
+
+            - The curve-generation process has been completely explained.
+
+            - Safety against additive and multiplicative transfer
+
+            - complex-multiplication field discriminant is 2^447.5,
+              which is much larger than the minimum 2^100.
+
+          ECC security
+
+            - Supports Montgomery ladder that allows constant-time
+              single-coordinate single-scalar multiplication that
+              protects against side channel attacks, as well as
+              complete, constant-time multi-scalar multiplication.
+
+            - 221.8-bit security against combined attack (small-subgroup
+              attack together with invalid-curve attack).
+
+            - Points on Curve448 (i.e. public keys) are
+              indistinguishable from uniform random strings.
 
         o It provides conservative 224 bits of symmetric security.
 
-        o It is immune against invalid curve attacks: Its public keys do
-          not require validation as long as the public key is not zero.
+        o NIST has announced X448 will be included in the SP 800-186.[2]
+
+        o Its public keys do not require validation as long as the
+          public key is not zero.
+
+          "[X448] is actually two curves, where any patterns of bits
+           will be interpreted as a point on one of the curves or on the
+           other."[3]
 
         o Its public keys are reasonably short (84 Base58 chars) to be
           manually typed from Networked Computer to Source Computer.
 
-    The correctness of the X448 implementation[3] is tested by TFC unit
+    The correctness of the X448 implementation[4] is tested by TFC unit
     tests. The testing is done in limited scope by using official test
     vectors.
 
      [1] https://safecurves.cr.yp.to/
      [2] https://csrc.nist.gov/News/2017/Transition-Plans-for-Key-Establishment-Schemes
-     [3] https://github.com/openssl/openssl/tree/OpenSSL_1_1_1-stable/crypto/ec/curve448
+     [3] https://crypto.stackexchange.com/a/44348
+     [4] https://github.com/openssl/openssl/tree/OpenSSL_1_1_1-stable/crypto/ec/curve448
          https://github.com/pyca/cryptography/blob/master/src/cryptography/hazmat/primitives/asymmetric/x448.py
     """
     @staticmethod
