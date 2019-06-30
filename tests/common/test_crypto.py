@@ -47,7 +47,7 @@ from tests.utils import cd_unit_test, cleanup
 class TestBLAKE2b(unittest.TestCase):
     """\
     Because hash values of secure hash functions are unpredictable
-    (i.e. indistinguishable from output of a truly random function),
+    (i.e. indistinguishable from the output of a truly random function),
     it's hard to know whether the algorithm is implemented correctly.
 
     Known answer test (KAT) (aka test vector) contains known correct
