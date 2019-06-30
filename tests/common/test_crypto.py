@@ -190,6 +190,7 @@ class TestArgon2Wrapper(unittest.TestCase):
         self.assertIsInstance(key, bytes)
         self.assertEqual(len(key), SYMMETRIC_KEY_LENGTH)
 
+
 class TestX448(unittest.TestCase):
     """\
     The X448 shared secret is also an unpredictable value. To test the
