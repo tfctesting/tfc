@@ -157,13 +157,13 @@ def argon2_kdf(password:    str,                           # Password to derive 
     physically compromised data storage devices where the encrypted data
     is at rest. In such situation, Argon2d is the most secure option.
 
-    The correctness of the Argon2d implementation* is tested by TFC unit
+    The correctness of the Argon2d implementation[1] is tested by TFC unit
     tests. The testing is done by comparing the output with the output
     of the reference command-line implementation under randomized
     parameters.
 
-    * https://github.com/P-H-C/phc-winner-argon2
-      https://github.com/hynek/argon2_cffi
+     [1] https://github.com/P-H-C/phc-winner-argon2
+         https://github.com/hynek/argon2_cffi
     """
     if len(salt) != ARGON2_SALT_LENGTH:
         raise CriticalError("Invalid salt length.")
@@ -186,11 +186,9 @@ class X448(object):
 
     The reasons for using X448 in TFC include
 
-        o It meets the criterion for a safe curve.
-          (https://safecurves.cr.yp.to/)
+        o It meets the criterion for a safe curve.[1]
 
-        o NIST has announced X448 will be included in the SP 800-186.
-          (https://csrc.nist.gov/News/2017/Transition-Plans-for-Key-Establishment-Schemes)
+        o NIST has announced X448 will be included in the SP 800-186.[2]
 
         o It provides conservative 224 bits of symmetric security.
 
@@ -200,12 +198,14 @@ class X448(object):
         o Its public keys are reasonably short (84 Base58 chars) to be
           manually typed from Networked Computer to Source Computer.
 
-    The correctness of the X448 implementation* is tested by TFC unit
+    The correctness of the X448 implementation[3] is tested by TFC unit
     tests. The testing is done in limited scope by using official test
     vectors.
 
-    * https://github.com/openssl/openssl/tree/OpenSSL_1_1_1-stable/crypto/ec/curve448
-      https://github.com/pyca/cryptography/blob/master/src/cryptography/hazmat/primitives/asymmetric/x448.py
+     [1] https://safecurves.cr.yp.to/
+     [2] https://csrc.nist.gov/News/2017/Transition-Plans-for-Key-Establishment-Schemes
+     [3] https://github.com/openssl/openssl/tree/OpenSSL_1_1_1-stable/crypto/ec/curve448
+         https://github.com/pyca/cryptography/blob/master/src/cryptography/hazmat/primitives/asymmetric/x448.py
     """
     @staticmethod
     def generate_private_key() -> 'X448PrivateKey':
@@ -229,8 +229,9 @@ class X448(object):
 
         Because the raw bits of the X448 shared secret might not be
         uniformly distributed in the keyspace (i.e. bits might have bias
-        towards 0 or 1), the raw shared secret is passed through BLAKE2b
-        CSPRF to ensure uniformly random shared key.
+        towards 0 or 1), the raw shared secret is passed through a
+        computational extractor (BLAKE2b CSPRF) to ensure uniformly
+        random shared key.
         """
         if len(public_key) != TFC_PUBLIC_KEY_LENGTH:
             raise CriticalError("Invalid public key length.")

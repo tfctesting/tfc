@@ -174,8 +174,11 @@ class TestArgon2KDF(unittest.TestCase):
 
 
 class TestX448(unittest.TestCase):
-    """
-    X448 test vectors
+    """\
+    The X448 shared secret is also an unpredictable value. To test the
+    correctness of the OpenSSL implementation and TFC's wrapper, this
+    test uses the official X448 test vectors:
+
         https://tools.ietf.org/html/rfc7748#section-6.2
     """
     sk_alice = bytes.fromhex(
@@ -198,20 +201,20 @@ class TestX448(unittest.TestCase):
         '07fff4181ac6cc95ec1c16a94a0f74d12da232ce40a77552281d282b'
         'b60c0b56fd2464c335543936521c24403085d59a449a5037514a879d')
 
-    def test_private_key_generation(self):
+    def test_generate_private_key_returns_private_key_object(self):
         self.assertIsInstance(X448.generate_private_key(), X448PrivateKey)
 
-    def test_incorrect_public_key_length_raises_critical_error(self):
-        sk = X448PrivateKey.generate()
-        for key in [key_len * b'a' for key_len in (1, TFC_PUBLIC_KEY_LENGTH-1, TFC_PUBLIC_KEY_LENGTH+1, 1000)]:
+    def test_deriving_shared_key_with_an_incorrect_public_key_length_raises_critical_error(self):
+        private_key = X448PrivateKey.generate()
+        for public_key in [key_len * b'a' for key_len in (1, TFC_PUBLIC_KEY_LENGTH-1, TFC_PUBLIC_KEY_LENGTH+1, 1000)]:
             with self.assertRaises(SystemExit):
-                X448.shared_key(sk, key)
+                X448.shared_key(private_key, public_key)
 
-    def test_zero_public_key_raises_critical_error(self):
+    def test_deriving_shared_key_with_a_zero_public_key_raises_critical_error(self):
         with self.assertRaises(SystemExit):
             X448.shared_key(X448PrivateKey.generate(), bytes(TFC_PUBLIC_KEY_LENGTH))
 
-    def test_with_test_vectors(self):
+    def test_x448_with_test_vectors(self):
         sk_alice_ = X448PrivateKey.from_private_bytes(TestX448.sk_alice)
         sk_bob_   = X448PrivateKey.from_private_bytes(TestX448.sk_bob)
 
