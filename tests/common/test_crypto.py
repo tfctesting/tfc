@@ -140,7 +140,7 @@ class TestArgon2KDF(unittest.TestCase):
         os.chdir('..')
         cleanup(self.unittest_dir)
 
-    def test_argon2_using_the_official_command_line_utility(self):
+    def test_argon2_cffi_using_the_official_command_line_utility(self):
 
         for _ in range(self.number_of_tests):
 
