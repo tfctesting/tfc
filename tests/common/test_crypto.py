@@ -214,7 +214,7 @@ class TestX448(unittest.TestCase):
         with self.assertRaises(SystemExit):
             X448.shared_key(X448PrivateKey.generate(), bytes(TFC_PUBLIC_KEY_LENGTH))
 
-    def test_with_test_vectors(self):
+    def test_x448_with_test_vectors(self):
         sk_alice_ = X448PrivateKey.from_private_bytes(TestX448.sk_alice)
         sk_bob_   = X448PrivateKey.from_private_bytes(TestX448.sk_bob)
 
