@@ -177,11 +177,8 @@ class TestArgon2KDF(unittest.TestCase):
             self.assertEqual(purported_key, key_test_vector)
 
 
-class TestTFCWrapperForArgon2(unittest.TestCase):
-    """\
-    In this test we check Argon2 wrapper-function's input validation and
-    that the the output is correct.
-    """
+class TestArgon2Wrapper(unittest.TestCase):
+
     def test_invalid_salt_length_raises_critical_error(self):
         for salt_length in [v for v in (0, ARGON2_SALT_LENGTH-1, ARGON2_SALT_LENGTH+1, 1000)]:
             with self.assertRaises(SystemExit):
