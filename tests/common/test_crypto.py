@@ -56,7 +56,7 @@ class TestBLAKE2b(unittest.TestCase):
     function is correct (on the other hand, any failing test indicates a
     problem within the implementation).
 
-    TFC does it's best to verify the BLAKE2b implementation is correct
+    TFC does its best to verify the BLAKE2b implementation is correct
     by using the full suite of BLAKE2b KATs available in the official
     BLAKE2 GitHub repository:
 
