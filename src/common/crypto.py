@@ -192,20 +192,20 @@ class X448(object):
 
             - The curve-generation process has been completely explained.
 
-            - Safety against additive and multiplicative transfer
+            - Safety against additive and multiplicative transfer.
 
-            - complex-multiplication field discriminant is 2^447.5,
-              which is much larger than the minimum 2^100.
+            - The complex-multiplication field discriminant is 2^447.5,
+              which is much larger than the minimum (2^100).
 
           ECC security
 
-            - Supports Montgomery ladder that allows constant-time
-              single-coordinate single-scalar multiplication that
-              protects against side channel attacks, as well as
-              complete, constant-time multi-scalar multiplication.
+            - Use of Montgomery ladder that protects from side channel
+              attacks by doing constant-time single-coordinate
+              single-scalar multiplication, as well as complete,
+              constant-time multi-scalar multiplication.
 
-            - 221.8-bit security against combined attack (small-subgroup
-              attack together with invalid-curve attack).
+            - 221.8-bit security against twist attacks (small-subgroup
+              attack combined with invalid-curve attack).
 
             - Points on Curve448 (i.e. public keys) are
               indistinguishable from uniform random strings.
@@ -250,9 +250,8 @@ class X448(object):
     def shared_key(private_key: 'X448PrivateKey', public_key: bytes) -> bytes:
         """Derive the X448 shared key.
 
-        Since the shared secret is zero if contact's public key is zero,
-        this function checks the public key is a valid non-zero
-        bytestring.
+        The validation of the shared secret is handled by the
+        pyca/cryptography library.
 
         Because the raw bits of the X448 shared secret might not be
         uniformly distributed in the keyspace (i.e. bits might have bias
@@ -263,10 +262,11 @@ class X448(object):
         if len(public_key) != TFC_PUBLIC_KEY_LENGTH:
             raise CriticalError("Invalid public key length.")
 
-        if public_key == bytes(TFC_PUBLIC_KEY_LENGTH):
-            raise CriticalError("Received zero public key.")
+        try:
+            shared_secret = private_key.exchange(X448PublicKey.from_public_bytes(public_key))
+        except ValueError as e:
+            raise CriticalError(e)
 
-        shared_secret = private_key.exchange(X448PublicKey.from_public_bytes(public_key))
         return blake2b(shared_secret, digest_size=SYMMETRIC_KEY_LENGTH)
 
 

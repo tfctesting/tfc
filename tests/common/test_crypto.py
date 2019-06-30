@@ -19,6 +19,7 @@ You should have received a copy of the GNU General Public License
 along with TFC. If not, see <https://www.gnu.org/licenses/>.
 """
 
+import hashlib
 import multiprocessing
 import os
 import random
@@ -65,19 +66,21 @@ class TestBLAKE2b(unittest.TestCase):
     def setUp(self) -> None:
         self.unittest_dir  = cd_unit_test()
         self.kat_file_name = 'blake2b-kat.txt'
-        self.kat_url       = 'https://raw.githubusercontent.com/BLAKE2/BLAKE2/master/testvectors/blake2b-kat.txt'
+        self.kat_file_url  = 'https://raw.githubusercontent.com/BLAKE2/BLAKE2/master/testvectors/blake2b-kat.txt'
 
-        subprocess.Popen(f'wget {self.kat_url} -O {self.kat_file_name}', shell=True).wait()
+        # Download the test vector file.
+        subprocess.Popen(f'wget {self.kat_file_url} -O {self.kat_file_name}', shell=True).wait()
 
-        # Verify downloaded data is the same as when creating this test.
-        self.assertEqual(blake2b(open(self.kat_file_name, 'rb').read()).hex(),
-                         'ea28264d8101799846e61d1cbb43ff937cb5860af3028bb87dbf9861283ec500')
+        # Verify the SHA256 hash of the file that contains the KATs.
+        file_data = open(self.kat_file_name, 'rb').read()
+        self.assertEqual(hashlib.sha256(file_data).hexdigest(),
+                         '82fcb3cabe8ff6e1452849e3b2a26a3631f1e2b51beb62ffb537892d2b3e364f')
 
     def tearDown(self) -> None:
         cleanup(self.unittest_dir)
 
     def test_blake2b_known_answer_tests(self):
-
+        # Setup
         with open(self.kat_file_name) as f:
             file_data = f.read()
 
@@ -86,6 +89,7 @@ class TestBLAKE2b(unittest.TestCase):
 
         self.assertEqual(len(set(test_vectors)), 256)
 
+        # Test
         for test_vector in test_vectors:
 
             # Each value is hex-encoded, and has a tab-separated name
@@ -116,28 +120,39 @@ class TestArgon2KDF(unittest.TestCase):
     def setUp(self) -> None:
         self.unittest_dir = cd_unit_test()
 
-    def tearDown(self) -> None:
-        cleanup(self.unittest_dir)
+        self.file_url        = 'https://github.com/P-H-C/phc-winner-argon2/archive/master.zip'
+        self.file_name       = 'argon2_master.zip'
+        self.number_of_tests = 256
 
-    def test_argon2_using_official_command_line_utility(self):
-        # Setup
-        subprocess.Popen('wget https://github.com/P-H-C/phc-winner-argon2/archive/master.zip', shell=True).wait()
-        subprocess.Popen('unzip master.zip',                                                   shell=True).wait()
+        # Download the Argon2 command-line utility.
+        subprocess.Popen(f'wget {self.file_url} -O {self.file_name}', shell=True).wait()
+
+        # Verify the SHA256 hash of the zip-file containing the command-line utility.
+        file_data = open(self.file_name, 'rb').read()
+        self.assertEqual(hashlib.sha256(file_data).hexdigest(),
+                         '2957db15d320b0970a34be9a6ef984b11b2296b1b1f8b051a47e35035c1bc7cf')
+
+        # Unzip and compile the command-line utility.
+        subprocess.Popen(f'unzip {self.file_name}', shell=True).wait()
         os.chdir('phc-winner-argon2-master/')
         subprocess.Popen('make', shell=True).wait()
 
-        # Test
-        number_of_tests = 256
+    def tearDown(self) -> None:
+        os.chdir('..')
+        cleanup(self.unittest_dir)
 
-        for _ in range(number_of_tests):
+    def test_argon2_using_the_official_command_line_utility(self):
 
-            password = os.urandom(16).hex()
-            salt     = os.urandom(8).hex()
+        for _ in range(self.number_of_tests):
 
+            # Generate random parameters
+            password    = os.urandom(16).hex()
+            salt        = os.urandom(8).hex()
             parallelism = random.SystemRandom().randint(1, multiprocessing.cpu_count())
             time_cost   = random.SystemRandom().randint(1, 3)
             memory_cost = random.SystemRandom().randint(7, 15)
 
+            # Generate a key using the command-line utility
             output = subprocess.check_output(
                 f'echo -n "{password}" | ./argon2 {salt} '
                 f'-t {time_cost} '
@@ -149,29 +164,32 @@ class TestArgon2KDF(unittest.TestCase):
 
             key_test_vector = output.split('\n')[4].split('\t')[-1]
 
-            key = argon2.low_level.hash_secret_raw(secret=password.encode(),
-                                                   salt=salt.encode(),
-                                                   time_cost=time_cost,
-                                                   memory_cost=2**memory_cost,
-                                                   parallelism=parallelism,
-                                                   hash_len=SYMMETRIC_KEY_LENGTH,
-                                                   type=argon2.Type.D).hex()
+            # Generate a key using the argon2_cffi library
+            purported_key = argon2.low_level.hash_secret_raw(secret=password.encode(),
+                                                             salt=salt.encode(),
+                                                             time_cost=time_cost,
+                                                             memory_cost=2**memory_cost,
+                                                             parallelism=parallelism,
+                                                             hash_len=SYMMETRIC_KEY_LENGTH,
+                                                             type=argon2.Type.D).hex()
 
-            self.assertEqual(key, key_test_vector)
+            self.assertEqual(purported_key, key_test_vector)
 
-        # Teardown
-        os.chdir('..')
 
-    def test_argon2d_kdf_key_type_and_length(self):
-        key = argon2_kdf('password', ARGON2_SALT_LENGTH*b'a', time_cost=1, memory_cost=100)
-        self.assertIsInstance(key, bytes)
-        self.assertEqual(len(key), SYMMETRIC_KEY_LENGTH)
-
+class TestTFCWrapperForArgon2(unittest.TestCase):
+    """\
+    In this test we check Argon2 wrapper-function's input validation and
+    that the the output is correct.
+    """
     def test_invalid_salt_length_raises_critical_error(self):
         for salt_length in [v for v in (0, ARGON2_SALT_LENGTH-1, ARGON2_SALT_LENGTH+1, 1000)]:
             with self.assertRaises(SystemExit):
                 argon2_kdf('password', salt_length * b'a')
 
+    def test_argon2d_kdf_key_type_and_length(self):
+        key = argon2_kdf('password', ARGON2_SALT_LENGTH*b'a', time_cost=1, memory_cost=100)
+        self.assertIsInstance(key, bytes)
+        self.assertEqual(len(key), SYMMETRIC_KEY_LENGTH)
 
 class TestX448(unittest.TestCase):
     """\
@@ -206,11 +224,31 @@ class TestX448(unittest.TestCase):
 
     def test_deriving_shared_key_with_an_incorrect_public_key_length_raises_critical_error(self):
         private_key = X448PrivateKey.generate()
-        for public_key in [key_len * b'a' for key_len in (1, TFC_PUBLIC_KEY_LENGTH-1, TFC_PUBLIC_KEY_LENGTH+1, 1000)]:
+        public_keys = [key_len * b'a' for key_len in (1, TFC_PUBLIC_KEY_LENGTH-1,
+                                                         TFC_PUBLIC_KEY_LENGTH+1, 1000)]
+        for public_key in public_keys:
             with self.assertRaises(SystemExit):
                 X448.shared_key(private_key, public_key)
 
-    def test_deriving_shared_key_with_a_zero_public_key_raises_critical_error(self):
+    def test_deriving_zero_shared_key_raises_critical_error(self):
+        """\
+        Some experts such as JPA[1] and Thai Duong[2] have argued that
+        X25519 public keys should be validated before use to prevent one
+        party from being able to force shared key to preselected value.
+        This also applies to X448.
+            While it's not clear how this type of attack could be
+        leveraged in the context of secure messaging, there is
+          1) no harm in doing the check and
+          2) no need to trouble ourselves with whether it's needed as
+             the pyca/cryptography implementation already checks for
+             zero shared keys.
+
+        In this test we merely check that the pyca/cryptography library
+        validates shared secrets.
+
+        [1] https://research.kudelskisecurity.com/2017/04/25/should-ecdh-keys-be-validated/
+        [2] https://vnhacker.blogspot.com/2015/09/why-not-validating-curve25519-public.html
+        """
         with self.assertRaises(SystemExit):
             X448.shared_key(X448PrivateKey.generate(), bytes(TFC_PUBLIC_KEY_LENGTH))
 
