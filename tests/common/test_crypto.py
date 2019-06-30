@@ -71,7 +71,7 @@ class TestBLAKE2b(unittest.TestCase):
         # Download the test vector file.
         subprocess.Popen(f'wget {self.kat_file_url} -O {self.kat_file_name}', shell=True).wait()
 
-        # Verify the SHA256 hash of the file that contains the KATs.
+        # Verify the SHA256 hash of the test vector file.
         file_data = open(self.kat_file_name, 'rb').read()
         self.assertEqual(hashlib.sha256(file_data).hexdigest(),
                          '82fcb3cabe8ff6e1452849e3b2a26a3631f1e2b51beb62ffb537892d2b3e364f')
