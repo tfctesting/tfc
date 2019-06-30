@@ -64,40 +64,41 @@ class TestBLAKE2b(unittest.TestCase):
     """
 
     def setUp(self) -> None:
-        self.unittest_dir  = cd_unit_test()
-        self.kat_file_name = 'blake2b-kat.txt'
-        self.kat_file_url  = 'https://raw.githubusercontent.com/BLAKE2/BLAKE2/master/testvectors/blake2b-kat.txt'
+        self.unittest_dir = cd_unit_test()
+
+        kat_file_url  = 'https://raw.githubusercontent.com/BLAKE2/BLAKE2/master/testvectors/blake2b-kat.txt'
+        kat_file_name = 'blake2b-kat.txt'
 
         # Download the test vector file.
-        subprocess.Popen(f'wget {self.kat_file_url} -O {self.kat_file_name}', shell=True).wait()
+        subprocess.Popen(f'wget {kat_file_url} -O {kat_file_name}', shell=True).wait()
 
         # Verify the SHA256 hash of the test vector file.
-        file_data = open(self.kat_file_name, 'rb').read()
+        file_data = open(kat_file_name, 'rb').read()
         self.assertEqual(hashlib.sha256(file_data).hexdigest(),
                          '82fcb3cabe8ff6e1452849e3b2a26a3631f1e2b51beb62ffb537892d2b3e364f')
 
-    def tearDown(self) -> None:
-        cleanup(self.unittest_dir)
-
-    def test_blake2b_known_answer_tests(self):
-        # Setup
-        with open(self.kat_file_name) as f:
+        # Read and parse test vectors
+        with open(kat_file_name) as f:
             file_data = f.read()
 
         trimmed_data = file_data[2:-1]             # Remove empty lines from the start and the end of the file.
         test_vectors = trimmed_data.split('\n\n')  # Each tuple of test vectors is separated with an empty line.
 
-        self.assertEqual(len(set(test_vectors)), 256)
-
-        # Test
+        # Each value is hex-encoded, and has a tab-separated name
+        # (in, key, hash) prepended to it that must be separated.
+        self.test_vectors = []
         for test_vector in test_vectors:
-
-            # Each value is hex-encoded, and has a tab-separated name
-            # (in, key, hash) prepended to it that must be separated.
             message, key, digest = [bytes.fromhex(line.split('\t')[1]) for line in test_vector.split('\n')]
+            self.test_vectors.append((message, key, digest))
 
+        self.assertEqual(len(set(self.test_vectors)), 256)
+
+    def tearDown(self) -> None:
+        cleanup(self.unittest_dir)
+
+    def test_blake2b_known_answer_tests(self):
+        for message, key, digest in self.test_vectors:
             purp_digest = blake2b(message, key, digest_size=BLAKE2_DIGEST_LENGTH_MAX)
-
             self.assertEqual(purp_digest, digest)
 
 
