@@ -118,8 +118,7 @@ class TestArgon2KDF(unittest.TestCase):
     """
 
     def setUp(self) -> None:
-        self.unittest_dir = cd_unit_test()
-
+        self.unittest_dir    = cd_unit_test()
         self.file_url        = 'https://github.com/P-H-C/phc-winner-argon2/archive/master.zip'
         self.file_name       = 'argon2_master.zip'
         self.number_of_tests = 256
