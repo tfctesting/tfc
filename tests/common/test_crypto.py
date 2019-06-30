@@ -77,7 +77,7 @@ class TestBLAKE2b(unittest.TestCase):
         self.assertEqual(hashlib.sha256(file_data).hexdigest(),
                          '82fcb3cabe8ff6e1452849e3b2a26a3631f1e2b51beb62ffb537892d2b3e364f')
 
-        # Read and parse test vectors
+        # Read and parse the test vectors
         with open(kat_file_name) as f:
             file_data = f.read()
 
