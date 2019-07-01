@@ -236,10 +236,10 @@ class TestX448(unittest.TestCase):
 
     def test_deriving_zero_shared_key_raises_critical_error(self):
         """\
-        Some experts such as JPA[1] and Thai Duong[2] have argued that
-        X25519 public keys should be validated before use to prevent one
-        party from being able to force the shared key to a preselected
-        value. This also applies to X448.
+        Some experts such as JP Aumasson[1] and Thai Duong[2] have
+        argued that X25519 public keys should be validated before use to
+        prevent one party from being able to force the shared key to a
+        preselected value. This also applies to X448.
             While it's not clear how this type of attack could be
         leveraged in the context of secure messaging where both parties
         strive for confidentiality, and where easier ways to break the
