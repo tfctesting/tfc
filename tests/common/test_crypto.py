@@ -108,7 +108,7 @@ class TestBLAKE2b(unittest.TestCase):
     def tearDown(self) -> None:
         cleanup(self.unittest_dir)
 
-    def test_blake2b_known_answer_tests(self):
+    def test_blake2b_using_known_answer_tests(self):
         for message, key, digest in self.test_vectors:
             purp_digest = blake2b(message, key, digest_size=BLAKE2_DIGEST_LENGTH_MAX)
             self.assertEqual(purp_digest, digest)
