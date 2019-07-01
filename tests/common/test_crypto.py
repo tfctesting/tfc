@@ -81,11 +81,11 @@ class TestBLAKE2b(unittest.TestCase):
         self.assertEqual(hashlib.sha256(file_data.encode()).hexdigest(),
                          '82fcb3cabe8ff6e1452849e3b2a26a3631f1e2b51beb62ffb537892d2b3e364f')
 
-        # Parse the test vectors to a list of tuples: [(message1, key1, digest1), (message2, key2, digest2), ...]
-        self.test_vectors = []
-
         trimmed_data = file_data[2:-1]             # Remove empty lines from the start and the end of the file.
         test_vectors = trimmed_data.split('\n\n')  # Each tuple of test vectors is separated with an empty line.
+
+        # Parse the test vectors to a list of tuples: [(message1, key1, digest1), (message2, key2, digest2), ...]
+        self.test_vectors = []
 
         for test_vector in test_vectors:
 
