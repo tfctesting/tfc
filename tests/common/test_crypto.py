@@ -53,8 +53,8 @@ class TestBLAKE2b(unittest.TestCase):
     Known answer test (KAT) (aka test vector) contains known correct
     output value under some known input value. With each successful KAT
     it becomes more and more certain that the implementation of the
-    function is correct (on the other hand, any failing test indicates a
-    problem within the implementation).
+    function is correct. On the other hand, any failing test indicates a
+    problem within the implementation.
 
     TFC does its best to verify the BLAKE2b implementation is correct
     by using the full suite of BLAKE2b KATs available in the official
