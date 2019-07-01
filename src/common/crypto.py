@@ -29,7 +29,7 @@ ChaCha stream cipher
 ├─ BLAKE2b cryptographic hash function
 |  └─ Argon2d password hashing function
 └─ ChaCha20 stream cipher
-   ├─ XChaCha20-Poly1305 (IETF) AEAD
+   ├─ XChaCha20-Poly1305 AEAD (IETF variant)
    └─ Linux kernel CSPRNG
 """
 
