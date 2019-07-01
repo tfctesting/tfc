@@ -160,17 +160,17 @@ class TestArgon2KDF(unittest.TestCase):
 
         for _ in range(self.number_of_tests):
 
-            sysrand = random.SystemRandom()
+            sys_rand = random.SystemRandom()
 
             # Generate random parameters for the test.
-            len_password = sysrand.randint(1, 127)
-            len_salt     = sysrand.randint(8, 128)
-            password     = ''.join([sysrand.choice(string.ascii_letters + string.digits) for _ in range(len_password)])
-            salt         = ''.join([sysrand.choice(string.ascii_letters + string.digits) for _ in range(len_salt)])
-            parallelism  = sysrand.randint(1, multiprocessing.cpu_count())
-            time_cost    = sysrand.randint(1, 3)
-            memory_cost  = sysrand.randint(7, 15)
-            key_length   = sysrand.randint(4, 64)
+            len_password = sys_rand.randint(1, 127)
+            len_salt     = sys_rand.randint(8, 128)
+            password     = ''.join([sys_rand.choice(string.ascii_letters + string.digits) for _ in range(len_password)])
+            salt         = ''.join([sys_rand.choice(string.ascii_letters + string.digits) for _ in range(len_salt)])
+            parallelism  = sys_rand.randint(1, multiprocessing.cpu_count())
+            time_cost    = sys_rand.randint(1, 3)
+            memory_cost  = sys_rand.randint(7, 15)
+            key_length   = sys_rand.randint(4, 64)
 
             # Generate a key test vector using the command-line utility.
             output = subprocess.check_output(
