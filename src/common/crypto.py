@@ -21,7 +21,7 @@ along with TFC. If not, see <https://www.gnu.org/licenses/>.
 ---
 
 This module contains TFC's cryptographic functions. Most algorithms are
-based on the ChaCha20 stream cipher by Daniel J. Bernstein (djb).
+based on the ChaCha stream cipher by Daniel J. Bernstein (djb).
 
 Curve448-Goldilocks
 └─ X448 key exchange
