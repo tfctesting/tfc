@@ -162,15 +162,31 @@ class TestArgon2KDF(unittest.TestCase):
 
             sys_rand = random.SystemRandom()
 
+            # Command-line utility's parameter limits
+            MIN_PASSWORD_LENGTH = 1
+            MAX_PASSWORD_LENGTH = 127
+            MIN_SALT_LENGTH     = 8
+            MIN_PARALLELISM     = 1
+            MAX_PARALLELISM     = multiprocessing.cpu_count()
+            MIN_TIME_COST       = 1
+            MIN_MEMORY_COST     = 7
+            MIN_KEY_LENGTH      = 4
+
+            # Arbitrary limits set for the test
+            MAX_SALT_LENGTH     = 128
+            MAX_TIME_COST       = 3
+            MAX_MEMORY_COST     = 15
+            MAX_KEY_LENGTH      = 64
+
             # Generate random parameters for the test.
-            len_password = sys_rand.randint(1, 127)
-            len_salt     = sys_rand.randint(8, 128)
+            len_password = sys_rand.randint(MIN_PASSWORD_LENGTH, MAX_PASSWORD_LENGTH)
+            len_salt     = sys_rand.randint(MIN_SALT_LENGTH,     MAX_SALT_LENGTH)
             password     = ''.join([sys_rand.choice(string.ascii_letters + string.digits) for _ in range(len_password)])
             salt         = ''.join([sys_rand.choice(string.ascii_letters + string.digits) for _ in range(len_salt)])
-            parallelism  = sys_rand.randint(1, multiprocessing.cpu_count())
-            time_cost    = sys_rand.randint(1, 3)
-            memory_cost  = sys_rand.randint(7, 15)
-            key_length   = sys_rand.randint(4, 64)
+            parallelism  = sys_rand.randint(MIN_PARALLELISM, MAX_PARALLELISM)
+            time_cost    = sys_rand.randint(MIN_TIME_COST,   MAX_TIME_COST)
+            memory_cost  = sys_rand.randint(MIN_MEMORY_COST, MAX_MEMORY_COST)
+            key_length   = sys_rand.randint(MIN_KEY_LENGTH,  MAX_KEY_LENGTH)
 
             # Generate a key test vector using the command-line utility.
             output = subprocess.check_output(
