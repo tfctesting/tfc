@@ -106,10 +106,10 @@ class TestArgon2KDF(unittest.TestCase):
     """\
     Similar to normal cryptographic hash functions, a password hashing
     function such as the Argon2 also generates unpredictable values
-    (secret keys). The IETF test vectors[1] require parameters (e.g. the
-    "Secret" and the "Associated data" fields) that the argon2_cffi
-    library does not provide. The only available option is to generate
-    the test vectors dynamically.
+    (secret keys in this case). The IETF test vectors[1] require
+    parameters (e.g. the "Secret" and the "Associated data" fields) that
+    the argon2_cffi library does not provide. The only available option
+    is to generate the test vectors dynamically.
         To do that, this test downloads and compiles the command-line
     utility[2] for the reference implementation of Argon2. It then
     generates random parameters, and compares the output of the
