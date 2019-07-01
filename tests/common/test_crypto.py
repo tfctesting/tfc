@@ -95,11 +95,11 @@ class TestBLAKE2b(unittest.TestCase):
 
             self.test_vectors.append((message, key, digest))
 
-        # Transpose the list of tuples to lists of messages, keys, and
-        # digests, and verify that messages and digests are unique, and
-        # that identical keys are used in every test vector.
+        # Transpose the list of tuples to lists of messages, keys, and digests.
         messages, keys, digests = list(map(list, zip(*self.test_vectors)))
 
+        # Verify that messages and digests are unique, and
+        # that identical keys are used in every test vector.
         self.assertEqual(len(set(messages)), 256)
         self.assertEqual(len(    keys),      256)
         self.assertEqual(len(set(keys)),       1)
