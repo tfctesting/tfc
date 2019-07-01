@@ -84,13 +84,17 @@ class TestBLAKE2b(unittest.TestCase):
         trimmed_data = file_data[2:-1]             # Remove empty lines from the start and the end of the file.
         test_vectors = trimmed_data.split('\n\n')  # Each tuple of test vectors is separated with an empty line.
 
-        # Each value is hex-encoded, and has a tab-separated name
-        # (in, key, hash) prepended to it that must be separated.
         self.test_vectors = []
+
         for test_vector in test_vectors:
+
+            # Each value is hex-encoded, and has a tab-separated name
+            # (in, key, hash) prepended to it that must be separated.
             message, key, digest = [bytes.fromhex(line.split('\t')[1]) for line in test_vector.split('\n')]
+
             self.test_vectors.append((message, key, digest))
 
+        # Verify unique test vectors where parsed from the file.
         self.assertEqual(len(set(self.test_vectors)), 256)
 
     def tearDown(self) -> None:
