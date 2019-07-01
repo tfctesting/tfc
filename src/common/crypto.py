@@ -23,12 +23,14 @@ along with TFC. If not, see <https://www.gnu.org/licenses/>.
 This module contains TFC's cryptographic functions. Most algorithms are
 based on the ChaCha20 stream cipher by Daniel J. Bernstein (djb).
 
-X448
-ChaCha20
-├─ Linux kernel CSPRNG
-├─ XChaCha20-Poly1305 (IETF) AEAD
-└─ BLAKE2b cryptographic hash function
-   └─ Argon2d key derivation function
+Curve448-Goldilocks
+└─ X448 key exchange
+ChaCha stream cipher
+├─ BLAKE2b cryptographic hash function
+|  └─ Argon2d password hashing function
+└─ ChaCha20 stream cipher
+   ├─ XChaCha20-Poly1305 (IETF) AEAD
+   └─ Linux kernel CSPRNG
 """
 
 import hashlib
