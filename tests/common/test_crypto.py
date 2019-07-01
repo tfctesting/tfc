@@ -108,7 +108,7 @@ class TestArgon2KDF(unittest.TestCase):
     function also generates unpredictable values (secret keys). The IETF
     test vectors[1] require parameters that the argon2_cffi library does
     not provide.
-        To generate the test vectors, this application downloads and
+        To generate the test vectors, this test downloads and
     compiles the command-line utility[2] for the reference
     implementation of Argon2. It then generates random parameters, and
     compares the output of the argon2_cffi function to the output of the
@@ -120,20 +120,21 @@ class TestArgon2KDF(unittest.TestCase):
 
     def setUp(self) -> None:
         self.unittest_dir    = cd_unit_test()
-        self.file_url        = 'https://github.com/P-H-C/phc-winner-argon2/archive/master.zip'
-        self.file_name       = 'argon2_master.zip'
         self.number_of_tests = 256
 
+        file_url  = 'https://github.com/P-H-C/phc-winner-argon2/archive/master.zip'
+        file_name = 'argon2_master.zip'
+
         # Download the Argon2 command-line utility.
-        subprocess.Popen(f'wget {self.file_url} -O {self.file_name}', shell=True).wait()
+        subprocess.Popen(f'wget {file_url} -O {file_name}', shell=True).wait()
 
         # Verify the SHA256 hash of the zip-file containing the command-line utility.
-        file_data = open(self.file_name, 'rb').read()
+        file_data = open(file_name, 'rb').read()
         self.assertEqual(hashlib.sha256(file_data).hexdigest(),
                          '2957db15d320b0970a34be9a6ef984b11b2296b1b1f8b051a47e35035c1bc7cf')
 
         # Unzip and compile the command-line utility.
-        subprocess.Popen(f'unzip {self.file_name}', shell=True).wait()
+        subprocess.Popen(f'unzip {file_name}', shell=True).wait()
         os.chdir('phc-winner-argon2-master/')
         subprocess.Popen('make', shell=True).wait()
 
@@ -145,7 +146,7 @@ class TestArgon2KDF(unittest.TestCase):
 
         for _ in range(self.number_of_tests):
 
-            # Generate random parameters
+            # Generate random parameters for the test.
             len_password = random.SystemRandom().randint(1, 16)
             len_salt     = random.SystemRandom().randint(4, 16)
             password     = os.urandom(len_password).hex()
@@ -154,7 +155,7 @@ class TestArgon2KDF(unittest.TestCase):
             time_cost    = random.SystemRandom().randint(1, 3)
             memory_cost  = random.SystemRandom().randint(7, 15)
 
-            # Generate a key using the command-line utility
+            # Generate a key using the command-line utility.
             output = subprocess.check_output(
                 f'echo -n "{password}" | ./argon2 {salt} '
                 f'-t {time_cost} '
@@ -166,7 +167,7 @@ class TestArgon2KDF(unittest.TestCase):
 
             key_test_vector = output.split('\n')[4].split('\t')[-1]
 
-            # Generate a key using the argon2_cffi library
+            # Generate a key using the argon2_cffi library.
             purported_key = argon2.low_level.hash_secret_raw(secret=password.encode(),
                                                              salt=salt.encode(),
                                                              time_cost=time_cost,
@@ -181,7 +182,7 @@ class TestArgon2KDF(unittest.TestCase):
 class TestArgon2Wrapper(unittest.TestCase):
 
     def test_invalid_salt_length_raises_critical_error(self):
-        for salt_length in [v for v in (0, ARGON2_SALT_LENGTH-1, ARGON2_SALT_LENGTH+1, 1000)]:
+        for salt_length in [0, ARGON2_SALT_LENGTH-1, ARGON2_SALT_LENGTH+1, 1000]:
             with self.assertRaises(SystemExit):
                 argon2_kdf('password', salt_length * b'a')
 
