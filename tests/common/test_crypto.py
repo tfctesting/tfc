@@ -160,13 +160,14 @@ class TestArgon2KDF(unittest.TestCase):
         for _ in range(self.number_of_tests):
 
             # Generate random parameters for the test.
-            len_password = random.SystemRandom().randint(1, 16)
+            len_password = random.SystemRandom().randint(1, 64)
             len_salt     = random.SystemRandom().randint(4, 16)
             password     = os.urandom(len_password).hex()
             salt         = os.urandom(len_salt).hex()
             parallelism  = random.SystemRandom().randint(1, multiprocessing.cpu_count())
             time_cost    = random.SystemRandom().randint(1, 3)
             memory_cost  = random.SystemRandom().randint(7, 15)
+            key_length   = random.SystemRandom().randint(1, 64)
 
             # Generate a key test vector using the command-line utility.
             output = subprocess.check_output(
@@ -174,7 +175,7 @@ class TestArgon2KDF(unittest.TestCase):
                 f'-t {time_cost} '
                 f'-m {memory_cost} '
                 f'-p {parallelism} '
-                f'-l {SYMMETRIC_KEY_LENGTH} '
+                f'-l {key_length} '
                 f'-d',
                 shell=True).decode()  # type: str
 
@@ -186,7 +187,7 @@ class TestArgon2KDF(unittest.TestCase):
                                                              time_cost=time_cost,
                                                              memory_cost=2**memory_cost,
                                                              parallelism=parallelism,
-                                                             hash_len=SYMMETRIC_KEY_LENGTH,
+                                                             hash_len=key_length,
                                                              type=argon2.Type.D).hex()
 
             self.assertEqual(purported_key, key_test_vector)
