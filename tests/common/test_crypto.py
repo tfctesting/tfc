@@ -61,7 +61,7 @@ class TestBLAKE2b(unittest.TestCase):
     by using the full suite of BLAKE2b KATs available in the official
     BLAKE2 GitHub repository:
 
-       https://github.com/BLAKE2/BLAKE2/blob/master/testvectors/blake2b-kat.txt
+        https://github.com/BLAKE2/BLAKE2/blob/master/testvectors/blake2b-kat.txt
     """
 
     def setUp(self) -> None:
