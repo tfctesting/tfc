@@ -72,19 +72,19 @@ class TestBLAKE2b(unittest.TestCase):
         # Download the test vector file.
         subprocess.Popen(f'wget {kat_file_url} -O {kat_file_name}', shell=True).wait()
 
-        # Verify the SHA256 hash of the test vector file.
-        file_data = open(kat_file_name, 'rb').read()
-        self.assertEqual(hashlib.sha256(file_data).hexdigest(),
-                         '82fcb3cabe8ff6e1452849e3b2a26a3631f1e2b51beb62ffb537892d2b3e364f')
-
-        # Read and parse the test vectors.
+        # Read the test vector file.
         with open(kat_file_name) as f:
             file_data = f.read()
 
+        # Verify the SHA256 hash of the test vector file.
+        self.assertEqual(hashlib.sha256(file_data.encode()).hexdigest(),
+                         '82fcb3cabe8ff6e1452849e3b2a26a3631f1e2b51beb62ffb537892d2b3e364f')
+
+        # Parse the test vectors to a list of tuples: [(message1, key1, digest1), (message2, key2, digest2), ...]
+        self.test_vectors = []
+
         trimmed_data = file_data[2:-1]             # Remove empty lines from the start and the end of the file.
         test_vectors = trimmed_data.split('\n\n')  # Each tuple of test vectors is separated with an empty line.
-
-        self.test_vectors = []
 
         for test_vector in test_vectors:
 
@@ -94,8 +94,15 @@ class TestBLAKE2b(unittest.TestCase):
 
             self.test_vectors.append((message, key, digest))
 
-        # Verify unique test vectors were parsed from the file.
-        self.assertEqual(len(set(self.test_vectors)), 256)
+        # Transpose the list of tuples to lists of messages, keys, and
+        # digests, and verify that messages and digests are unique, and
+        # that identical keys are used in every test vector.
+        messages, keys, digests = list(map(list, zip(*self.test_vectors)))
+
+        self.assertEqual(len(set(messages)), 256)
+        self.assertEqual(len(    keys),      256)
+        self.assertEqual(len(set(keys)),       1)
+        self.assertEqual(len(set(digests)),  256)
 
     def tearDown(self) -> None:
         cleanup(self.unittest_dir)
