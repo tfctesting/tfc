@@ -128,43 +128,68 @@ def argon2_kdf(password:    str,                           # Password to derive 
                ) -> bytes:                                 # The derived key
     """Derive an encryption key from password and salt using Argon2d.
 
-    Argon2 is a key derivation function (KDF) designed by Alex Biryukov,
+    Argon2 is a password hashing function designed by Alex Biryukov,
     Daniel Dinu, and Dmitry Khovratovich from the University of
     Luxembourg. The algorithm is the winner of the 2015 Password Hashing
     Competition (PHC).
 
     For more details, see
         https://password-hashing.net/
-        https://github.com/P-H-C/phc-winner-argon2/blob/master/argon2-specs.pdf
         https://en.wikipedia.org/wiki/Argon2
 
-    The purpose of the KDF is to stretch a password into a 256-bit key.
+    The reasons for using Argon2 in TFC include
+
+        o PBKDF2 and bcrypt are not memory-hard, thus they are weak
+          against massively parallel processing on FPGAs/GPUs/ASICs.[1]
+
+        o scrypt is very complex as it "combines two independent
+          cryptographic primitives (the SHA256 hash function, and
+          the Salsa20/8 core operation), and four generic operations
+          (HMAC, PBKDF2, Block-Mix and ROMix)."[2] Furthermore,
+          scrypt is "vulnerable to trivial trime-memory tradeoff (TMTO)
+          attacks that allows compact implementations with the same
+          energy cost."[1]
+
+        o Of the PHC finalists, only Catena and Argon2i offer
+          cache-timing resistance by offering data-independent
+          memory access. Catena does not support parallelism[3],
+          thus in the event the assessment that TFC does not need to
+          protect itself from cache-timing attacks is wrong, the
+          switch is trivial.
+
+    The purpose of Argon2 is to stretch a password into a 256-bit key.
     Argon2 features a slow, memory-hard hash function that consumes
     computational resources of an attacker that attempts a dictionary
-    or a brute force attack. The accompanied 256-bit salt prevents
-    rainbow-table attacks, forcing each attack to take place against an
-    individual (physically compromised) TFC-endpoint, or PSK
-    transmission media.
+    or a brute force attack.
+
+    The function also takes a salt (256-bit random value in this case)
+    that prevents rainbow-table attacks, and forces each attack to take
+    place against an individual (physically compromised) TFC-endpoint,
+    or PSK transmission media.
 
     The used Argon2 version is Argon2d that uses data-dependent memory
     access, which maximizes security against time-memory trade-off
     (TMTO) attacks at the risk of side-channel attacks. The IETF
     recommends using Argon2id (that is side-channel resistant and almost
     as secure as Argon2d against TMTO attacks) **except** when there is
-    a reason to prefer Argon2d (or Argon2i). The reason TFC uses Argon2d
-    is key derivation only takes place on Source and Destination
-    Computer. As these computers are connected to the Networked Computer
-    only via a data diode, they do not leak any information via
-    side-channels to the adversary. The expected attacks are against
-    physically compromised data storage devices where the encrypted data
-    is at rest. In such a situation, Argon2d is the most secure option.
+    a reason to prefer Argon2d (or Argon2i).
+        The reason TFC uses Argon2d is key derivation only takes place
+    on Source and Destination Computer. As these computers are connected
+    to the Networked Computer only via a data diode, they do not leak
+    any information via side-channels to the adversary. The expected
+    attacks are against physically compromised data storage devices
+    where the encrypted data is at rest. In such a situation, Argon2d is
+    the most secure option.
 
-    The correctness of the Argon2d implementation[1] is tested by TFC
+    The correctness of the Argon2d implementation[3] is tested by TFC
     unit tests. The testing is done by comparing the output with the
     output of the reference command-line implementation under randomized
     parameters.
 
-     [1] https://github.com/P-H-C/phc-winner-argon2
+     [1] https://github.com/P-H-C/phc-winner-argon2/blob/master/argon2-specs.pdf  # p. 2
+     [2] https://password-hashing.net/submissions/specs/Catena-v5.pdf             # p.10
+     [3] https://crypto.stackexchange.com/a/51623
+     [3] https://github.com/P-H-C/phc-winner-argon2
          https://github.com/hynek/argon2_cffi
     """
     if len(salt) != ARGON2_SALT_LENGTH:
