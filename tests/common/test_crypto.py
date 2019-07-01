@@ -181,12 +181,13 @@ class TestArgon2KDF(unittest.TestCase):
             # Generate random parameters for the test.
             len_password = sys_rand.randint(MIN_PASSWORD_LENGTH, MAX_PASSWORD_LENGTH)
             len_salt     = sys_rand.randint(MIN_SALT_LENGTH,     MAX_SALT_LENGTH)
-            password     = ''.join([sys_rand.choice(ascii_letters + digits) for _ in range(len_password)])
-            salt         = ''.join([sys_rand.choice(ascii_letters + digits) for _ in range(len_salt)])
-            parallelism  = sys_rand.randint(MIN_PARALLELISM, MAX_PARALLELISM)
-            time_cost    = sys_rand.randint(MIN_TIME_COST,   MAX_TIME_COST)
-            memory_cost  = sys_rand.randint(MIN_MEMORY_COST, MAX_MEMORY_COST)
-            key_length   = sys_rand.randint(MIN_KEY_LENGTH,  MAX_KEY_LENGTH)
+            parallelism  = sys_rand.randint(MIN_PARALLELISM,     MAX_PARALLELISM)
+            time_cost    = sys_rand.randint(MIN_TIME_COST,       MAX_TIME_COST)
+            memory_cost  = sys_rand.randint(MIN_MEMORY_COST,     MAX_MEMORY_COST)
+            key_length   = sys_rand.randint(MIN_KEY_LENGTH,      MAX_KEY_LENGTH)
+
+            password = ''.join([sys_rand.choice(ascii_letters + digits) for _ in range(len_password)])
+            salt     = ''.join([sys_rand.choice(ascii_letters + digits) for _ in range(len_salt)])
 
             # Generate a key test vector using the command-line utility.
             output = subprocess.check_output(
