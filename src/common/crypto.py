@@ -167,11 +167,11 @@ def argon2_kdf(password:    str,                           # Password to derive 
     or PSK transmission media.
 
     The used Argon2 version is Argon2d that uses data-dependent memory
-    access, which maximizes security against time-memory trade-off
-    (TMTO) attacks at the risk of side-channel attacks. The IETF
-    recommends using Argon2id (that is side-channel resistant and almost
-    as secure as Argon2d against TMTO attacks) **except** when there is
-    a reason to prefer Argon2d (or Argon2i).
+    access, which maximizes security against TMTO attacks at the risk of
+    side-channel attacks. The IETF recommends using Argon2id (that is
+    side-channel resistant and almost as secure as Argon2d against
+    TMTO attacks) **except** when there is a reason to prefer Argon2d
+    (or Argon2i).
         The reason TFC uses Argon2d is key derivation only takes place
     on Source and Destination Computer. As these computers are connected
     to the Networked Computer only via a data diode, they do not leak
