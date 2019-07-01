@@ -276,8 +276,8 @@ class TestX448(unittest.TestCase):
         leveraged in the context of secure messaging where both parties
         strive for confidentiality, and where easier ways to break the
         confidentiality of the conversation exist, there is
-          1) no harm in doing the check and
-          2) no need to trouble ourselves with whether it's needed as
+          a) no harm in doing the check and
+          b) no need to trouble ourselves with whether it's needed as
              the pyca/cryptography implementation already checks for
              zero shared keys. This test merely verifies that the check
              takes place.
