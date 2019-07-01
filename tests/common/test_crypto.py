@@ -109,7 +109,7 @@ class TestArgon2KDF(unittest.TestCase):
     keys). The IETF test vectors[1] require parameters (such as the
     "Secret" and the "Associated data" fields) that the argon2_cffi
     library does not provide.
-        The only option available is to generate the test vectors,
+        The only option available is to generate the test vectors
     dynamically. To do that, this test downloads and compiles the
     command-line utility[2] for the reference implementation of Argon2.
     It then generates random parameters, and compares the output of the
