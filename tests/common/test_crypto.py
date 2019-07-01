@@ -51,11 +51,11 @@ class TestBLAKE2b(unittest.TestCase):
     (i.e. indistinguishable from the output of a truly random function),
     it's hard to know whether the algorithm is implemented correctly.
 
-    Known answer test (KAT), aka test vector, contains the known correct
-    output value of the function under some known input value. With each
-    successful KAT it becomes more and more certain that the
-    implementation of the function is correct. On the other hand, any
-    failing KAT indicates a problem within the implementation.
+    Known answer test (KAT), a.k.a. test vector, contains the known
+    correct output value of the function under some known set of input
+    values. With each successful KAT it becomes more and more certain
+    that the implementation of the function is correct. On the other
+    hand, any failing KAT indicates a problem within the implementation.
 
     TFC does its best to verify the BLAKE2b implementation is correct
     by using the full suite of BLAKE2b KATs available in the official
