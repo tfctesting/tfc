@@ -24,6 +24,7 @@ import multiprocessing
 import os
 import random
 import subprocess
+import string
 import unittest
 
 from unittest      import mock
@@ -159,15 +160,17 @@ class TestArgon2KDF(unittest.TestCase):
 
         for _ in range(self.number_of_tests):
 
+            sysrand = random.SystemRandom()
+
             # Generate random parameters for the test.
-            len_password = random.SystemRandom().randint(1, 64)
-            len_salt     = random.SystemRandom().randint(4, 16)
-            password     = os.urandom(len_password).hex()
-            salt         = os.urandom(len_salt).hex()
-            parallelism  = random.SystemRandom().randint(1, multiprocessing.cpu_count())
-            time_cost    = random.SystemRandom().randint(1, 3)
-            memory_cost  = random.SystemRandom().randint(7, 15)
-            key_length   = random.SystemRandom().randint(1, 64)
+            len_password = sysrand.randint(1, 127)
+            len_salt     = sysrand.randint(8, 128)
+            password     = ''.join([sysrand.choice(string.ascii_letters + string.digits) for _ in range(len_password)])
+            salt         = ''.join([sysrand.choice(string.ascii_letters + string.digits) for _ in range(len_salt)])
+            parallelism  = sysrand.randint(1, multiprocessing.cpu_count())
+            time_cost    = sysrand.randint(1, 3)
+            memory_cost  = sysrand.randint(7, 15)
+            key_length   = sysrand.randint(4, 64)
 
             # Generate a key test vector using the command-line utility.
             output = subprocess.check_output(
@@ -202,7 +205,7 @@ class TestArgon2Wrapper(unittest.TestCase):
                 argon2_kdf('password', salt_length * b'a')
 
     def test_argon2_kdf_key_type_and_length(self):
-        key = argon2_kdf('password', ARGON2_SALT_LENGTH*b'a', time_cost=1, memory_cost=100)
+        key = argon2_kdf('password', os.urandom(ARGON2_SALT_LENGTH), time_cost=1, memory_cost=100)
         self.assertIsInstance(key, bytes)
         self.assertEqual(len(key), SYMMETRIC_KEY_LENGTH)
 
