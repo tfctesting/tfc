@@ -155,7 +155,7 @@ def argon2_kdf(password:    str,                           # Password to derive 
     only via a data diode, they do not leak any information via
     side-channels to the adversary. The expected attacks are against
     physically compromised data storage devices where the encrypted data
-    is at rest. In such situation, Argon2d is the most secure option.
+    is at rest. In such a situation, Argon2d is the most secure option.
 
     The correctness of the Argon2d implementation[1] is tested by TFC
     unit tests. The testing is done by comparing the output with the
