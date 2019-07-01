@@ -251,11 +251,13 @@ class X448(object):
         """Derive the X448 shared key.
 
         The pyca/cryptography library verifies that the shared secret is
-        not zero. However, because the raw bits of the X448 shared
-        secret might not be uniformly distributed in the keyspace (i.e.
-        bits might have bias towards 0 or 1), the raw shared secret is
-        passed through a computational extractor (BLAKE2b CSPRF) to
-        ensure uniformly random shared key.
+        not zero.
+
+        Because the raw bits of the X448 shared secret might not be
+        uniformly distributed in the keyspace (i.e. bits might have bias
+        towards 0 or 1), the raw shared secret is passed through a
+        computational extractor (BLAKE2b CSPRF) to ensure uniformly
+        random shared key.
         """
         if len(public_key) != TFC_PUBLIC_KEY_LENGTH:
             raise CriticalError("Invalid public key length.")
