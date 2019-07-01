@@ -146,7 +146,7 @@ def argon2_kdf(password:    str,                           # Password to derive 
           cryptographic primitives (the SHA256 hash function, and
           the Salsa20/8 core operation), and four generic operations
           (HMAC, PBKDF2, Block-Mix and ROMix)."[2] Furthermore,
-          scrypt is "vulnerable to trivial trime-memory tradeoff (TMTO)
+          scrypt is "vulnerable to trivial time-memory tradeoff (TMTO)
           attacks that allows compact implementations with the same
           energy cost."[1]
 
@@ -168,7 +168,7 @@ def argon2_kdf(password:    str,                           # Password to derive 
     or PSK transmission media.
 
     The used Argon2 version is Argon2d that uses data-dependent memory
-    access, which maximizes security against time-memory trade-off
+    access, which maximizes security against time-memory tradeoff
     (TMTO) attacks at the risk of side-channel attacks. The IETF
     recommends using Argon2id (that is side-channel resistant and almost
     as secure as Argon2d against TMTO attacks) **except** when there is
@@ -182,9 +182,9 @@ def argon2_kdf(password:    str,                           # Password to derive 
     the most secure option.
 
     The correctness of the Argon2d implementation[3] is tested by TFC
-    unit tests. The testing is done by comparing the output with the
-    output of the reference command-line implementation under randomized
-    parameters.
+    unit tests. The testing is done by comparing the output of the
+    argon2_cffi library with the output of the Argon2 reference
+    command-line utility under randomized parameters.
 
      [1] https://github.com/P-H-C/phc-winner-argon2/blob/master/argon2-specs.pdf  # p. 2
      [2] https://password-hashing.net/submissions/specs/Catena-v5.pdf             # p.10
