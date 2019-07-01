@@ -250,8 +250,8 @@ class X448(object):
     def shared_key(private_key: 'X448PrivateKey', public_key: bytes) -> bytes:
         """Derive the X448 shared key.
 
-        The pyca/cryptography library verifies that the shared secret is
-        not zero.
+        The pyca/cryptography library validates the public key length
+        and verifies that the shared secret is not zero.
 
         Because the raw bits of the X448 shared secret might not be
         uniformly distributed in the keyspace (i.e. bits might have bias
@@ -259,9 +259,6 @@ class X448(object):
         computational extractor (BLAKE2b CSPRF) to ensure uniformly
         random shared key.
         """
-        if len(public_key) != TFC_PUBLIC_KEY_LENGTH:
-            raise CriticalError("Invalid public key length.")
-
         try:
             shared_secret = private_key.exchange(X448PublicKey.from_public_bytes(public_key))
         except ValueError as e:
