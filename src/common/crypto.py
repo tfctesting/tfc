@@ -263,7 +263,7 @@ class X448(object):
         try:
             shared_secret = private_key.exchange(X448PublicKey.from_public_bytes(public_key))
         except ValueError as e:
-            raise CriticalError(e)
+            raise CriticalError(str(e))
 
         return blake2b(shared_secret, digest_size=SYMMETRIC_KEY_LENGTH)
 

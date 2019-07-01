@@ -111,7 +111,7 @@ class TestStandardSenderLoop(unittest.TestCase):
         window.window_contacts = [contact_list.get_contact_by_address_or_nick('Alice')]
         user_input             = UserInput(plaintext='test')
 
-        delay = 0.01
+        delay = 0.015
 
         def queue_delayer():
             """Place datagrams into queue after delay."""
