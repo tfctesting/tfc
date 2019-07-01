@@ -146,7 +146,7 @@ def argon2_kdf(password:    str,                           # Password to derive 
           cryptographic primitives (the SHA256 hash function, and
           the Salsa20/8 core operation), and four generic operations
           (HMAC, PBKDF2, Block-Mix and ROMix)."[2] Furthermore,
-          scrypt is "vulnerable to trivial time-memory tradeoff (TMTO)
+          scrypt is "vulnerable to trivial time-memory trade-off (TMTO)
           attacks that allows compact implementations with the same
           energy cost."[1]
 
@@ -167,7 +167,7 @@ def argon2_kdf(password:    str,                           # Password to derive 
     or PSK transmission media.
 
     The used Argon2 version is Argon2d that uses data-dependent memory
-    access, which maximizes security against time-memory tradeoff
+    access, which maximizes security against time-memory trade-off
     (TMTO) attacks at the risk of side-channel attacks. The IETF
     recommends using Argon2id (that is side-channel resistant and almost
     as secure as Argon2d against TMTO attacks) **except** when there is
