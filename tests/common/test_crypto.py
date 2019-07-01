@@ -94,7 +94,7 @@ class TestBLAKE2b(unittest.TestCase):
 
             self.test_vectors.append((message, key, digest))
 
-        # Verify unique test vectors where parsed from the file.
+        # Verify unique test vectors were parsed from the file.
         self.assertEqual(len(set(self.test_vectors)), 256)
 
     def tearDown(self) -> None:
