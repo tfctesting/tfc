@@ -108,11 +108,11 @@ class TestArgon2KDF(unittest.TestCase):
     function like Argon2 also generates unpredictable values (secret
     keys). The IETF test vectors[1] require parameters (such as the
     "Secret" and the "Associated data" fields) that the argon2_cffi
-    library does not provide.
-        The only option available is to generate the test vectors
-    dynamically. To do that, this test downloads and compiles the
-    command-line utility[2] for the reference implementation of Argon2.
-    It then generates random parameters, and compares the output of the
+    library does not provide. The only available option is to generate
+    the test vectors dynamically.
+        To do that, this test downloads and compiles the command-line
+    utility[2] for the reference implementation of Argon2. It then
+    generates random parameters, and compares the output of the
     argon2_cffi function to the output of the command-line utility under
     those parameters.
 
