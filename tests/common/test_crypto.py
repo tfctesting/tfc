@@ -161,18 +161,18 @@ class TestArgon2KDF(unittest.TestCase):
         # Command-line utility's parameter limits
         MIN_PASSWORD_LENGTH = 1
         MAX_PASSWORD_LENGTH = 127
-        MIN_SALT_LENGTH = 8
-        MIN_PARALLELISM = 1
-        MAX_PARALLELISM = multiprocessing.cpu_count()
-        MIN_TIME_COST = 1
-        MIN_MEMORY_COST = 7
-        MIN_KEY_LENGTH = 4
+        MIN_SALT_LENGTH     = 8
+        MIN_PARALLELISM     = 1
+        MAX_PARALLELISM     = multiprocessing.cpu_count()
+        MIN_TIME_COST       = 1
+        MIN_MEMORY_COST     = 7
+        MIN_KEY_LENGTH      = 4
 
         # Arbitrary limits set for the test
         MAX_SALT_LENGTH = 128
-        MAX_TIME_COST = 3
+        MAX_TIME_COST   = 3
         MAX_MEMORY_COST = 15
-        MAX_KEY_LENGTH = 64
+        MAX_KEY_LENGTH  = 64
 
         sys_rand = random.SystemRandom()
 
