@@ -65,7 +65,7 @@ class TestBLAKE2b(unittest.TestCase):
     """
 
     def setUp(self) -> None:
-        self.unittest_dir = cd_unit_test()
+        self.unit_test_dir = cd_unit_test()
 
         kat_file_url  = 'https://raw.githubusercontent.com/BLAKE2/BLAKE2/master/testvectors/blake2b-kat.txt'
         kat_file_name = 'blake2b-kat.txt'
@@ -106,7 +106,7 @@ class TestBLAKE2b(unittest.TestCase):
         self.assertEqual(len(set(digests)),  256)
 
     def tearDown(self) -> None:
-        cleanup(self.unittest_dir)
+        cleanup(self.unit_test_dir)
 
     def test_blake2b_using_the_official_known_answer_tests(self):
         for message, key, digest in self.test_vectors:
@@ -133,7 +133,7 @@ class TestArgon2KDF(unittest.TestCase):
     """
 
     def setUp(self) -> None:
-        self.unittest_dir    = cd_unit_test()
+        self.unit_test_dir   = cd_unit_test()
         self.number_of_tests = 256
 
         file_url  = 'https://github.com/P-H-C/phc-winner-argon2/archive/master.zip'
@@ -154,7 +154,7 @@ class TestArgon2KDF(unittest.TestCase):
 
     def tearDown(self) -> None:
         os.chdir('..')
-        cleanup(self.unittest_dir)
+        cleanup(self.unit_test_dir)
 
     def test_argon2_cffi_using_the_official_command_line_utility(self):
 
