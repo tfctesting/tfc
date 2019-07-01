@@ -112,9 +112,9 @@ class TestArgon2KDF(unittest.TestCase):
     is to generate the test vectors dynamically.
         To do that, this test downloads and compiles the command-line
     utility[2] for the reference implementation of Argon2. It then
-    generates random parameters, and compares the output of the
-    argon2_cffi function to the output of the command-line utility under
-    those parameters.
+    generates random (but valid) input parameters, and compares the
+    output of the argon2_cffi function to the output of the command-line
+    utility under those input parameters.
 
     [1] https://tools.ietf.org/html/draft-irtf-cfrg-argon2-03#section-6.1
     [2] https://github.com/P-H-C/phc-winner-argon2#command-line-utility
