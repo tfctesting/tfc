@@ -51,7 +51,7 @@ class TestBLAKE2b(unittest.TestCase):
     (i.e. indistinguishable from the output of a truly random function),
     it's hard to know whether the algorithm is implemented correctly.
 
-    Known answer test (KAT) (aka test vector) contains known correct
+    Known answer test (KAT) (aka test vector) contains the known correct
     output value of the function under some known input value. With each
     successful KAT it becomes more and more certain that the
     implementation of the function is correct. On the other hand, any
