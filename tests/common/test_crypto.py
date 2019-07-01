@@ -157,7 +157,7 @@ class TestArgon2KDF(unittest.TestCase):
             time_cost    = random.SystemRandom().randint(1, 3)
             memory_cost  = random.SystemRandom().randint(7, 15)
 
-            # Generate a key using the command-line utility.
+            # Generate a key test vector using the command-line utility.
             output = subprocess.check_output(
                 f'echo -n "{password}" | ./argon2 {salt} '
                 f'-t {time_cost} '
@@ -184,11 +184,12 @@ class TestArgon2KDF(unittest.TestCase):
 class TestArgon2Wrapper(unittest.TestCase):
 
     def test_invalid_salt_length_raises_critical_error(self):
-        for salt_length in [0, ARGON2_SALT_LENGTH-1, ARGON2_SALT_LENGTH+1, 1000]:
+        for salt_length in [0, ARGON2_SALT_LENGTH-1,
+                               ARGON2_SALT_LENGTH+1, 1000]:
             with self.assertRaises(SystemExit):
                 argon2_kdf('password', salt_length * b'a')
 
-    def test_argon2d_kdf_key_type_and_length(self):
+    def test_argon2_kdf_key_type_and_length(self):
         key = argon2_kdf('password', ARGON2_SALT_LENGTH*b'a', time_cost=1, memory_cost=100)
         self.assertIsInstance(key, bytes)
         self.assertEqual(len(key), SYMMETRIC_KEY_LENGTH)
