@@ -148,7 +148,7 @@ class TestArgon2KDF(unittest.TestCase):
         self.assertEqual(hashlib.sha256(file_data).hexdigest(),
                          '2957db15d320b0970a34be9a6ef984b11b2296b1b1f8b051a47e35035c1bc7cf')
 
-        # Unzip and compile the command-line utility.
+        # Unzip, compile, and test the command-line utility.
         subprocess.Popen(f'unzip {file_name}', shell=True).wait()
         os.chdir('phc-winner-argon2-master/')
         subprocess.Popen('make',      shell=True).wait()
