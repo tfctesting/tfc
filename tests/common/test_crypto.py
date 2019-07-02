@@ -244,7 +244,7 @@ class TestX448(unittest.TestCase):
     vectors for repeated call of the scalar multiplication for 1k and 1M
     rounds.
         The pyca/cryptography library does not provide bindings for the
-    OpenSSL's X448 internals, but both KATs are done by OpenSSL:
+    OpenSSL's X448 internals, but both KATs are done by OpenSSL tests:
 
         https://github.com/openssl/openssl/blob/master/test/curve448_internal_test.c#L654
         https://github.com/openssl/openssl/blob/master/test/curve448_internal_test.c#L668
@@ -300,7 +300,7 @@ class TestX448(unittest.TestCase):
         [2] https://vnhacker.blogspot.com/2015/09/why-not-validating-curve25519-public.html
         """
         with self.assertRaises(SystemExit):
-            X448.shared_key(X448PrivateKey.generate(), bytes(TFC_PUBLIC_KEY_LENGTH))
+            X448.shared_key(X448.generate_private_key(), bytes(TFC_PUBLIC_KEY_LENGTH))
 
     def test_x448_with_test_vectors(self):
         sk_alice_ = X448PrivateKey.from_private_bytes(TestX448.sk_alice)
