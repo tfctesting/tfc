@@ -231,11 +231,23 @@ class TestArgon2Wrapper(unittest.TestCase):
 
 class TestX448(unittest.TestCase):
     """\
-    The X448 shared secret is also an unpredictable value. To test the
-    correctness of the OpenSSL implementation and TFC's wrapper, this
-    test uses the official X448 test vectors:
+    Again, since the X448 shared secret is an unpredictable value (a
+    random point on the curve), verifying that the algorithm is
+    implemented correctly, is best done with the official test vectors:
 
         https://tools.ietf.org/html/rfc7748#section-6.2
+
+    In addition to the X448 test vectors, there also exists separate
+    test vectors for the the internal functionality of X448 (namely
+    scalar multiplication where known input scalar and input
+    u-coordinate produce a known output u-coordinate), as well as test
+    vectors for repeated call of the scalar multiplication for 1k and 1M
+    rounds.
+        The pyca/cryptography library does not provide bindings for the
+    OpenSSL's X448 internals, but both KATs are done by OpenSSL:
+
+        https://github.com/openssl/openssl/blob/master/test/curve448_internal_test.c#L654
+        https://github.com/openssl/openssl/blob/master/test/curve448_internal_test.c#L668
     """
     sk_alice = bytes.fromhex(
         '9a8f4925d1519f5775cf46b04b5800d4ee9ee8bae8bc5565d498c28d'
@@ -257,11 +269,11 @@ class TestX448(unittest.TestCase):
         '07fff4181ac6cc95ec1c16a94a0f74d12da232ce40a77552281d282b'
         'b60c0b56fd2464c335543936521c24403085d59a449a5037514a879d')
 
-    def test_generate_private_key_returns_private_key_object(self):
+    def test_generate_private_key_function_returns_private_key_object(self):
         self.assertIsInstance(X448.generate_private_key(), X448PrivateKey)
 
     def test_deriving_shared_key_with_an_incorrect_public_key_length_raises_critical_error(self):
-        private_key = X448PrivateKey.generate()
+        private_key = X448.generate_private_key()
         public_keys = [key_len * b'a' for key_len in (1, TFC_PUBLIC_KEY_LENGTH-1,
                                                          TFC_PUBLIC_KEY_LENGTH+1, 1000)]
         for public_key in public_keys:
@@ -356,21 +368,21 @@ class TestXChaCha20Poly1305(unittest.TestCase):
     # ---
 
     ietf_nonce = bytes.fromhex(
-        "404142434445464748494a4b4c4d4e4f"
-        "5051525354555657")
+        '404142434445464748494a4b4c4d4e4f'
+        '5051525354555657')
 
     ietf_ct = bytes.fromhex(
-        "bd6d179d3e83d43b9576579493c0e939"
-        "572a1700252bfaccbed2902c21396cbb"
-        "731c7f1b0b4aa6440bf3a82f4eda7e39"
-        "ae64c6708c54c216cb96b72e1213b452"
-        "2f8c9ba40db5d945b11b69b982c1bb9e"
-        "3f3fac2bc369488f76b2383565d3fff9"
-        "21f9664c97637da9768812f615c68b13"
-        "b52e")
+        'bd6d179d3e83d43b9576579493c0e939'
+        '572a1700252bfaccbed2902c21396cbb'
+        '731c7f1b0b4aa6440bf3a82f4eda7e39'
+        'ae64c6708c54c216cb96b72e1213b452'
+        '2f8c9ba40db5d945b11b69b982c1bb9e'
+        '3f3fac2bc369488f76b2383565d3fff9'
+        '21f9664c97637da9768812f615c68b13'
+        'b52e')
 
     ietf_tag = bytes.fromhex(
-        "c0875924c1c7987947deafd8780acf49")
+        'c0875924c1c7987947deafd8780acf49')
 
     ietf_nonce_ct_tag = ietf_nonce + ietf_ct + ietf_tag
 
