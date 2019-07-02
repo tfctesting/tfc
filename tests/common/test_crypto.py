@@ -243,8 +243,11 @@ class TestX448(unittest.TestCase):
     multiplication where a known input scalar and input u-coordinate
     produce a known output u-coordinate), as well as test vectors for
     the output u-coordinate after the scalar multiplication has been
-    performed 1,000 and 1,000,000 times.
-        The pyca/cryptography library does not provide bindings for the
+    performed 1,000 and 1,000,000 times:
+
+        https://tools.ietf.org/html/rfc7748#section-5.2
+
+    The pyca/cryptography library does not provide bindings for the
     OpenSSL's X448 internals, but both KATs are done by OpenSSL tests:
 
         https://github.com/openssl/openssl/blob/master/test/curve448_internal_test.c#L654
