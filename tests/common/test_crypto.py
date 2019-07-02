@@ -296,7 +296,8 @@ class TestX448(unittest.TestCase):
             It's not clear how this type of attack could be leveraged in
         the context of secure messaging where both the sender and the
         recipient desire confidentiality, and where easier ways to break
-        the confidentiality of the conversation exist. However, there is
+        the confidentiality of the conversation exist for both parties.
+        However, there is
           a) no harm in doing the check and
           b) no need to trouble ourselves with whether TFC should ensure
              contributory behavior; the pyca/cryptography library
