@@ -239,7 +239,7 @@ class TestX448(unittest.TestCase):
 
     In addition to the X448 test vectors, there also exists separate
     test vectors for the internal functionality of X448 (namely scalar
-    multiplication where known input scalar and input u-coordinate
+    multiplication where a known input scalar and input u-coordinate
     produce a known output u-coordinate), as well as test vectors for
     the output u-coordinate after the scalar multiplication has been
     performed 1,000 and 1,000,000 times.
