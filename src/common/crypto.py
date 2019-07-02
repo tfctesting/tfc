@@ -155,8 +155,8 @@ def argon2_kdf(password:    str,                           # Password to derive 
         o Of all of the PHC finalists, only Catena and Argon2i offer
           cache-timing resistance by using data-independent memory
           access. Catena does not support parallelism[3], thus if it
-          turns out TFC needs protection from cache-timing attacks after
-          all, the selection of Argon2 (that always supports
+          later turns out TFC needs protection from cache-timing attacks
+          after all, the selection of Argon2 (that always supports
           parallelism) is ideal, as switching from Argon2d to Argon2i is
           trivial.
 
