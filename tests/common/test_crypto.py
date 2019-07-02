@@ -138,7 +138,7 @@ class TestArgon2KDF(unittest.TestCase):
         self.number_of_tests = 256
 
         file_url  = 'https://github.com/P-H-C/phc-winner-argon2/archive/master.zip'
-        file_name = 'argon2_master.zip'
+        file_name = 'phc-winner-argon2-master.zip'
 
         # Download the Argon2 command-line utility.
         subprocess.Popen(f'wget {file_url} -O {file_name}', shell=True).wait()
