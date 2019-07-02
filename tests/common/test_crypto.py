@@ -231,9 +231,10 @@ class TestArgon2Wrapper(unittest.TestCase):
 
 class TestX448(unittest.TestCase):
     """\
-    Again, since the X448 shared secret is an unpredictable value (a
-    random point on the curve), the correct implementation of the
-    algorithm is done with the official test vectors:
+    Again, since the X448 output (shared secret) is an unpredictable
+    value (a random point on the curve), the easiest way to verify
+    the correct implementation of the algorithm is with the official
+    test vectors:
 
         https://tools.ietf.org/html/rfc7748#section-6.2
 
