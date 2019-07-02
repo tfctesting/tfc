@@ -298,8 +298,8 @@ class TestX448(unittest.TestCase):
           a) no harm in doing the check and
           b) no need to trouble ourselves with whether TFC should ensure
              contributory behavior, as the pyca/cryptography library
-             already checks that the shared key is not zero. This test
-             merely verifies that the check takes place.
+             already checks that the shared secret is not zero. This
+             test merely verifies that the check takes place.
 
         [1] https://research.kudelskisecurity.com/2017/04/25/should-ecdh-keys-be-validated/
         [2] https://vnhacker.blogspot.com/2015/09/why-not-validating-curve25519-public.html
