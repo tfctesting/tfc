@@ -147,7 +147,7 @@ def argon2_kdf(password:    str,                           # Password to derive 
         o scrypt is very complex as it "combines two independent
           cryptographic primitives (the SHA256 hash function, and
           the Salsa20/8 core operation), and four generic operations
-          (HMAC, PBKDF2, Block-Mix and ROMix)."[2] Furthermore,
+          (HMAC, PBKDF2, Block-Mix, and ROMix)."[2] Furthermore,
           scrypt is "vulnerable to trivial time-memory trade-off (TMTO)
           attacks that allows compact implementations with the same
           energy cost."[1]
