@@ -232,9 +232,9 @@ class TestArgon2Wrapper(unittest.TestCase):
 class TestX448(unittest.TestCase):
     """\
     Again, since the X448 output (shared secret) is an unpredictable
-    value (a random point on the curve), the easiest way to verify
-    the correct implementation of the algorithm is with the official
-    test vectors:
+    value (a random point on the curve), the easiest way to verify the
+    correct implementation of the algorithm is with the official test
+    vectors:
 
         https://tools.ietf.org/html/rfc7748#section-6.2
 
@@ -242,8 +242,8 @@ class TestX448(unittest.TestCase):
     test vectors for the internal functionality of X448 (namely scalar
     multiplication where a known input scalar and input u-coordinate
     produce a known output u-coordinate), as well as test vectors for
-    the output after the scalar multiplication has been performed
-    1,000 and 1,000,000 times:
+    the output after the scalar multiplication has been performed 1,000
+    and 1,000,000 times:
 
         https://tools.ietf.org/html/rfc7748#section-5.2
 
