@@ -244,7 +244,7 @@ class TestX448(unittest.TestCase):
         The first set contains known input scalars and input
     u-coordinates that produce known output u-coordinates.
         The second set contains an input scalar and input u-coordinate,
-    plus the output value after the scalar multiplication has been
+    plus the output values after the scalar multiplication has been
     performed 1,000 and 1,000,000 times:
 
         https://tools.ietf.org/html/rfc7748#section-5.2
