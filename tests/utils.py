@@ -111,8 +111,8 @@ def cd_unit_test():
 
 def cleanup(name):
     """Remove unit test related directory."""
-    os.chdir("..")
-    shutil.rmtree(f"{name}/")
+    os.chdir('..')
+    shutil.rmtree(f'{name}/')
 
 
 def func_that_raises(exception: Any) -> Callable:
