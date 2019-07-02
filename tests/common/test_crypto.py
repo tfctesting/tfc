@@ -273,13 +273,13 @@ class TestX448(unittest.TestCase):
 
     def test_deriving_shared_key_with_an_incorrect_public_key_length_raises_critical_error(self):
         private_key = X448.generate_private_key()
-        public_keys = [key_len * b'a' for key_len in (1, TFC_PUBLIC_KEY_LENGTH-1,
-                                                         TFC_PUBLIC_KEY_LENGTH+1, 1000)]
+        public_keys = [key_length * b'a' for key_length in (1, TFC_PUBLIC_KEY_LENGTH-1,
+                                                               TFC_PUBLIC_KEY_LENGTH+1, 1000)]
         for public_key in public_keys:
             with self.assertRaises(SystemExit):
                 X448.shared_key(private_key, public_key)
 
-    def test_deriving_zero_shared_key_raises_critical_error(self):
+    def test_deriving_zero_shared_secret_raises_critical_error(self):
         """\
         Some experts such as JP Aumasson[1] and Thai Duong[2] have
         argued that X25519 public keys should be validated before use to
@@ -291,9 +291,9 @@ class TestX448(unittest.TestCase):
         confidentiality of the conversation exist, there is
           a) no harm in doing the check and
           b) no need to trouble ourselves with whether it's needed as
-             the pyca/cryptography implementation already checks for
-             zero shared keys. This test merely verifies that the check
-             takes place.
+             the pyca/cryptography library already checks that the
+             shared key is not zero. This test merely verifies that the
+             check takes place.
 
         [1] https://research.kudelskisecurity.com/2017/04/25/should-ecdh-keys-be-validated/
         [2] https://vnhacker.blogspot.com/2015/09/why-not-validating-curve25519-public.html
