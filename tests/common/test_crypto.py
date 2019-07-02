@@ -284,8 +284,9 @@ class TestX448(unittest.TestCase):
         """\
         Some experts such as JP Aumasson[1] and Thai Duong[2] have
         argued that X25519 public keys should be validated before use to
-        prevent one party from being able to force the shared key to a
-        preselected value. This also applies to X448.
+        prevent one party from having key control, i.e., being able to
+        force the shared key to a preselected value. This also applies
+        to X448.
             While it's not clear how this type of attack could be
         leveraged in the context of secure messaging where both parties
         strive for confidentiality, and where easier ways to break the
