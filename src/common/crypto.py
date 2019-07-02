@@ -141,7 +141,7 @@ def argon2_kdf(password:    str,                           # Password to derive 
     The reasons for using Argon2 in TFC include
 
         o PBKDF2 and bcrypt are not memory-hard, thus they are weak
-          against massively parallel computing attacks on
+          against massively parallel computing attacks with
           FPGAs/GPUs/ASICs.[1]
 
         o scrypt is very complex as it "combines two independent
