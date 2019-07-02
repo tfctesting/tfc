@@ -155,8 +155,9 @@ def argon2_kdf(password:    str,                           # Password to derive 
           cache-timing resistance by using data-independent memory
           access. Catena does not support parallelism[3], thus if it
           turns out TFC needs protection from cache-timing attacks after
-          all, the selection of Argon2 is ideal as switch from Argon2d
-          to Argon2i is trivial.
+          all, the selection of Argon2 (that always supports
+          parallelism) is ideal as switch from Argon2d to Argon2i is
+          trivial.
 
     The purpose of Argon2 is to stretch a password into a 256-bit key.
     Argon2 features a slow, memory-hard hash function that consumes
