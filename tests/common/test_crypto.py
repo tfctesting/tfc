@@ -126,7 +126,7 @@ class TestArgon2KDF(unittest.TestCase):
     utility[2] for the reference implementation of Argon2. Next, the
     test compiles and runs the command-line utility's tests. It then
     generates random (but valid) input parameters, and compares the
-    output of the argon2_cffi function to the output of the command-line
+    output of the argon2_cffi library to the output of the command-line
     utility under those input parameters.
 
     [1] https://tools.ietf.org/html/draft-irtf-cfrg-argon2-03#section-6.1
