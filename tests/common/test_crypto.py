@@ -123,7 +123,8 @@ class TestArgon2KDF(unittest.TestCase):
     the argon2_cffi library does not provide. The only available option
     is to generate the test vectors dynamically.
         To do that, this test downloads and compiles the command-line
-    utility[2] for the reference implementation of Argon2. It then
+    utility[2] for the reference implementation of Argon2. Next, the
+    test compiles and runs the command-line utility's tests. It then
     generates random (but valid) input parameters, and compares the
     output of the argon2_cffi function to the output of the command-line
     utility under those input parameters.
@@ -150,7 +151,8 @@ class TestArgon2KDF(unittest.TestCase):
         # Unzip and compile the command-line utility.
         subprocess.Popen(f'unzip {file_name}', shell=True).wait()
         os.chdir('phc-winner-argon2-master/')
-        subprocess.Popen('make', shell=True).wait()
+        subprocess.Popen('make',      shell=True).wait()
+        subprocess.Popen('make test', shell=True).wait()
 
     def tearDown(self) -> None:
         os.chdir('..')
