@@ -241,7 +241,8 @@ class TestX448(unittest.TestCase):
     test vectors for the internal functionality of X448 (namely scalar
     multiplication where known input scalar and input u-coordinate
     produce a known output u-coordinate), as well as test vectors for
-    repeated call of the scalar multiplication for 1k and 1M rounds.
+    the output coordinate after the scalar multiplication has been
+    performed 1,000 and 1,000,000 times.
         The pyca/cryptography library does not provide bindings for the
     OpenSSL's X448 internals, but both KATs are done by OpenSSL tests:
 
