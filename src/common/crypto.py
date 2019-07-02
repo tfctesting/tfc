@@ -184,7 +184,7 @@ def argon2_kdf(password:    str,                           # Password to derive 
     The correctness of the Argon2d implementation[3] is tested by TFC
     unit tests. The testing is done by comparing the output of the
     argon2_cffi library with the output of the Argon2 reference
-    command-line utility under randomized parameters.
+    command-line utility under randomized input parameters.
 
      [1] https://github.com/P-H-C/phc-winner-argon2/blob/master/argon2-specs.pdf  # p. 2
      [2] https://password-hashing.net/submissions/specs/Catena-v5.pdf             # p.10
