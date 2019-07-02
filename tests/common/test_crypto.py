@@ -47,9 +47,9 @@ from tests.utils import cd_unit_test, cleanup
 
 class TestBLAKE2b(unittest.TestCase):
     """\
-    Because hash values of secure hash functions are unpredictable
-    (i.e. indistinguishable from the output of a truly random function),
-    it's hard to know whether the algorithm is implemented correctly.
+    Because hash values of secure hash functions are unpredictable (i.e.
+    indistinguishable from the output of a truly random function), it's
+    hard to know whether the algorithm is implemented correctly.
 
     Known answer test (KAT), a.k.a. test vector, contains the known
     correct output value of the function under some known set of input
@@ -57,8 +57,8 @@ class TestBLAKE2b(unittest.TestCase):
     that the implementation of the function is correct. On the other
     hand, any failing KAT indicates a problem within the implementation.
 
-    TFC does its best to verify the BLAKE2b implementation is correct
-    by using the full suite of BLAKE2b KATs available in the official
+    TFC does its best to verify the BLAKE2b implementation is correct by
+    using the full suite of BLAKE2b KATs available in the official
     BLAKE2 GitHub repository:
 
         https://github.com/BLAKE2/BLAKE2/blob/master/testvectors/blake2b-kat.txt
