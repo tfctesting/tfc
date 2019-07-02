@@ -291,13 +291,13 @@ class TestX448(unittest.TestCase):
         prevent one party from having key control, i.e., being able to
         force the shared secret to a preselected value. This also
         applies to X448.
-            While it's not clear how this type of attack could be
+            It's not clear how this type of attack could be
         leveraged in the context of secure messaging where both parties
         strive for confidentiality, and where easier ways to break the
-        confidentiality of the conversation exist, there is
+        confidentiality of the conversation exist. However, there is
           a) no harm in doing the check and
           b) no need to trouble ourselves with whether TFC should ensure
-             contributory behavior, as the pyca/cryptography library
+             contributory behavior; the pyca/cryptography library
              already checks that the shared secret is not zero. This
              test merely verifies that the check takes place.
 
