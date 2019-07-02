@@ -184,7 +184,7 @@ def argon2_kdf(password:    str,                           # Password to derive 
     where the encrypted data is at rest. In such a situation, Argon2d is
     the most secure option.
 
-    The correctness of the Argon2d implementation[3] is tested by TFC
+    The correctness of the Argon2d implementation[4] is tested by TFC
     unit tests. The testing is done by comparing the output of the
     argon2_cffi library with the output of the Argon2 reference
     command-line utility under randomized input parameters.
@@ -192,7 +192,7 @@ def argon2_kdf(password:    str,                           # Password to derive 
      [1] https://github.com/P-H-C/phc-winner-argon2/blob/master/argon2-specs.pdf  # p. 2
      [2] https://password-hashing.net/submissions/specs/Catena-v5.pdf             # p.10
      [3] https://crypto.stackexchange.com/a/51623
-     [3] https://github.com/P-H-C/phc-winner-argon2
+     [4] https://github.com/P-H-C/phc-winner-argon2
          https://github.com/hynek/argon2_cffi
     """
     if len(salt) != ARGON2_SALT_LENGTH:
