@@ -151,7 +151,7 @@ def argon2_kdf(password:    str,                           # Password to derive 
           attacks that allows compact implementations with the same
           energy cost."[1]
 
-        o Of the PHC finalists, only Catena and Argon2i offer
+        o Of all of the PHC finalists, only Catena and Argon2i offer
           cache-timing resistance by using data-independent memory
           access. Catena does not support parallelism[3], thus if it
           turns out TFC needs protection from cache-timing attacks after
