@@ -276,7 +276,7 @@ class TestX448(unittest.TestCase):
     def test_generate_private_key_function_returns_private_key_object(self):
         self.assertIsInstance(X448.generate_private_key(), X448PrivateKey)
 
-    def test_deriving_shared_secret_with_an_incorrect_public_key_length_raises_critical_error(self):
+    def test_deriving_shared_secret_with_an_incorrect_size_public_key_raises_critical_error(self):
         private_key = X448.generate_private_key()
         public_keys = [key_length * b'a' for key_length in (1, TFC_PUBLIC_KEY_LENGTH-1,
                                                                TFC_PUBLIC_KEY_LENGTH+1, 1000)]
