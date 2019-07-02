@@ -238,11 +238,10 @@ class TestX448(unittest.TestCase):
         https://tools.ietf.org/html/rfc7748#section-6.2
 
     In addition to the X448 test vectors, there also exists separate
-    test vectors for the the internal functionality of X448 (namely
-    scalar multiplication where known input scalar and input
-    u-coordinate produce a known output u-coordinate), as well as test
-    vectors for repeated call of the scalar multiplication for 1k and 1M
-    rounds.
+    test vectors for the internal functionality of X448 (namely scalar
+    multiplication where known input scalar and input u-coordinate
+    produce a known output u-coordinate), as well as test vectors for
+    repeated call of the scalar multiplication for 1k and 1M rounds.
         The pyca/cryptography library does not provide bindings for the
     OpenSSL's X448 internals, but both KATs are done by OpenSSL tests:
 
