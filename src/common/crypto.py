@@ -51,8 +51,7 @@ from src.common.misc       import ignored, separate_header
 from src.common.output     import m_print, phase, print_on_previous_line
 from src.common.statics    import ARGON2_PSK_MEMORY_COST, ARGON2_PSK_PARALLELISM, ARGON2_PSK_TIME_COST
 from src.common.statics    import ARGON2_SALT_LENGTH, BITS_PER_BYTE, BLAKE2_DIGEST_LENGTH, BLAKE2_DIGEST_LENGTH_MAX
-from src.common.statics    import DONE, ENTROPY_THRESHOLD, PADDING_LENGTH, SYMMETRIC_KEY_LENGTH
-from src.common.statics    import XCHACHA20_NONCE_LENGTH
+from src.common.statics    import DONE, ENTROPY_THRESHOLD, PADDING_LENGTH, SYMMETRIC_KEY_LENGTH, XCHACHA20_NONCE_LENGTH
 
 
 def blake2b(message:     bytes,                        # Message to hash
