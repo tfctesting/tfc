@@ -276,18 +276,17 @@ class X448(object):
            the `generate()` class method imports the OpenSSL backend[1].
 
         2. Importing the backend causes Python to execute this[2] line
-           of code that runs the __init__() method[3] of the Backend
+           of code that runs the `__init__()` method[3] of the Backend
            class, which in turns calls the `activate_osrandom_engine()`
            method[4].
 
-        3. According to the documentation[5], calling the method
-           `activate_osrandom_engine()` will disable OpenSSL’s default
-           CSPRNG, and activate the "OS random engine".
+        3. Calling `activate_osrandom_engine()` disables the default
+           OpenSSL CSPRNG, and activates the "OS random engine".[5]
 
-        4. According to the documentation[6], unlike OpenSSL's CSPRNG,
-           the OS random engine sources its entropy from /dev/urandom,
-           does not suffer from the fork() weakness, and does not have
-           issues with the initialization.
+        4. Unlike OpenSSL user-space CSPRNG, the OS random engine
+           sources its entropy from /dev/urandom. It also does not
+           suffer from the fork() weakness, or have issues with CSPRNG
+           initialization.[6]
 
         5. The fallback option (/dev/urandom) of OS random engine might
            be problematic on pre 3.17 kernels if the initialization has
@@ -295,7 +294,8 @@ class X448(object):
            version of the OS it's running on is at least 4.8. This means
            that like the documentation says[7], the used source of
            entropy is GETRANDOM(0), which is the same source as used by
-           TFC's csprng() function.
+           TFC's csprng() function, and that does not yield entropy
+           until it has been initialized.
 
          [1] https://github.com/pyca/cryptography/blob/2.7/src/cryptography/hazmat/primitives/asymmetric/x448.py#L38
          [2] https://github.com/pyca/cryptography/blob/2.7/src/cryptography/hazmat/backends/openssl/backend.py#L2445
