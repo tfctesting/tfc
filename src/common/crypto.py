@@ -226,7 +226,7 @@ class X448(object):
             - Large prime field (p=2^448 - 2^224 - 1) provides
               conservative 224 bits of symmetric security.
 
-            - The Edwards curve (x^2+y^2 = 1-39081x^2y^2) is complete
+            - The Edwards curve (x^2+y^2 = 1-39081x^2y^2) is complete.
 
             - The base point (x_1,y_1) is on the curve.
 
@@ -290,10 +290,10 @@ class X448(object):
 
         2. Importing the backend causes Python to execute this[2] line
            of code that runs the `__init__()` method[3] of the Backend
-           class, which in turns calls the `activate_osrandom_engine()`
+           class, which then calls the `self.activate_osrandom_engine()`
            method[4].
 
-        3. Calling `activate_osrandom_engine()` disables the default
+        3. Calling the `activate_osrandom_engine()` disables the default
            OpenSSL CSPRNG, and activates the "OS random engine".[5]
 
         4. Unlike OpenSSL user-space CSPRNG, the OS random engine
@@ -307,7 +307,7 @@ class X448(object):
            of the OS it's running on is at least 4.8. This means that
            like the documentation says[7], the used source of entropy is
            GETRANDOM(0), which is the same source as the one used by
-           TFC's csprng() function, and that does not yield entropy
+           TFC's `csprng()` function, and that does not yield entropy
            until it has been properly seeded.
 
          [1] https://github.com/pyca/cryptography/blob/2.7/src/cryptography/hazmat/primitives/asymmetric/x448.py#L38
