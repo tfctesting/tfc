@@ -234,7 +234,7 @@ class X448(object):
             - 222.8-bit security against the Pollard's rho method.
                 This is important as the security of hash ratchet
               depends on the security of the root key. Curve25519 is
-              therefore less feasible choice. Curve448 is also likely to
+              thus less feasible choice. Curve448 is also likely to
               resist quantum computers and mathematical breakthroughs
               against ECC for a longer time.
 
