@@ -277,8 +277,8 @@ class X448(object):
           to be manually typed from Networked Computer to Source Computer.
 
     The correctness of the X448 implementation[4] is tested by TFC unit
-    tests. The testing is done in limited scope by using official test
-    vectors.
+    tests. The testing is done in limited scope by using the official
+    test vectors.
 
      [1] https://safecurves.cr.yp.to/
      [2] https://csrc.nist.gov/News/2017/Transition-Plans-for-Key-Establishment-Schemes
