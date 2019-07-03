@@ -223,7 +223,7 @@ class X448(object):
 
           Parameters
 
-            - Large prime field (p=2^448 - 2^224 - 1) provides
+            - Large prime field (p = 2^448 - 2^224 - 1) provides
               conservative 224 bits of symmetric security.
                 This is important as the security of hash ratchet
               depends on the security of the root key. Curve25519 is
