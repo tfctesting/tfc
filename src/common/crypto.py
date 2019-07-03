@@ -336,10 +336,11 @@ class X448(object):
         3. Calling the `activate_osrandom_engine()` disables the default
            OpenSSL CSPRNG, and activates the "OS random engine".[5]
 
-        4. Unlike OpenSSL user-space CSPRNG, the OS random engine
-           sources its entropy directly from /dev/urandom. It also does
-           not suffer from the fork() weakness, or have issues with
-           CSPRNG initialization.[6]
+        4. Unlike OpenSSL user-space CSPRNG that only seeds from
+           /dev/urandom, the OS random engine sources all of its
+           entropy directly from /dev/urandom. It also does not suffer
+           from the fork() weakness, or have issues with CSPRNG
+           initialization.[6]
 
         5. The fallback option (/dev/urandom) of OS random engine might
            be problematic on pre-3.17 kernels if the CSPRNG has not been
