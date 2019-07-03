@@ -345,14 +345,15 @@ class X448(object):
 
         5. The fallback option (/dev/urandom) of OS random engine might
            be problematic on pre-3.17 kernels if the CSPRNG has not been
-           seeded properly. However, TFC checks that the kernel version
+           properly seeded. However, TFC checks that the kernel version
            of the OS it's running on is at least 4.8. This means that
            the used source of entropy is always GETRANDOM(0).[7] This
-           can be verified from the source code[8] as well: The last
-           parameter `0` indicates GRND_NONBLOCK flag is not set. This
-           means /dev/urandom is used, and that it does not yield
-           entropy until it has been properly seeded. This is the same
-           case as with TFC's `csprng()` function.
+           can be verified from the source code as well: The last
+           parameter `0` of the GETRANDOM syscall[8] indicates
+           GRND_NONBLOCK flag is not set. This means /dev/urandom is
+           used, and that it does not yield entropy until it has been
+           properly seeded. This is the same case as with TFC's
+           `csprng()` function.
 
          [1] https://github.com/pyca/cryptography/blob/2.7/src/cryptography/hazmat/primitives/asymmetric/x448.py#L38
          [2] https://github.com/pyca/cryptography/blob/2.7/src/cryptography/hazmat/backends/openssl/backend.py#L2445
