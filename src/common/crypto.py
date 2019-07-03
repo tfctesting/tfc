@@ -340,7 +340,7 @@ class X448(object):
            /dev/urandom, the OS random engine uses GETRANDOM(0) syscall
            that sources all of its entropy directly from /dev/urandom.
            The OS random engine does not suffer from the fork() weakness
-           where forked process is not automatically reseeded and it's
+           where forked process is not automatically reseeded, and it's
            also safe from issues with OpenSSL CSPRNG initialization.[6]
 
         5. The fallback option (/dev/urandom) of OS random engine might
