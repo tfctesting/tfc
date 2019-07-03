@@ -221,27 +221,40 @@ class X448(object):
 
         o It meets the criterion for a SafeCurve[1]:
 
+          Parameters
+
+            - Large prime field (p=2^448 - 2^224 - 1) provides
+              conservative 224 bits of symmetric security.
+
+            - The Edwards curve (x^2+y^2 = 1-39081x^2y^2) is complete
+
+            - The base point (x_1,y_1) is on the curve.
+
           ECDLP security
 
-            - The curve-generation process has been completely explained.
+            - 222.8-bit security against the rho method.
 
-            - Safety against additive and multiplicative transfer.
+            - Safe against additive and multiplicative transfer.
 
             - The complex-multiplication field discriminant is 2^447.5,
               which is much larger than the minimum (2^100).
 
+            - The curve-generation process is fully rigid, i.e. it has
+              been completely explained.
+
           ECC security
 
             - Use of Montgomery ladder that protects from side channel
-              attacks by doing constant-time scalar multiplication.
+              attacks by doing constant-time single-scalar multiplication.
 
             - 221.8-bit security against twist attacks (small-subgroup
               attack combined with invalid-curve attack).
 
+            - Support for complete single/multi-scalar multiplication
+              formulas.
+
             - Points on Curve448 (e.g. public keys) are
               indistinguishable from uniform random strings.
-
-        o It provides conservative 224 bits of symmetric security.
 
         o NIST has announced X448 will be included in the SP 800-186.[2]
 
