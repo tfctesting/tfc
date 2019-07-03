@@ -233,9 +233,7 @@ class X448(object):
           ECC security
 
             - Use of Montgomery ladder that protects from side channel
-              attacks by doing constant-time single-coordinate
-              single-scalar multiplication, as well as complete,
-              constant-time multi-scalar multiplication.
+              attacks by doing constant-time scalar multiplication.
 
             - 221.8-bit security against twist attacks (small-subgroup
               attack combined with invalid-curve attack).
@@ -248,7 +246,7 @@ class X448(object):
         o NIST has announced X448 will be included in the SP 800-186.[2]
 
         o Its public keys do not require validation as long as the
-          resulting shared secret is not zero.
+          resulting shared secret is not zero:
 
           "[X448] is actually two curves, where any patterns of bits
            will be interpreted as a point on one of the curves or on the
@@ -287,16 +285,17 @@ class X448(object):
            CSPRNG, and activate the "OS random engine".
 
         4. According to the documentation[6], unlike OpenSSL's CSPRNG,
-           the "OS random engine" sources its entropy from /dev/urandom,
-           does not suffer from the `fork()` weakness, and does not have
+           the OS random engine sources its entropy from /dev/urandom,
+           does not suffer from the fork() weakness, and does not have
            issues with the initialization.
 
-        5. /dev/urandom might be problematic on pre 3.17 kernels if the
-           initialization has not been completed. However, TFC checks
-           that the kernel version of the OS it's running on is at least
-           4.8. This means that like the documentation says[7], the used
-           source of entropy is GETRANDOM(0), which is the same source
-           as used by TFC's csprng() function.
+        5. The fallback option (/dev/urandom) of OS random engine might
+           be problematic on pre 3.17 kernels if the initialization has
+           not been completed. However, TFC checks that the kernel
+           version of the OS it's running on is at least 4.8. This means
+           that like the documentation says[7], the used source of
+           entropy is GETRANDOM(0), which is the same source as used by
+           TFC's csprng() function.
 
          [1] https://github.com/pyca/cryptography/blob/2.7/src/cryptography/hazmat/primitives/asymmetric/x448.py#L38
          [2] https://github.com/pyca/cryptography/blob/2.7/src/cryptography/hazmat/backends/openssl/backend.py#L2445
