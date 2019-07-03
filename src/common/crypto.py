@@ -346,9 +346,9 @@ class X448(object):
            seeded properly. However, TFC checks that the kernel version
            of the OS it's running on is at least 4.8. This means that
            the used source of entropy is always GETRANDOM(0).[7] This
-           can be verified from the source code[8] as well, where the
-           last parameter `0` indicates GRND_NONBLOCK flag is not set.
-           This means /dev/urandom is used, and that it does not yield
+           can be verified from the source code[8] as well: The last
+           parameter `0` indicates GRND_NONBLOCK flag is not set. This
+           means /dev/urandom is used, and that it does not yield
            entropy until it has been properly seeded. This is the same
            case as with TFC's `csprng()` function.
 
