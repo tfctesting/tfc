@@ -310,7 +310,7 @@ class X448(object):
            initialization.[6]
 
         5. The fallback option (/dev/urandom) of OS random engine might
-           be problematic on pre 3.17 kernels if the CSPRNG has not been
+           be problematic on pre-3.17 kernels if the CSPRNG has not been
            seeded properly. However, TFC checks that the kernel version
            of the OS it's running on is at least 4.8. This means that
            like the documentation says[7], the used source of entropy is
