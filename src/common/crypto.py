@@ -319,21 +319,21 @@ class X448(object):
     def shared_key(private_key: 'X448PrivateKey', public_key: bytes) -> bytes:
         """Derive the X448 shared key.
 
-        The pyca/cryptography library validates the public key length
-        and verifies that the shared secret is not zero.
+        The pyca/cryptography library validates the length of the public
+        key and verifies that the shared secret is not zero.
 
-        Because the X448 shared secret is not a random byte string, but
-        a random point on the curve, the raw bits of the shared secret
+        The X448 shared secret is not a random byte string, but a random
+        point on the curve. Thus, the raw bits of the shared secret
         might not be uniformly distributed in the keyspace, but have
         bias towards 0 or 1.
             To get rid of the bias, the raw shared secret is passed
         through a computational extractor (BLAKE2b CSPRF) to ensure
         uniformly random shared key.
 
-        While `shared secret` and `shared key` are used synonymsly, in
-        TFC documentation we choose to distinguish between the two by
-        calling the raw shared secret the `shared secret`, and the
-        blake2b compressed shared secret, the `shared key`.
+        While `shared secret` and `shared key` are used synonymously, in
+        TFC documentation we choose to distinguish between the raw
+        shared secret and the blake2b compressed shared secret by
+        calling the latter `shared key`.
 
         Note that the shared key won't be used directly as a session
         key. Instead, it will be used as the key parameter in separate
