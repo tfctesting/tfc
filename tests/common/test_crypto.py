@@ -129,8 +129,8 @@ class TestArgon2KDF(unittest.TestCase):
     output of the argon2_cffi library to the output of the command-line
     utility under those input parameters.
 
-    [1] https://tools.ietf.org/html/draft-irtf-cfrg-argon2-03#section-6.1
-    [2] https://github.com/P-H-C/phc-winner-argon2#command-line-utility
+     [1] https://tools.ietf.org/html/draft-irtf-cfrg-argon2-03#section-6.1
+     [2] https://github.com/P-H-C/phc-winner-argon2#command-line-utility
     """
 
     def setUp(self) -> None:
@@ -304,8 +304,8 @@ class TestX448(unittest.TestCase):
              already checks that the shared secret is not zero. This
              test merely verifies that the check takes place.
 
-        [1] https://research.kudelskisecurity.com/2017/04/25/should-ecdh-keys-be-validated/
-        [2] https://vnhacker.blogspot.com/2015/09/why-not-validating-curve25519-public.html
+         [1] https://research.kudelskisecurity.com/2017/04/25/should-ecdh-keys-be-validated/
+         [2] https://vnhacker.blogspot.com/2015/09/why-not-validating-curve25519-public.html
         """
         with self.assertRaises(SystemExit):
             X448.shared_key(X448.generate_private_key(), bytes(TFC_PUBLIC_KEY_LENGTH))

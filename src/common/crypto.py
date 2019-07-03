@@ -210,8 +210,12 @@ def argon2_kdf(password:    str,                           # Password to derive 
 class X448(object):
     """\
     X448 is the Diffie-Hellman function for Curve448-Goldilocks, a
-    state-of-the-art elliptical curve designed by Mike Hamburg in 2014:
+    state-of-the-art elliptical curve designed by Mike Hamburg in 2015.
+
+    For more details, see
         https://eprint.iacr.org/2015/625.pdf
+        http://ed448goldilocks.sourceforge.net/
+        https://en.wikipedia.org/wiki/Curve448
 
     The reasons for using X448 in TFC include
 
@@ -236,7 +240,7 @@ class X448(object):
             - 221.8-bit security against twist attacks (small-subgroup
               attack combined with invalid-curve attack).
 
-            - Points on Curve448 (i.e. public keys) are
+            - Points on Curve448 (e.g. public keys) are
               indistinguishable from uniform random strings.
 
         o It provides conservative 224 bits of symmetric security.
@@ -250,8 +254,8 @@ class X448(object):
            will be interpreted as a point on one of the curves or on the
            other."[3]
 
-        o Its public keys are reasonably short (84 Base58 chars) to be
-          manually typed from Networked Computer to Source Computer.
+        o Its public keys are reasonably short (84 chars when WIF-encoded)
+          to be manually typed from Networked Computer to Source Computer.
 
     The correctness of the X448 implementation[4] is tested by TFC unit
     tests. The testing is done in limited scope by using official test
@@ -265,7 +269,42 @@ class X448(object):
     """
     @staticmethod
     def generate_private_key() -> 'X448PrivateKey':
-        """Generate the X448 private key."""
+        """Generate the X448 private key.
+
+        The pyca/cryptography's key generation process is as follows:
+
+        1. When `X448PrivateKey.generate()` is called by this method,
+           the `generate()` class method imports the OpenSSL backend[1].
+
+        2. Importing the backend causes Python to execute this[2] line
+           of code that runs the __init__() method[3] of the Backend
+           class, which in turns calls the `activate_osrandom_engine()`
+           method[4].
+
+        3. According to the documentation[5], calling the method
+           `activate_osrandom_engine()` will disable OpenSSL’s default
+           CSPRNG, and activate the "OS random engine".
+
+        4. According to the documentation[6], the "OS random engine"
+           sources its entropy from /dev/urandom, does not suffer from
+           the `fork()` weakness, and does not have issues with
+           initialization.
+
+        5. While /dev/urandom might be problematic if the initialization
+           has not completed on pre 3.17 kernels, TFC checks checks that
+           the kernel version of the OS it's running on is at least 4.8.
+           This means that like the documentation says[7], the used
+           source of entropy is GETRANDOM(0), which is the same source
+           as used by TFC's csprng() function.
+
+         [1] https://github.com/pyca/cryptography/blob/2.7/src/cryptography/hazmat/primitives/asymmetric/x448.py#L38
+         [2] https://github.com/pyca/cryptography/blob/2.7/src/cryptography/hazmat/backends/openssl/backend.py#L2445
+         [3] https://github.com/pyca/cryptography/blob/2.7/src/cryptography/hazmat/backends/openssl/backend.py#L115
+         [4] https://github.com/pyca/cryptography/blob/2.7/src/cryptography/hazmat/backends/openssl/backend.py#L122
+         [5] https://cryptography.io/en/latest/hazmat/backends/openssl/#activate_osrandom_engine
+         [6] https://cryptography.io/en/latest/hazmat/backends/openssl/#os-random-engine
+         [7] https://cryptography.io/en/latest/hazmat/backends/openssl/#os-random-sources
+        """
         return X448PrivateKey.generate()
 
     @staticmethod
@@ -282,11 +321,23 @@ class X448(object):
         The pyca/cryptography library validates the public key length
         and verifies that the shared secret is not zero.
 
-        Because the raw bits of the X448 shared secret might not be
-        uniformly distributed in the keyspace (i.e. bits might have bias
-        towards 0 or 1), the raw shared secret is passed through a
-        computational extractor (BLAKE2b CSPRF) to ensure uniformly
-        random shared key.
+        Because the X448 shared secret is not a random byte string, but
+        a random point on the curve, the raw bits of the shared secret
+        might not be uniformly distributed in the keyspace, but have
+        bias towards 0 or 1.
+            To get rid of the bias, the raw shared secret is passed
+        through a computational extractor (BLAKE2b CSPRF) to ensure
+        uniformly random shared key.
+
+        While `shared secret` and `shared key` are used synonymsly, in
+        TFC documentation we choose to distinguish between the two by
+        calling the raw shared secret the `shared secret`, and the
+        blake2b compressed shared secret, the `shared key`.
+
+        Note that the shared key won't be used directly as a session
+        key. Instead, it will be used as the key parameter in separate
+        BLAKE2b instances where the hash function is used as a KDF to
+        extract unidirectional message/header keys and fingerprints.
         """
         try:
             shared_secret = private_key.exchange(X448PublicKey.from_public_bytes(public_key))

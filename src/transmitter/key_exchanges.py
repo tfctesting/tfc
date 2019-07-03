@@ -342,7 +342,7 @@ def start_key_exchange(onion_pub_key: bytes,          # Public key of contact's 
                      "Aborting key exchange for your safety."], bold=True, tail=1)
             raise FunctionReturn("Error: Zero public key", output=False)
 
-        # Derive shared key
+        # Derive the shared key
         dh_shared_key = X448.shared_key(tfc_private_key_user, tfc_public_key_contact)
 
         # Domain separate unidirectional keys from shared key by using public
