@@ -289,13 +289,13 @@ class X448(object):
            initialization.[6]
 
         5. The fallback option (/dev/urandom) of OS random engine might
-           be problematic on pre 3.17 kernels if the initialization has
-           not been completed. However, TFC checks that the kernel
-           version of the OS it's running on is at least 4.8. This means
-           that like the documentation says[7], the used source of
-           entropy is GETRANDOM(0), which is the same source as used by
-           TFC's csprng() function, and that does not yield entropy
-           until it has been initialized.
+           be problematic on pre 3.17 kernels if the CSPRNG has not been
+           seeded properly. However, TFC checks that the kernel version
+           of the OS it's running on is at least 4.8. This means that
+           like the documentation says[7], the used source of entropy is
+           GETRANDOM(0), which is the same source as used by TFC's
+           csprng() function, and that does not yield entropy until it
+           has been initialized.
 
          [1] https://github.com/pyca/cryptography/blob/2.7/src/cryptography/hazmat/primitives/asymmetric/x448.py#L38
          [2] https://github.com/pyca/cryptography/blob/2.7/src/cryptography/hazmat/backends/openssl/backend.py#L2445
