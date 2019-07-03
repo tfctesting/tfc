@@ -267,6 +267,7 @@ class X448(object):
      [4] https://github.com/openssl/openssl/tree/OpenSSL_1_1_1-stable/crypto/ec/curve448
          https://github.com/pyca/cryptography/blob/master/src/cryptography/hazmat/primitives/asymmetric/x448.py
     """
+
     @staticmethod
     def generate_private_key() -> 'X448PrivateKey':
         """Generate the X448 private key.
@@ -285,15 +286,15 @@ class X448(object):
            `activate_osrandom_engine()` will disable OpenSSL’s default
            CSPRNG, and activate the "OS random engine".
 
-        4. According to the documentation[6], the "OS random engine"
-           sources its entropy from /dev/urandom, does not suffer from
-           the `fork()` weakness, and does not have issues with
-           initialization.
+        4. According to the documentation[6], unlike OpenSSL's CSPRNG,
+           the "OS random engine" sources its entropy from /dev/urandom,
+           does not suffer from the `fork()` weakness, and does not have
+           issues with the initialization.
 
-        5. While /dev/urandom might be problematic if the initialization
-           has not completed on pre 3.17 kernels, TFC checks checks that
-           the kernel version of the OS it's running on is at least 4.8.
-           This means that like the documentation says[7], the used
+        5. /dev/urandom might be problematic on pre 3.17 kernels if the
+           initialization has not been completed. However, TFC checks
+           that the kernel version of the OS it's running on is at least
+           4.8. This means that like the documentation says[7], the used
            source of entropy is GETRANDOM(0), which is the same source
            as used by TFC's csprng() function.
 
