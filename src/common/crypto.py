@@ -330,8 +330,8 @@ class X448(object):
 
         2. Importing the backend causes Python to execute this[2] line
            of code that runs the `__init__()` method[3] of the Backend
-           class, which then calls the `self.activate_osrandom_engine()`
-           method[4].
+           class, which then calls the `activate_osrandom_engine()`
+           instance method[4].
 
         3. Calling the `activate_osrandom_engine()` disables the default
            OpenSSL CSPRNG, and activates the "OS random engine".[5]
