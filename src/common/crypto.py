@@ -210,7 +210,7 @@ def argon2_kdf(password:    str,                           # Password to derive 
 class X448(object):
     """\
     X448 is the Diffie-Hellman function for Curve448-Goldilocks, a
-    state-of-the-art elliptical curve published by Mike Hamburg in 2015.
+    state-of-the-art elliptical curve published by Mike Hamburg in 2014.
 
     For more details, see
         https://eprint.iacr.org/2015/625.pdf
