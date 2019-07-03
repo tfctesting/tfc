@@ -219,7 +219,7 @@ class X448(object):
 
     The reasons for using X448 in TFC include
 
-        o It meets the criterion for a SafeCurve[1]:
+        o Curve448 meets the criterion for a SafeCurve[1]:
 
           Parameters
 
