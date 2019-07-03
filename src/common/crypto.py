@@ -256,8 +256,8 @@ class X448(object):
             - 221.8-bit security against twist attacks (small-subgroup
               attack combined with invalid-curve attack).
 
-            - Support for complete single/multi-scalar multiplication
-              formulas.
+            - Support for complete single-scalar and multi-scalar
+              multiplication formulas.
 
             - Points on Curve448 (e.g. public keys) are
               indistinguishable from uniform random strings.
