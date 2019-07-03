@@ -332,7 +332,7 @@ class X448(object):
         While `shared secret` and `shared key` are used synonymously, in
         TFC documentation we choose to distinguish between the raw
         shared secret and the blake2b compressed shared secret by
-        calling the latter `shared key`.
+        calling the latter the `shared key`.
 
         Note that the shared key won't be used directly as a session
         key. Instead, it will be used as the key parameter in separate
