@@ -312,10 +312,12 @@ class X448(object):
            be problematic on pre-3.17 kernels if the CSPRNG has not been
            seeded properly. However, TFC checks that the kernel version
            of the OS it's running on is at least 4.8. This means that
-           like the documentation says[7], the used source of entropy is
-           GETRANDOM(0), which is the same source as the one used by
-           TFC's `csprng()` function, and that does not yield entropy
-           until it has been properly seeded.
+           the used source of entropy is always GETRANDOM(0). This can
+           be verified from the source code[8] as well, where the
+           last parameter "0" indicates GRND_NONBLOCK flag is not set.
+           This means /dev/urandom is used, and that it does not yield
+           entropy until it has been properly seeded). This is the same
+           case as with TFC's `csprng()` function.
 
          [1] https://github.com/pyca/cryptography/blob/2.7/src/cryptography/hazmat/primitives/asymmetric/x448.py#L38
          [2] https://github.com/pyca/cryptography/blob/2.7/src/cryptography/hazmat/backends/openssl/backend.py#L2445
@@ -324,6 +326,7 @@ class X448(object):
          [5] https://cryptography.io/en/latest/hazmat/backends/openssl/#activate_osrandom_engine
          [6] https://cryptography.io/en/latest/hazmat/backends/openssl/#os-random-engine
          [7] https://cryptography.io/en/latest/hazmat/backends/openssl/#os-random-sources
+         [8] https://github.com/pyca/cryptography/blob/master/src/_cffi_src/openssl/src/osrandom_engine.c#L391
         """
         return X448PrivateKey.generate()
 
