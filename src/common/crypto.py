@@ -241,7 +241,7 @@ class X448(object):
             - Safe against additive and multiplicative transfer.
 
             - The complex-multiplication field discriminant is 2^447.5,
-              which is much larger than the minimum (2^100).
+              which is much larger than the required minimum (2^100).
 
             - The curve-generation process is fully rigid, i.e. it has
               been completely explained. In comparison, NIST P-curves
