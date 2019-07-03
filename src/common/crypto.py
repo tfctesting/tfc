@@ -223,13 +223,7 @@ class X448(object):
 
           Parameters
 
-            - Large prime field (p = 2^448 - 2^224 - 1) provides
-              conservative 224 bits of symmetric security.
-                This is important as the security of hash ratchet
-              depends on the security of the root key. Curve25519 is
-              therefore less feasible choice. Curve448 is also likely to
-              resist quantum computers and mathematical breakthroughs
-              against ECC for a longer time.
+            - Use of large prime field (p = 2^448 - 2^224 - 1).
 
             - The Edwards curve (x^2+y^2 = 1-39081x^2y^2) is complete.
 
@@ -237,7 +231,12 @@ class X448(object):
 
           ECDLP security
 
-            - 222.8-bit security against the rho method.
+            - 222.8-bit security against the Pollard's rho method.
+                This is important as the security of hash ratchet
+              depends on the security of the root key. Curve25519 is
+              therefore less feasible choice. Curve448 is also likely to
+              resist quantum computers and mathematical breakthroughs
+              against ECC for a longer time.
 
             - Safe against additive and multiplicative transfer.
 
