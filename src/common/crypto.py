@@ -207,6 +207,39 @@ def argon2_kdf(password:    str,                           # Password to derive 
     return key
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 class X448(object):
     """\
     X448 is the Diffie-Hellman function for Curve448-Goldilocks, a
@@ -232,7 +265,7 @@ class X448(object):
           ECDLP security
 
             - 222.8-bit security against the Pollard's rho method.
-                This is important as the security of hash ratchet
+                  This is important as the security of hash ratchet
               depends on the security of the root key. Curve25519 is
               thus less feasible choice. Curve448 is also likely to
               resist quantum computers and mathematical breakthroughs
