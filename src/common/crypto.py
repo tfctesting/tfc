@@ -310,7 +310,7 @@ class X448(object):
 
     @staticmethod
     def derive_public_key(private_key: 'X448PrivateKey') -> bytes:
-        """Derive public key from X448 private key."""
+        """Derive public key from an X448 private key."""
         public_key = private_key.public_key().public_bytes(encoding=Encoding.Raw,
                                                            format=PublicFormat.Raw)  # type: bytes
         return public_key
