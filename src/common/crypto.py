@@ -350,7 +350,7 @@ class X448(object):
         bias towards 0 or 1.
             To get rid of the bias, the raw shared secret is passed
         through a computational extractor (BLAKE2b CSPRF) to ensure
-        uniformly random shared key.
+        a uniformly random shared key.
 
         While `shared secret` and `shared key` are used synonymously, in
         TFC we choose to distinguish between the raw shared secret and
