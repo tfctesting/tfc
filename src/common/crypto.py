@@ -229,7 +229,7 @@ class X448(object):
               depends on the security of the root key. Curve25519 is
               therefore less feasible choice. Curve448 is also likely to
               resist quantum computers and mathematical breakthroughs
-              against ECC for longer time.
+              against ECC for a longer time.
 
             - The Edwards curve (x^2+y^2 = 1-39081x^2y^2) is complete.
 
