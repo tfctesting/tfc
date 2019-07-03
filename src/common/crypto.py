@@ -293,9 +293,9 @@ class X448(object):
            seeded properly. However, TFC checks that the kernel version
            of the OS it's running on is at least 4.8. This means that
            like the documentation says[7], the used source of entropy is
-           GETRANDOM(0), which is the same source as used by TFC's
-           csprng() function, and that does not yield entropy until it
-           has been initialized.
+           GETRANDOM(0), which is the same source as the one used by
+           TFC's csprng() function, and that does not yield entropy
+           until it has been properly seeded.
 
          [1] https://github.com/pyca/cryptography/blob/2.7/src/cryptography/hazmat/primitives/asymmetric/x448.py#L38
          [2] https://github.com/pyca/cryptography/blob/2.7/src/cryptography/hazmat/backends/openssl/backend.py#L2445
