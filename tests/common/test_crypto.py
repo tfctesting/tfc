@@ -434,6 +434,9 @@ class TestXChaCha20Poly1305(unittest.TestCase):
         self.assertEqual(self.ietf_ad,        self.libsodium_ad)
         self.assertEqual(self.ietf_key,       self.libsodium_key)
 
+        self.assertNotEqual(self.ietf_nonce,        self.libsodium_nonce)
+        self.assertNotEqual(self.nonce_ct_tag_ietf, self.nonce_ct_tag_libsodium)
+
         self.plaintext = self.ietf_plaintext
         self.ad        = self.ietf_ad
         self.key       = self.ietf_key
