@@ -408,19 +408,20 @@ def encrypt_and_sign(plaintext: bytes,       # Plaintext to encrypt
 
     The reasons for using XChaCha20-Poly1305 in TFC include
 
-        o The Salsa20 algorithm has 14 years of cryptanalysis behind it.[4]
+        o The Salsa20 algorithm has 14 years of cryptanalysis behind it[4]
+          and ChaCha20 has resisted cryptanalysis as well[5].
 
-        o The increased diffusion over the well-received Salsa20.[5]
+        o The increased diffusion over the well-received Salsa20.[6]
 
         o The algorithm is much faster compared to AES (in cases where
-          the CPU and/or implementation does not support AES-NI).[5]
+          the CPU and/or implementation does not support AES-NI).[6]
 
         o Security against cache-timing attacks on all CPUs (unlike AES
-          on CPUs without AES-NI).[6]
+          on CPUs without AES-NI).[7]
 
-        o The good name of djb.[7]
+        o The good name of djb.[8]
 
-    The correctness of the XChaCha20-Poly1305 implementation[8] is
+    The correctness of the XChaCha20-Poly1305 implementation[9] is
     tested by TFC unit tests. The testing is done in limited scope by
     using the libsodium and official IETF test vectors.
 
@@ -428,10 +429,11 @@ def encrypt_and_sign(plaintext: bytes,       # Plaintext to encrypt
      [2] https://tools.ietf.org/html/rfc8439
      [3] https://download.libsodium.org/doc/secret-key_cryptography/aead/chacha20-poly1305/xchacha20-poly1305_construction
      [4] https://en.wikipedia.org/wiki/Salsa20#Cryptanalysis_of_Salsa20
-     [5] https://cr.yp.to/chacha/chacha-20080128.pdf
-     [6] https://cr.yp.to/antiforgery/cachetiming-20050414.pdf  # p. 2
-     [7] https://www.eff.org/sv/deeplinks/2015/04/remembering-case-established-code-speech
-     [8] https://github.com/jedisct1/libsodium/blob/master/src/libsodium/crypto_core/hchacha20/core_hchacha20.c
+     [5] https://eprint.iacr.org/2007/472.pdf
+     [6] https://cr.yp.to/chacha/chacha-20080128.pdf
+     [7] https://cr.yp.to/antiforgery/cachetiming-20050414.pdf  # p. 2
+     [8] https://www.eff.org/sv/deeplinks/2015/04/remembering-case-established-code-speech
+     [9] https://github.com/jedisct1/libsodium/blob/master/src/libsodium/crypto_core/hchacha20/core_hchacha20.c
          https://github.com/jedisct1/libsodium/blob/master/src/libsodium/crypto_aead/xchacha20poly1305/sodium/aead_xchacha20poly1305.c
          https://github.com/pyca/pynacl/blob/master/src/nacl/bindings/crypto_aead.py#L349
     """
