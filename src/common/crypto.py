@@ -387,7 +387,7 @@ def encrypt_and_sign(plaintext: bytes,       # Plaintext to encrypt
     maintaining or increasing speed.
 
     For more details, see
-        https://cr.yp.to/chacha/chacha-20080128.pdf
+        https://cr.yp.to/chacha.html
         https://cr.yp.to/snuffle.html
         https://en.wikipedia.org/wiki/Salsa20#ChaCha_variant
 
@@ -400,34 +400,38 @@ def encrypt_and_sign(plaintext: bytes,       # Plaintext to encrypt
         https://cr.yp.to/mac.html
 
     The version used in TFC is the XChaCha20-Poly1305-IETF[1], a variant
-    of the ChaCha20-Poly1305-IETF (RFC 7539[2]). Quoting libsodium, the
+    of the ChaCha20-Poly1305-IETF (RFC 8439[2]). Quoting libsodium, the
     XChaCha20 (=eXtended-nonce ChaCha20) variant allows encryption of
-    ~2^64 bytes per message, encryption of up to 2^64 messages per key,
-    and safe use of random nonces due to the 192-bit nonce space[3].
+    ~2^64 bytes per message, encryption of practically unlimited number
+    of messages, and safe use of random nonces due to the 192-bit nonce
+    space[3].
 
     The reasons for using XChaCha20-Poly1305 in TFC include
 
         o The Salsa20 algorithm has 14 years of cryptanalysis behind it.[4]
 
-        o The increased diffusion over the well-received Salsa20.
+        o The increased diffusion over the well-received Salsa20.[5]
 
         o The algorithm is much faster compared to AES (in cases where
-          the CPU and/or implementation does not support AES-NI).
+          the CPU and/or implementation does not support AES-NI).[5]
 
         o Security against cache-timing attacks on all CPUs (unlike AES
-          on CPUs without AES-NI).
+          on CPUs without AES-NI).[6]
 
-        o The good name of djb.
+        o The good name of djb.[7]
 
     The correctness of the XChaCha20-Poly1305 implementation[5] is
     tested by TFC unit tests. The testing is done in limited scope by
     using the libsodium and official IETF test vectors.
 
-     [1] https://tools.ietf.org/html/draft-arciszewski-xchacha-00
-     [2] https://tools.ietf.org/html/rfc7539
-     [3] https://download.libsodium.org/doc/secret-key_cryptography/aead/chacha20-poly1305#variants
+     [1] https://tools.ietf.org/html/draft-irtf-cfrg-xchacha-00
+     [2] https://tools.ietf.org/html/rfc8439
+     [3] https://download.libsodium.org/doc/secret-key_cryptography/aead/chacha20-poly1305/xchacha20-poly1305_construction
      [4] https://en.wikipedia.org/wiki/Salsa20#Cryptanalysis_of_Salsa20
-     [5] https://github.com/jedisct1/libsodium/tree/master/src/libsodium/crypto_aead/xchacha20poly1305/sodium
+     [5] https://cr.yp.to/chacha/chacha-20080128.pdf
+     [6] https://cr.yp.to/antiforgery/cachetiming-20050414.pdf  # p. 2
+     [8] https://www.eff.org/sv/deeplinks/2015/04/remembering-case-established-code-speech
+     [7] https://github.com/jedisct1/libsodium/tree/master/src/libsodium/crypto_aead/xchacha20poly1305/sodium
          https://github.com/pyca/pynacl/blob/master/src/nacl/bindings/crypto_aead.py#L349
     """
     if len(key) != SYMMETRIC_KEY_LENGTH:
