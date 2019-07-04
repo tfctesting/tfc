@@ -398,20 +398,15 @@ def encrypt_and_sign(plaintext: bytes,       # Plaintext to encrypt
     For more details, see
         https://cr.yp.to/mac.html
 
-    The version used in TFC is the XChaCha20-Poly1305-IETF*, a variant
-    of the ChaCha20-Poly1305-IETF (RFC 7539**). Quoting libsodium, the
+    The version used in TFC is the XChaCha20-Poly1305-IETF[1], a variant
+    of the ChaCha20-Poly1305-IETF (RFC 7539[2]). Quoting libsodium, the
     XChaCha20 (=eXtended-nonce ChaCha20) variant allows encryption of
     ~2^64 bytes per message, encryption of up to 2^64 messages per key,
-    and safe use of random nonces due to the 192-bit nonce space***.
-
-    *   https://tools.ietf.org/html/draft-arciszewski-xchacha-00
-    **  https://tools.ietf.org/html/rfc7539
-    *** https://download.libsodium.org/doc/secret-key_cryptography/aead/chacha20-poly1305#variants
+    and safe use of random nonces due to the 192-bit nonce space[3].
 
     The reasons for using XChaCha20-Poly1305 in TFC include
 
-        o The Salsa20 algorithm has 14 years of cryptanalysis behind it.
-          (https://en.wikipedia.org/wiki/Salsa20#Cryptanalysis_of_Salsa20)
+        o The Salsa20 algorithm has 14 years of cryptanalysis behind it.[4]
 
         o The increased diffusion over the well-received Salsa20.
 
@@ -423,17 +418,21 @@ def encrypt_and_sign(plaintext: bytes,       # Plaintext to encrypt
 
         o The good name of djb.
 
-    The correctness of the XChaCha20-Poly1305 implementation* is tested
-    by TFC unit tests. The testing is done in limited scope by using
-    IETF and libsodium test vectors.
+    The correctness of the XChaCha20-Poly1305 implementation[5] is
+    tested by TFC unit tests. The testing is done in limited scope by
+    using the libsodium and official IETF test vectors.
 
-    * https://github.com/jedisct1/libsodium/tree/master/src/libsodium/crypto_aead/xchacha20poly1305/sodium
-      https://github.com/pyca/pynacl/blob/master/src/nacl/bindings/crypto_aead.py
+     [1] https://tools.ietf.org/html/draft-arciszewski-xchacha-00
+     [2] https://tools.ietf.org/html/rfc7539
+     [3] https://download.libsodium.org/doc/secret-key_cryptography/aead/chacha20-poly1305#variants
+     [4] https://en.wikipedia.org/wiki/Salsa20#Cryptanalysis_of_Salsa20
+     [5] https://github.com/jedisct1/libsodium/tree/master/src/libsodium/crypto_aead/xchacha20poly1305/sodium
+         https://github.com/pyca/pynacl/blob/master/src/nacl/bindings/crypto_aead.py
     """
     if len(key) != SYMMETRIC_KEY_LENGTH:
         raise CriticalError("Invalid key length.")
 
-    nonce = csprng(XCHACHA20_NONCE_LENGTH)
+    nonce  = csprng(XCHACHA20_NONCE_LENGTH)
     ct_tag = nacl.bindings.crypto_aead_xchacha20poly1305_ietf_encrypt(plaintext, ad, nonce, key)  # type: bytes
 
     return nonce + ct_tag
