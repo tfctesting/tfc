@@ -429,7 +429,6 @@ class TestXChaCha20Poly1305(unittest.TestCase):
     nonce_ct_tag_libsodium = libsodium_nonce + libsodium_ct_tag
 
     def setUp(self) -> None:
-        # Verify that common test vectors are equal.
         self.assertEqual(self.ietf_plaintext, self.libsodium_plaintext)
         self.assertEqual(self.ietf_ad,        self.libsodium_ad)
         self.assertEqual(self.ietf_key,       self.libsodium_key)
