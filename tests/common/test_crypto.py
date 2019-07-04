@@ -325,106 +325,149 @@ class TestX448(unittest.TestCase):
 
 
 class TestXChaCha20Poly1305(unittest.TestCase):
-    """Libsodium test vectors:
+    """\
+    Since HChaCha20 is a secure PRG, the XChaCha20 stream cipher derived
+    from it is also semantically secure: Under some input (plaintext,
+    associated data, nonce, and key), XChaCha20 will output ciphertext
+    and tag that are indistinguishable from the output of a truly random
+    function. So again, the implementation is best tested using test
+    vectors.
+
+    There are two slightly different test vectors available. Both KATs
+    use the same plaintext, associated data, and key. However, each
+    KAT uses a different nonce, which will result in different
+    ciphertext and tag.
+
+    IETF test vectors:
+        https://tools.ietf.org/html/draft-irtf-cfrg-xchacha-00#appendix-A.1
+
+    Libsodium test vectors:
         Message: https://github.com/jedisct1/libsodium/blob/master/test/default/aead_xchacha20poly1305.c#L22
         Ad:      https://github.com/jedisct1/libsodium/blob/master/test/default/aead_xchacha20poly1305.c#L28
         Nonce:   https://github.com/jedisct1/libsodium/blob/master/test/default/aead_xchacha20poly1305.c#L25
         Key:     https://github.com/jedisct1/libsodium/blob/master/test/default/aead_xchacha20poly1305.c#L14
         CT+tag:  https://github.com/jedisct1/libsodium/blob/master/test/default/aead_xchacha20poly1305.exp#L1
 
-    IETF test vectors:
-        https://tools.ietf.org/html/draft-arciszewski-xchacha-02#appendix-A.1
+    Some of the test vectors contain white space between every pair of hex
+    digits, which is left as it is as bytes.fromhex() ignores it:
+
+        https://docs.python.org/3/library/stdtypes.html#bytes.fromhex
     """
-    plaintext = \
-        b"Ladies and Gentlemen of the class of '99: If I could offer you " \
-        b"only one tip for the future, sunscreen would be it."
 
-    ad = bytes.fromhex(
-        '50515253c0c1c2c3c4c5c6c7')
+    ietf_plaintext = bytes.fromhex(
+        '4c 61 64 69 65 73 20 61 6e 64 20 47 65 6e 74 6c'
+        '65 6d 65 6e 20 6f 66 20 74 68 65 20 63 6c 61 73'
+        '73 20 6f 66 20 27 39 39 3a 20 49 66 20 49 20 63'
+        '6f 75 6c 64 20 6f 66 66 65 72 20 79 6f 75 20 6f'
+        '6e 6c 79 20 6f 6e 65 20 74 69 70 20 66 6f 72 20'
+        '74 68 65 20 66 75 74 75 72 65 2c 20 73 75 6e 73'
+        '63 72 65 65 6e 20 77 6f 75 6c 64 20 62 65 20 69'
+        '74 2e')
 
-    nonce = bytes.fromhex(
-        '070000004041424344454647'
-        '48494a4b4c4d4e4f50515253')
+    ietf_ad = bytes.fromhex(
+        '50 51 52 53 c0 c1 c2 c3 c4 c5 c6 c7')
 
-    key = bytes.fromhex(
-        '8081828384858687'
-        '88898a8b8c8d8e8f'
-        '9091929394959697'
-        '98999a9b9c9d9e9f')
+    ietf_key = bytes.fromhex(
+        '80 81 82 83 84 85 86 87 88 89 8a 8b 8c 8d 8e 8f'
+        '90 91 92 93 94 95 96 97 98 99 9a 9b 9c 9d 9e 9f')
 
-    ct_tag = bytes.fromhex(
-        'f8ebea4875044066'
-        'fc162a0604e171fe'
-        'ecfb3d2042524856'
-        '3bcfd5a155dcc47b'
-        'bda70b86e5ab9b55'
-        '002bd1274c02db35'
-        '321acd7af8b2e2d2'
-        '5015e136b7679458'
-        'e9f43243bf719d63'
-        '9badb5feac03f80a'
-        '19a96ef10cb1d153'
-        '33a837b90946ba38'
-        '54ee74da3f2585ef'
-        'c7e1e170e17e15e5'
-        '63e77601f4f85caf'
-        'a8e5877614e143e6'
-        '8420')
+    ietf_nonce = bytes.fromhex(
+        '40 41 42 43 44 45 46 47 48 49 4a 4b 4c 4d 4e 4f'
+        '50 51 52 53 54 55 56 57')
 
-    nonce_ct_tag = nonce + ct_tag
+    ietf_ciphertext = bytes.fromhex(
+        'bd 6d 17 9d 3e 83 d4 3b 95 76 57 94 93 c0 e9 39'
+        '57 2a 17 00 25 2b fa cc be d2 90 2c 21 39 6c bb'
+        '73 1c 7f 1b 0b 4a a6 44 0b f3 a8 2f 4e da 7e 39'
+        'ae 64 c6 70 8c 54 c2 16 cb 96 b7 2e 12 13 b4 52'
+        '2f 8c 9b a4 0d b5 d9 45 b1 1b 69 b9 82 c1 bb 9e'
+        '3f 3f ac 2b c3 69 48 8f 76 b2 38 35 65 d3 ff f9'
+        '21 f9 66 4c 97 63 7d a9 76 88 12 f6 15 c6 8b 13'
+        'b5 2e')
+
+    ietf_tag = bytes.fromhex(
+        'c0:87:59:24:c1:c7:98:79:47:de:af:d8:78:0a:cf:49'.replace(':', ''))
+
+    nonce_ct_tag_ietf = ietf_nonce + ietf_ciphertext + ietf_tag
 
     # ---
 
-    ietf_nonce = bytes.fromhex(
-        '404142434445464748494a4b4c4d4e4f'
-        '5051525354555657')
+    libsodium_plaintext = \
+        b"Ladies and Gentlemen of the class of '99: If I could offer you " \
+        b"only one tip for the future, sunscreen would be it."
 
-    ietf_ct = bytes.fromhex(
-        'bd6d179d3e83d43b9576579493c0e939'
-        '572a1700252bfaccbed2902c21396cbb'
-        '731c7f1b0b4aa6440bf3a82f4eda7e39'
-        'ae64c6708c54c216cb96b72e1213b452'
-        '2f8c9ba40db5d945b11b69b982c1bb9e'
-        '3f3fac2bc369488f76b2383565d3fff9'
-        '21f9664c97637da9768812f615c68b13'
-        'b52e')
+    libsodium_ad = bytes([
+        0x50, 0x51, 0x52, 0x53, 0xc0, 0xc1, 0xc2, 0xc3, 0xc4, 0xc5, 0xc6, 0xc7])
 
-    ietf_tag = bytes.fromhex(
-        'c0875924c1c7987947deafd8780acf49')
+    libsodium_key = bytes([
+        0x80, 0x81, 0x82, 0x83, 0x84, 0x85, 0x86, 0x87,
+        0x88, 0x89, 0x8a, 0x8b, 0x8c, 0x8d, 0x8e, 0x8f,
+        0x90, 0x91, 0x92, 0x93, 0x94, 0x95, 0x96, 0x97,
+        0x98, 0x99, 0x9a, 0x9b, 0x9c, 0x9d, 0x9e, 0x9f])
 
-    ietf_nonce_ct_tag = ietf_nonce + ietf_ct + ietf_tag
+    libsodium_nonce = bytes([
+        0x07, 0x00, 0x00, 0x00, 0x40, 0x41, 0x42, 0x43, 0x44, 0x45, 0x46, 0x47,
+        0x48, 0x49, 0x4a, 0x4b, 0x4c, 0x4d, 0x4e, 0x4f, 0x50, 0x51, 0x52, 0x53])
 
-    @mock.patch('src.common.crypto.csprng', side_effect=[nonce, ietf_nonce])
+    libsodium_ct_tag = bytes([
+        0xf8, 0xeb, 0xea, 0x48, 0x75, 0x04, 0x40, 0x66,
+        0xfc, 0x16, 0x2a, 0x06, 0x04, 0xe1, 0x71, 0xfe,
+        0xec, 0xfb, 0x3d, 0x20, 0x42, 0x52, 0x48, 0x56,
+        0x3b, 0xcf, 0xd5, 0xa1, 0x55, 0xdc, 0xc4, 0x7b,
+        0xbd, 0xa7, 0x0b, 0x86, 0xe5, 0xab, 0x9b, 0x55,
+        0x00, 0x2b, 0xd1, 0x27, 0x4c, 0x02, 0xdb, 0x35,
+        0x32, 0x1a, 0xcd, 0x7a, 0xf8, 0xb2, 0xe2, 0xd2,
+        0x50, 0x15, 0xe1, 0x36, 0xb7, 0x67, 0x94, 0x58,
+        0xe9, 0xf4, 0x32, 0x43, 0xbf, 0x71, 0x9d, 0x63,
+        0x9b, 0xad, 0xb5, 0xfe, 0xac, 0x03, 0xf8, 0x0a,
+        0x19, 0xa9, 0x6e, 0xf1, 0x0c, 0xb1, 0xd1, 0x53,
+        0x33, 0xa8, 0x37, 0xb9, 0x09, 0x46, 0xba, 0x38,
+        0x54, 0xee, 0x74, 0xda, 0x3f, 0x25, 0x85, 0xef,
+        0xc7, 0xe1, 0xe1, 0x70, 0xe1, 0x7e, 0x15, 0xe5,
+        0x63, 0xe7, 0x76, 0x01, 0xf4, 0xf8, 0x5c, 0xaf,
+        0xa8, 0xe5, 0x87, 0x76, 0x14, 0xe1, 0x43, 0xe6,
+        0x84, 0x20])
+
+    nonce_ct_tag_libsodium = libsodium_nonce + libsodium_ct_tag
+
+    def setUp(self) -> None:
+
+        # Verify that common test vectors are equal.
+        self.assertEqual(self.ietf_plaintext, self.libsodium_plaintext)
+        self.assertEqual(self.ietf_ad,        self.libsodium_ad)
+        self.assertEqual(self.ietf_key,       self.libsodium_key)
+
+        self.plaintext   = self.ietf_plaintext
+        self.ad          = self.ietf_ad
+        self.key         = self.ietf_key
+        self.ietf_ct_tag = self.ietf_ciphertext + self.ietf_tag
+
+    @mock.patch('src.common.crypto.csprng', side_effect=[ietf_nonce, libsodium_nonce])
     def test_encrypt_and_sign_with_official_test_vectors(self, mock_csprng):
-        self.assertEqual(encrypt_and_sign(self.plaintext, self.key, self.ad),
-                         self.nonce_ct_tag)
-
-        self.assertEqual(encrypt_and_sign(self.plaintext, self.key, self.ad),
-                         self.ietf_nonce_ct_tag)
-
+        self.assertEqual(encrypt_and_sign(self.plaintext, self.key, self.ad), self.nonce_ct_tag_ietf)
+        self.assertEqual(encrypt_and_sign(self.plaintext, self.key, self.ad), self.nonce_ct_tag_libsodium)
         mock_csprng.assert_called_with(XCHACHA20_NONCE_LENGTH)
 
     def test_auth_and_decrypt_with_official_test_vectors(self):
-        self.assertEqual(auth_and_decrypt(self.nonce_ct_tag, self.key, ad=self.ad),
-                         self.plaintext)
+        self.assertEqual(auth_and_decrypt(self.nonce_ct_tag_ietf,      self.key, ad=self.ad), self.plaintext)
+        self.assertEqual(auth_and_decrypt(self.nonce_ct_tag_libsodium, self.key, ad=self.ad), self.plaintext)
 
-        self.assertEqual(auth_and_decrypt(self.ietf_nonce_ct_tag, self.key, ad=self.ad),
-                         self.plaintext)
-
-    def test_invalid_key_size_raises_critical_error(self):
-        with self.assertRaises(SystemExit):
-            encrypt_and_sign(self.plaintext, self.key + b'a')
-
-        with self.assertRaises(SystemExit):
-            auth_and_decrypt(self.nonce_ct_tag, self.key + b'a')
+    def test_invalid_size_key_raises_critical_error(self):
+        invalid_keys = [key_length * b'a' for key_length in [1, SYMMETRIC_KEY_LENGTH-1,
+                                                                SYMMETRIC_KEY_LENGTH+1, 1000]]
+        for invalid_key in invalid_keys:
+            with self.assertRaises(SystemExit):
+                encrypt_and_sign(self.plaintext,         invalid_key)
+            with self.assertRaises(SystemExit):
+                auth_and_decrypt(self.nonce_ct_tag_ietf, invalid_key)
 
     def test_database_decryption_error_raises_critical_error(self):
         with self.assertRaises(SystemExit):
-            auth_and_decrypt(self.nonce_ct_tag, key=bytes(SYMMETRIC_KEY_LENGTH), database='path/database_filename')
+            auth_and_decrypt(self.nonce_ct_tag_ietf, key=bytes(SYMMETRIC_KEY_LENGTH), database='path/database_filename')
 
     def test_error_in_decryption_of_data_from_contact_raises_nacl_crypto_error(self):
         with self.assertRaises(nacl.exceptions.CryptoError):
-            auth_and_decrypt(self.nonce_ct_tag, key=bytes(SYMMETRIC_KEY_LENGTH))
+            auth_and_decrypt(self.nonce_ct_tag_ietf, key=bytes(SYMMETRIC_KEY_LENGTH))
 
 
 class TestBytePadding(unittest.TestCase):
