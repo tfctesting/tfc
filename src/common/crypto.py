@@ -425,7 +425,7 @@ def encrypt_and_sign(plaintext: bytes,       # Plaintext to encrypt
 
     The correctness of the XChaCha20-Poly1305 implementation* is tested
     by TFC unit tests. The testing is done in limited scope by using
-    libsodium and IETF test vectors.
+    IETF and libsodium test vectors.
 
     * https://github.com/jedisct1/libsodium/tree/master/src/libsodium/crypto_aead/xchacha20poly1305/sodium
       https://github.com/pyca/pynacl/blob/master/src/nacl/bindings/crypto_aead.py
