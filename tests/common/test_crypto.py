@@ -330,8 +330,8 @@ class TestXChaCha20Poly1305(unittest.TestCase):
     from it is also semantically secure: Under some set of inputs
     (plaintext, associated data, key, and nonce), XChaCha20-Poly1305
     will output a ciphertext and a tag that are indistinguishable from
-    the output of a truly random function. So again, the implementation
-    is best tested using test vectors.
+    the output of a truly random function. So again, the correctness of
+    the implementation is best tested using test vectors.
 
     There are two slightly different test vectors available. Both KATs
     use the same plaintext, associated data, and key. However, both
@@ -344,12 +344,12 @@ class TestXChaCha20Poly1305(unittest.TestCase):
     Libsodium test vectors:
         Message: https://github.com/jedisct1/libsodium/blob/master/test/default/aead_xchacha20poly1305.c#L22
         Ad:      https://github.com/jedisct1/libsodium/blob/master/test/default/aead_xchacha20poly1305.c#L28
-        Nonce:   https://github.com/jedisct1/libsodium/blob/master/test/default/aead_xchacha20poly1305.c#L25
         Key:     https://github.com/jedisct1/libsodium/blob/master/test/default/aead_xchacha20poly1305.c#L14
+        Nonce:   https://github.com/jedisct1/libsodium/blob/master/test/default/aead_xchacha20poly1305.c#L25
         CT+tag:  https://github.com/jedisct1/libsodium/blob/master/test/default/aead_xchacha20poly1305.exp#L1
 
-    The test vectors below are presented in the form that makes their
-    comparison with the sources as easy as possible.
+    To make the verification of the test vectors (listed below) easy,
+    they are formatted in the most identical way as is possible.
     """
 
     ietf_plaintext = bytes.fromhex(
@@ -453,7 +453,7 @@ class TestXChaCha20Poly1305(unittest.TestCase):
                                                                 SYMMETRIC_KEY_LENGTH+1, 1000]]
         for invalid_key in invalid_keys:
             with self.assertRaises(SystemExit):
-                encrypt_and_sign(self.plaintext,         invalid_key)
+                encrypt_and_sign(self.libsodium_plaintext, invalid_key)
             with self.assertRaises(SystemExit):
                 auth_and_decrypt(self.nonce_ct_tag_ietf, invalid_key)
 
