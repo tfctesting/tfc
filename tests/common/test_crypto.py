@@ -217,11 +217,12 @@ class TestArgon2KDF(unittest.TestCase):
 
 class TestArgon2Wrapper(unittest.TestCase):
 
-    def test_invalid_salt_length_raises_critical_error(self):
-        for salt_length in [0, ARGON2_SALT_LENGTH-1,
-                               ARGON2_SALT_LENGTH+1, 1000]:
+    def test_invalid_length_salt_raises_critical_error(self):
+        invalid_salts = [salt_length * b'a' for salt_length in [0, ARGON2_SALT_LENGTH-1,
+                                                                   ARGON2_SALT_LENGTH+1, 1000]]
+        for invalid_salt in invalid_salts:
             with self.assertRaises(SystemExit):
-                argon2_kdf('password', salt_length * b'a')
+                argon2_kdf('password', invalid_salt)
 
     def test_argon2_kdf_key_type_and_length(self):
         key = argon2_kdf('password', os.urandom(ARGON2_SALT_LENGTH), time_cost=1, memory_cost=100)
@@ -278,13 +279,13 @@ class TestX448(unittest.TestCase):
     def test_generate_private_key_function_returns_private_key_object(self):
         self.assertIsInstance(X448.generate_private_key(), X448PrivateKey)
 
-    def test_deriving_shared_secret_with_an_incorrect_size_public_key_raises_critical_error(self):
-        private_key = X448.generate_private_key()
-        public_keys = [key_length * b'a' for key_length in (1, TFC_PUBLIC_KEY_LENGTH-1,
-                                                               TFC_PUBLIC_KEY_LENGTH+1, 1000)]
-        for public_key in public_keys:
+    def test_deriving_shared_secret_with_an_invalid_size_public_key_raises_critical_error(self):
+        private_key         = X448.generate_private_key()
+        invalid_public_keys = [key_length * b'a' for key_length in (1, TFC_PUBLIC_KEY_LENGTH-1,
+                                                                       TFC_PUBLIC_KEY_LENGTH+1, 1000)]
+        for invalid_public_key in invalid_public_keys:
             with self.assertRaises(SystemExit):
-                X448.shared_key(private_key, public_key)
+                X448.shared_key(private_key, invalid_public_key)
 
     def test_deriving_zero_shared_secret_raises_critical_error(self):
         """\
@@ -441,12 +442,12 @@ class TestXChaCha20Poly1305(unittest.TestCase):
         self.key       = self.ietf_key
 
     @mock.patch('src.common.crypto.csprng', side_effect=[ietf_nonce, libsodium_nonce])
-    def test_encrypt_and_sign_with_official_test_vectors(self, mock_csprng):
+    def test_encrypt_and_sign_with_the_official_test_vectors(self, mock_csprng):
         self.assertEqual(encrypt_and_sign(self.plaintext, self.key, self.ad), self.nonce_ct_tag_ietf)
         self.assertEqual(encrypt_and_sign(self.plaintext, self.key, self.ad), self.nonce_ct_tag_libsodium)
         mock_csprng.assert_called_with(XCHACHA20_NONCE_LENGTH)
 
-    def test_auth_and_decrypt_with_official_test_vectors(self):
+    def test_auth_and_decrypt_with_the_official_test_vectors(self):
         self.assertEqual(auth_and_decrypt(self.nonce_ct_tag_ietf,      self.key, ad=self.ad), self.plaintext)
         self.assertEqual(auth_and_decrypt(self.nonce_ct_tag_libsodium, self.key, ad=self.ad), self.plaintext)
 
