@@ -402,7 +402,7 @@ def init_tables(prim:      int = 0x11d,
     if c_exp <= 8:
         _bytearray = bytearray
     else:
-        def _bytearray(obj: Union[str, bytes, int, List[int]] = 0, encoding: str = "latin-1") -> array:
+        def _bytearray(obj: Union[str, bytes, int, List[int]] = 0, encoding: str = "latin-1") -> Any:
             """Fake bytearray replacement, supporting int values above 255"""
             # always use Latin-1 and not UTF8 because Latin-1 maps the
             # first 256 characters to their byte value equivalents. UTF8
