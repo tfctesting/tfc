@@ -460,11 +460,11 @@ class TestXChaCha20Poly1305(unittest.TestCase):
             with self.assertRaises(SystemExit):
                 auth_and_decrypt(self.nonce_ct_tag_ietf, invalid_key)
 
-    def test_database_decryption_error_raises_critical_error(self):
+    def test_invalid_tag_in_data_from_database_raises_critical_error(self):
         with self.assertRaises(SystemExit):
             auth_and_decrypt(self.nonce_ct_tag_ietf, key=bytes(SYMMETRIC_KEY_LENGTH), database='path/database_filename')
 
-    def test_error_in_decryption_of_data_from_contact_raises_nacl_crypto_error(self):
+    def test_invalid_tag_in_data_from_contact_raises_nacl_crypto_error(self):
         with self.assertRaises(nacl.exceptions.CryptoError):
             auth_and_decrypt(self.nonce_ct_tag_ietf, key=bytes(SYMMETRIC_KEY_LENGTH))
 

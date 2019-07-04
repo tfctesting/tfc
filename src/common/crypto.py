@@ -377,7 +377,7 @@ def encrypt_and_sign(plaintext: bytes,       # Plaintext to encrypt
                      key:       bytes,       # 32-byte symmetric key
                      ad:        bytes = b''  # Associated data
                      ) -> bytes:             # Nonce + ciphertext + tag
-    """Encrypt plaintext with XChaCha20-Poly1305.
+    """Encrypt plaintext with XChaCha20-Poly1305 (IETF variant).
 
     ChaCha20 is a stream cipher published by Daniel J. Bernstein (djb)
     in 2008. The algorithm is an improved version of Salsa20 -- another
@@ -388,6 +388,7 @@ def encrypt_and_sign(plaintext: bytes,       # Plaintext to encrypt
 
     For more details, see
         https://cr.yp.to/chacha/chacha-20080128.pdf
+        https://cr.yp.to/snuffle.html
         https://en.wikipedia.org/wiki/Salsa20#ChaCha_variant
 
     The Poly1305 is a Wegman-Carter Message Authentication Code also
@@ -427,7 +428,7 @@ def encrypt_and_sign(plaintext: bytes,       # Plaintext to encrypt
      [3] https://download.libsodium.org/doc/secret-key_cryptography/aead/chacha20-poly1305#variants
      [4] https://en.wikipedia.org/wiki/Salsa20#Cryptanalysis_of_Salsa20
      [5] https://github.com/jedisct1/libsodium/tree/master/src/libsodium/crypto_aead/xchacha20poly1305/sodium
-         https://github.com/pyca/pynacl/blob/master/src/nacl/bindings/crypto_aead.py
+         https://github.com/pyca/pynacl/blob/master/src/nacl/bindings/crypto_aead.py#L349
     """
     if len(key) != SYMMETRIC_KEY_LENGTH:
         raise CriticalError("Invalid key length.")
@@ -457,7 +458,7 @@ def auth_and_decrypt(nonce_ct_tag: bytes,       # Nonce + ciphertext + tag
     database), the `database` parameter is provided, so the function
     knows which database is in question. In case the authentication
     fails due to invalid tag, the data is assumed to be either tampered
-    or corrupted. TFC will in such case gracefully exit to avoid
+    with, or corrupted. TFC will in such case gracefully exit to avoid
     processing the unsafe data and warn the user in which database the
     issue was detected.
     """
