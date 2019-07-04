@@ -431,7 +431,8 @@ def encrypt_and_sign(plaintext: bytes,       # Plaintext to encrypt
      [5] https://cr.yp.to/chacha/chacha-20080128.pdf
      [6] https://cr.yp.to/antiforgery/cachetiming-20050414.pdf  # p. 2
      [7] https://www.eff.org/sv/deeplinks/2015/04/remembering-case-established-code-speech
-     [8] https://github.com/jedisct1/libsodium/tree/master/src/libsodium/crypto_aead/xchacha20poly1305/sodium
+     [8] https://github.com/jedisct1/libsodium/blob/master/src/libsodium/crypto_core/hchacha20/core_hchacha20.c
+         https://github.com/jedisct1/libsodium/blob/master/src/libsodium/crypto_aead/xchacha20poly1305/sodium/aead_xchacha20poly1305.c
          https://github.com/pyca/pynacl/blob/master/src/nacl/bindings/crypto_aead.py#L349
     """
     if len(key) != SYMMETRIC_KEY_LENGTH:
