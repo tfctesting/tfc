@@ -420,7 +420,7 @@ def encrypt_and_sign(plaintext: bytes,       # Plaintext to encrypt
 
         o The good name of djb.[7]
 
-    The correctness of the XChaCha20-Poly1305 implementation[5] is
+    The correctness of the XChaCha20-Poly1305 implementation[8] is
     tested by TFC unit tests. The testing is done in limited scope by
     using the libsodium and official IETF test vectors.
 
