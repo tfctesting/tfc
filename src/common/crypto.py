@@ -391,10 +391,10 @@ def encrypt_and_sign(plaintext: bytes,       # Plaintext to encrypt
         https://cr.yp.to/snuffle.html
         https://en.wikipedia.org/wiki/Salsa20#ChaCha_variant
 
-    The Poly1305 is a Wegman-Carter Message Authentication Code also
-    designed by djb. The MAC is provably secure if ChaCha20 is secure.
-    The 128-bit tag space ensures the attacker's advantage to create an
-    existential forgery is negligible.
+    The Poly1305 is a Wegman-Carter message authentication code (MAC)
+    also designed by djb. The MAC is provably secure if ChaCha20 is
+    secure. The 128-bit tag space ensures the attacker's advantage to
+    create an existential forgery is negligible.
 
     For more details, see
         https://cr.yp.to/mac.html
