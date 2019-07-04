@@ -430,8 +430,8 @@ def encrypt_and_sign(plaintext: bytes,       # Plaintext to encrypt
      [4] https://en.wikipedia.org/wiki/Salsa20#Cryptanalysis_of_Salsa20
      [5] https://cr.yp.to/chacha/chacha-20080128.pdf
      [6] https://cr.yp.to/antiforgery/cachetiming-20050414.pdf  # p. 2
-     [8] https://www.eff.org/sv/deeplinks/2015/04/remembering-case-established-code-speech
-     [7] https://github.com/jedisct1/libsodium/tree/master/src/libsodium/crypto_aead/xchacha20poly1305/sodium
+     [7] https://www.eff.org/sv/deeplinks/2015/04/remembering-case-established-code-speech
+     [8] https://github.com/jedisct1/libsodium/tree/master/src/libsodium/crypto_aead/xchacha20poly1305/sodium
          https://github.com/pyca/pynacl/blob/master/src/nacl/bindings/crypto_aead.py#L349
     """
     if len(key) != SYMMETRIC_KEY_LENGTH:
