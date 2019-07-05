@@ -448,7 +448,7 @@ def encrypt_and_sign(plaintext: bytes,       # Plaintext to encrypt
 
 def auth_and_decrypt(nonce_ct_tag: bytes,       # Nonce + ciphertext + tag
                      key:          bytes,       # 32-byte symmetric key
-                     database:     str   = '',  # When provided, gracefully exists TFC when the tag is invalid
+                     database:     str   = '',  # When provided, gracefully exits TFC when the tag is invalid
                      ad:           bytes = b''  # Associated data
                      ) -> bytes:                # Plaintext
     """Authenticate and decrypt XChaCha20-Poly1305 ciphertext.
