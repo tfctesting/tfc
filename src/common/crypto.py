@@ -465,7 +465,7 @@ def auth_and_decrypt(nonce_ct_tag: bytes,       # Nonce + ciphertext + tag
     database), the `database` parameter is provided, so the function
     knows which database is in question. In case the authentication
     fails due to invalid tag, the data is assumed to be either tampered
-    with, or corrupted. TFC will in such case gracefully exit to avoid
+    with, or corrupted. TFC will in such a case gracefully exit to avoid
     processing the unsafe data and warn the user in which database the
     issue was detected.
     """
