@@ -24,7 +24,7 @@ import time
 import typing
 
 from datetime import datetime
-from typing   import Dict
+from typing   import Any, Dict
 
 from src.common.encoding   import bytes_to_int
 from src.common.exceptions import FunctionReturn
@@ -37,7 +37,7 @@ if typing.TYPE_CHECKING:
     from src.common.gateway import Gateway
 
 
-def receiver_loop(queues:    Dict[bytes, 'Queue'],
+def receiver_loop(queues:    Dict[bytes, 'Queue[Any]'],
                   gateway:   'Gateway',
                   unit_test: bool = False
                   ) -> None:

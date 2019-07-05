@@ -22,7 +22,7 @@ along with TFC. If not, see <https://www.gnu.org/licenses/>.
 import time
 import typing
 
-from typing import Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 
 from src.common.misc    import ignored
 from src.common.statics import *
@@ -36,7 +36,7 @@ if typing.TYPE_CHECKING:
     from src.common.db_settings import Settings
     from src.common.gateway     import Gateway
     from src.common.db_settings import Settings
-    QueueDict      = Dict[bytes, Queue]
+    QueueDict      = Dict[bytes, Queue[Any]]
     Message_buffer = Dict[bytes, List[Tuple[bytes, bytes, bool, bool, bytes]]]
 
 

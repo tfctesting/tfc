@@ -66,17 +66,17 @@ def group_management_print(key:          str,            # Group management mess
         m_print(justified, box=True)
 
 
-def m_print(msg_list:       Union[str, list],  # List of lines to print
-            manual_proceed: bool  = False,     # Wait for user input before continuing
-            bold:           bool  = False,     # When True, prints the message in bold style
-            center:         bool  = True,      # When False, does not center message
-            box:            bool  = False,     # When True, prints a box around the message
-            head_clear:     bool  = False,     # When True, clears screen before printing message
-            tail_clear:     bool  = False,     # When True, clears screen after printing message (requires delay)
-            delay:          float = 0,         # Delay before continuing
-            max_width:      int   = 0,         # Maximum width of message
-            head:           int   = 0,         # Number of new lines to print before the message
-            tail:           int   = 0,         # Number of new lines to print after the message
+def m_print(msg_list:       Union[str, List[str]],  # List of lines to print
+            manual_proceed: bool  = False,          # Wait for user input before continuing
+            bold:           bool  = False,          # When True, prints the message in bold style
+            center:         bool  = True,           # When False, does not center message
+            box:            bool  = False,          # When True, prints a box around the message
+            head_clear:     bool  = False,          # When True, clears screen before printing message
+            tail_clear:     bool  = False,          # When True, clears screen after printing message (requires delay)
+            delay:          float = 0,              # Delay before continuing
+            max_width:      int   = 0,              # Maximum width of message
+            head:           int   = 0,              # Number of new lines to print before the message
+            tail:           int   = 0,              # Number of new lines to print after the message
             ) -> None:
     """Print message to screen.
 

@@ -34,7 +34,7 @@ from flask import Flask, send_file
 from src.common.statics import *
 
 if typing.TYPE_CHECKING:
-    QueueDict = Dict[bytes, Queue]
+    QueueDict = Dict[bytes, Queue[Any]]
 
 
 def flask_server(queues:               'QueueDict',

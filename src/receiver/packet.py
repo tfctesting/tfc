@@ -24,7 +24,7 @@ import typing
 import zlib
 
 from datetime import datetime, timedelta
-from typing   import Any, Callable, Dict, Generator, Iterable, List, Optional, Sized
+from typing   import Any, Callable, Dict, Iterable, Iterator, List, Optional, Sized
 
 import nacl.exceptions
 
@@ -320,7 +320,7 @@ class Packet(object):
                       self.eh: self.process_end_header,
                       self.ch: self.process_cancel_header,
                       self.nh: self.process_noise_header
-                      }  # type: Dict[bytes, Callable]
+                      }  # type: Dict[bytes, Callable[[bytes, Optional[bytes]], None]]
             func = func_d[packet[:ASSEMBLY_PACKET_HEADER_LENGTH]]
         except KeyError:
             # Erroneous headers are ignored but stored as placeholder data.
@@ -375,7 +375,7 @@ class Packet(object):
             raise FunctionReturn("Error: Decompression of command failed.")
 
 
-class PacketList(Iterable, Sized):
+class PacketList(Iterable[Packet], Sized):
     """PacketList manages all file, message, and command packets."""
 
     def __init__(self,
@@ -387,7 +387,7 @@ class PacketList(Iterable, Sized):
         self.contact_list = contact_list
         self.packets      = []  # type: List[Packet]
 
-    def __iter__(self) -> Generator:
+    def __iter__(self) -> Iterator[Packet]:
         """Iterate over packet list."""
         yield from self.packets
 

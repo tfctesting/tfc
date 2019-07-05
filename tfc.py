@@ -23,7 +23,7 @@ import os
 import sys
 
 from multiprocessing import Process, Queue
-from typing          import Dict
+from typing          import Any, Dict
 
 from src.common.crypto       import check_kernel_entropy, check_kernel_version
 from src.common.db_contacts  import ContactList
@@ -127,7 +127,7 @@ def main() -> None:
                   SENDER_MODE_QUEUE:       Queue(),  # `sender_loop` default/traffic masking mode switch commands
                   WINDOW_SELECT_QUEUE:     Queue(),  # `sender_loop` window selection commands during traffic masking
                   EXIT_QUEUE:              Queue()   # EXIT/WIPE signal from `input_loop` to `main`
-                  }  # type: Dict[bytes, Queue]
+                  }  # type: Dict[bytes, Queue[Any]]
 
         process_list = [Process(target=input_loop,      args=(queues, settings, gateway, contact_list, group_list,
                                                               master_key, onion_service, sys.stdin.fileno())),

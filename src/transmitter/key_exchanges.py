@@ -23,7 +23,7 @@ import os
 import time
 import typing
 
-from typing import Dict
+from typing import Any, Dict
 
 from src.common.crypto       import argon2_kdf, blake2b, csprng, encrypt_and_sign, X448
 from src.common.db_masterkey import MasterKey
@@ -43,7 +43,7 @@ if typing.TYPE_CHECKING:
     from src.common.db_settings  import Settings
     from src.common.gateway      import Gateway
     from src.transmitter.windows import TxWindow
-    QueueDict = Dict[bytes, Queue]
+    QueueDict = Dict[bytes, Queue[Any]]
 
 
 def export_onion_service_data(contact_list:  'ContactList',

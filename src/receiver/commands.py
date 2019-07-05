@@ -58,7 +58,7 @@ def process_command(ts:           'datetime',
                     settings:     'Settings',
                     master_key:   'MasterKey',
                     gateway:      'Gateway',
-                    exit_queue:   'Queue'
+                    exit_queue:   'Queue[Any]'
                     ) -> None:
     """Decrypt command assembly packet and process command."""
     assembly_packet = decrypt_assembly_packet(assembly_ct, LOCAL_PUBKEY, ORIGIN_USER_HEADER,
@@ -136,7 +136,7 @@ def reset_screen(win_uid: bytes, window_list: 'WindowList') -> None:
     os.system(RESET)
 
 
-def exit_tfc(exit_queue: 'Queue') -> None:
+def exit_tfc(exit_queue: 'Queue[Any]') -> None:
     """Exit TFC."""
     exit_queue.put(EXIT)
 
@@ -395,7 +395,7 @@ def contact_rem(onion_pub_key: bytes,
     remove_logs(contact_list, group_list, settings, master_key, onion_pub_key)
 
 
-def wipe(exit_queue: 'Queue') -> None:
+def wipe(exit_queue: 'Queue[str]') -> None:
     """\
     Reset terminals, wipe all TFC user data on Destination Computer and
     power off the system.

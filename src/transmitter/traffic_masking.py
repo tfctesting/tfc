@@ -33,7 +33,7 @@ if typing.TYPE_CHECKING:
     from multiprocessing        import Queue
     from src.common.db_contacts import ContactList
     from src.common.db_settings import Settings
-    QueueDict = Dict[bytes, Queue]
+    QueueDict = Dict[bytes, Queue[Any]]
 
 
 class HideRunTime(object):

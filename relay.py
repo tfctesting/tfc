@@ -23,7 +23,7 @@ import os
 import sys
 
 from multiprocessing import Process, Queue
-from typing          import Dict
+from typing          import Any, Dict
 
 from cryptography.hazmat.primitives.asymmetric.x448 import X448PrivateKey
 from cryptography.hazmat.primitives.serialization   import Encoding, PublicFormat
@@ -163,7 +163,7 @@ def main() -> None:
          ONION_KEY_QUEUE:    Queue(),  # Onion Service private key   from `relay_command`         to `onion_service`
          TOR_DATA_QUEUE:     Queue(),  # Open port for Tor           from `onion_service`         to `client_scheduler`
          EXIT_QUEUE:         Queue()   # EXIT/WIPE signal            from `relay_command`         to `main`
-         }  # type: Dict[bytes, Queue]
+         }  # type: Dict[bytes, Queue[Any]]
 
     process_list = [Process(target=gateway_loop,     args=(queues, gateway                       )),
                     Process(target=src_incoming,     args=(queues, gateway                       )),

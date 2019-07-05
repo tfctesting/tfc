@@ -52,7 +52,7 @@ if typing.TYPE_CHECKING:
     from src.common.db_settings  import Settings
     from src.common.gateway      import Gateway
     from src.transmitter.windows import TxWindow
-    QueueDict = Dict[bytes, Queue]
+    QueueDict = Dict[bytes, Queue[Any]]
 
 
 def process_command(user_input:    'UserInput',

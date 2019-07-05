@@ -25,7 +25,7 @@ import sys
 import time
 
 from multiprocessing import Process, Queue
-from typing          import Dict, Tuple
+from typing          import Any, Dict, Tuple
 
 from src.common.misc    import get_terminal_height, get_terminal_width, ignored, monitor_processes
 from src.common.output  import clear_screen
@@ -73,8 +73,8 @@ def animate(argv: str) -> None:
     draw_frame(argv, IDLE)
 
 
-def rx_loop(io_queue:     'Queue',  # Queue through which to push datagrams through
-            input_socket: int       # Socket number for Transmitter/Relay Program
+def rx_loop(io_queue:     'Queue[Any]',  # Queue through which to push datagrams through
+            input_socket: int            # Socket number for Transmitter/Relay Program
             ) -> None:
     """Read datagrams from a transmitting program."""
     listener  = multiprocessing.connection.Listener((LOCALHOST, input_socket))
@@ -89,10 +89,10 @@ def rx_loop(io_queue:     'Queue',  # Queue through which to push datagrams thro
             sys.exit(0)
 
 
-def tx_loop(io_queue:      'Queue',      # Queue through which to push datagrams through
-            output_socket: int,          # Socket number for the Relay/Receiver Program
-            argv:          str,          # Arguments for the simulator position/orientation
-            unit_test:     bool = False  # Break out from the loop during unit testing
+def tx_loop(io_queue:      'Queue[Any]',  # Queue through which to push datagrams through
+            output_socket: int,           # Socket number for the Relay/Receiver Program
+            argv:          str,           # Arguments for the simulator position/orientation
+            unit_test:     bool = False   # Break out from the loop during unit testing
             ) -> None:
     """Send queued datagrams to a receiving program."""
     draw_frame(argv, IDLE)
@@ -138,7 +138,7 @@ def process_arguments() -> Tuple[str, int, int]:
         sys.exit(1)
 
 
-def main(queues: Dict[bytes, Queue]) -> None:
+def main(queues: Dict[bytes, 'Queue[Any]']) -> None:
     """\
     Read the argument from the command line and launch the data diode simulator.
 
@@ -163,7 +163,7 @@ def main(queues: Dict[bytes, Queue]) -> None:
 
     argv, input_socket, output_socket = process_arguments()
 
-    io_queue     = Queue()  # type: Queue
+    io_queue     = Queue()  # type: Queue[Any]
     process_list = [Process(target=rx_loop, args=(io_queue, input_socket       )),
                     Process(target=tx_loop, args=(io_queue, output_socket, argv))]
 

@@ -21,7 +21,7 @@ along with TFC. If not, see <https://www.gnu.org/licenses/>.
 
 import typing
 
-from typing import Dict
+from typing import Any, Dict
 
 from src.common.db_logs    import remove_logs
 from src.common.encoding   import onion_address_to_pub_key
@@ -44,7 +44,7 @@ if typing.TYPE_CHECKING:
     from src.common.db_settings     import Settings
     from src.transmitter.user_input import UserInput
     from src.transmitter.windows    import TxWindow
-    QueueDict = Dict[bytes, Queue]
+    QueueDict = Dict[bytes, Queue[Any]]
 
 
 def add_new_contact(contact_list:  'ContactList',

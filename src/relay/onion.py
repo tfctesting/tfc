@@ -156,7 +156,7 @@ def stem_compatible_ed25519_key_from_private_key(private_key: bytes) -> str:
     return base64.b64encode(expanded_private_key).decode()
 
 
-def onion_service(queues: Dict[bytes, 'Queue']) -> None:
+def onion_service(queues: Dict[bytes, 'Queue[Any]']) -> None:
     """Manage the Tor Onion Service and control Tor via stem."""
     rp_print("Setup   0% - Waiting for Onion Service configuration...", bold=True)
     while queues[ONION_KEY_QUEUE].qsize() == 0:

@@ -27,7 +27,7 @@ import subprocess
 import tkinter
 import typing
 
-from typing import List, Tuple
+from typing import Any, List, Tuple
 
 import nacl.exceptions
 
@@ -60,7 +60,7 @@ def process_local_key(ts:            'datetime',
                       settings:      'Settings',
                       kdk_hashes:     List[bytes],
                       packet_hashes:  List[bytes],
-                      l_queue:        'Queue'
+                      l_queue:        'Queue[Any]'
                       ) -> None:
     """Decrypt local key packet and add local contact/keyset."""
     bootstrap = not key_list.has_local_keyset()
@@ -145,8 +145,8 @@ def process_local_key(ts:            'datetime',
         root = tkinter.Tk()
         root.withdraw()
         try:
-            if root.clipboard_get() == b58encode(kdk):
-                root.clipboard_clear()
+            if root.clipboard_get() == b58encode(kdk):  # type: ignore
+                root.clipboard_clear()                  # type: ignore
         except tkinter.TclError:
             pass
         root.destroy()

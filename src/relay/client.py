@@ -26,7 +26,7 @@ import typing
 
 from datetime        import datetime
 from multiprocessing import Process, Queue
-from typing          import Dict, List
+from typing          import Any, Dict, List
 
 import requests
 
@@ -41,7 +41,7 @@ from src.common.statics  import *
 if typing.TYPE_CHECKING:
     from src.common.gateway import Gateway
     from requests.sessions  import Session
-    QueueDict = Dict[bytes, Queue]
+    QueueDict = Dict[bytes, Queue[Any]]
 
 
 def client_scheduler(queues:                'QueueDict',

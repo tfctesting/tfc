@@ -23,23 +23,24 @@ import os
 import textwrap
 import typing
 
-from typing import Callable, Generator, Iterable, List, Sized
+from typing import Callable, Iterable, Iterator, List, Sized
 
-from src.common.crypto     import auth_and_decrypt, encrypt_and_sign
-from src.common.encoding   import bool_to_bytes, int_to_bytes, str_to_bytes, onion_address_to_pub_key, b58encode
-from src.common.encoding   import bytes_to_bool, bytes_to_int, bytes_to_str
-from src.common.exceptions import CriticalError
-from src.common.misc       import ensure_dir, get_terminal_width, round_up, separate_header, separate_headers
-from src.common.misc       import split_byte_string
-from src.common.statics    import *
+from src.common.crypto      import auth_and_decrypt, encrypt_and_sign
+from src.common.db_contacts import Contact
+from src.common.encoding    import bool_to_bytes, int_to_bytes, str_to_bytes, onion_address_to_pub_key, b58encode
+from src.common.encoding    import bytes_to_bool, bytes_to_int, bytes_to_str
+from src.common.exceptions  import CriticalError
+from src.common.misc        import ensure_dir, get_terminal_width, round_up, separate_header, separate_headers
+from src.common.misc        import split_byte_string
+from src.common.statics     import *
 
 if typing.TYPE_CHECKING:
-    from src.common.db_contacts  import Contact, ContactList
+    from src.common.db_contacts  import ContactList
     from src.common.db_masterkey import MasterKey
     from src.common.db_settings  import Settings
 
 
-class Group(Iterable, Sized):
+class Group(Iterable[Contact], Sized):
     """\
     Group object contains a list of Contact objects (group members) and
     settings related to the group:
@@ -98,7 +99,7 @@ class Group(Iterable, Sized):
                  notifications: bool,
                  members:       List['Contact'],
                  settings:      'Settings',
-                 store_groups:  Callable
+                 store_groups:  Callable[..., None]
                  ) -> None:
         """Create a new Group object.
 
@@ -114,7 +115,7 @@ class Group(Iterable, Sized):
         self.settings      = settings
         self.store_groups  = store_groups
 
-    def __iter__(self) -> Generator:
+    def __iter__(self) -> Iterator[Contact]:
         """Iterate over members (Contact objects) in the Group object."""
         yield from self.members
 
@@ -176,7 +177,7 @@ class Group(Iterable, Sized):
         return not any(self.members)
 
 
-class GroupList(Iterable, Sized):
+class GroupList(Iterable[Group], Sized):
     """\
     GroupList object manages TFC's Group objects and the storage of the
     objects in an encrypted database.
@@ -221,7 +222,7 @@ class GroupList(Iterable, Sized):
         else:
             self.store_groups()
 
-    def __iter__(self) -> Generator:
+    def __iter__(self) -> Iterator[Group]:
         """Iterate over Group objects in `self.groups`."""
         yield from self.groups
 

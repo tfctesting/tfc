@@ -33,7 +33,7 @@ import typing
 import zlib
 
 from contextlib      import contextmanager
-from typing          import Any, Callable, Dict, Generator, List, Tuple, Union
+from typing          import Any, Callable, Dict, Iterator, List, Optional, Tuple, Type, Union
 from multiprocessing import Process, Queue
 
 from src.common.reed_solomon import RSCodec
@@ -129,7 +129,7 @@ def get_tab_completer(contact_list: 'ContactList',
                       group_list:   'GroupList',
                       settings:     'Settings',
                       gateway:      'Gateway'
-                      ) -> Callable:
+                      ) -> Optional[Callable[[str, Any], Any]]:
     """Return the tab completer object."""
 
     def tab_complete(text: str, state: Any) -> List[str]:
@@ -154,7 +154,7 @@ def get_terminal_width() -> int:
 
 
 @contextmanager
-def ignored(*exceptions: Any) -> Generator:
+def ignored(*exceptions: Type[BaseException]) -> Iterator[Any]:
     """Ignore an exception."""
     try:
         yield
@@ -164,7 +164,7 @@ def ignored(*exceptions: Any) -> Generator:
 
 def monitor_processes(process_list:       List[Process],
                       software_operation: str,
-                      queues:             Dict[bytes, Queue],
+                      queues:             Dict[bytes, 'Queue[Any]'],
                       error_exit_code:    int = 1
                       ) -> None:
     """Monitor the status of `process_list` and EXIT_QUEUE.

@@ -24,7 +24,7 @@ import sys
 import time
 import typing
 
-from typing import Dict, List, Tuple
+from typing import Any, Dict, List, Tuple
 
 from src.common.exceptions import FunctionReturn
 from src.common.output     import clear_screen
@@ -48,7 +48,7 @@ if typing.TYPE_CHECKING:
     from src.common.gateway      import Gateway
 
 
-def output_loop(queues:       Dict[bytes, 'Queue'],
+def output_loop(queues:       Dict[bytes, 'Queue[Any]'],
                 gateway:      'Gateway',
                 settings:     'Settings',
                 contact_list: 'ContactList',

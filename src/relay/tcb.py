@@ -22,7 +22,7 @@ along with TFC. If not, see <https://www.gnu.org/licenses/>.
 import time
 import typing
 
-from typing import Dict, Union
+from typing import Any, Dict, Union
 
 from src.common.encoding   import bytes_to_int, pub_key_to_short_address
 from src.common.encoding   import int_to_bytes, b85encode
@@ -35,12 +35,12 @@ if typing.TYPE_CHECKING:
     from datetime           import datetime
     from multiprocessing    import Queue
     from src.common.gateway import Gateway
-    QueueDict = Dict[bytes, Queue]
+    QueueDict = Dict[bytes, Queue[Any]]
 
 
 def queue_to_flask(packet:        Union[bytes, str],
                    onion_pub_key: bytes,
-                   flask_queue:   'Queue',
+                   flask_queue:   'Queue[Any]',
                    ts:            'datetime',
                    header:        bytes
                    ) -> None:
@@ -122,7 +122,7 @@ def src_incoming(queues:    'QueueDict',
 def process_group_management_message(ts:                'datetime',
                                      packet:            bytes,
                                      header:            bytes,
-                                     messages_to_flask: 'Queue') -> None:
+                                     messages_to_flask: 'Queue[Any]') -> None:
     """Parse and display group management message."""
     header_str       = header.decode()
     group_id, packet = separate_header(packet, GROUP_ID_LENGTH)

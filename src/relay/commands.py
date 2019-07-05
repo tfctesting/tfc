@@ -36,7 +36,7 @@ from src.common.statics    import *
 if typing.TYPE_CHECKING:
     from multiprocessing    import Queue
     from src.common.gateway import Gateway
-    QueueDict = Dict[bytes, Queue]
+    QueueDict = Dict[bytes, Queue[Any]]
 
 def relay_command(queues:    'QueueDict',
                   gateway:   'Gateway',
