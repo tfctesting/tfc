@@ -457,8 +457,8 @@ def auth_and_decrypt(nonce_ct_tag: bytes,       # Nonce + ciphertext + tag
         https://download.libsodium.org/doc/helpers#constant-time-test-for-equality
 
     When TFC decrypts ciphertext from an untrusted source (i.e., a
-    contact), no `database` parameter is provided. In such situation, if
-    the tag of the untrusted ciphertext is invalid, TFC discards the
+    contact), no `database` parameter is provided. In such a situation,
+    if the tag of the untrusted ciphertext is invalid, TFC discards the
     ciphertext and recovers appropriately.
 
     When TFC decrypts ciphertext from a trusted source (i.e., a
