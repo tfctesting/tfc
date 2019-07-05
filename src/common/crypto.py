@@ -389,6 +389,7 @@ def encrypt_and_sign(plaintext: bytes,       # Plaintext to encrypt
     For more details, see
         https://cr.yp.to/chacha.html
         https://cr.yp.to/snuffle.html
+        https://cr.yp.to/snuffle/security.pdf
         https://en.wikipedia.org/wiki/Salsa20#ChaCha_variant
 
     The Poly1305 is a Wegman-Carter message authentication code (MAC)
@@ -408,34 +409,45 @@ def encrypt_and_sign(plaintext: bytes,       # Plaintext to encrypt
 
     The reasons for using XChaCha20-Poly1305 in TFC include
 
-        o The Salsa20 algorithm has 14 years of cryptanalysis behind it[4]
-          and ChaCha20 has resisted cryptanalysis as well[5].
+        o Conservative 256-bit key size[4] that matches the 222.8-bit
+          security of X448, and BLAKE2b (with truncated, 256-bit hashes).
 
-        o The increased diffusion over the well-received Salsa20.[6]
+        o The Salsa20 algorithm has 14 years of cryptanalysis behind it[5]
+          and ChaCha20 has resisted cryptanalysis as well[6][7]. Currently
+          the best public attack[8] breaks ChaCha7 in 2^233 operations.
 
-        o The algorithm is much faster compared to AES (in cases where
-          the CPU and/or implementation does not support AES-NI).[6]
+        o Security against differential and linear cryptanalysis.[9][10]
 
         o Security against cache-timing attacks on all CPUs (unlike AES
-          on CPUs without AES-NI).[7]
+          on CPUs without AES-NI).[11]
 
-        o The good name of djb.[8]
+        o The increased diffusion over the well-received Salsa20.[12]
 
-    The correctness of the XChaCha20-Poly1305 implementation[9] is
+        o The algorithm is much faster compared to AES (in cases where
+          the CPU and/or implementation does not support AES-NI).[12]
+
+        o The good name of djb.[13]
+
+    The correctness of the XChaCha20-Poly1305 implementation[14] is
     tested by TFC unit tests. The testing is done in limited scope by
     using the libsodium and official IETF test vectors.
 
-     [1] https://tools.ietf.org/html/draft-irtf-cfrg-xchacha-00
-     [2] https://tools.ietf.org/html/rfc8439
-     [3] https://download.libsodium.org/doc/secret-key_cryptography/aead/chacha20-poly1305/xchacha20-poly1305_construction
-     [4] https://en.wikipedia.org/wiki/Salsa20#Cryptanalysis_of_Salsa20
-     [5] https://eprint.iacr.org/2007/472.pdf
-     [6] https://cr.yp.to/chacha/chacha-20080128.pdf
-     [7] https://cr.yp.to/antiforgery/cachetiming-20050414.pdf  # p. 2
-     [8] https://www.eff.org/sv/deeplinks/2015/04/remembering-case-established-code-speech
-     [9] https://github.com/jedisct1/libsodium/blob/master/src/libsodium/crypto_core/hchacha20/core_hchacha20.c
-         https://github.com/jedisct1/libsodium/blob/master/src/libsodium/crypto_aead/xchacha20poly1305/sodium/aead_xchacha20poly1305.c
-         https://github.com/pyca/pynacl/blob/master/src/nacl/bindings/crypto_aead.py#L349
+      [1] https://tools.ietf.org/html/draft-irtf-cfrg-xchacha-00
+      [2] https://tools.ietf.org/html/rfc8439
+      [3] https://download.libsodium.org/doc/secret-key_cryptography/aead/chacha20-poly1305/xchacha20-poly1305_construction
+      [4] https://cr.yp.to/snuffle/keysizes.pdf
+      [5] https://en.wikipedia.org/wiki/Salsa20#Cryptanalysis_of_Salsa20
+      [6] https://eprint.iacr.org/2007/472.pdf
+      [7] https://eprint.iacr.org/2015/698.pdf
+      [8] https://eprint.iacr.org/2016/377.pdf
+      [9] https://www.cryptrec.go.jp/exreport/cryptrec-ex-2601-2016.pdf
+     [10] https://eprint.iacr.org/2013/328.pdf
+     [11] https://cr.yp.to/antiforgery/cachetiming-20050414.pdf  # p. 2
+     [12] https://cr.yp.to/chacha/chacha-20080128.pdf
+     [13] https://www.eff.org/sv/deeplinks/2015/04/remembering-case-established-code-speech
+     [14] https://github.com/jedisct1/libsodium/blob/master/src/libsodium/crypto_core/hchacha20/core_hchacha20.c
+          https://github.com/jedisct1/libsodium/blob/master/src/libsodium/crypto_aead/xchacha20poly1305/sodium/aead_xchacha20poly1305.c
+          https://github.com/pyca/pynacl/blob/master/src/nacl/bindings/crypto_aead.py#L349
     """
     if len(key) != SYMMETRIC_KEY_LENGTH:
         raise CriticalError("Invalid key length.")
