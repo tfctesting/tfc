@@ -487,8 +487,9 @@ class TestBytePadding(unittest.TestCase):
         padded_bytestrings = set()
 
         for message_length in range(4*PADDING_LENGTH):
-            string = os.urandom(message_length)
-            padded = byte_padding(string)
+            message = os.urandom(message_length)
+            padded  = byte_padding(message)
+
             self.assertIsInstance(padded, bytes)
             self.assertEqual(len(padded) % PADDING_LENGTH, 0)
 
@@ -507,25 +508,25 @@ class TestBytePadding(unittest.TestCase):
         This test makes sure TFC detects if the length of the message
         padded by pyca/cryptography library is not correct.
             The MagicMock object pads the message b'test_string' to
-        the incorrect length of 256 bytes.
+        an incorrect length of 256 bytes.
         """
         with self.assertRaises(SystemExit):
             byte_padding(b'test_string')
 
     def test_message_length_equal_to_padding_size_adds_a_dummy_block(self):
-        string1 = (PADDING_LENGTH-1) * b'm'
-        padded1 = byte_padding(string1)
+        message1 = (PADDING_LENGTH-1) * b'm'
+        padded1  = byte_padding(message1)
         self.assertEqual(len(padded1), PADDING_LENGTH)
 
-        string2 = PADDING_LENGTH * b'm'
-        padded2 = byte_padding(string2)
+        message2 = PADDING_LENGTH * b'm'
+        padded2  = byte_padding(message2)
         self.assertEqual(len(padded2), 2*PADDING_LENGTH)
 
-    def test_removal_of_padding_does_not_alter_the_original_string(self):
+    def test_removal_of_padding_does_not_alter_the_original_message(self):
         for length in range(4*PADDING_LENGTH):
-            string = os.urandom(length)
-            padded = byte_padding(string)
-            self.assertEqual(rm_padding_bytes(padded), string)
+            message = os.urandom(length)
+            padded  = byte_padding(message)
+            self.assertEqual(rm_padding_bytes(padded), message)
 
 
 class TestCSPRNG(unittest.TestCase):
