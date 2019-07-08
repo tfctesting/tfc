@@ -470,42 +470,63 @@ class TestXChaCha20Poly1305(unittest.TestCase):
 
 
 class TestBytePadding(unittest.TestCase):
-    """Unit tests of the cryptography library are available at
+    """\
+    Encrypting plaintext with a stream cipher such as XChaCha20 hides
+    the content of the message, but not its length. To hide the exact
+    length of the message, TFC adds data to plaintexts. The requirements
+    for the PKCS#7 padding TFC uses are as follows:
+
+        1. The size of the padded message needs to be a multiple of the
+           padding size (255 bytes).
+        2. If the length of the padded message is exactly 255 bytes, a
+           dummy block is added.
+        3. Removing the padding must not change the original message in
+           any way.
+
+    Unit tests of the cryptography library are available at
         https://github.com/pyca/cryptography/blob/master/tests/hazmat/primitives/test_padding.py
     """
 
-    def test_padding_length_is_divisible_by_packet_length(self):
-        padded_bytestrings = []
+    def test_length_of_padded_message_is_divisible_by_padding_length(self):
+        padded_bytestrings = set()
 
-        for length in range(1000):
-            string = length * b'm'
+        for message_length in range(4*PADDING_LENGTH):
+            string = os.urandom(message_length)
             padded = byte_padding(string)
             self.assertIsInstance(padded, bytes)
             self.assertEqual(len(padded) % PADDING_LENGTH, 0)
 
-            padded_bytestrings.append(len(padded))
-        self.assertNotEqual(len(list(set(padded_bytestrings))), 1)
+            padded_bytestrings.add(len(padded))
 
-    def test_packet_length_equal_to_padding_size_adds_dummy_block(self):
-        string = PADDING_LENGTH * b'm'
-        padded = byte_padding(string)
-        self.assertEqual(len(padded), 2*PADDING_LENGTH)
+        self.assertEqual(padded_bytestrings, {1*PADDING_LENGTH, 2*PADDING_LENGTH,
+                                              3*PADDING_LENGTH, 4*PADDING_LENGTH})
 
     @mock.patch("cryptography.hazmat.primitives.padding.PKCS7",
                 return_value=MagicMock(
                     padder=MagicMock(return_value=MagicMock(
-                        update=MagicMock(return_value=b'a'),
-                        finalize=MagicMock(return_value=PADDING_LENGTH*b'a')))))
+                        update=MagicMock(return_value=b''),
+                        finalize=MagicMock(return_value=(PADDING_LENGTH+1)*b'a')))))
     def test_invalid_padding_length_raises_critical_error(self, _):
-        string = b'test_string'
+        """\
+        This test makes sure TFC detects if the length of the message
+        padded by pyca/cryptography library is not correct.
+            The MagicMock object pads the message b'test_string' to
+        the incorrect length of 256 bytes.
+        """
         with self.assertRaises(SystemExit):
-            byte_padding(string)
+            byte_padding(b'test_string')
 
+    def test_message_length_equal_to_padding_size_adds_a_dummy_block(self):
+        string1 = (PADDING_LENGTH-1) * b'm'
+        padded1 = byte_padding(string1)
+        self.assertEqual(len(padded1), PADDING_LENGTH)
 
-class TestRmPaddingBytes(unittest.TestCase):
+        string2 = PADDING_LENGTH * b'm'
+        padded2 = byte_padding(string2)
+        self.assertEqual(len(padded2), 2*PADDING_LENGTH)
 
-    def test_removal_of_padding_does_not_alter_original_string(self):
-        for length in range(1000):
+    def test_removal_of_padding_does_not_alter_the_original_string(self):
+        for length in range(4*PADDING_LENGTH):
             string = os.urandom(length)
             padded = byte_padding(string)
             self.assertEqual(rm_padding_bytes(padded), string)
