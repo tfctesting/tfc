@@ -523,8 +523,8 @@ class TestBytePadding(unittest.TestCase):
         self.assertEqual(len(padded2), 2*PADDING_LENGTH)
 
     def test_removal_of_padding_does_not_alter_the_original_message(self):
-        for length in range(4*PADDING_LENGTH):
-            message = os.urandom(length)
+        for message_length in range(4*PADDING_LENGTH):
+            message = os.urandom(message_length)
             padded  = byte_padding(message)
             self.assertEqual(rm_padding_bytes(padded), message)
 
