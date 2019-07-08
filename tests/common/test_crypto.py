@@ -470,20 +470,16 @@ class TestXChaCha20Poly1305(unittest.TestCase):
 
 
 class TestBytePadding(unittest.TestCase):
-    """\
-    Encrypting plaintext with a stream cipher such as XChaCha20 hides
-    the content of the message, but not its length. To hide the exact
-    length of the message, TFC adds data to plaintexts. The requirements
-    for the PKCS#7 padding TFC uses are as follows:
+    """The requirements the PKCS#7 padding are as follows:
 
-        1. The size of the padded message needs to be a multiple of the
+        1. The size of the padded message must be a multiple of the
            padding size (255 bytes).
-        2. If the length of the padded message is exactly 255 bytes, a
-           dummy block is added.
+        2. If the length of the message to be padded is exactly 255
+           bytes, a dummy block must be added.
         3. Removing the padding must not change the original message in
            any way.
 
-    Unit tests of the cryptography library are available at
+    The unit tests of the pyca/cryptography library are available at
         https://github.com/pyca/cryptography/blob/master/tests/hazmat/primitives/test_padding.py
     """
 
