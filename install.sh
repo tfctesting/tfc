@@ -620,13 +620,14 @@ function root_check {
 
 
 function sudoer_check {
-    # Check that the user who launched the installer is on sudoers list.
+    # Check that the user who launched the installer is on the sudoers list.
     sudoers=$(getent group sudo |cut -d: -f4 | tr "," "\n")
     user_is_sudoer=false
 
     for sudoer in ${sudoers}; do
         if [[ ${sudoer} == ${USER} ]]; then
             user_is_sudoer=true
+            break
         fi
     done
 
