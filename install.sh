@@ -621,9 +621,16 @@ function root_check {
 
 function sudoer_check {
     # Check that the user who launched the installer is on sudoers list.
-    local prompt
-    prompt=$(sudo -nv 2>&1)
-    if ! [[ $? -eq 0 ]]; then
+    sudoers=$(getent group sudo |cut -d: -f4 | tr "," "\n")
+    user_is_sudoer=false
+
+    for sudoer in ${sudoers}; do
+        if [[ ${sudoer} == ${USER} ]]; then
+            ${user_is_sudoer} = true
+        fi
+    done
+
+    if ! [[ ${user_is_sudoer} ]]; then
         exit_with_message "User ${USER} must be on sudoers list."
     fi
 }
