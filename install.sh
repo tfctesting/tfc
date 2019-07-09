@@ -275,7 +275,7 @@ function install_local_test {
 
     sudo torsocks apt install terminator -y
 
-    torsocks python3.7 -m pip install -r /opt/tfc/requirements-venv.txt --require-hashes
+    install_virtualenv
     sudo python3.7 -m virtualenv /opt/tfc/venv_tfc --system-site-packages
 
     . /opt/tfc/venv_tfc/bin/activate
@@ -310,11 +310,12 @@ function install_developer {
 
     create_user_data_dir
 
+    sudo torsocks apt update
     sudo torsocks apt install git libssl-dev python3-pip python3-setuptools python3-tk terminator -y
 
     torsocks git clone https://github.com/tfctesting/tfc.git $HOME/tfc
 
-    torsocks python3.7 -m pip install -r $HOME/tfc/requirements-venv.txt --require-hashes
+    install_virtualenv
     python3.7 -m virtualenv $HOME/tfc/venv_tfc --system-site-packages
 
     . $HOME/tfc/venv_tfc/bin/activate
@@ -347,7 +348,7 @@ function install_relay_ubuntu {
     verify_files
     create_user_data_dir
 
-    torsocks python3.7 -m pip install -r /opt/tfc/requirements-venv.txt --require-hashes
+    install_virtualenv
     sudo python3.7 -m virtualenv /opt/tfc/venv_relay --system-site-packages
 
     . /opt/tfc/venv_relay/bin/activate
@@ -421,6 +422,19 @@ function install_relay {
         install_relay_ubuntu
     fi
 }
+
+
+function install_virtualenv {
+    # Determine if OS is debian and install virtualenv as sudo so that
+    # the user (who should be on sudoers list) can see virtualenv on
+    # when the installer sets up virtual environment to /opt/tfc/.
+    distro=$(lsb_release -d | awk -F"\t" '{print $2}')
+
+    if [[ "$distro" =~ ^Debian* ]]; then
+        sudo torsocks python3.7 -m pip install -r /opt/tfc/requirements-venv.txt --require-hashes
+    else
+        torsocks python3.7 -m pip install -r /opt/tfc/requirements-venv.txt --require-hashes
+    fi
 
 
 function read_sudo_pwd {
