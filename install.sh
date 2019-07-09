@@ -474,6 +474,7 @@ function kill_network {
         fi
     done
 
+    sleep 1
     clear
     c_echo ''
     c_echo " This computer needs to be air gapped. The installer has "
@@ -613,9 +614,17 @@ function arg_error {
 function root_check {
     # Check that the installer was not launched as root.
     if [[ !$EUID -ne 0 ]]; then
-        clear
-        echo -e "\nError: This installer must not be run as root. Exiting.\n" 1>&2
-        exit 1
+        exit_with_message "This installer must not be run as root."
+    fi
+}
+
+
+function sudoer_check {
+    # Check that the user who launched the installer is on sudoers list.
+    local prompt
+    prompt=$(sudo -nv 2>&1)
+    if ! [[ $? -eq 0 ]]; then
+        exit_with_message "User ${USER} must be on sudoers list."
     fi
 }
 
@@ -623,16 +632,26 @@ function root_check {
 function architecture_check {
     # Check that the OS is 64-bit, and not 32-bit.
     if ! [[ "$(uname -m 2>/dev/null | grep x86_64)" ]]; then
-        clear
-        echo -e "\nError: Invalid system architecture. Exiting.\n" 1>&2
-        exit 1
+        exit_with_message "Invalid system architecture."
     fi
+}
+
+
+function exit_with_message {
+    # Print error message and exit the installer with flag 1.
+    clear
+    echo ''
+    c_echo "Error: $* Exiting." 1>&2
+    echo ''
+    exit 1
+
 }
 
 
 set -e
 architecture_check
 root_check
+sudoer_check
 sudo_pwd=''
 
 case $1 in
