@@ -631,7 +631,7 @@ function sudoer_check {
     done
 
     if ! ${user_is_sudoer}; then
-        exit_with_message "User ${USER} must be on sudoers list."
+        exit_with_message "User ${USER} must be on the sudoers list."
     fi
 }
 
