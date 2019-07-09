@@ -652,7 +652,6 @@ function exit_with_message {
     c_echo "Error: $* Exiting." 1>&2
     echo ''
     exit 1
-
 }
 
 
