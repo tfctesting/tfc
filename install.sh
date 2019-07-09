@@ -626,7 +626,7 @@ function sudoer_check {
 
     for sudoer in ${sudoers}; do
         if [[ ${sudoer} == ${USER} ]]; then
-            ${user_is_sudoer} = true
+            user_is_sudoer=true
         fi
     done
 
