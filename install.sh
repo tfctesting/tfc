@@ -435,6 +435,7 @@ function install_virtualenv {
     else
         torsocks python3.7 -m pip install -r /opt/tfc/requirements-venv.txt --require-hashes
     fi
+}
 
 
 function read_sudo_pwd {
