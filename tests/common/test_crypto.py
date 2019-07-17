@@ -483,7 +483,7 @@ class TestBytePadding(unittest.TestCase):
         https://github.com/pyca/cryptography/blob/master/tests/hazmat/primitives/test_padding.py
     """
 
-    def test_length_of_padded_message_is_divisible_by_padding_length(self):
+    def test_length_of_the_padded_message_is_divisible_by_padding_length(self):
         padded_bytestrings = set()
 
         for message_length in range(4*PADDING_LENGTH):
