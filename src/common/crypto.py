@@ -505,11 +505,15 @@ def byte_padding(bytestring: bytes  # Bytestring to be padded
     maximum length of the compressed message.
 
     When traffic masking is enabled, the padding contributes to traffic
-    flow confidentiality: During traffic masking, TFC will output a
+    flow confidentiality*: During traffic masking, TFC will output a
     constant stream of padded packets at constant intervals that hides
     metadata about message length (i.e., the adversary won't be able to
     distinguish when transmission of packet or series of packets starts
     and stops), as well as the type (message/file) of transferred data.
+
+    * traffic flow confidentiality is sometimes abbreviated as TFC but
+      it is never used in the documentation as it clashes with the
+      program name.
 
     TFC uses PKCS #7 padding scheme described in RFC 2315 and RFC 5652:
         https://tools.ietf.org/html/rfc2315#section-10.3
