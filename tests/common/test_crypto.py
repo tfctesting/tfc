@@ -470,7 +470,7 @@ class TestXChaCha20Poly1305(unittest.TestCase):
 
 
 class TestBytePadding(unittest.TestCase):
-    """The requirements of the PKCS#7 padding are as follows:
+    """The requirements of the PKCS #7 padding are as follows:
 
         1. The size of the padded message must be a multiple of the
            padding size (255 bytes).
