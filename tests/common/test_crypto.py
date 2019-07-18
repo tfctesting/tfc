@@ -160,7 +160,7 @@ class TestArgon2KDF(unittest.TestCase):
 
     def test_argon2_cffi_using_the_official_command_line_utility(self):
 
-        # Command-line utility's parameter limits
+        # Command-line utility's parameter limits.
         MIN_PASSWORD_LENGTH = 1
         MAX_PASSWORD_LENGTH = 127
         MIN_SALT_LENGTH     = 8
@@ -170,7 +170,7 @@ class TestArgon2KDF(unittest.TestCase):
         MIN_MEMORY_COST     = 7
         MIN_KEY_LENGTH      = 4
 
-        # Arbitrary limits set for the test
+        # Arbitrary limits set for the test.
         MAX_SALT_LENGTH = 128
         MAX_TIME_COST   = 3
         MAX_MEMORY_COST = 15
