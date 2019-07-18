@@ -512,7 +512,7 @@ def byte_padding(bytestring: bytes  # Bytestring to be padded
     and stops), as well as the type (message/file) of transferred data.
 
     * traffic flow confidentiality is sometimes abbreviated as TFC but
-      it is never used in the documentation as it clashes with the
+      the TLA is never used in the documentation as it clashes with the
       program name.
 
     TFC uses PKCS #7 padding scheme described in RFC 2315 and RFC 5652:
