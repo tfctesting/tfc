@@ -498,7 +498,7 @@ class TestBytePadding(unittest.TestCase):
         self.assertEqual(padded_bytestrings, {1*PADDING_LENGTH, 2*PADDING_LENGTH,
                                               3*PADDING_LENGTH, 4*PADDING_LENGTH})
 
-    @mock.patch("cryptography.hazmat.primitives.padding.PKCS7",
+    @mock.patch('cryptography.hazmat.primitives.padding.PKCS7',
                 return_value=MagicMock(
                     padder=MagicMock(return_value=MagicMock(
                         update=MagicMock(return_value=b''),
