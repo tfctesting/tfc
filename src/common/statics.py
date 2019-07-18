@@ -531,6 +531,7 @@ XCHACHA20_NONCE_LENGTH           = 24
 SYMMETRIC_KEY_LENGTH             = 32
 POLY1305_TAG_LENGTH              = 16
 BLAKE2_DIGEST_LENGTH             = 32
+BLAKE2_DIGEST_LENGTH_MIN         = 1
 BLAKE2_DIGEST_LENGTH_MAX         = 64
 ENTROPY_THRESHOLD                = 512
 HARAC_LENGTH                     = 8

@@ -39,8 +39,9 @@ from cryptography.hazmat.primitives.asymmetric.x448 import X448PrivateKey
 
 from src.common.crypto  import argon2_kdf, auth_and_decrypt, blake2b, byte_padding, check_kernel_entropy
 from src.common.crypto  import check_kernel_version, csprng, encrypt_and_sign, rm_padding_bytes, X448
-from src.common.statics import ARGON2_SALT_LENGTH, BLAKE2_DIGEST_LENGTH_MAX, ENTROPY_THRESHOLD, PADDING_LENGTH
-from src.common.statics import SYMMETRIC_KEY_LENGTH, TFC_PUBLIC_KEY_LENGTH, XCHACHA20_NONCE_LENGTH
+from src.common.statics import ARGON2_SALT_LENGTH, BLAKE2_DIGEST_LENGTH_MAX, BLAKE2_DIGEST_LENGTH_MIN
+from src.common.statics import ENTROPY_THRESHOLD, PADDING_LENGTH, SYMMETRIC_KEY_LENGTH, TFC_PUBLIC_KEY_LENGTH
+from src.common.statics import XCHACHA20_NONCE_LENGTH
 
 from tests.utils import cd_unit_test, cleanup
 
@@ -112,6 +113,14 @@ class TestBLAKE2b(unittest.TestCase):
         for message, key, digest in self.test_vectors:
             purported_digest = blake2b(message, key, digest_size=BLAKE2_DIGEST_LENGTH_MAX)
             self.assertEqual(purported_digest, digest)
+
+
+class TestBLAKE2bWrapper(unittest.TestCase):
+
+    def test_invalid_digest_size_raises_critical_error(self):
+        for invalid_digest_size in [-1, 0, 65, 66]:
+            with self.assertRaises(SystemExit):
+                blake2b(b'password', digest_size=invalid_digest_size)
 
 
 class TestArgon2KDF(unittest.TestCase):
@@ -532,44 +541,74 @@ class TestBytePadding(unittest.TestCase):
 
 
 class TestCSPRNG(unittest.TestCase):
+    """\
+    This suite of tests verifies the type and length of returned data,
+    as well as the limits for the key size.
 
+    The CSPRNG used in TFC is the Linux kernel's CSPRNG which is based
+    on ChaCha20. The algorithm is not deterministic in any way and it is
+    not possible to verify the correctness of the implementation from
+    within Python.
+
+    The unittests for random.c can be found at
+        https://github.com/smuellerDD/lrng/tree/master/test
+
+    The report on the statistical tests of the LRNG can be found from
+    Chapter 3 (page 26) of the whitepaper:
+        https://www.chronox.de/lrng/doc/lrng.pdf
+
+    The use of BLAKE2 compression is tested by mocking the entropy
+    returned by the GETRANDOM call, and then comparing the output with
+    the BLAKE2b hash of the mocked entropy.
+    """
     entropy = SYMMETRIC_KEY_LENGTH * b'a'
 
-    def test_key_generation(self):
+    def test_default_key_size_and_key_type(self):
         key = csprng()
         self.assertEqual(len(key), SYMMETRIC_KEY_LENGTH)
         self.assertIsInstance(key, bytes)
 
     @mock.patch('os.getrandom', return_value=entropy)
-    def test_function_calls_getrandom_with_correct_parameters_and_hashes_with_blake2b(self, mock_get_random):
+    def test_function_calls_getrandom_with_correct_parameters_and_hashes_entropy_with_blake2b(self, mock_get_random):
         key = csprng()
         mock_get_random.assert_called_with(SYMMETRIC_KEY_LENGTH, flags=0)
         self.assertEqual(key, blake2b(self.entropy))
 
-    def test_function_returns_specified_amount_of_entropy(self):
-        for key_size in [16, 24, 32, 56, 64]:
+    def test_function_returns_key_of_specified_size(self):
+        for key_size in range(1, BLAKE2_DIGEST_LENGTH_MAX+1):
             key = csprng(key_size)
             self.assertEqual(len(key), key_size)
 
+    def test_subceeding_hash_function_min_digest_size_raises_critical_error(self):
+        with self.assertRaises(SystemExit):
+            csprng(BLAKE2_DIGEST_LENGTH_MIN-1)
+
     def test_exceeding_hash_function_max_digest_size_raises_critical_error(self):
         with self.assertRaises(SystemExit):
-            csprng(BLAKE2_DIGEST_LENGTH_MAX + 1)
+            csprng(BLAKE2_DIGEST_LENGTH_MAX+1)
 
+    @mock.patch('src.common.crypto.blake2b')
     @mock.patch('os.getrandom', side_effect=[(SYMMETRIC_KEY_LENGTH-1) * b'a',
                                              (SYMMETRIC_KEY_LENGTH+1) * b'a'])
-    def test_invalid_entropy_raises_critical_error(self, _):
+    def test_invalid_size_entropy_from_get_random_raises_critical_error(self, mock_get_random, mock_blake2):
         with self.assertRaises(SystemExit):
             csprng()
         with self.assertRaises(SystemExit):
             csprng()
+
+        mock_get_random.assert_called_with(SYMMETRIC_KEY_LENGTH, flags=0)
+        mock_blake2.assert_not_called()
 
     @mock.patch('src.common.crypto.blake2b', side_effect=[(SYMMETRIC_KEY_LENGTH-1) * b'a',
                                                           (SYMMETRIC_KEY_LENGTH+1) * b'a'])
-    def test_invalid_blake2b_digest_raises_critical_error(self, _):
+    def test_invalid_size_blake2b_digest_raises_critical_error(self, mock_blake2):
         with self.assertRaises(SystemExit):
             csprng()
         with self.assertRaises(SystemExit):
             csprng()
+
+        mock_blake2.assert_called()
+
 
 class TestCheckKernelEntropy(unittest.TestCase):
 
