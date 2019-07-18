@@ -507,20 +507,21 @@ class TestBytePadding(unittest.TestCase):
         """\
         This test makes sure TFC detects if the length of the message
         padded by pyca/cryptography library is not correct.
-            The MagicMock object pads the message b'test_string' to
-        an incorrect length of 256 bytes.
+            The MagicMock object replaces the message b'test_string' with
+        a message that has an incorrect length of 256 bytes.
         """
         with self.assertRaises(SystemExit):
             byte_padding(b'test_string')
 
-    def test_message_length_equal_to_padding_size_adds_a_dummy_block(self):
-        message1 = (PADDING_LENGTH-1) * b'm'
-        padded1  = byte_padding(message1)
-        self.assertEqual(len(padded1), PADDING_LENGTH)
+    def test_message_length_one_less_than_padding_size_does_not_add_a_dummy_block(self):
+        message = (PADDING_LENGTH-1) * b'a'
+        padded  = byte_padding(message)
+        self.assertEqual(len(padded), PADDING_LENGTH)
 
-        message2 = PADDING_LENGTH * b'm'
-        padded2  = byte_padding(message2)
-        self.assertEqual(len(padded2), 2*PADDING_LENGTH)
+    def test_message_length_equal_to_padding_size_adds_a_dummy_block(self):
+        message = PADDING_LENGTH * b'a'
+        padded  = byte_padding(message)
+        self.assertEqual(len(padded), 2*PADDING_LENGTH)
 
     def test_removal_of_padding_does_not_alter_the_original_message(self):
         for message_length in range(4*PADDING_LENGTH):
