@@ -515,12 +515,12 @@ class TestBytePadding(unittest.TestCase):
         mock_padder.assert_called()
 
     def test_message_length_one_less_than_padding_size_does_not_add_a_dummy_block(self):
-        message = (PADDING_LENGTH-1) * b'a'
+        message = os.urandom(PADDING_LENGTH-1)
         padded  = byte_padding(message)
         self.assertEqual(len(padded), PADDING_LENGTH)
 
     def test_message_length_equal_to_padding_size_adds_a_dummy_block(self):
-        message = PADDING_LENGTH * b'a'
+        message = os.urandom(PADDING_LENGTH)
         padded  = byte_padding(message)
         self.assertEqual(len(padded), 2*PADDING_LENGTH)
 
