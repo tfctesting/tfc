@@ -82,7 +82,7 @@ class MasterKey(object):
 
         The generated master key depends on a 256-bit salt and the
         password entered by the user. Additional computational strength
-        is added by the slow hash function (Argon2d). The more cores and
+        is added by the slow hash function (Argon2id). The more cores and
         the faster each core is, and the more memory the system has, the
         more secure TFC data is under the same password.
 
@@ -91,9 +91,10 @@ class MasterKey(object):
 
             https://tools.ietf.org/html/draft-irtf-cfrg-argon2-04#section-4
 
-        1) For Argon2 type (y), Argon2d was selected because the
-           adversary does not have side channel access to the
-           data-diode separated devices that run the algorithm.
+        1) For Argon2 type (y), Argon2id was selected because the
+           adversary might be able to run arbitrary code on Destination
+           Computer and thus perform a side-channel attack against the
+           function.
 
         2) The maximum number of threads (h) is determined by the number
            available in the system. However, during local testing this
@@ -132,7 +133,7 @@ class MasterKey(object):
         key is stored together with key derivation parameters into the
         login database.
             The preimage resistance of BLAKE2b prevents derivation of master
-        key from the stored hash, and Argon2d ensures brute force and
+        key from the stored hash, and Argon2id ensures brute force and
         dictionary attacks against the master password are painfully
         slow even with GPUs/ASICs/FPGAs, as long as the password is
         sufficiently strong.
