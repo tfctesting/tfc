@@ -90,8 +90,12 @@ class TestOnionService(unittest.TestCase):
         with self.assertRaises(SystemExit):
             OnionService(self.master_key)
 
+    @mock.patch('os.getrandom', side_effect=[ 1 * b'a',   # Initial confirmation code
+                                             32 * b'a',   # ed25519 key
+                                             24 * b'a',   # Nonce
+                                              1 * b'b'])  # New confirmation code (different)
     @mock.patch('time.sleep', return_value=None)
-    def test_confirmation_code_generation(self, _):
+    def test_confirmation_code_generation(self, *_):
         onion_service = OnionService(self.master_key)
         conf_code     = onion_service.conf_code
         onion_service.new_confirmation_code()

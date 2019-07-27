@@ -94,6 +94,20 @@ class TestGatewaySerial(TFCTestCase):
         gateway = Gateway(operation=RX, local_test=False, dd_sockets=False)
         self.assertIsNone(gateway.write(b"message"))
 
+    @mock.patch('time.sleep',     return_value=None)
+    @mock.patch('serial.Serial',  return_value=MagicMock(
+        read_all=MagicMock(side_effect=[KeyboardInterrupt, SerialException, b'', b'1', b'2', b''])))
+    @mock.patch('os.listdir',     side_effect=[['ttyUSB0'], ['ttyUSB0'], ['ttyUSB0']])
+    @mock.patch('builtins.input', side_effect=['Yes'])
+    def test_serial_uninitialized_serial_interface_for_read_raises_critical_error(self, *_):
+        # Setup
+        gateway           = Gateway(operation=RX, local_test=False, dd_sockets=False)
+        gateway.rx_serial = None
+
+        # Test
+        with self.assertRaises(SystemExit):
+            gateway.read()
+
     @mock.patch('time.monotonic', side_effect=[1, 2, 3])
     @mock.patch('time.sleep',     return_value=None)
     @mock.patch('serial.Serial',  return_value=MagicMock(

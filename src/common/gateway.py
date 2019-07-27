@@ -81,8 +81,8 @@ class Gateway(object):
                  ) -> None:
         """Create a new Gateway object."""
         self.settings  = GatewaySettings(operation, local_test, dd_sockets)
-        self.tx_serial = None  # type: serial.Serial
-        self.rx_serial = None  # type: serial.Serial
+        self.tx_serial = None  # type: Optional[serial.Serial]
+        self.rx_serial = None  # type: Optional[serial.Serial]
         self.rx_socket = None  # type: Optional[multiprocessing.connection.Connection]
         self.tx_socket = None  # type: Optional[multiprocessing.connection.Connection]
 
@@ -153,7 +153,7 @@ class Gateway(object):
                 time.sleep(LOCAL_TESTING_PACKET_DELAY)
             except BrokenPipeError:
                 raise CriticalError("Relay IPC server disconnected.", exit_code=0)
-        else:
+        elif self.tx_serial is not None:
             try:
                 self.tx_serial.write(packet)
                 self.tx_serial.flush()
@@ -180,6 +180,8 @@ class Gateway(object):
                 except EOFError:
                     raise CriticalError("Relay IPC client disconnected.", exit_code=0)
         else:
+            if self.rx_serial is None:
+                raise CriticalError("Serial interface has not been initialized.")
             while True:
                 try:
                     start_time  = 0.0

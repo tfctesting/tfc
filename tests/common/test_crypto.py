@@ -170,32 +170,32 @@ class TestArgon2KDF(unittest.TestCase):
     def test_argon2_cffi_using_the_official_command_line_utility(self):
 
         # Command-line utility's parameter limits.
-        MIN_PASSWORD_LENGTH = 1
-        MAX_PASSWORD_LENGTH = 127
-        MIN_SALT_LENGTH     = 8
-        MIN_PARALLELISM     = 1
-        MAX_PARALLELISM     = multiprocessing.cpu_count()
-        MIN_TIME_COST       = 1
-        MIN_MEMORY_COST     = 7
-        MIN_KEY_LENGTH      = 4
+        min_password_length = 1
+        max_password_length = 127
+        min_salt_length     = 8
+        min_parallelism     = 1
+        max_parallelism     = multiprocessing.cpu_count()
+        min_time_cost       = 1
+        min_memory_cost     = 7
+        min_key_length      = 4
 
         # Arbitrary limits set for the test.
-        MAX_SALT_LENGTH = 128
-        MAX_TIME_COST   = 3
-        MAX_MEMORY_COST = 15
-        MAX_KEY_LENGTH  = 64
+        max_salt_length = 128
+        max_time_cost   = 3
+        max_memory_cost = 15
+        max_key_length  = 64
 
         sys_rand = random.SystemRandom()
 
         for _ in range(self.number_of_tests):
 
             # Generate random parameters for the test.
-            len_password = sys_rand.randint(MIN_PASSWORD_LENGTH, MAX_PASSWORD_LENGTH)
-            len_salt     = sys_rand.randint(MIN_SALT_LENGTH,     MAX_SALT_LENGTH)
-            parallelism  = sys_rand.randint(MIN_PARALLELISM,     MAX_PARALLELISM)
-            time_cost    = sys_rand.randint(MIN_TIME_COST,       MAX_TIME_COST)
-            memory_cost  = sys_rand.randint(MIN_MEMORY_COST,     MAX_MEMORY_COST)
-            key_length   = sys_rand.randint(MIN_KEY_LENGTH,      MAX_KEY_LENGTH)
+            len_password = sys_rand.randint(min_password_length, max_password_length)
+            len_salt     = sys_rand.randint(min_salt_length,     max_salt_length)
+            parallelism  = sys_rand.randint(min_parallelism,     max_parallelism)
+            time_cost    = sys_rand.randint(min_time_cost,       max_time_cost)
+            memory_cost  = sys_rand.randint(min_memory_cost,     max_memory_cost)
+            key_length   = sys_rand.randint(min_key_length,      max_key_length)
 
             password = ''.join([sys_rand.choice(ascii_letters + digits) for _ in range(len_password)])
             salt     = ''.join([sys_rand.choice(ascii_letters + digits) for _ in range(len_salt)])
