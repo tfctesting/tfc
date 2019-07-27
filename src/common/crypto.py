@@ -527,7 +527,7 @@ def byte_padding(bytestring: bytes  # Bytestring to be padded
         https://en.wikipedia.org/wiki/Padding_(cryptography)#PKCS#5_and_PKCS#7
     """
     padder  = padding.PKCS7(PADDING_LENGTH * BITS_PER_BYTE).padder()
-    padded  = padder.update(bytestring)
+    padded  = padder.update(bytestring)  # type: bytes
     padded += padder.finalize()
 
     if len(padded) % PADDING_LENGTH != 0:
@@ -544,7 +544,7 @@ def rm_padding_bytes(bytestring: bytes  # Padded bytestring
     byte that is always part of the padding.
     """
     unpadder  = padding.PKCS7(PADDING_LENGTH * BITS_PER_BYTE).unpadder()
-    unpadded  = unpadder.update(bytestring)
+    unpadded  = unpadder.update(bytestring)  # type: bytes
     unpadded += unpadder.finalize()
 
     return unpadded
