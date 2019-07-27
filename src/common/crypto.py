@@ -155,13 +155,16 @@ def argon2_kdf(password:    str,                           # Password to derive 
           attacks that allows compact implementations with the same
           energy cost."[1]
 
-        o Of all of the PHC finalists, only Catena and Argon2i(d) offer
-          cache-timing resistance by using data-independent memory
-          access. Catena does not support parallelism[3], thus if it
-          later turns out TFC needs stronger protection from
+        o Of all of the PHC finalists, only Catena and Argon2id offer
+          complete cache-timing resistance by using data-independent
+          memory access. Catena does not support parallelism[3], thus if
+          it later turns out TFC needs stronger protection from
           cache-timing attacks, the selection of Argon2 (that always
           supports parallelism) is ideal, as switching from Argon2id
           to Argon2i is trivial.
+
+        o More secure algorithms such as the Balloon hash[4] function do
+          not have robust implementations.
 
     The purpose of Argon2 is to stretch a password into a 256-bit key.
     Argon2 features a slow, memory-hard hash function that consumes
@@ -174,7 +177,7 @@ def argon2_kdf(password:    str,                           # Password to derive 
     or PSK transmission media.
 
     The Argon2 version used is the Argon2id, that is the current
-    recommendation of the draft RFC. Argon2id uses data-independent
+    recommendation of the draft RFC[5]. Argon2id uses data-independent
     memory access for the first half of the first iteration, and
     data-dependent memory access for the rest. This provides a lot of
     protection against TMTO attacks which is great because most of the
@@ -193,7 +196,9 @@ def argon2_kdf(password:    str,                           # Password to derive 
      [1] https://github.com/P-H-C/phc-winner-argon2/blob/master/argon2-specs.pdf  # p. 2
      [2] https://password-hashing.net/submissions/specs/Catena-v5.pdf             # p.10
      [3] https://crypto.stackexchange.com/a/51623
-     [4] https://github.com/P-H-C/phc-winner-argon2
+     [4] https://crypto.stanford.edu/balloon/
+     [5] https://tools.ietf.org/html/draft-irtf-cfrg-argon2-06#section-9.4
+     [6] https://github.com/P-H-C/phc-winner-argon2
          https://github.com/hynek/argon2_cffi
     """
     if len(salt) != ARGON2_SALT_LENGTH:
@@ -263,7 +268,7 @@ class X448(object):
             - Points on Curve448 (e.g. public keys) are
               indistinguishable from uniform random strings.
 
-        o Safer curves (M-511 and E-521) don't have robust implementations.
+        o Safer curves (M-511 and E-521) do not have robust implementations.
 
         o NIST has announced X448 will be included in the SP 800-186.[2]
 
@@ -303,7 +308,8 @@ class X448(object):
            instance method[4].
 
         3. Calling the `activate_osrandom_engine()` disables the default
-           OpenSSL CSPRNG, and activates the "OS random engine".[5]
+           OpenSSL CSPRNG, and activates the pyca/cryptography
+           "OS random engine".[5]
 
         4. Unlike OpenSSL user-space CSPRNG that only seeds from
            /dev/urandom, the OS random engine uses GETRANDOM(0) syscall
