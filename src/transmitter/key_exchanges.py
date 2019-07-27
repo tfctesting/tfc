@@ -445,7 +445,7 @@ def create_pre_shared_key(onion_pub_key: bytes,           # Public key of contac
 
     The generated keys are protected by a key encryption key, derived
     from a 256-bit salt and a password (that is to be shared with the
-    recipient) using Argon2d key derivation function.
+    recipient) using Argon2id key derivation function.
 
     The encrypted message and header keys are stored together with salt
     on a removable media. This media must be a never-before-used device
