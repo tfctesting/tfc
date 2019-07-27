@@ -27,7 +27,7 @@ Curve448-Goldilocks
 └─ X448 key exchange
 ChaCha stream cipher
 ├─ BLAKE2b cryptographic hash function
-|  └─ Argon2d password hashing function
+|  └─ Argon2id password hashing function
 └─ ChaCha20 stream cipher
    ├─ XChaCha20-Poly1305 AEAD (IETF variant)
    └─ Linux kernel CSPRNG
@@ -130,7 +130,7 @@ def argon2_kdf(password:    str,                           # Password to derive 
                memory_cost: int = ARGON2_PSK_MEMORY_COST,  # Amount of memory to use (in bytes)
                parallelism: int = ARGON2_PSK_PARALLELISM   # Number of threads to use
                ) -> bytes:                                 # The derived key
-    """Derive an encryption key from password and salt using Argon2d.
+    """Derive an encryption key from password and salt using Argon2id.
 
     Argon2 is a password hashing function designed by Alex Biryukov,
     Daniel Dinu, and Dmitry Khovratovich from the University of
@@ -155,13 +155,13 @@ def argon2_kdf(password:    str,                           # Password to derive 
           attacks that allows compact implementations with the same
           energy cost."[1]
 
-        o Of all of the PHC finalists, only Catena and Argon2i offer
+        o Of all of the PHC finalists, only Catena and Argon2i(d) offer
           cache-timing resistance by using data-independent memory
           access. Catena does not support parallelism[3], thus if it
-          later turns out TFC needs protection from cache-timing attacks
-          after all, the selection of Argon2 (that always supports
-          parallelism) is ideal, as switching from Argon2d to Argon2i is
-          trivial.
+          later turns out TFC needs stronger protection from
+          cache-timing attacks, the selection of Argon2 (that always
+          supports parallelism) is ideal, as switching from Argon2id
+          to Argon2i is trivial.
 
     The purpose of Argon2 is to stretch a password into a 256-bit key.
     Argon2 features a slow, memory-hard hash function that consumes
@@ -173,21 +173,19 @@ def argon2_kdf(password:    str,                           # Password to derive 
     place against an individual (physically compromised) TFC-endpoint,
     or PSK transmission media.
 
-    The used Argon2 version is Argon2d that uses data-dependent memory
-    access, which maximizes security against TMTO attacks at the risk of
-    side-channel attacks. The IETF recommends using Argon2id (that is
-    side-channel resistant and almost as secure as Argon2d against
-    TMTO attacks) **except** when there is a reason to prefer Argon2d
-    (or Argon2i).
-        The reason TFC uses Argon2d is key derivation only takes place
-    on Source and Destination Computer. As these computers are connected
-    to the Networked Computer only via a data diode, they do not leak
-    any information via side-channels to the adversary. The expected
-    attacks are against physically compromised data storage devices
-    where the encrypted data is at rest. In such a situation, Argon2d is
-    the most secure option.
+    The Argon2 version used is the Argon2id, that is the current
+    recommendation of the draft RFC. Argon2id uses data-independent
+    memory access for the first half of the first iteration, and
+    data-dependent memory access for the rest. This provides a lot of
+    protection against TMTO attacks which is great because most of the
+    expected attacks are against physically compromised data storage
+    devices where the encrypted data is at rest.
+        Argon2id also adds some some security against side-channel
+    attacks that malicious code running on Destination Computer might
+    perform. Considering these two attacks, Argon2id is the most secure
+    option.
 
-    The correctness of the Argon2d implementation[4] is tested by TFC
+    The correctness of the Argon2id implementation[4] is tested by TFC
     unit tests. The testing is done by comparing the output of the
     argon2_cffi library with the output of the Argon2 reference
     command-line utility under randomized input parameters.
@@ -207,7 +205,7 @@ def argon2_kdf(password:    str,                           # Password to derive 
                                            memory_cost=memory_cost,
                                            parallelism=parallelism,
                                            hash_len=SYMMETRIC_KEY_LENGTH,
-                                           type=argon2.Type.D)  # type: bytes
+                                           type=argon2.Type.ID)  # type: bytes
     return key
 
 
@@ -522,14 +520,14 @@ def byte_padding(bytestring: bytes  # Bytestring to be padded
     For a better explanation, see
         https://en.wikipedia.org/wiki/Padding_(cryptography)#PKCS#5_and_PKCS#7
     """
-    padder      = padding.PKCS7(PADDING_LENGTH * BITS_PER_BYTE).padder()
-    bytestring  = padder.update(bytestring)  # type: bytes
-    bytestring += padder.finalize()
+    padder  = padding.PKCS7(PADDING_LENGTH * BITS_PER_BYTE).padder()
+    padded  = padder.update(bytestring)
+    padded += padder.finalize()
 
-    if len(bytestring) % PADDING_LENGTH != 0:
-        raise CriticalError(f"Padded message had invalid length ({len(bytestring)}).")
+    if len(padded) % PADDING_LENGTH != 0:
+        raise CriticalError(f"Padded message had invalid length ({len(padded)}).")
 
-    return bytestring
+    return padded
 
 
 def rm_padding_bytes(bytestring: bytes  # Padded bytestring
@@ -539,11 +537,11 @@ def rm_padding_bytes(bytestring: bytes  # Padded bytestring
     The length of padding is determined by the ord-value of the last
     byte that is always part of the padding.
     """
-    unpadder    = padding.PKCS7(PADDING_LENGTH * BITS_PER_BYTE).unpadder()
-    bytestring  = unpadder.update(bytestring)  # type: bytes
-    bytestring += unpadder.finalize()
+    unpadder  = padding.PKCS7(PADDING_LENGTH * BITS_PER_BYTE).unpadder()
+    unpadded  = unpadder.update(bytestring)
+    unpadded += unpadder.finalize()
 
-    return bytestring
+    return unpadded
 
 
 def csprng(key_length: int = SYMMETRIC_KEY_LENGTH) -> bytes:
@@ -602,33 +600,32 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH) -> bytes:
         o Keyboard presses and mouse movements (not assumed to provide
           any entropy).[1]
 
-        Each seed is generated by concatenating the SHA-1 hash of the
-        entropy pool, as well as noise from CPU (if available), and
-        jitter from CPU and a 64-bit timestamp (only 32 LSBs are used).
-        The entropy pool is a LFSR that takes in 32 LSBs of interrupt
-        timestamps. The hash of the entropy pool is mixed back to the
-        pool to provide backtracking resistance.[1]
+    Each seed is generated by concatenating the SHA-1 hash of the
+    entropy pool, as well as noise from CPU (if available), and jitter
+    from CPU and a 64-bit timestamp (only 32 LSBs are used). The entropy
+    pool is a LFSR that takes in 32 LSBs of interrupt timestamps. The
+    hash of the entropy pool is mixed back to the pool to provide
+    backtracking resistance.[1]
 
-        The primary DRNG always tries to seed itself with 256 bits of
-        random data. For efficiency reasons, the seed consists of the
-        160-bit SHA-1 hash of the entropy pool, and the 256-bit block
-        that contains entropy from the secondary pool, plus the 32-bit
-        timestamp (that is assumed to have no entropy).
+    The primary DRNG always tries to seed itself with 256 bits of random
+    data. For efficiency reasons, the seed consists of the 160-bit SHA-1
+    hash of the entropy pool, and the 256-bit block that contains
+    entropy from the secondary pool, plus the 32-bit timestamp (that is
+    assumed to have no entropy).
 
-        The primary DRNG is used to seed the secondary DRNG, which is
-        thus also seeded with 256 bits of entropy.[1] TFC uses the
-        secondary DRNG to generate keys with getrandom(GRND_NONBLOCK).
+    The primary DRNG is used to seed the secondary DRNG, which is thus
+    also seeded with 256 bits of entropy.[1] TFC uses the secondary DRNG
+    to generate keys with getrandom(GRND_NONBLOCK).
 
-        The secondary DRNG is reseeded every 600 seconds, 2^20 generate
-        operations, or if the DRNG is forced to reseed by writing into
-        /dev/(u)random.
+    The secondary DRNG is reseeded every 600 seconds, 2^20 generate
+    operations, or if the DRNG is forced to reseed by writing into
+    /dev/(u)random.
 
-        Once the minimum (128-bit) seed level is reached, only API calls
-        like wait_for_random_bytes and add_random_ready_callback are
-        available: This is for in-kernel consumers. The user-space
-        callers waiting for getrandom syscall are woken up once LRNG
-        reaches fully seeded level (256-bits).[1]
-
+    Once the minimum (128-bit) seed level is reached, only API calls
+    like wait_for_random_bytes and add_random_ready_callback are
+    available: This is for in-kernel consumers. The user-space callers
+    waiting for getrandom syscall are woken up once LRNG reaches fully
+    seeded level (256-bits).[1]
 
     DRNG
     ----
