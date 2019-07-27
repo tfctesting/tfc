@@ -745,7 +745,7 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH) -> bytes:
         -  4-byte counter
         - 12-byte nonce
 
-    In addition, the state contains init_time, a 32-bit timestamp of
+    In addition, the state contains init_time, a 4-byte timestamp of
     when the DRNG was last seeded.
 
     DRNG initialization
