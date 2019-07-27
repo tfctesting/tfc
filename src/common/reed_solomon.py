@@ -464,26 +464,33 @@ def init_tables(prim:      int = 0x11d,
 
 
 def gf_add(x: int, y: int) -> int:
+    """Do addition in binary Galois Field."""
     return x ^ y
 
 
 def gf_sub(x: int, y: int) -> int:
-    # In binary Galois Field, subtraction is
-    # just the same as addition (since we mod 2)
+    """Do substraction in binary Galois Field.
+
+    In binary Galois Field, subtraction is just
+    the same as addition (since we mod 2)
+    """
     return x ^ y
 
 
 def gf_neg(x: int) -> int:
+    """Do negation in binary Galois Field."""
     return x
 
 
 def gf_inverse(x: int) -> int:
+    """Get the inverse of the value in binary Galois Field."""
     # gf_inverse(x) == gf_div(1, x)
     ret_val = gf_exp[field_charac - gf_log[x]]  # type: int
     return ret_val
 
 
 def gf_mul(x: int, y: int) -> int:
+    """Multiply two numbers in the binary Galois Field."""
     if x == 0 or y == 0:
         return 0
     ret_val = gf_exp[(gf_log[x] + gf_log[y]) % field_charac]  # type: int
@@ -491,6 +498,7 @@ def gf_mul(x: int, y: int) -> int:
 
 
 def gf_div(x: int, y: int) -> int:
+    """Perform division in the binary Galois Field."""
     if y == 0:
         raise ZeroDivisionError()
     if x == 0:
@@ -500,6 +508,7 @@ def gf_div(x: int, y: int) -> int:
 
 
 def gf_pow(x: int, power: int) -> int:
+    """Raise x to some power in the binary Galois Field."""
     ret_val = gf_exp[(gf_log[x] * power) % field_charac]  # type: int
     return ret_val
 
@@ -607,16 +616,17 @@ def gf_mult_nolut(x:                 int,
 # Galois Field polynomials maths
 
 def gf_poly_scale(p: bytes, x: int) -> bytearray:
+    """No docstring provided."""
     ret_val = _bytearray([gf_mul(p[i], x) for i in range(len(p))])  # type: bytearray
     return ret_val
 
-def gf_poly_add(p: bytes, q: Union[bytearray, List[int]]) -> Any:
 
+def gf_poly_add(p: bytes, q: Union[bytearray, List[int]]) -> Any:
+    """No docstring provided."""
     r = _bytearray(max(len(p), len(q)))  # type: bytearray
 
     r[len(r) - len(p):len(r)] = p
-    # for i in range(len(p)):
-    # r[i + len(r) - len(p)] = p[i]
+
     for i in range(len(q)):
         r[i + len(r) - len(q)] ^= q[i]
     return r
