@@ -207,7 +207,7 @@ class TestArgon2KDF(unittest.TestCase):
                 f'-m {memory_cost} '
                 f'-p {parallelism} '
                 f'-l {key_length} '
-                f'-d',
+                f'-id',
                 shell=True).decode()  # type: str
 
             key_test_vector = output.split('\n')[4].split('\t')[-1]
@@ -219,7 +219,7 @@ class TestArgon2KDF(unittest.TestCase):
                                                              memory_cost=2**memory_cost,
                                                              parallelism=parallelism,
                                                              hash_len=key_length,
-                                                             type=argon2.Type.D).hex()
+                                                             type=argon2.Type.ID).hex()
 
             self.assertEqual(purported_key, key_test_vector)
 
