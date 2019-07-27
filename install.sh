@@ -117,7 +117,7 @@ CFFI=cffi-1.12.3-cp37-cp37m-manylinux1_x86_64.whl
 CHARDET=chardet-3.0.4-py2.py3-none-any.whl
 CLICK=Click-7.0-py2.py3-none-any.whl
 CRYPTOGRAPHY=cryptography-2.7-cp34-abi3-manylinux1_x86_64.whl
-FLASK=Flask-1.0.3-py2.py3-none-any.whl
+FLASK=Flask-1.1.1-py2.py3-none-any.whl
 IDNA=idna-2.8-py2.py3-none-any.whl
 ITSDANGEROUS=itsdangerous-1.1.0-py2.py3-none-any.whl
 JINJA2=Jinja2-2.10.1-py2.py3-none-any.whl
@@ -130,8 +130,8 @@ REQUESTS=requests-2.22.0-py2.py3-none-any.whl
 SIX=six-1.12.0-py2.py3-none-any.whl
 STEM=stem-1.7.1.tar.gz
 URLLIB3=urllib3-1.25.3-py2.py3-none-any.whl
-VIRTUALENV=virtualenv-16.6.1-py2.py3-none-any.whl
-WERKZEUG=Werkzeug-0.15.4-py2.py3-none-any.whl
+VIRTUALENV=virtualenv-16.7.2-py2.py3-none-any.whl
+WERKZEUG=Werkzeug-0.15.5-py2.py3-none-any.whl
 
 
 function process_tcb_dependencies {
