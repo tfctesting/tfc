@@ -39,9 +39,9 @@ from cryptography.hazmat.primitives.asymmetric.x448 import X448PrivateKey
 
 from src.common.crypto  import argon2_kdf, auth_and_decrypt, blake2b, byte_padding, check_kernel_entropy
 from src.common.crypto  import check_kernel_version, csprng, encrypt_and_sign, rm_padding_bytes, X448
-from src.common.statics import ARGON2_SALT_LENGTH, BLAKE2_DIGEST_LENGTH_MAX, BLAKE2_DIGEST_LENGTH_MIN
-from src.common.statics import ENTROPY_THRESHOLD, PADDING_LENGTH, SYMMETRIC_KEY_LENGTH, TFC_PUBLIC_KEY_LENGTH
-from src.common.statics import XCHACHA20_NONCE_LENGTH
+from src.common.statics import ARGON2_PSK_MEMORY_COST, ARGON2_PSK_PARALLELISM, ARGON2_PSK_TIME_COST, ARGON2_SALT_LENGTH
+from src.common.statics import BLAKE2_DIGEST_LENGTH_MAX, BLAKE2_DIGEST_LENGTH_MIN, ENTROPY_THRESHOLD
+from src.common.statics import PADDING_LENGTH, SYMMETRIC_KEY_LENGTH, TFC_PUBLIC_KEY_LENGTH, XCHACHA20_NONCE_LENGTH
 
 from tests.utils import cd_unit_test, cleanup
 
@@ -231,10 +231,11 @@ class TestArgon2Wrapper(unittest.TestCase):
                                                                    ARGON2_SALT_LENGTH+1, 1000]]
         for invalid_salt in invalid_salts:
             with self.assertRaises(SystemExit):
-                argon2_kdf('password', invalid_salt)
+                argon2_kdf('password', invalid_salt,
+                           ARGON2_PSK_TIME_COST, ARGON2_PSK_MEMORY_COST, ARGON2_PSK_PARALLELISM)
 
     def test_argon2_kdf_key_type_and_length(self):
-        key = argon2_kdf('password', os.urandom(ARGON2_SALT_LENGTH), time_cost=1, memory_cost=100)
+        key = argon2_kdf('password', os.urandom(ARGON2_SALT_LENGTH), time_cost=1, memory_cost=100, parallelism=1)
         self.assertIsInstance(key, bytes)
         self.assertEqual(len(key), SYMMETRIC_KEY_LENGTH)
 

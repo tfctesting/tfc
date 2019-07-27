@@ -49,7 +49,6 @@ from cryptography.hazmat.primitives.serialization   import Encoding, PublicForma
 from src.common.exceptions import CriticalError
 from src.common.misc       import ignored, separate_header
 from src.common.output     import m_print, phase, print_on_previous_line
-from src.common.statics    import ARGON2_PSK_MEMORY_COST, ARGON2_PSK_PARALLELISM, ARGON2_PSK_TIME_COST
 from src.common.statics    import ARGON2_SALT_LENGTH, BITS_PER_BYTE, BLAKE2_DIGEST_LENGTH, BLAKE2_DIGEST_LENGTH_MAX
 from src.common.statics    import BLAKE2_DIGEST_LENGTH_MIN, DONE, ENTROPY_THRESHOLD, PADDING_LENGTH
 from src.common.statics    import SYMMETRIC_KEY_LENGTH, XCHACHA20_NONCE_LENGTH
@@ -124,12 +123,12 @@ def blake2b(message:     bytes,                        # Message to hash
     return hashlib.blake2b(message, digest_size=digest_size, key=key, salt=salt, person=person).digest()
 
 
-def argon2_kdf(password:    str,                           # Password to derive the key from
-               salt:        bytes,                         # Salt to derive the key from
-               time_cost:   int = ARGON2_PSK_TIME_COST,    # Number of iterations
-               memory_cost: int = ARGON2_PSK_MEMORY_COST,  # Amount of memory to use (in bytes)
-               parallelism: int = ARGON2_PSK_PARALLELISM   # Number of threads to use
-               ) -> bytes:                                 # The derived key
+def argon2_kdf(password:    str,    # Password to derive the key from
+               salt:        bytes,  # Salt to derive the key from
+               time_cost:   int,    # Number of iterations
+               memory_cost: int,    # Amount of memory to use (in bytes)
+               parallelism: int     # Number of threads to use
+               ) -> bytes:          # The derived key
     """Derive an encryption key from password and salt using Argon2id.
 
     Argon2 is a password hashing function designed by Alex Biryukov,

@@ -467,7 +467,7 @@ def create_pre_shared_key(onion_pub_key: bytes,           # Public key of contac
         password = MasterKey.new_password("password for PSK")
 
         phase("Deriving key encryption key", head=2)
-        kek = argon2_kdf(password, salt, time_cost=ARGON2_PSK_TIME_COST, memory_cost=ARGON2_PSK_MEMORY_COST)
+        kek = argon2_kdf(password, salt, ARGON2_PSK_TIME_COST, ARGON2_PSK_MEMORY_COST, ARGON2_PSK_PARALLELISM)
         phase(DONE)
 
         ct_tag = encrypt_and_sign(tx_mk + tx_hk, key=kek)

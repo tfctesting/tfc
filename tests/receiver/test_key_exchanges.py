@@ -317,15 +317,16 @@ class TestKeyExPSKRx(TFCTestCase):
             f.write(os.urandom(PSK_FILE_SIZE))
 
         # Test
-        e_raised = False
+        error_raised = False
         try:
             with mock.patch('builtins.open', side_effect=PermissionError):
                 key_ex_psk_rx(*self.args)
         except FunctionReturn as inst:
-            e_raised = True
+            error_raised = True
             self.assertEqual("Error: No read permission for the PSK file.", inst.message)
-        self.assertTrue(e_raised)
+        self.assertTrue(error_raised)
 
+    @mock.patch('src.receiver.key_exchanges.ARGON2_PSK_PARALLELISM', 1)
     @mock.patch('src.receiver.key_exchanges.ARGON2_PSK_TIME_COST',   1)
     @mock.patch('src.receiver.key_exchanges.ARGON2_PSK_MEMORY_COST', 100)
     @mock.patch('getpass.getpass', side_effect=['invalid', 'password'])
@@ -341,7 +342,7 @@ class TestKeyExPSKRx(TFCTestCase):
         salt   = bytes(ARGON2_SALT_LENGTH)
         rx_key = bytes(SYMMETRIC_KEY_LENGTH)
         rx_hek = bytes(SYMMETRIC_KEY_LENGTH)
-        kek    = argon2_kdf('password', salt, time_cost=1, memory_cost=100)
+        kek    = argon2_kdf('password', salt, time_cost=1, memory_cost=100, parallelism=1)
         ct_tag = encrypt_and_sign(rx_key + rx_hek, key=kek)
 
         with open(self.file_name, 'wb+') as f:
@@ -350,6 +351,7 @@ class TestKeyExPSKRx(TFCTestCase):
         # Test
         self.assert_fr("Error: Received invalid keys from contact.", key_ex_psk_rx, *self.args)
 
+    @mock.patch('src.receiver.key_exchanges.ARGON2_PSK_PARALLELISM', 1)
     @mock.patch('src.receiver.key_exchanges.ARGON2_PSK_TIME_COST',   1)
     @mock.patch('src.receiver.key_exchanges.ARGON2_PSK_MEMORY_COST', 100)
     @mock.patch('time.sleep',      return_value=None)
@@ -363,7 +365,7 @@ class TestKeyExPSKRx(TFCTestCase):
         salt          = os.urandom(ARGON2_SALT_LENGTH)
         rx_key        = os.urandom(SYMMETRIC_KEY_LENGTH)
         rx_hek        = os.urandom(SYMMETRIC_KEY_LENGTH)
-        kek           = argon2_kdf('test_password', salt, time_cost=1, memory_cost=100)
+        kek           = argon2_kdf('test_password', salt, time_cost=1, memory_cost=100, parallelism=1)
         ct_tag        = encrypt_and_sign(rx_key + rx_hek, key=kek)
 
         with open(self.file_name, 'wb+') as f:
@@ -376,6 +378,7 @@ class TestKeyExPSKRx(TFCTestCase):
         self.assertEqual(keyset.rx_mk, rx_key)
         self.assertEqual(keyset.rx_hk, rx_hek)
 
+    @mock.patch('src.receiver.key_exchanges.ARGON2_PSK_PARALLELISM', 1)
     @mock.patch('src.receiver.key_exchanges.ARGON2_PSK_TIME_COST',   1)
     @mock.patch('src.receiver.key_exchanges.ARGON2_PSK_MEMORY_COST', 100)
     @mock.patch('subprocess.Popen')
@@ -391,7 +394,7 @@ class TestKeyExPSKRx(TFCTestCase):
         salt   = os.urandom(ARGON2_SALT_LENGTH)
         rx_key = os.urandom(SYMMETRIC_KEY_LENGTH)
         rx_hek = os.urandom(SYMMETRIC_KEY_LENGTH)
-        kek    = argon2_kdf('test_password', salt, time_cost=1, memory_cost=100)
+        kek    = argon2_kdf('test_password', salt, time_cost=1, memory_cost=100, parallelism=1)
         ct_tag = encrypt_and_sign(rx_key + rx_hek, key=kek)
 
         with open(self.file_name, 'wb+') as f:
