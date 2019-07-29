@@ -564,6 +564,7 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH) -> bytes:
         https://www.bsi.bund.de/SharedDocs/Downloads/EN/BSI/Publications/Studies/LinuxRNG/LinuxRNG_EN.pdf?__blob=publicationFile&v=16
         https://github.com/torvalds/linux/blob/master/drivers/char/random.c
     """
+
     # LRNG Overview
     """
     The following schematic is based on [1; p.19].
@@ -576,13 +577,15 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH) -> bytes:
                                /dev/urandom
                                      ↑
                                      |  ┌────────┐
-                                     |  |        | State transition
+                                     |  |        | State transition function
                              ┏━━━━━━━━━━━━━━━┓   |
                              ┃ ChaCha20 DRNG ┃<──┘
                              ┗━━━━━━━━━━━━━━━┛
                                      ↑
-                                SHA-1+fold ──────┐
-                                     |           | State transition
+                                   fold
+                                     |
+                                   SHA-1 ────────┐
+                                     |           | State transition function
                              ┏━━━━━━━━━━━━━━┓    |
                              ┃  input_pool  ┃<───┘
                              ┗━━━━━━━━━━━━━━┛<─────────────────────┐
@@ -596,6 +599,8 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH) -> bytes:
     ┃add_device ┃┃add_hwgenerator┃┃ add_input ┃┃ add_disk  ┃┃add_interrupt┃
     ┃_randomness┃┃  _randomness  ┃┃_randomness┃┃_randomness┃┃ _randomness ┃
     ┗━━━━━━━━━━━┛┗━━━━━━━━━━━━━━━┛┗━━━━━━━━━━━┛┗━━━━━━━━━━━┛┗━━━━━━━━━━━━━┛
+    
+    [1] https://www.bsi.bund.de/SharedDocs/Downloads/EN/BSI/Publications/Studies/LinuxRNG/LinuxRNG_EN.pdf?__blob=publicationFile&v=16
     """
 
     # Entropy sources
@@ -607,14 +612,14 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH) -> bytes:
           into the unseeded ChaCha20 DRNG and input_pool during boot
           along with the high-resolution time stamp, XORed with the
           Jiffies (Linux kernel timer). The value is requested only
-          once, and it is not considered to contain any entropy.
+          once, and it is not considered to contain any entropy.[1]
 
         o add_hwgenerator_randomness: HWRNGs supported by the Linux
           kernel, if available. The output of the HWRNG device is used
           to seed the ChaCha20 DRNG if needed, and then to seed the
           input_pool directly when the entropy estimator's value falls 
           below the set threshold. (The CPU HWRNG is not processed by 
-          the add_hwgenerator_randomness service function).
+          the add_hwgenerator_randomness service function).[1]
 
         o add_input_randomness: Key presses, mouse movements, mouse
           button presses etc. Repeated event values (e.g. key presses or 
@@ -627,12 +632,12 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH) -> bytes:
           to the event value the 32 LSBs of the 64-bit RDTSC timestamp,
           plus the 64-bit Jiffies timestamp.  
               HID events are not assumed to increase the entropy of the 
-          input_pool.
+          input_pool.[1]
 
         o add_disk_randomness: Hardware events of block devices, e.g.
           HDDs (but not e.g. SSDs). When a disk event occurs, the device
           number as well as the timer state variable disk->random is 
-          mixed into the input_pool via add_timer_randomness.
+          mixed into the input_pool via add_timer_randomness.[1]
 
         o add_interrupt_randomness: Interrupts (i.e. signals from SW/HW
           to processor that an event needs immediate attention) occur
@@ -658,10 +663,10 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH) -> bytes:
           passed since the fast_pool was last mixed in. The counter 
           keeping track of interrupt events is then zeroed. 
               The entire content of the fast_pool increases the internal
-          entropy of the input_pool by 1 bit. If the RDSEED instruction
-          is available, it is used to obtain a 64-bit value that is also
-          mixed into the input_pool, and the internal entropy of the 
-          input_pool is increased by another bit.
+          entropy of the input_pool by 1 bit. If the RDSEED (explained 
+          below) instruction is available, it is used to obtain a 64-bit
+          value that is also mixed into the input_pool, and the internal
+          entropy of the input_pool is increased by another bit.[1]
 
     Additional raw entropy sources include
 
@@ -687,7 +692,7 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH) -> bytes:
 
           While the RDSEED/RDRAND instrucitons are used extensively, 
           because the CPU HWRNG is not an auditable source, it is 
-          assumed to provide only very small amount of entropy.[2]
+          assumed to provide only very small amount of entropy.[1]
 
         o CPU Jitter RNG (assumed to provide a 1/16th bit of entropy per
           generated bit.)[2]
@@ -696,8 +701,11 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH) -> bytes:
 
         o User space IOCTL of RNDADDENTROPY.[2]
 
-    Noise sources with low entropy are considered to only stir the LRNG
-    state, not reseed it.
+     [1] https://www.bsi.bund.de/SharedDocs/Downloads/EN/BSI/Publications/Studies/LinuxRNG/LinuxRNG_EN.pdf?__blob=publicationFile&v=16
+     [2] https://www.chronox.de/lrng/doc/lrng.pdf
+     [3] https://software.intel.com/sites/default/files/managed/98/4a/DRNG_Software_Implementation_Guide_2.1.pdf
+         https://spectrum.ieee.org/computing/hardware/behind-intels-new-randomnumber-generator
+     [4] https://www.amd.com/system/files/TechDocs/amd-random-number-generator.pdf  
     """
 
     # The input pool
@@ -770,6 +778,9 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH) -> bytes:
     # hash of the entropy pool, and a 256-bit block that contains entropy
     # from the secondary pool, plus the 32-bit timestamp (that is assumed
     # to have no entropy).
+    
+     [1] https://www.bsi.bund.de/SharedDocs/Downloads/EN/BSI/Publications/Studies/LinuxRNG/LinuxRNG_EN.pdf?__blob=publicationFile&v=16
+     [2] https://www.chronox.de/lrng/doc/lrng.pdf
     """
 
     # The ChaCha20 DRNG
@@ -848,6 +859,21 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH) -> bytes:
     file system (VFS) layer, which reduces complexity and possibility
     of external errors.
 
+    Quoting PEP 524 [3]:
+        "The os.getrandom() is a thin wrapper on the getrandom()
+         syscall/C function and so inherit of its behaviour. For
+         example, on Linux, it can return less bytes than
+         requested if the syscall is interrupted by a signal."
+
+    However, quoting LWN[4] on GETRANDOM:
+        "--reads of 256 bytes or less from /dev/urandom are guaranteed to
+         return the full request once that device has been initialized."
+
+    Since the largest key generated in TFC is the 56-byte X448 private
+    key, GETRANDOM is guaranteed to always return enough bytes. As a
+    good practice however, TFC checks that the length of the obtained
+    entropy is correct.
+
     Reseeding of the DRNG
     ---------------------
     The DRNG is reseeded automatically every 300 seconds irrespective of
@@ -861,6 +887,11 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH) -> bytes:
         2. 32-byte value obtained via RDRAND CPU instruction, or
         3. eight 4-byte high-resolution time stamps
     The result is then XORed with the key component of the DRNG state.
+    
+     [1] https://www.bsi.bund.de/SharedDocs/Downloads/EN/BSI/Publications/Studies/LinuxRNG/LinuxRNG_EN.pdf?__blob=publicationFile&v=16
+     [2] https://www.chronox.de/lrng/doc/lrng.pdf
+     [3] https://www.python.org/dev/peps/pep-0524/
+     [4] https://lwn.net/Articles/606141/
     """
 
     # GETRANDOM and Python
@@ -879,28 +910,16 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH) -> bytes:
     version 4.8 is required by TFC).
         The flag 0 means GETRANDOM will block if the DRNG is not fully 
     seeded.
+    """
 
-    Quoting PEP 524 [5]:
-        "The os.getrandom() is a thin wrapper on the getrandom()
-         syscall/C function and so inherit of its behaviour. For
-         example, on Linux, it can return less bytes than
-         requested if the syscall is interrupted by a signal."
-
-    However, quoting LWN[6] on GETRANDOM:
-        "--reads of 256 bytes or less from /dev/urandom are guaranteed to
-         return the full request once that device has been initialized."
-
-    Since the largest key generated in TFC is the 56-byte X448 private
-    key, GETRANDOM is guaranteed to always return enough bytes. As a
-    good practice however, TFC checks that the length of the obtained
-    entropy is correct.
-
+    # BLAKE2 compression
+    """
     The output of GETRANDOM is further compressed with BLAKE2b. The
     preimage resistance of the hash function protects the internal
     state of the entropy pool just in case some user decides to modify
     the source to accept pre-4.8 Linux kernel that has no backtracking
     resistance. Another reason for the hashing is its recommended by
-    djb[7].
+    djb[1].
 
     Since BLAKE2b only produces 1..64 byte digests, its use limits the
     size of the generated keys to 64 bytes. This is not a problem for 
@@ -909,15 +928,7 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH) -> bytes:
     generation, the largest key this function generates is a 32-byte 
     symmetric key.
 
-     [1] https://www.bsi.bund.de/SharedDocs/Downloads/EN/BSI/Publications/Studies/LinuxRNG/LinuxRNG_EN.pdf?__blob=publicationFile&v=16
-     [2] https://www.chronox.de/lrng/doc/lrng.pdf
-     [3] https://lwn.net/Articles/686033/
-     [4] https://software.intel.com/sites/default/files/managed/98/4a/DRNG_Software_Implementation_Guide_2.1.pdf
-         https://spectrum.ieee.org/computing/hardware/behind-intels-new-randomnumber-generator
-     [5] https://www.amd.com/system/files/TechDocs/amd-random-number-generator.pdf
-     [6] https://www.python.org/dev/peps/pep-0524/
-     [7] https://lwn.net/Articles/606141/
-     [8] https://media.ccc.de/v/32c3-7210-pqchacks#video&t=1116
+     [1] https://media.ccc.de/v/32c3-7210-pqchacks#video&t=1116
     """
     if key_length < 1 or key_length > BLAKE2_DIGEST_LENGTH_MAX:
         raise CriticalError(f"Invalid key size ({key_length} bytes).")
