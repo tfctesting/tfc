@@ -565,36 +565,36 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH) -> bytes:
         https://github.com/torvalds/linux/blob/master/drivers/char/random.c
     """
 
-    # LRNG Overview
+    # TFC key generation overview
     """
     The following schematic is based on [1; p.19].
 
-                                Use in TFC
-                                     ↑
-                              BLAKE2b (by TFC)
-                                     ↑
+                X448 private keys          Other TFC keys
+                        ↑                         ↑  
+                 OS random engine          BLAKE2b (by TFC)
+                        ↑                         ↑
+                        └────────┐       ┌────────┘
                                 GETRANDOM()
-                               /dev/urandom
                                      ↑
                                      |  ┌────────┐
-                                     |  |        | State transition function
+                                     |  |        | State transition
                              ┏━━━━━━━━━━━━━━━┓   |
                              ┃ ChaCha20 DRNG ┃<──┘
                              ┗━━━━━━━━━━━━━━━┛
                                      ↑
                                    fold
-                                     |
+                                     ↑
                                    SHA-1 ────────┐
-                                     |           | State transition function
+                                     ↑           | State transition
                              ┏━━━━━━━━━━━━━━┓    |
                              ┃  input_pool  ┃<───┘
                              ┗━━━━━━━━━━━━━━┛<─────────────────────┐
                                ↑ ↑       ↑                         |
-          ┌────────────────────┘ |   ┏━━━━━━━━━━━━━━━┓             |
-          |              ┌───────┘   ┃ Time variance ┃       ┏━━━━━━━━━━━┓
-          |              |           ┃  calculation  ┃       ┃ fast_pool ┃
-          |              |           ┗━━━━━━━━━━━━━━━┛       ┗━━━━━━━━━━━┛
-          |              |               ↑       ↑                 ↑
+          ┌────────────────────┘ |    ┏━━━━━━━━━━━━━━━┓            |
+          |              ┌───────┘    ┃ Time variance ┃      ┏━━━━━━━━━━━┓
+          |              |            ┃  calculation  ┃      ┃ fast_pool ┃
+          |              |            ┗━━━━━━━━━━━━━━━┛      ┗━━━━━━━━━━━┛
+          |              |                ↑       ↑                ↑
     ┏━━━━━━━━━━━┓┏━━━━━━━━━━━━━━━┓┏━━━━━━━━━━━┓┏━━━━━━━━━━━┓┏━━━━━━━━━━━━━┓
     ┃add_device ┃┃add_hwgenerator┃┃ add_input ┃┃ add_disk  ┃┃add_interrupt┃
     ┃_randomness┃┃  _randomness  ┃┃_randomness┃┃_randomness┃┃ _randomness ┃
