@@ -628,9 +628,9 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH) -> bytes:
               The event data consists of four LSBs of the event type, 
           four MSBs of the event code, the event code itself, and the 
           event value, all XORed together. The resulting event data is 
-          fed to the input_pool via add_timer_randomness, which prepends
-          to the event value the 32 LSBs of the 64-bit RDTSC timestamp,
-          plus the 64-bit Jiffies timestamp.  
+          fed into the input_pool via add_timer_randomness, which 
+          prepends to the event value the 32 LSBs of the 64-bit RDTSC 
+          timestamp, plus the 64-bit Jiffies timestamp.  
               HID events are not assumed to increase the entropy of the 
           input_pool.[1]
 
@@ -659,14 +659,15 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH) -> bytes:
           more evenly with a function called fast_mix.
               The content of the fast_pool is mixed into the input_pool 
           once it has data about at least 64 interrupt events, and 
-          (unless the DRNG is being seeded) at least one second has 
-          passed since the fast_pool was last mixed in. The counter 
-          keeping track of interrupt events is then zeroed. 
-              The entire content of the fast_pool increases the internal
-          entropy of the input_pool by 1 bit. If the RDSEED (explained 
-          below) instruction is available, it is used to obtain a 64-bit
-          value that is also mixed into the input_pool, and the internal
-          entropy of the input_pool is increased by another bit.[1]
+          (unless the ChaCha20 DRNG is being seeded) at least one second 
+          has passed since the fast_pool was last mixed in. The counter 
+          keeping track of the interrupt events is then zeroed. 
+              The entire content of the fast_pool is considered to 
+          increase the internal entropy of the input_pool by 1 bit. If 
+          the RDSEED (explained below) instruction is available, it is 
+          used to obtain a 64-bit value that is also mixed into the 
+          input_pool, and the internal entropy of the input_pool is 
+          considered to have increased by another bit.[1]
 
     Additional raw entropy sources include
 
@@ -690,14 +691,14 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH) -> bytes:
                      re-seeded at least every 2048 queries of 32-bits 
                      (8kB).[4]
 
-          While the RDSEED/RDRAND instrucitons are used extensively, 
+          While the RDSEED/RDRAND instructions are used extensively, 
           because the CPU HWRNG is not an auditable source, it is 
           assumed to provide only very small amount of entropy.[1]
 
         o CPU Jitter RNG (assumed to provide a 1/16th bit of entropy per
           generated bit.)[2]
 
-        o Data written to /dev/(u)random from user space.[2]
+        o Data written to /dev/(u)random from the user space.[2]
 
         o User space IOCTL of RNDADDENTROPY.[2]
 
@@ -733,7 +734,8 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH) -> bytes:
     ----------------------------------------------------
     After a hardware event has occurred, the entropy of the event value
     is estimated, and both values are mixed into the input_pool using a 
-    function based on a LFSR, one byte at a time.
+    function based on a linear feedback shift register (LFSR), one byte 
+    at a time.
 
     **Minimally seeded state**
     The `minimally seeded` threshold of the input_pool is 128 bits. This
@@ -749,8 +751,8 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH) -> bytes:
     According to [2], this happens approximately 1.3 seconds after boot.
         Once the input_pool is fully seeded, user space callers waiting 
     for the GETRANDOM syscall are woken up.[2] This means TFC's 
-    GETRANDOM syscall won't be available until the ChaCha20 DRNG is 
-    fully seeded.
+    GETRANDOM syscall won't be even be available until the ChaCha20 DRNG 
+    is fully seeded.
     
     State transition and output of the input_pool
     ---------------------------------------------
@@ -787,10 +789,9 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH) -> bytes:
     """
     Overview
     --------
-    LRNG uses the ChaCha20 stream cipher as the default deterministic
-    random number generator (DRNG).
+    LRNG uses the ChaCha20 stream cipher as the default DRNG.
 
-    The internal 64-byte state of the ChaCha20 DRNG consists of
+    The internal 64-byte state of the DRNG consists of
         - 16-byte constant b'Expand 32-byte k' set by djb.
         - 32-byte key (The only part that is re-seeded with entropy)
         -  4-byte counter
@@ -803,7 +804,7 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH) -> bytes:
     --------------------------
     The DRNG is initialized during the boot time of the kernel by using 
     the content of the input_pool (considered to have poor entropy at 
-    this point) for key, counter, and nonce parts of  the DRNG state. 
+    this point) for key, counter, and nonce parts of the DRNG state. 
         Each of the three values is XORed with the output from CPU 
     HWRNG obtained via RDSEED or RDRAND instruction (if available --
     otherwise only the key is XORed, with the timestamp from RDTSCP 
@@ -825,7 +826,7 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH) -> bytes:
     content from the add_device_randomness source is mixed into the 
     DRNG key state using an LFSR with a period of 255. Once the 
     entropy sources have been mixed in, the DRNG is considered 
-    initially seeded. At that poin the add_device_randomness is 
+    initially seeded. At that point the add_device_randomness is 
     redirected back to feed the input_pool.
 
     **Fully seeded state**
@@ -834,9 +835,9 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH) -> bytes:
     from the input_pool with the key part of the DRNG. After this, the 
     DRNG is considered to be fully seeded (i.e., its internal entropy is 
     estimated to be 256 bits).
-        The time to reach this state might take minutes, but as the 
-    installation of TFC via Tor takes longer than that, the DRNG is most
-    likely fully seeded by the time it generates keys.
+        The time to reach this state might take up to 90 seconds, but as 
+    the installation of TFC via Tor takes longer than that, the DRNG is 
+    most likely fully seeded by the time it generates keys.
 
     State transition and output of the DRNG
     ---------------------------------------
@@ -879,7 +880,7 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH) -> bytes:
     The DRNG is reseeded automatically every 300 seconds irrespective of
     the amount of data produced by the DRNG. Re-seeding also occurs 
     after 2^20 generate operations, or if the DRNG is forced to reseed 
-    by writing into /dev/(u)random.
+    by writing data into /dev/(u)random.
         The DRNG is re-seeded by obtaining (up to) 32 bytes of entropy 
     from the input_pool. In the order of preference, the entropy from 
     input_pool is XORed with the output of
@@ -924,13 +925,13 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH) -> bytes:
     Since BLAKE2b only produces 1..64 byte digests, its use limits the
     size of the generated keys to 64 bytes. This is not a problem for 
     TFC because again, the largest key it generates is the 56-byte X448 
-    private key, and because pyca/cryptogrpahy manages X448 private key 
-    generation, the largest key this function generates is a 32-byte 
-    symmetric key.
+    private key. Howver, because pyca/cryptogrpahy manages the X448 
+    private key generation, the largest key this function will generate 
+    is a 32-byte symmetric key.
 
      [1] https://media.ccc.de/v/32c3-7210-pqchacks#video&t=1116
     """
-    if key_length < 1 or key_length > BLAKE2_DIGEST_LENGTH_MAX:
+    if key_length < BLAKE2_DIGEST_LENGTH_MIN or key_length > BLAKE2_DIGEST_LENGTH_MAX:
         raise CriticalError(f"Invalid key size ({key_length} bytes).")
 
     entropy = os.getrandom(key_length, flags=0)
