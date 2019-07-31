@@ -625,8 +625,8 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH  # Length of the key
 
         o add_input_randomness: Key presses, mouse movements, mouse
           button presses etc. Repeated event values (e.g. key presses or 
-          mouse movements in the same direction) are ignored by the 
-          service function.
+          same direction mouse movements) are ignored by the service 
+          function.
               The event data consists of four LSBs of the event type, 
           four MSBs of the event code, the event code itself, and the 
           event value, all XORed together. The resulting event data is 
