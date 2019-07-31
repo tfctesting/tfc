@@ -701,7 +701,7 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH  # Length of the key
           generated bit.)[2]
 
         o Data written to /dev/(u)random from the user space[2] such as
-          the 4096-bit seed obtained from the DRBG when the previous 
+          the 4096-bit seed obtained from the DRNG when the previous 
           session ended and the system was powered off. While the value 
           might not be mixed in early enough during boot to benefit the 
           kernel, it is mixed into the input_pool before TFC starts.
