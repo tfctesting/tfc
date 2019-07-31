@@ -784,9 +784,8 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH  # Length of the key
     The input_pool is reseeded constantly as random events occur. The 
     events are mixed with the LFSR, one byte at a time.     
         When the input_pool is full, more entropy keeps getting mixed in
-    which is helpful in case the entropy heuristic estimates were 
-    optimistic: At some point the entropy will for sure reach the 
-    maximum of 4096 bits.
+    which is helpful in case the entropy estimator is optimistic: At 
+    some point the entropy will for sure reach the maximum of 4096 bits.
         When the input_pool entropy estimator considers the pool to have
     4096 bits of entropy, it will output 1024 bits to blocking_pool for 
     the use of /dev/random, and it will then (stupidly) reduce the 
