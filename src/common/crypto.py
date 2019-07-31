@@ -762,11 +762,12 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH  # Length of the key
     
     State transition and output of the input_pool
     ---------------------------------------------
-    When outputting entropy from input_pool to the ChaCha20 DRNG, the 
-    input_pool output function first compresses the entire content of 
-    the input_pool with SHA-1 like function that has the transformation
-    function of SHA-1, but that replaces the constants of SHA-1 with 
-    random values obtained from CPU HWRNG via RDRAND, if available. 
+    When outputting entropy from the input_pool to the ChaCha20 DRNG, 
+    the input_pool output function first compresses the entire content 
+    of the input_pool with SHA-1 like function that has the 
+    transformation function of SHA-1, but that replaces the constants of
+    SHA-1 with random values obtained from CPU HWRNG via RDRAND, if 
+    available. 
         The output function also "folds" the 160-bit digest by slicing 
     it into two 80-bit chunks and by then XORing them together to 
     produce the final output. At the same time, the output function 
