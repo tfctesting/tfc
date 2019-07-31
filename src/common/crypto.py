@@ -866,11 +866,12 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH  # Length of the key
     unused keystream and XORs it with the key part of the ChaCha20 state 
     to ensure backtracking resistance.
 
-    The benefit of reading random bytes via the GETRANDOM syscall 
-    instead of /dev/urandom is it bypasses the Linux kernel's virtual 
-    file system (VFS) layer, which reduces complexity and possibility
-    of external errors. It's also the case /dev/urandom does not block
-    before it's initially seeded.
+    The random bytes are obtained with the GETRANDOM syscall, that has
+    the two benefits:
+        1. It bypasses the Linux kernel's virtual file system (VFS) 
+           layer, which reduces complexity and possibility, and
+        2. unlike /dev/urandom, GETRANDOM(0) blocks until it has been 
+           properly seeded.
 
     Quoting PEP 524 [3]:
         "The os.getrandom() is a thin wrapper on the getrandom()
