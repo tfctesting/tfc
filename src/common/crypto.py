@@ -25,7 +25,7 @@ based on the ChaCha stream cipher by Daniel J. Bernstein (djb).
 
 Curve448-Goldilocks
 └─ X448 key exchange
-ChaCha stream cipher
+ChaCha20 block function
 ├─ BLAKE2b cryptographic hash function
 |  └─ Argon2id password hashing function
 └─ ChaCha20 stream cipher
@@ -963,14 +963,14 @@ def check_kernel_entropy() -> None:
     therefore this check is mostly unnecessary.
 
     However, in a situation where the kernel trusts the CPU's HWRNG, the
-    ChaCha20 DRNG is not seeded with a fully seeded input_pool, but the
-    with an initially seeded input_pool and entropy from RDRAND which
-    might not be trustworthy.
+    ChaCha20 DRNG is not initially seeded with a seed from fully seeded
+    input_pool, but with a seed from only initially seeded input_pool,
+    and with entropy from RDRAND which might not be trustworthy.
         To mitigate the issue, this function waits until the input_pool
     is fully seeded, i.e., the entropy_avail counter matches
     CRNG_INIT_CNT_THRESH (=512 bits). The function then writes to the
-    `/dev/urandom` device file to trigger reseeding of the ChaCha20 DRNG
-    from the input_pool.[2]
+    `/dev/urandom` device file, which triggers the reseeding of the
+    ChaCha20 DRNG from the input_pool.[2]
 
      [1] https://github.com/torvalds/linux/blob/master/drivers/char/random.c#L886
      [2] https://www.chronox.de/lrng/doc/lrng.pdf p.10
