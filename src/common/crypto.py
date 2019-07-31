@@ -857,9 +857,10 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH  # Length of the key
     essentially part of the keystream that in the context of stream
     cipher would be XORed with the plaintext to produce the ciphertext.
         With each generated block the internal 32-bit counter value of 
-    the ChaCha20 state is incremented to ensure unique blocks. The state 
-    of the DRNG is further stirred by XORing the second 32-bit word of 
-    the nonce with the output from RDRAND instruction, if available.
+    the ChaCha20 state is incremented by one to ensure unique blocks. 
+    The state of the DRNG is further stirred by XORing the second 32-bit 
+    word of the nonce with the output from RDRAND instruction, if 
+    available.
         Once the amount of requested random data has been generated, the 
     state update function is invoked, which takes a 256-bit block of 
     unused keystream and XORs it with the key part of the ChaCha20 state 
