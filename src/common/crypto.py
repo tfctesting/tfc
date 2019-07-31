@@ -781,8 +781,8 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH  # Length of the key
 
     Reseeding of the input_pool
     ---------------------------
-    The input is reseeded constantly as random events occur. The events 
-    are mixed with the LFSR, one byte at a time.     
+    The input_pool is reseeded constantly as random events occur. The 
+    events are mixed with the LFSR, one byte at a time.     
         When the input_pool is full, more entropy keeps getting mixed in
     which is helpful in case the entropy heuristic estimates were 
     optimistic: At some point the entropy will for sure reach the 
