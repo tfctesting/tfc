@@ -963,7 +963,7 @@ def check_kernel_entropy() -> None:
 
     However, in a situation where the kernel trusts the CPU's HWRNG, the
     ChaCha20 DRNG is not seeded with a fully seeded input_pool, but the
-    with an initialy seeded input_pool and entropy from RDRAND which
+    with an initially seeded input_pool and entropy from RDRAND which
     might not be trustworthy.
         To mitigate the issue, this function waits until the input_pool
     is fully seeded, i.e., the entropy_avail counter matches
