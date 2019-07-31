@@ -549,7 +549,8 @@ def rm_padding_bytes(bytestring: bytes  # Padded bytestring
     return unpadded
 
 
-def csprng(key_length: int = SYMMETRIC_KEY_LENGTH) -> bytes:
+def csprng(key_length: int = SYMMETRIC_KEY_LENGTH  # Length of the key
+           ) -> bytes:                             # The generated key
     """Generate a cryptographically secure random key.
 
     The default key length is 32 bytes (256 bits).
