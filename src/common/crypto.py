@@ -869,7 +869,7 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH  # Length of the key
     The random bytes are obtained with the GETRANDOM syscall instead of
     the /dev/urandom device file. This has two major benefits:
         1. It bypasses the Linux kernel's virtual file system (VFS) 
-           layer, which reduces complexity and possibility, and
+           layer, which reduces complexity and possibility of bugs, and
         2. unlike /dev/urandom, GETRANDOM(0) blocks until it has been 
            properly seeded.
 
