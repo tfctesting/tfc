@@ -921,7 +921,7 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH  # Length of the key
     TFC uses the `os.getrandom(size, flags=0)` explicitly. This forces
     use of recent enough Python interpreter (3.6.0 or later) and limits
     the Linux kernel version to 3.17 or newer (to make use of the LRNG,
-    version 4.8 is required by TFC).
+    the actual kernel version required by TFC is 4.8).
         The flag 0 means GETRANDOM will block if the DRNG is not fully 
     seeded.
     """
