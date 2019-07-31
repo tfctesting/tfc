@@ -25,7 +25,7 @@ based on the ChaCha stream cipher by Daniel J. Bernstein (djb).
 
 Curve448-Goldilocks
 └─ X448 key exchange
-ChaCha20 block function
+ChaCha stream cipher
 ├─ BLAKE2b cryptographic hash function
 |  └─ Argon2id password hashing function
 └─ ChaCha20 stream cipher
