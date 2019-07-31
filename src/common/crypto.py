@@ -779,13 +779,17 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH  # Length of the key
 
     Reseeding of the input_pool
     ---------------------------
-    TODO
-    # The input_pool always tries to seed itself with 256 bits of random
-    # data. For efficiency reasons, the seed consists of the 160-bit SHA-1
-    # hash of the entropy pool, and a 256-bit block that contains entropy
-    # from the secondary pool, plus the 32-bit timestamp (that is assumed
-    # to have no entropy).
-    
+    The input is reseeded constantly as the random events occur. The 
+    events are mixed with the LFSR, one byte at a time.     
+        When the input_pool is full, more entropy keeps getting mixed in
+    which is helpful in case the entropy heuristic estimates were 
+    optimistic: At some point the entropy will for sure reach the 
+    maximum of 4096 bits.
+        When the input_pool entropy estimator considers the pool to have
+    4096 bits of entropy, it will output 1024 bits to blocking_pool for 
+    the use of /dev/random, and it will then (stupidly) reduce the 
+    input_pool's entropy estimator by 1024 bits. 
+
      [1] https://www.bsi.bund.de/SharedDocs/Downloads/EN/BSI/Publications/Studies/LinuxRNG/LinuxRNG_EN.pdf?__blob=publicationFile&v=16
      [2] https://www.chronox.de/lrng/doc/lrng.pdf
     """
@@ -797,7 +801,7 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH  # Length of the key
     LRNG uses the ChaCha20 stream cipher as the default DRNG.
 
     The internal 64-byte state of the DRNG consists of
-        - 16-byte constant b'Expand 32-byte k' set by djb.
+        - 16-byte constant b'Expand 32-byte k' set by the designer (djb)
         - 32-byte key (The only part that is re-seeded with entropy)
         -  4-byte counter
         - 12-byte nonce
