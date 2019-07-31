@@ -820,7 +820,7 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH  # Length of the key
     otherwise only the key is XORed, with the timestamp from RDTSCP 
     instruction).
         The initialization is completed by setting the init_time to 
-    value that causes the DRNG to reseed the next time it's called.
+    a value that causes the DRNG to reseed the next time it's called.
 
     Initial seeding and seeding levels of the DRNG
     ----------------------------------------------
