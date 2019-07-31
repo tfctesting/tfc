@@ -938,7 +938,7 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH  # Length of the key
     Since BLAKE2b only produces 1..64 byte digests, its use limits the
     size of the generated keys to 64 bytes. This is not a problem for 
     TFC because again, the largest key it generates is the 56-byte X448 
-    private key. Howver, because pyca/cryptogrpahy manages the X448 
+    private key. However, because pyca/cryptogrpahy manages the X448 
     private key generation, the largest key this function will generate 
     is a 32-byte symmetric key.
 
