@@ -799,7 +799,7 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH  # Length of the key
     """
     Overview
     --------
-    LRNG uses the ChaCha20 stream cipher as the default DRNG.
+    The LRNG uses the ChaCha20 stream cipher as the default DRNG.
 
     The internal 64-byte state of the DRNG consists of
         - 16-byte constant b'Expand 32-byte k' set by the designer (djb)
