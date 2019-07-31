@@ -747,9 +747,9 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH  # Length of the key
     The `minimally seeded` threshold of the input_pool is 128 bits. This
     level of entropy is reached at early boot phase (by the time the 
     user space boots).
-        Once the minimum (128-bit) seed level is reached, only in-kernel
-    API calls like wait_for_random_bytes and add_random_ready_callback 
-    are available.
+        Once the minimum seed level is reached, only in-kernel API calls 
+    like wait_for_random_bytes and add_random_ready_callback are 
+    available.
 
     **Fully seeded state**    
     The `fully seeded` threshold (256 bits) is reached by the time 
