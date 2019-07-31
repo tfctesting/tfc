@@ -757,7 +757,7 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH  # Length of the key
     According to [2], this happens approximately 1.3 seconds after boot.
         Once the input_pool is fully seeded, user space callers waiting 
     for the GETRANDOM syscall are woken up.[2] This means TFC's 
-    GETRANDOM syscall won't be even be available until the ChaCha20 DRNG 
+    GETRANDOM syscall won't even be available until the ChaCha20 DRNG 
     is fully seeded.
     
     State transition and output of the input_pool
