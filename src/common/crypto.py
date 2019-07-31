@@ -695,7 +695,7 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH  # Length of the key
 
           While the RDSEED/RDRAND instructions are used extensively, 
           because the CPU HWRNG is not an auditable source, it is 
-          assumed to provide only very small amount of entropy.[1]
+          assumed to provide only a very small amount of entropy.[1]
 
         o CPU Jitter RNG (assumed to provide a 1/16th bit of entropy per
           generated bit.)[2]
