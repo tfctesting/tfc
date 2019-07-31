@@ -835,7 +835,7 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH  # Length of the key
     interrupt events from add_interrupt_randomness. In addition, all 
     content from the add_device_randomness source is mixed into the 
     DRNG key state using an LFSR with a period of 255. Once the 
-    entropy sources have been mixed in, the DRNG is considered 
+    entropy sources have been mixed in, the DRNG is considered to be
     initially seeded. At that point the add_device_randomness is 
     redirected back to feed the input_pool.
 
