@@ -702,6 +702,11 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH) -> bytes:
 
         o User space IOCTL of RNDADDENTROPY.[2]
 
+        o 4096-bit seed obtained from the DRBG when the previous session
+          ended and the system was powered off. While the value might 
+          not be mixed in early enough during boot to benefit the 
+          kernel, it is mixed into the input_pool before TFC starts.
+
      [1] https://www.bsi.bund.de/SharedDocs/Downloads/EN/BSI/Publications/Studies/LinuxRNG/LinuxRNG_EN.pdf?__blob=publicationFile&v=16
      [2] https://www.chronox.de/lrng/doc/lrng.pdf
      [3] https://software.intel.com/sites/default/files/managed/98/4a/DRNG_Software_Implementation_Guide_2.1.pdf
@@ -814,8 +819,8 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH) -> bytes:
 
     Initial seeding and seeding levels of the DRNG
     ----------------------------------------------
-    If the RDSEED or RDRAND is available during initialization, and the 
-    CPU HWRNG is trusted by the kernel, the DRNG is considered fully 
+    If the RDSEED or RDRAND is available during initialization, and if 
+    the CPU HWRNG is trusted by the kernel, the DRNG is considered fully 
     seeded and the seeding steps below are skipped.
 
     **Initially seeded state**
@@ -950,28 +955,24 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH) -> bytes:
 def check_kernel_entropy() -> None:
     """Wait until the kernel CSPRNG is sufficiently seeded.
 
-    The LRNG is designed not to yield entropy to user space via GETRANDOM until
-    the ChaCha20 DRNG has been fully seeded. i.e. until the entropy evaluator
-    estimates the internal entropy of the DRNG is at least 256 bits. LRNG is
-    conservative with its estimates, therefore this stage is really not needed.
-        The purpose of this function to reduce the chance the entropy estimator's
-    heuristics is optimistic after all: By requiring the input_pool to have at
-    least 512-bit entropy, as long as the random events contain at least
-    4 bits/byte of entropy (very unlikely considering the conservative  estimation),
-    the 256-bit security is still achieved. Furthermore, even if it's just
-    dangerously low 2 bits/byte of entropy, a reasonable 128-bit security level is
-    still achieved.
+    The LRNG is designed not to yield entropy to user space via
+    GETRANDOM until the ChaCha20 DRNG has been fully seeded, i.e., until
+    the entropy evaluator estimates the internal entropy of the DRNG to
+    be at least 256 bits. LRNG is conservative with its estimates,
+    therefore this check is mostly unnecessary.
 
-    Wait until the `entropy_avail` file states that the LRNG input_pool
-    has at least 512 bits of entropy. The waiting ensures the ChaCha20
-    CSPRNG is fully seeded (i.e., it has the maximum of 256 bits of
-    entropy) when it generates keys. The same entropy threshold is used
-    by the GETRANDOM syscall in random.c:
-        #define CRNG_INIT_CNT_THRESH (2*CHACHA20_KEY_SIZE)
+    However, in a situation where the kernel trusts the CPU's HWRNG, the
+    ChaCha20 DRNG is not seeded with a fully seeded input_pool, but the
+    with an initialy seeded input_pool and entropy from RDRAND which
+    might not be trustworthy.
+        To mitigate the issue, this function waits until the input_pool
+    is fully seeded, i.e., the entropy_avail counter matches
+    CRNG_INIT_CNT_THRESH (=512 bits). The function then writes to the
+    `/dev/urandom` device file to trigger reseeding of the ChaCha20 DRNG
+    from the input_pool.[2]
 
-    For more information on the kernel CSPRNG threshold, see
-        https://security.stackexchange.com/a/175771/123524
-        https://crypto.stackexchange.com/a/56377
+     [1] https://github.com/torvalds/linux/blob/master/drivers/char/random.c#L886
+     [2] https://www.chronox.de/lrng/doc/lrng.pdf p.10
     """
     message = "Waiting for kernel CSPRNG entropy pool to fill up"
     phase(message, head=1)
@@ -983,6 +984,9 @@ def check_kernel_entropy() -> None:
                 ent_avail = int(f.read().strip())
             m_print(f"{ent_avail}/{ENTROPY_THRESHOLD}")
             print_on_previous_line(delay=0.1)
+
+    with open('/dev/urandom', 'wb') as f:
+        f.write(b'Reseed the DRNG')
 
     print_on_previous_line()
     phase(message)
