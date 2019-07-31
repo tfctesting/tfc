@@ -869,7 +869,8 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH  # Length of the key
     The benefit of reading random bytes via the GETRANDOM syscall 
     instead of /dev/urandom is it bypasses the Linux kernel's virtual 
     file system (VFS) layer, which reduces complexity and possibility
-    of external errors.
+    of external errors. It's also the case /dev/urandom does not block
+    before it's initially seeded.
 
     Quoting PEP 524 [3]:
         "The os.getrandom() is a thin wrapper on the getrandom()
