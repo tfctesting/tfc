@@ -312,10 +312,11 @@ class X448(object):
 
         4. Unlike OpenSSL user-space CSPRNG that only seeds from
            /dev/urandom, the OS random engine uses GETRANDOM(0) syscall
-           that sources all of its entropy directly from /dev/urandom.
-           The OS random engine does not suffer from the fork() weakness
-           where forked process is not automatically reseeded, and it's
-           also safe from issues with OpenSSL CSPRNG initialization.[6]
+           that sources all of its entropy directly from the ChaCha20
+           DRNG. The OS random engine does not suffer from the fork()
+           weakness where forked process is not automatically reseeded,
+           and it's also safe from issues with OpenSSL CSPRNG
+           initialization.[6]
 
         5. The fallback option (/dev/urandom) of OS random engine might
            be problematic on pre-3.17 kernels if the CSPRNG has not been
@@ -324,8 +325,8 @@ class X448(object):
            the used source of entropy is always GETRANDOM(0).[7] This
            can be verified from the source code as well: The last
            parameter `0` of the GETRANDOM syscall[8] indicates
-           GRND_NONBLOCK flag is not set. This means /dev/urandom is
-           used, and that it does not yield entropy until it has been
+           GRND_NONBLOCK flag is not set. This means the ChaCha20 DRNG
+           is used, and that it does not yield entropy until it has been
            properly seeded. This is the same case as with TFC's
            `csprng()` function.
 
