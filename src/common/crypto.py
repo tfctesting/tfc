@@ -788,8 +788,8 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH  # Length of the key
     some point the entropy will for sure reach the maximum of 4096 bits.
         When the input_pool entropy estimator considers the pool to have
     4096 bits of entropy, it will output 1024 bits to blocking_pool for 
-    the use of /dev/random, and it will then (stupidly) reduce the 
-    input_pool's entropy estimator by 1024 bits. 
+    the use of /dev/random, and it will then reduce the input_pool's 
+    entropy estimator by 1024 bits. 
 
      [1] https://www.bsi.bund.de/SharedDocs/Downloads/EN/BSI/Publications/Studies/LinuxRNG/LinuxRNG_EN.pdf?__blob=publicationFile&v=16
      [2] https://www.chronox.de/lrng/doc/lrng.pdf
