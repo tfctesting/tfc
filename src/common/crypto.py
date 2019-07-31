@@ -565,10 +565,11 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH  # Length of the key
         https://www.chronox.de/lrng/doc/lrng.pdf
         https://www.bsi.bund.de/SharedDocs/Downloads/EN/BSI/Publications/Studies/LinuxRNG/LinuxRNG_EN.pdf?__blob=publicationFile&v=16
         https://github.com/torvalds/linux/blob/master/drivers/char/random.c
-    """
 
-    # TFC key generation overview
-    """
+
+    TFC key generation overview
+    ===========================
+
     The following schematic is based on [1; p.19].
 
                 X448 private keys          Other TFC keys
@@ -603,10 +604,11 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH  # Length of the key
     ┗━━━━━━━━━━━┛┗━━━━━━━━━━━━━━━┛┗━━━━━━━━━━━┛┗━━━━━━━━━━━┛┗━━━━━━━━━━━━━┛
     
     [1] https://www.bsi.bund.de/SharedDocs/Downloads/EN/BSI/Publications/Studies/LinuxRNG/LinuxRNG_EN.pdf?__blob=publicationFile&v=16
-    """
 
-    # Entropy sources
-    """
+
+    Entropy sources
+    ===============
+
     The APIs for the raw entropy sources of the LRNG include
 
         o add_device_randomness: Device driver-related data believed to
@@ -713,10 +715,11 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH  # Length of the key
      [3] https://software.intel.com/sites/default/files/managed/98/4a/DRNG_Software_Implementation_Guide_2.1.pdf
          https://spectrum.ieee.org/computing/hardware/behind-intels-new-randomnumber-generator
      [4] https://www.amd.com/system/files/TechDocs/amd-random-number-generator.pdf  
-    """
 
-    # The input pool
-    """
+
+    The input_pool
+    ==============
+
     Overview
     --------
     The input_pool is the 4096-bit primary entropy pool of the LRNG 
@@ -793,10 +796,11 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH  # Length of the key
 
      [1] https://www.bsi.bund.de/SharedDocs/Downloads/EN/BSI/Publications/Studies/LinuxRNG/LinuxRNG_EN.pdf?__blob=publicationFile&v=16
      [2] https://www.chronox.de/lrng/doc/lrng.pdf
-    """
 
-    # The ChaCha20 DRNG
-    """
+
+    The ChaCha20 DRNG
+    =================
+
     Overview
     --------
     The LRNG uses the ChaCha20 stream cipher as the default DRNG.
@@ -906,10 +910,11 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH  # Length of the key
      [2] https://www.chronox.de/lrng/doc/lrng.pdf
      [3] https://www.python.org/dev/peps/pep-0524/
      [4] https://lwn.net/Articles/606141/
-    """
 
-    # GETRANDOM and Python
-    """
+
+    GETRANDOM and Python
+    ====================
+
     Since Python 3.6.0, `os.urandom` has been a wrapper for the best 
     available CSPRNG. The 3.17 and earlier versions of Linux kernel do 
     not support the GETRANDOM call, and Python 3.7's `os.urandom` will 
@@ -924,10 +929,10 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH  # Length of the key
     the actual kernel version required by TFC is 4.8).
         The flag 0 means GETRANDOM will block if the DRNG is not fully 
     seeded.
-    """
 
-    # BLAKE2 compression
-    """
+    BLAKE2 compression
+    ==================
+
     The output of GETRANDOM is further compressed with BLAKE2b. The
     preimage resistance of the hash function protects the internal
     state of the entropy pool just in case some user decides to modify
