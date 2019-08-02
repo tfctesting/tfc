@@ -667,6 +667,10 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH  # Length of the key
           (unless the ChaCha20 DRNG is being seeded) at least one second
           has passed since the fast_pool was last mixed in. The counter
           keeping track of the interrupt events is then zeroed.
+              Each interrupt is assumed to contain 1/32 bit of entropy
+          per interrupt. However, the measured Shannon entropy for each
+          interrupt is 19.2 bits, which means each 128-bit fast_pool is
+          fed 1228.8 bits of entropy.
               The entire content of the fast_pool is considered to
           increase the internal entropy of the input_pool by 1 bit. If
           the RDSEED (explained below) instruction is available, it is
@@ -837,11 +841,7 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH  # Length of the key
     During initialization time of the kernel, the kernel injects four 
     sets of data from fast_pool into the DRNG (instead of the 
     input_pool). Each set contains event data and timestamps of 64 
-    interrupt events from add_interrupt_randomness. Each interrupt is
-    thus assumed to contain 1/32 bit of entropy per interrupt. However,
-    the measured Shannon entropy for each interrupt is 19.2 bits, which
-    means each 128-bit fast_pool is fed 1228.8 bits of entropy, thus the
-    key part of the DRNG's state contains 256 bits of entropy.
+    interrupt events from add_interrupt_randomness.
         In addition, all content from the add_device_randomness source
     is mixed into the DRNG key state using an LFSR with a period of 255.
     Once the entropy sources have been mixed in, the DRNG is considered
@@ -926,8 +926,7 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH  # Length of the key
     in those cases fall back to non-blocking `/dev/urandom` that is not 
     secure on live distros as they have low entropy at the start of the 
     session.
-
-    To avoid possibly unsafe key generation, instead of `os.urandom`,
+        To avoid possibly unsafe key generation, instead of `os.urandom`
     TFC uses the `os.getrandom(size, flags=0)` explicitly. This forces
     use of recent enough Python interpreter (3.6.0 or later) and limits
     the Linux kernel version to 3.17 or newer (to make use of the LRNG,
@@ -949,7 +948,7 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH  # Length of the key
     Since BLAKE2b only produces 1..64 byte digests, its use limits the
     size of the generated keys to 64 bytes. This is not a problem for 
     TFC because again, the largest key it generates is the 56-byte X448 
-    private key. However, because pyca/cryptogrpahy manages the X448
+    private key. However, because pyca/cryptography manages the X448
     private key generation, the largest key this function will generate
     is a 32-byte symmetric key.
 
@@ -976,14 +975,15 @@ def check_kernel_entropy() -> None:
 
     The LRNG is designed not to yield entropy to user space via
     GETRANDOM until the ChaCha20 DRNG has been fully seeded, i.e., until
-    the entropy evaluator estimates the internal entropy of the DRNG to
-    be at least 256 bits. LRNG is conservative with its estimates,
-    therefore this check is mostly unnecessary.
+    the entropy evaluator estimates the internal entropy of the DRNG is
+    256 bits. LRNG is conservative with its estimates, therefore this
+    check is mostly unnecessary.
 
     However, in a situation where the kernel trusts the CPU's HWRNG, the
     ChaCha20 DRNG is not initially seeded with a seed from fully seeded
-    input_pool, but with a seed from only initially seeded input_pool,
-    and with entropy from RDRAND which might not be trustworthy.
+    input_pool, but with a seed from only initially seeded input_pool.
+    Majority of the entropy is trusted to come from RDRAND which might
+    not be trustworthy.
         To mitigate the issue, this function waits until the input_pool
     is fully seeded, i.e., the entropy_avail counter matches
     CRNG_INIT_CNT_THRESH (=512 bits). The function then writes to the
