@@ -631,13 +631,17 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH) -> bytes:
           fed to the input_pool via add_timer_randomness, which prepends
           to the event value the 32 LSBs of the 64-bit RDTSC timestamp,
           plus the 64-bit Jiffies timestamp.  
-              HID events are not assumed to increase the entropy of the 
-          input_pool.[1]
+              Each HID event contain 15.6 bits of Shannon entropy, but
+           due to LRNG's conservative heuristic entropy estimation, only
+           1.29 bits of entropy is awarded to the event. 
 
         o add_disk_randomness: Hardware events of block devices, e.g.
           HDDs (but not e.g. SSDs). When a disk event occurs, the device
           number as well as the timer state variable disk->random is 
-          mixed into the input_pool via add_timer_randomness.[1]
+          mixed into the input_pool via add_timer_randomness.[1] The
+          Shannon entropy for a disk event is 17.7 bits. Only 0.21 bits
+          of entropy are awarded to the event, thus each bit contains
+          88.5 bits of Shannon entropy.
 
         o add_interrupt_randomness: Interrupts (i.e. signals from SW/HW
           to processor that an event needs immediate attention) occur
@@ -821,9 +825,13 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH) -> bytes:
     During initialization time of the kernel, the kernel injects four 
     sets of data from fast_pool into the DRNG (instead of the 
     input_pool). Each set contains event data and timestamps of 64 
-    interrupt events from add_interrupt_randomness. In addition, all 
-    content from the add_device_randomness source is mixed into the 
-    DRNG key state using an LFSR with a period of 255. Once the 
+    interrupt events from add_interrupt_randomness. Each interrupt is
+    thus assumed to contain 1/32 bit of entropy per interrupt. However,
+    the measured Shannon entropy for each interrupt is 19.2 bits, which
+    means each 128-bit fast_pool is fed 1228.8 bits of entropy, thus the
+    key part of the DRNG's state contains 256 bits of entropy. 
+    addition, all content from the add_device_randomness source is mixed 
+    into the DRNG key state using an LFSR with a period of 255. Once the 
     entropy sources have been mixed in, the DRNG is considered 
     initially seeded. At that poin the add_device_randomness is 
     redirected back to feed the input_pool.
