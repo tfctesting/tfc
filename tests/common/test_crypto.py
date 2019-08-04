@@ -494,7 +494,7 @@ class TestBytePadding(unittest.TestCase):
     """
 
     def test_length_of_the_padded_message_is_divisible_by_padding_length(self):
-        padded_bytestrings = set()
+        padded_bytestring_lengths = set()
 
         for message_length in range(4*PADDING_LENGTH):
             message = os.urandom(message_length)
@@ -503,10 +503,10 @@ class TestBytePadding(unittest.TestCase):
             self.assertIsInstance(padded, bytes)
             self.assertEqual(len(padded) % PADDING_LENGTH, 0)
 
-            padded_bytestrings.add(len(padded))
+            padded_bytestring_lengths.add(len(padded))
 
-        self.assertEqual(padded_bytestrings, {1*PADDING_LENGTH, 2*PADDING_LENGTH,
-                                              3*PADDING_LENGTH, 4*PADDING_LENGTH})
+        self.assertEqual(padded_bytestring_lengths, {1*PADDING_LENGTH, 2*PADDING_LENGTH,
+                                                     3*PADDING_LENGTH, 4*PADDING_LENGTH})
 
     @mock.patch('cryptography.hazmat.primitives.padding.PKCS7',
                 return_value=MagicMock(
