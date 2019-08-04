@@ -849,11 +849,11 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH  # Length of the key
     redirected back to feed the input_pool.
 
     **Fully seeded state**
-    During initialization time of the kernel, once the input_pool has 
-    reached 128-bit entropy, the DRNG is reseeded by XORing 256 bits 
-    from the input_pool with the key part of the DRNG. After this, the 
-    DRNG is considered to be fully seeded (i.e., its internal entropy is 
-    estimated to be 256 bits).
+    As of Linux kernel 4.17, the DRNG is considered fully seeded
+    (256-bit entropy) only after, during initialization time of the
+    kernel, the input_pool has reached 128-bit entropy, and the DRNG is
+    reseeded by XORing 256 bits from the input_pool with the key part of
+    the DRNG.
         The time to reach this state might take up to 90 seconds, but as
     the installation of TFC via Tor takes longer than that, the DRNG is
     most likely fully seeded by the time it generates keys.
