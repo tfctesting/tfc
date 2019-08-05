@@ -483,9 +483,9 @@ class TestBytePadding(unittest.TestCase):
     """The requirements of the PKCS #7 padding are as follows:
 
         1. The size of the padded message must be a multiple of the
-           padding size (255 bytes).
-        2. If the length of the message to be padded is exactly 255
-           bytes, a dummy block must be added.
+           padding size (255 bytes in the case of TFC).
+        2. If the length of the message to be padded is the same as
+           padding size, a dummy block must be added.
         3. Removing the padding must not change the original message in
            any way.
 
