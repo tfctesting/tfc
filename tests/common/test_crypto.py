@@ -515,7 +515,7 @@ class TestBytePadding(unittest.TestCase):
                     padder=MagicMock(return_value=MagicMock(
                         update=MagicMock(return_value=b''),
                         finalize=MagicMock(return_value=(PADDING_LENGTH+1)*b'a')))))
-    def test_invalid_padding_length_raises_critical_error(self, mock_padder):
+    def test_invalid_padding_size_raises_critical_error(self, mock_padder):
         """\
         This test makes sure TFC detects if the length of the message
         padded by pyca/cryptography library is not correct.
