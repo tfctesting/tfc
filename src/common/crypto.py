@@ -1004,8 +1004,8 @@ def check_kernel_entropy() -> None:
             m_print(f"{ent_avail}/{ENTROPY_THRESHOLD}")
             print_on_previous_line(delay=0.1)
 
-    with open('/dev/urandom', 'wb') as f:
-        f.write(b'Reseed the DRNG')
+    with open('/dev/urandom', 'w') as f:
+        f.write('Reseed the DRNG')
 
     print_on_previous_line()
     phase(message)
