@@ -505,7 +505,8 @@ class TestBytePadding(unittest.TestCase):
 
             padded_bytestring_lengths.add(len(padded))
 
-        # Check that lengths of padded messages were multiples of PADDING_LENGTH.
+        # Check that all messages were padded to multiples of
+        # PADDING_LENGTH in the range of the loop above.
         self.assertEqual(padded_bytestring_lengths, {1*PADDING_LENGTH, 2*PADDING_LENGTH,
                                                      3*PADDING_LENGTH, 4*PADDING_LENGTH})
 
