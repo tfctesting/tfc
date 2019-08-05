@@ -81,7 +81,7 @@ class ProcessAssembledFile(TFCTestCase):
         payload = UNDECODABLE_UNICODE + US_BYTE + b'file_data'
 
         # Test
-        self.assert_fr("Error: Received file name had invalid encoding.",
+        self.assert_fr("Error: Received file name had an invalid encoding.",
                        process_assembled_file, self.ts, payload, *self.args)
 
     def test_invalid_name_raises_fr(self):
@@ -246,7 +246,7 @@ class TestProcessFile(TFCTestCase):
         compressed = zlib.compress(UNDECODABLE_UNICODE + b'file_data', level=COMPRESSION_LEVEL)
         file_data  = encrypt_and_sign(compressed, self.file_key)
 
-        self.assert_fr("Error: Name of file from Alice had invalid encoding.",
+        self.assert_fr("Error: Name of file from Alice had an invalid encoding.",
                        process_file, self.ts, self.account, file_data, *self.args)
 
     @mock.patch('time.sleep', return_value=None)

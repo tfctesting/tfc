@@ -23,7 +23,7 @@ function compare_digest {
     if sha512sum /opt/tfc/$2$3 | grep -Eo '^\w+' | cmp -s <(echo "$1"); then
         echo OK - Pinned SHA512 hash matched file /opt/tfc/$2$3
     else
-        echo Error: /opt/tfc/$2$3 had invalid SHA512 hash
+        echo Error: /opt/tfc/$2$3 had an invalid SHA512 hash
         exit 1
     fi
 }

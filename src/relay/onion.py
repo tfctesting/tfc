@@ -149,7 +149,7 @@ def stem_compatible_ed25519_key_from_private_key(private_key: bytes) -> str:
         return encode_int(a) + k
 
     if len(private_key) != ONION_SERVICE_PRIVATE_KEY_LENGTH:
-        raise CriticalError("Onion Service private key had invalid length.")
+        raise CriticalError("Onion Service private key had an invalid length.")
 
     expanded_private_key = expand_private_key(private_key)
 

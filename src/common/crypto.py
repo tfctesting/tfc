@@ -533,7 +533,7 @@ def byte_padding(bytestring: bytes  # Bytestring to be padded
     padded += padder.finalize()
 
     if len(padded) % PADDING_LENGTH != 0:
-        raise CriticalError(f"Padded message had invalid length ({len(padded)}).")
+        raise CriticalError(f"Padded message had an invalid length ({len(padded)}).")
 
     return padded
 
