@@ -405,7 +405,7 @@ class GatewaySettings(object):
         byte_travel_t = 1 / bytes_per_sec
 
         rx_receive_timeout    = max(2 * byte_travel_t, SERIAL_RX_MIN_TIMEOUT)
-        tx_inter_packet_delay =     2 * rx_receive_timeout
+        tx_inter_packet_delay = 2 * rx_receive_timeout
 
         return tx_inter_packet_delay, rx_receive_timeout
 

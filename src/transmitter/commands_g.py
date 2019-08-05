@@ -53,6 +53,7 @@ if typing.TYPE_CHECKING:
                                      Optional[bytes]],
                                     None]])
 
+
 def process_group_command(user_input:   'UserInput',
                           contact_list: 'ContactList',
                           group_list:   'GroupList',

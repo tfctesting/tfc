@@ -38,6 +38,7 @@ if typing.TYPE_CHECKING:
     from src.common.gateway import Gateway
     QueueDict = Dict[bytes, Queue[Any]]
 
+
 def relay_command(queues:    'QueueDict',
                   gateway:   'Gateway',
                   stdin_fd:  int,

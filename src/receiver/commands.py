@@ -181,6 +181,7 @@ def log_command(cmd_data:     bytes,
     else:
         access_logs(window, contact_list, group_list, settings, master_key, msg_to_load=no_messages)
 
+
 def remove_log(cmd_data:     bytes,
                contact_list: 'ContactList',
                group_list:   'GroupList',

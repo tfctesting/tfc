@@ -237,7 +237,6 @@ def get_data_loop(onion_addr:    str,
                 else:
                     rp_print(f"Received invalid packet from {short_addr}", ts, bold=True)
 
-
         except requests.exceptions.RequestException:
             break
 
