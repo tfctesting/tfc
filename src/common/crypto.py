@@ -120,7 +120,9 @@ def blake2b(message:     bytes,                        # Message to hash
     if digest_size < BLAKE2_DIGEST_LENGTH_MIN or digest_size > BLAKE2_DIGEST_LENGTH_MAX:
         raise CriticalError(f"Invalid digest size ({digest_size} bytes).")
 
-    return hashlib.blake2b(message, digest_size=digest_size, key=key, salt=salt, person=person).digest()
+    digest = hashlib.blake2b(message, digest_size=digest_size, key=key, salt=salt, person=person).digest()  # type: bytes
+
+    return digest
 
 
 def argon2_kdf(password:    str,    # Password to derive the key from
@@ -374,7 +376,7 @@ class X448(object):
         extract unidirectional message/header keys and fingerprints.
         """
         try:
-            shared_secret = private_key.exchange(X448PublicKey.from_public_bytes(public_key))
+            shared_secret = private_key.exchange(X448PublicKey.from_public_bytes(public_key))  # type: bytes
         except ValueError as e:
             raise CriticalError(str(e))
 
@@ -570,7 +572,8 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH  # Length of the key
     TFC key generation overview
     ===========================
 
-    The following schematic is based on [1; p.19].
+    The following schematic of the LRNG and its relation to TFC is based
+    on [1; p.19].
 
                 X448 private keys          Other TFC keys
                         ↑                         ↑
@@ -759,11 +762,11 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH  # Length of the key
     like wait_for_random_bytes and add_random_ready_callback are
     available.
 
-    **Fully seeded state**    
-    The `fully seeded` threshold (256 bits) is reached by the time 
-    initramfs is executed, and before the root partition is mounted. 
+    **Fully seeded state**
+    The `fully seeded` threshold (256 bits) is reached by the time
+    initramfs is executed, and before the root partition is mounted.
     According to [2], this happens approximately 1.3 seconds after boot.
-        Once the input_pool is fully seeded, user space callers waiting 
+        Once the input_pool is fully seeded, user space callers waiting
     for the GETRANDOM syscall are woken up.[2] This means TFC's 
     GETRANDOM syscall won't even be available until the ChaCha20 DRNG
     is fully seeded.
@@ -776,12 +779,12 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH  # Length of the key
     transformation function of SHA-1, but that replaces the constants of
     SHA-1 with random values obtained from CPU HWRNG via RDRAND, if
     available.
-        The output function also "folds" the 160-bit digest by slicing 
-    it into two 80-bit chunks and by then XORing them together to 
-    produce the final output. At the same time, the output function 
+        The output function also "folds" the 160-bit digest by slicing
+    it into two 80-bit chunks and by then XORing them together to
+    produce the final output. At the same time, the output function
     reduces the input_pool entropy estimator by 80 bits.
-        The "SHA-1" digest is mixed back into the input_pool using the 
-    LFSR-based state transition function to provide backtracking 
+        The "SHA-1" digest is mixed back into the input_pool using the
+    LFSR-based state transition function to provide backtracking
     resistance.
         If more than 80-bits of entropy is requested, the 
     hash-fold-yield-mix-back operation is repeated until the requested
@@ -822,13 +825,13 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH  # Length of the key
     Initialization of the DRNG
     --------------------------
     The DRNG is initialized during the boot time of the kernel by using 
-    the content of the input_pool (considered to have poor entropy at 
+    the content of the input_pool (considered to have poor entropy at
     this point) for key, counter, and nonce parts of the DRNG state.
-        Each of the three values is XORed with the output from CPU 
+        Each of the three values is XORed with the output from CPU
     HWRNG obtained via RDSEED or RDRAND instruction (if available --
-    otherwise only the key is XORed, with the timestamp from RDTSCP 
+    otherwise only the key is XORed, with the timestamp from RDTSCP
     instruction).
-        The initialization is completed by setting the init_time to 
+        The initialization is completed by setting the init_time to
     a value that causes the DRNG to reseed the next time it's called.
 
     Initial seeding and seeding levels of the DRNG
@@ -957,7 +960,7 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH  # Length of the key
     if key_length < BLAKE2_DIGEST_LENGTH_MIN or key_length > BLAKE2_DIGEST_LENGTH_MAX:
         raise CriticalError(f"Invalid key size ({key_length} bytes).")
 
-    entropy = os.getrandom(key_length, flags=0)
+    entropy = os.getrandom(key_length, flags=0)  # type: bytes
 
     if len(entropy) != key_length:
         raise CriticalError(f"GETRANDOM returned invalid amount of entropy ({len(entropy)} bytes).")
@@ -1020,7 +1023,7 @@ def check_kernel_version() -> None:
     protection:
         https://lkml.org/lkml/2016/7/25/43
     """
-    major_v, minor_v = [int(i) for i in os.uname()[2].split('.')[:2]]
+    major_v, minor_v = [int(i) for i in os.uname()[2].split('.')[:2]]  # type: int, int
 
     if major_v < 4 or (major_v == 4 and minor_v < 8):
         raise CriticalError("Insecure kernel CSPRNG version detected.")
