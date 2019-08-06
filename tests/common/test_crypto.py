@@ -549,7 +549,7 @@ class TestCSPRNG(unittest.TestCase):
     as well as the limits for the key size.
 
     The CSPRNG used in TFC is the Linux kernel's ChaCha20 based DRNG,
-    which is  accessed via the GETRANDOM syscall. Since the ChaCha20
+    which is accessed via the GETRANDOM syscall. Since the ChaCha20
     DRNG is seeded from the input_pool that together with noise sources
     forms a NDRNG, the output is not deterministic, and it is not
     possible to verify the correctness of the implementation from within
@@ -562,8 +562,8 @@ class TestCSPRNG(unittest.TestCase):
     Chapter 3 (page 26) of the whitepaper:
         https://www.chronox.de/lrng/doc/lrng.pdf
 
-    Further audit of the LRNG can be found from Chapters 4-8
-    (pp. 75..130) of the BSI analysis:
+    Further analysis of the LRNG can be found from Chapters 4-8
+    (pp. 75..130) of the BSI report:
         https://www.bsi.bund.de/SharedDocs/Downloads/EN/BSI/Publications/Studies/LinuxRNG/LinuxRNG_EN.pdf?__blob=publicationFile&v=16
 
     The use of BLAKE2 compression is tested by mocking the entropy
