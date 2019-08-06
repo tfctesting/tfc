@@ -742,14 +742,14 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH  # Length of the key
         2. Data obtained from CPU HWRNG via RDRAND instruction, if 
            available.
         3. System specific information such as OS name, release, 
-           version, and a HW identifier.
+           version, and a HW identifier.[1; p.57]
 
     Initial seeding and seeding levels of the input_pool
     ----------------------------------------------------
     After a hardware event has occurred, the entropy of the event value
     is estimated, and both values are mixed into the input_pool using a 
     function based on a linear feedback shift register (LFSR), one byte
-    at a time.
+    at a time.[1; p.21]
 
     **Minimally seeded state**
     The `minimally seeded` threshold of the input_pool is 128 bits. This
@@ -757,14 +757,15 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH  # Length of the key
     user space boots).
         Once the minimum seed level is reached, only in-kernel API calls
     like wait_for_random_bytes and add_random_ready_callback are
-    available.
+    available.[1; p.25]
 
     **Fully seeded state**
     The `fully seeded` threshold (256 bits) is reached by the time
     initramfs is executed, and before the root partition is mounted.
-    According to [2], this happens approximately 1.3 seconds after boot.
+    According to [2; pp. 5-6], this happens approximately 1.3 seconds
+    after boot.
         Once the input_pool is fully seeded, user space callers waiting
-    for the GETRANDOM syscall are woken up.[2] This means TFC's 
+    for the GETRANDOM syscall are woken up.[2; p.11] This means TFC's
     GETRANDOM syscall won't even be available until the ChaCha20 DRNG
     is fully seeded.
     
@@ -785,7 +786,7 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH  # Length of the key
     resistance.
         If more than 80-bits of entropy is requested, the 
     hash-fold-yield-mix-back operation is repeated until the requested
-    number of bytes are generated.
+    number of bytes are generated.[1; pp.32-33]
 
     Reseeding of the input_pool
     ---------------------------
@@ -797,7 +798,7 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH  # Length of the key
         When the input_pool entropy estimator considers the pool to have
     4096 bits of entropy, it will output 1024 bits to blocking_pool for
     the use of /dev/random, and it will then reduce the input_pool's
-    entropy estimator by 1024 bits.
+    entropy estimator by 1024 bits.[1; pp.62-63]
 
      [1] https://www.bsi.bund.de/SharedDocs/Downloads/EN/BSI/Publications/Studies/LinuxRNG/LinuxRNG_EN.pdf?__blob=publicationFile&v=16
      [2] https://www.chronox.de/lrng/doc/lrng.pdf
@@ -818,6 +819,7 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH  # Length of the key
 
     In addition, the DRNG state contains a 4-byte timestamp called 
     init_time, that keeps track of when the DRNG was last seeded.
+    [1; pp.35-36]
 
     Initialization of the DRNG
     --------------------------
@@ -830,6 +832,7 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH  # Length of the key
     instruction).
         The initialization is completed by setting the init_time to
     a value that causes the DRNG to reseed the next time it's called.
+    [1; p.33]
 
     Initial seeding and seeding levels of the DRNG
     ----------------------------------------------
@@ -857,6 +860,7 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH  # Length of the key
         The time to reach this state might take up to 90 seconds, but as
     the installation of TFC via Tor takes longer than that, the DRNG is
     most likely fully seeded by the time it generates keys.
+    [1; pp.38-39]
 
     State transition and output of the DRNG
     ---------------------------------------
@@ -874,6 +878,7 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH  # Length of the key
     state update function is invoked, which takes a 256-bit block of 
     unused keystream and XORs it with the key part of the ChaCha20 state 
     to ensure backtracking resistance.
+    [1; pp.36-37]
 
     The random bytes are obtained with the GETRANDOM syscall instead of
     the /dev/urandom device file. This has two major benefits:
@@ -881,6 +886,7 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH  # Length of the key
            layer, which reduces complexity and possibility of bugs, and
         2. unlike /dev/urandom, GETRANDOM(0) blocks until it has been
            properly seeded.
+    [1; pp.42-43]
 
     Quoting PEP 524 [3]:
         "The os.getrandom() is a thin wrapper on the getrandom()
@@ -900,17 +906,18 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH  # Length of the key
     Reseeding of the DRNG
     ---------------------
     The DRNG is reseeded automatically every 300 seconds irrespective of
-    the amount of data produced by the DRNG. Re-seeding also occurs 
-    after 2^20 generate operations, or if the DRNG is forced to reseed 
-    by writing data into /dev/(u)random.
+    the amount of data produced by the DRNG [1; p.35]. Re-seeding also
+    occurs after 2^20 generate operations, or if the DRNG is forced to
+    reseed by writing data into /dev/(u)random [2; p.10].
         The DRNG is re-seeded by obtaining (up to) 32 bytes of entropy 
     from the input_pool. In the order of preference, the entropy from 
     input_pool is XORed with the output of
         1. 32-byte value obtained via RDSEED CPU instruction, or
         2. 32-byte value obtained via RDRAND CPU instruction, or
         3. eight 4-byte high-resolution time stamps
-    The result is then XORed with the key component of the DRNG state.
-    
+    The result is then XORed with the key component of the DRNG state
+    [1; p.37].
+
      [1] https://www.bsi.bund.de/SharedDocs/Downloads/EN/BSI/Publications/Studies/LinuxRNG/LinuxRNG_EN.pdf?__blob=publicationFile&v=16
      [2] https://www.chronox.de/lrng/doc/lrng.pdf
      [3] https://www.python.org/dev/peps/pep-0524/
@@ -932,8 +939,9 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH  # Length of the key
     the Linux kernel version to 3.17 or newer (to make use of the LRNG,
     the actual kernel version required by TFC is 4.8).
         The flag 0 means GETRANDOM will block if the DRNG is not fully 
-    seeded.
+    seeded[1].
 
+     [1] https://manpages.debian.org/testing/manpages-dev/getrandom.2.en.html
 
     BLAKE2 compression
     ==================
@@ -945,14 +953,15 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH  # Length of the key
     resistance. Another reason for the hashing is its recommended by
     djb[1].
 
-    Since BLAKE2b only produces 1..64 byte digests, its use limits the
-    size of the generated keys to 64 bytes. This is not a problem for 
-    TFC because again, the largest key it generates is the 56-byte X448 
-    private key. However, because pyca/cryptography manages the X448
-    private key generation, the largest key this function will generate
-    is a 32-byte symmetric key.
+    Since BLAKE2b only produces 1..64 byte digests[2], its use limits
+    the size of the generated keys to 64 bytes. This is not a problem
+    for TFC because again, the largest key it generates is the 56-byte
+    X448 private key. However, because pyca/cryptography manages the
+    X448 private key generation, the largest key this function will
+    generate is a 32-byte symmetric key.
 
      [1] https://media.ccc.de/v/32c3-7210-pqchacks#video&t=1116
+     [2] https://blake2.net/
     """
     if key_length < BLAKE2_DIGEST_LENGTH_MIN or key_length > BLAKE2_DIGEST_LENGTH_MAX:
         raise CriticalError(f"Invalid key size ({key_length} bytes).")
