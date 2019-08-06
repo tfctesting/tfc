@@ -555,7 +555,7 @@ class TestCSPRNG(unittest.TestCase):
     possible to verify the correctness of the implementation from within
     Python.
 
-    The unittests for LRNG can be found at
+    The unittests for the LRNG can be found at
         https://github.com/smuellerDD/lrng/tree/master/test
 
     The report on the statistical tests of the LRNG can be found from
