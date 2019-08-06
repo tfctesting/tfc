@@ -573,7 +573,7 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH  # Length of the key
     ===========================
 
     The following schematic of the LRNG and its relation to TFC is based
-    on [1; p.19].
+    on [1; p.22].
 
                 X448 private keys          Other TFC keys
                         ↑                         ↑
@@ -619,33 +619,33 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH  # Length of the key
           into the unseeded ChaCha20 DRNG and input_pool during boot
           along with the high-resolution time stamp, XORed with the
           Jiffies (Linux kernel timer). The value is requested only
-          once, and it is not considered to contain any entropy.[1]
+          once, and it is not considered to contain any entropy.[1; p.55]
 
         o add_hwgenerator_randomness: HWRNGs supported by the Linux
           kernel, if available. The output of the HWRNG device is used
           to seed the ChaCha20 DRNG if needed, and then to seed the
           input_pool directly when the entropy estimator's value falls 
           below the set threshold. (The CPU HWRNG is not processed by 
-          the add_hwgenerator_randomness service function).[1]
+          the add_hwgenerator_randomness service function).[1; p.52]
 
         o add_input_randomness: Key presses, mouse movements, mouse
           button presses etc. Repeated event values (e.g. key presses or 
           same direction mouse movements) are ignored by the service
           function.
               The event data consists of four LSBs of the event type, 
-          four MSBs of the event code, the event code itself, and the 
+          four MSBs of the event code, the event code itself, and the
           event value, all XORed together. The resulting event data is 
           fed into the input_pool via add_timer_randomness, which
           prepends to the event value the 32 LSBs of the 64-bit RDTSC
-          timestamp, plus the 64-bit Jiffies timestamp.
-              Each HID event contain 15.6 bits of Shannon entropy, but
+          timestamp, plus the 64-bit Jiffies timestamp.[1; p.47]
+              Each HID event contains 15.6 bits of Shannon entropy, but
           due to LRNG's conservative heuristic entropy estimation, only
-          1.29 bits of entropy is awarded to the event.
+          1.29 bits of entropy is awarded to the event.[1; p.80]
 
         o add_disk_randomness: Hardware events of block devices, e.g.
           HDDs (but not e.g. SSDs). When a disk event occurs, the device
           number as well as the timer state variable disk->random is 
-          mixed into the input_pool via add_timer_randomness.[1]
+          mixed into the input_pool via add_timer_randomness.[1; p.53]
 
         o add_interrupt_randomness: Interrupts (i.e. signals from SW/HW
           to processor that an event needs immediate attention) occur
@@ -669,17 +669,17 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH  # Length of the key
           once it has data about at least 64 interrupt events, and 
           (unless the ChaCha20 DRNG is being seeded) at least one second
           has passed since the fast_pool was last mixed in. The counter
-          keeping track of the interrupt events is then zeroed.
+          keeping track of the interrupt events is then zeroed. [1; p.48]
               Each interrupt is assumed to contain 1/32 bit of entropy
           per interrupt. However, the measured Shannon entropy for each
           interrupt is 19.2 bits, which means each 128-bit fast_pool is
-          fed 1228.8 bits of entropy.
+          fed 1228.8 bits of entropy. [1; p.80]
               The entire content of the fast_pool is considered to
           increase the internal entropy of the input_pool by 1 bit. If
           the RDSEED (explained below) instruction is available, it is
           used to obtain a 64-bit value that is also mixed into the
           input_pool, and the internal entropy of the input_pool is
-          considered to have increased by another bit.[1]
+          considered to have increased by another bit.[1; p.37]
 
     Additional raw entropy sources include
 
@@ -691,7 +691,7 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH  # Length of the key
                         The conditioner is used to create 256-bit seeds
                      for the AES256-CTR based DRBG available via the
                      RDRAND instruction. The DRBG is re-seeded after 
-                     every 511th sample of 128 bits (~8kB).[3]
+                     every 511th sample of 128 bits (~8kB).[2]
 
             - AMD:   A set of 16 ring oscillator chains feeds 512 bits
                      of raw entropy to AES256-CBC-MAC based conditioner
@@ -701,28 +701,25 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH  # Length of the key
                      384-bit seed for the AES256-CTR based DRBG 
                      available via the RDRAND instruction. The DRBG is 
                      re-seeded at least every 2048 queries of 32-bits 
-                     (8kB).[4]
+                     (8kB).[3]
 
           While the RDSEED/RDRAND instructions are used extensively,
           because the CPU HWRNG is not an auditable source, it is 
-          assumed to provide only a very small amount of entropy.[1]
-
-        o CPU Jitter RNG (assumed to provide a 1/16th bit of entropy per
-          generated bit.)[2]
+          assumed to provide only a very small amount of entropy.[1; p.86]
 
         o Data written to /dev/(u)random from the user space[2] such as
           the 4096-bit seed obtained from the DRNG when the previous
           session ended and the system was powered off. While the value
           might not be mixed in early enough during boot to benefit the
           kernel, it is mixed into the input_pool before TFC starts.
+          [1; p.41]
 
-        o User space IOCTL of RNDADDENTROPY.[2]
+        o User space IOCTL of RNDADDENTROPY.[1; p.42]
 
      [1] https://www.bsi.bund.de/SharedDocs/Downloads/EN/BSI/Publications/Studies/LinuxRNG/LinuxRNG_EN.pdf?__blob=publicationFile&v=16
-     [2] https://www.chronox.de/lrng/doc/lrng.pdf
-     [3] https://software.intel.com/sites/default/files/managed/98/4a/DRNG_Software_Implementation_Guide_2.1.pdf
+     [2] https://software.intel.com/sites/default/files/managed/98/4a/DRNG_Software_Implementation_Guide_2.1.pdf
          https://spectrum.ieee.org/computing/hardware/behind-intels-new-randomnumber-generator
-     [4] https://www.amd.com/system/files/TechDocs/amd-random-number-generator.pdf  
+     [3] https://www.amd.com/system/files/TechDocs/amd-random-number-generator.pdf
 
 
     The input_pool
