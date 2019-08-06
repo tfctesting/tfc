@@ -614,7 +614,7 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH  # Length of the key
 
     The APIs for the raw entropy sources of the LRNG include
 
-        o add_device_randomness: Device driver-related data believed to
+        o add_device_randomness: Device driver related data believed to
           provide entropy. The device driver specific value is mixed
           into the unseeded ChaCha20 DRNG and input_pool during boot
           along with the high-resolution time stamp, XORed with the
