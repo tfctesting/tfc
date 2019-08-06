@@ -584,7 +584,7 @@ class TestCSPRNG(unittest.TestCase):
         self.assertEqual(key, blake2b(self.mock_entropy))
 
     def test_function_returns_key_of_specified_size(self):
-        for key_size in range(1, BLAKE2_DIGEST_LENGTH_MAX+1):
+        for key_size in range(BLAKE2_DIGEST_LENGTH_MIN, BLAKE2_DIGEST_LENGTH_MAX+1):
             key = csprng(key_size)
             self.assertEqual(len(key), key_size)
 
