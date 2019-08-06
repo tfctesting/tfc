@@ -551,7 +551,7 @@ class TestCSPRNG(unittest.TestCase):
     The CSPRNG used in TFC is the Linux kernel's ChaCha20 based DRNG,
     which is accessed via the GETRANDOM syscall. Since the ChaCha20
     DRNG is seeded from the input_pool that together with noise sources
-    forms a NDRNG, the output is not deterministic, and it is not
+    forms a NDRNG, the output is not deterministic, and thus, it is not
     possible to verify the correctness of the implementation from within
     Python.
 
