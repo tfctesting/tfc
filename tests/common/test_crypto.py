@@ -548,10 +548,12 @@ class TestCSPRNG(unittest.TestCase):
     This suite of tests verifies the type and length of returned data,
     as well as the limits for the key size.
 
-    The CSPRNG used in TFC is the Linux kernel's CSPRNG which is based
-    on ChaCha20. The algorithm is not deterministic in any way and it is
-    not possible to verify the correctness of the implementation from
-    within Python.
+    The CSPRNG used in TFC is the Linux kernel's ChaCha20 based DRNG,
+    which is  accessed via the GETRANDOM syscall. Since the ChaCha20
+    DRNG is seeded from the input_pool that together with noise sources
+    forms a NDRNG, the output is not deterministic, and it is not
+    possible to verify the correctness of the implementation from within
+    Python.
 
     The unittests for random.c can be found at
         https://github.com/smuellerDD/lrng/tree/master/test
@@ -560,22 +562,26 @@ class TestCSPRNG(unittest.TestCase):
     Chapter 3 (page 26) of the whitepaper:
         https://www.chronox.de/lrng/doc/lrng.pdf
 
+    Further audit of the LRNG can be found from Chapters 4-8
+    (pp. 75..130) of the BSI analysis:
+        https://www.bsi.bund.de/SharedDocs/Downloads/EN/BSI/Publications/Studies/LinuxRNG/LinuxRNG_EN.pdf?__blob=publicationFile&v=16
+
     The use of BLAKE2 compression is tested by mocking the entropy
     returned by the GETRANDOM call, and then comparing the output with
     the BLAKE2b hash of the mocked entropy.
     """
-    entropy = SYMMETRIC_KEY_LENGTH * b'a'
+    mock_entropy = SYMMETRIC_KEY_LENGTH * b'a'
 
     def test_default_key_size_and_key_type(self):
         key = csprng()
         self.assertEqual(len(key), SYMMETRIC_KEY_LENGTH)
         self.assertIsInstance(key, bytes)
 
-    @mock.patch('os.getrandom', return_value=entropy)
+    @mock.patch('os.getrandom', return_value=mock_entropy)
     def test_function_calls_getrandom_with_correct_parameters_and_hashes_entropy_with_blake2b(self, mock_get_random):
         key = csprng()
         mock_get_random.assert_called_with(SYMMETRIC_KEY_LENGTH, flags=0)
-        self.assertEqual(key, blake2b(self.entropy))
+        self.assertEqual(key, blake2b(self.mock_entropy))
 
     def test_function_returns_key_of_specified_size(self):
         for key_size in range(1, BLAKE2_DIGEST_LENGTH_MAX+1):
