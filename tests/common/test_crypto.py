@@ -622,14 +622,14 @@ class TestCSPRNG(unittest.TestCase):
 class TestCheckKernelEntropy(unittest.TestCase):
 
     @mock.patch('time.sleep', return_value=None)
-    def test_input_pool_state_greater_than_or_equal_to_entropy_threshold_returns_none(self, _):
+    def test_input_pool_entropy_greater_than_or_equal_to_entropy_threshold_returns_none(self, _):
         with mock.patch('builtins.open', mock.mock_open(read_data=str(ENTROPY_THRESHOLD))):
             self.assertIsNone(check_kernel_entropy())
         with mock.patch('builtins.open', mock.mock_open(read_data=str(ENTROPY_THRESHOLD+1))):
             self.assertIsNone(check_kernel_entropy())
 
     @mock.patch('time.sleep', return_value=None)
-    def test_input_pool_state_less_than_entropy_threshold_does_not_return(self, _):
+    def test_input_pool_entropy_less_than_entropy_threshold_does_not_return(self, _):
         with unittest.mock.patch('builtins.open', unittest.mock.mock_open(read_data=str(ENTROPY_THRESHOLD-1))):
             process = multiprocessing.Process(target=check_kernel_entropy)
             try:
