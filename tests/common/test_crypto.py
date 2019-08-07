@@ -622,24 +622,24 @@ class TestCSPRNG(unittest.TestCase):
 class TestCheckKernelEntropy(unittest.TestCase):
 
     @mock.patch('time.sleep', return_value=None)
-    def test_large_enough_entropy_pool_state_returns_none(self, _):
+    def test_input_pool_state_greater_than_or_equal_to_entropy_threshold_returns_none(self, _):
         with mock.patch('builtins.open', mock.mock_open(read_data=str(ENTROPY_THRESHOLD))):
             self.assertIsNone(check_kernel_entropy())
         with mock.patch('builtins.open', mock.mock_open(read_data=str(ENTROPY_THRESHOLD+1))):
             self.assertIsNone(check_kernel_entropy())
 
     @mock.patch('time.sleep', return_value=None)
-    def test_insufficient_entropy_pool_state_does_not_return(self, _):
+    def test_input_pool_state_less_than_entropy_threshold_does_not_return(self, _):
         with unittest.mock.patch('builtins.open', unittest.mock.mock_open(read_data=str(ENTROPY_THRESHOLD-1))):
-            p = multiprocessing.Process(target=check_kernel_entropy)
+            process = multiprocessing.Process(target=check_kernel_entropy)
             try:
-                p.start()
-                p.join(timeout=0.1)
-                self.assertTrue(p.is_alive())
+                process.start()
+                process.join(timeout=0.1)
+                self.assertTrue(process.is_alive())
             finally:
-                p.terminate()
-                p.join()
-                self.assertFalse(p.is_alive())
+                process.terminate()
+                process.join()
+                self.assertFalse(process.is_alive())
 
 
 class TestCheckKernelVersion(unittest.TestCase):
@@ -647,16 +647,18 @@ class TestCheckKernelVersion(unittest.TestCase):
     invalid_versions = ['3.9.11', '3.19.8', '4.7.10']
     valid_versions   = ['4.8.1',  '4.10.1', '5.0.0']
 
-    @mock.patch('os.uname', side_effect=[['', '', f'{i}-0-generic'] for i in invalid_versions])
-    def test_invalid_kernel_versions_raise_critical_error(self, _):
+    @mock.patch('os.uname', side_effect=[['', '', f'{version}-0-generic'] for version in invalid_versions])
+    def test_invalid_kernel_versions_raise_critical_error(self, mock_uname):
         for _ in self.invalid_versions:
             with self.assertRaises(SystemExit):
                 check_kernel_version()
+        mock_uname.assert_called()
 
-    @mock.patch('os.uname', side_effect=[['', '', f'{v}-0-generic'] for v in valid_versions])
-    def test_valid_kernel_versions(self, _):
+    @mock.patch('os.uname', side_effect=[['', '', f'{version}-0-generic'] for version in valid_versions])
+    def test_valid_kernel_versions(self, mock_uname):
         for _ in self.valid_versions:
             self.assertIsNone(check_kernel_version())
+        mock_uname.assert_called()
 
 
 if __name__ == '__main__':
