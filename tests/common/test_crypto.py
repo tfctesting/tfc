@@ -655,7 +655,7 @@ class TestCheckKernelVersion(unittest.TestCase):
         mock_uname.assert_called()
 
     @mock.patch('os.uname', side_effect=[['', '', f'{version}-0-generic'] for version in valid_versions])
-    def test_valid_kernel_versions(self, mock_uname):
+    def test_valid_kernel_versions_return_none(self, mock_uname):
         for _ in self.valid_versions:
             self.assertIsNone(check_kernel_version())
         mock_uname.assert_called()
