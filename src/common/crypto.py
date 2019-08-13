@@ -762,7 +762,7 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH  # Length of the key
     **Fully seeded state**
     The `fully seeded` threshold (256 bits) is reached by the time
     initramfs is executed, and before the root partition is mounted.
-    According to [2; pp. 5-6], this happens approximately 1.3 seconds
+    According to [2; pp.5-6], this happens approximately 1.3 seconds
     after boot.
         Once the input_pool is fully seeded, user space callers waiting
     for the GETRANDOM syscall are woken up.[2; p.11] This means TFC's
