@@ -885,7 +885,7 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH  # Length of the key
         1. It bypasses the Linux kernel's virtual file system (VFS)
            layer, which reduces complexity and possibility of bugs, and
         2. unlike /dev/urandom, GETRANDOM(0) blocks until it has been
-           properly seeded.
+           fully seeded.
     [1; pp.42-43]
 
     Quoting PEP 524 [3]:
