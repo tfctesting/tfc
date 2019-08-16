@@ -118,9 +118,10 @@ class TestBLAKE2b(unittest.TestCase):
 class TestBLAKE2bWrapper(unittest.TestCase):
 
     def test_invalid_digest_size_raises_critical_error(self):
-        for invalid_digest_size in [-1, 0, 65, 66]:
+        for invalid_digest_size in [-1, BLAKE2_DIGEST_LENGTH_MIN-1,
+                                        BLAKE2_DIGEST_LENGTH_MAX+1, 1000]:
             with self.assertRaises(SystemExit):
-                blake2b(b'password', digest_size=invalid_digest_size)
+                blake2b(b'test_string', digest_size=invalid_digest_size)
 
 
 class TestArgon2KDF(unittest.TestCase):
