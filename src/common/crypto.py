@@ -164,7 +164,7 @@ def argon2_kdf(password:    str,    # Password to derive the key from
           supports parallelism) is ideal, as switching from Argon2id
           to Argon2i is trivial.
 
-        o More secure algorithms such as the Balloon hash[4] function do
+        o More secure algorithms such as the Balloon hash function[4] do
           not have robust implementations.
 
     The purpose of Argon2 is to stretch a password into a 256-bit key.
