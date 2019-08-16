@@ -232,8 +232,7 @@ class TestArgon2Wrapper(unittest.TestCase):
                                                                    ARGON2_SALT_LENGTH+1, 1000]]
         for invalid_salt in invalid_salts:
             with self.assertRaises(SystemExit):
-                argon2_kdf('password', invalid_salt,
-                           ARGON2_PSK_TIME_COST, ARGON2_PSK_MEMORY_COST, ARGON2_PSK_PARALLELISM)
+                argon2_kdf('password', invalid_salt, time_cost=1, memory_cost=100, parallelism=1)
 
     def test_argon2_kdf_key_type_and_length(self):
         key = argon2_kdf('password', os.urandom(ARGON2_SALT_LENGTH), time_cost=1, memory_cost=100, parallelism=1)
