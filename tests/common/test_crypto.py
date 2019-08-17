@@ -564,10 +564,6 @@ class TestCSPRNG(unittest.TestCase):
     Further analysis of the LRNG can be found from Chapters 4-8
     (pp. 75..130) of the BSI report:
         https://www.bsi.bund.de/SharedDocs/Downloads/EN/BSI/Publications/Studies/LinuxRNG/LinuxRNG_EN.pdf?__blob=publicationFile&v=16
-
-    The use of BLAKE2 compression is tested by mocking the entropy
-    returned by the GETRANDOM call, and then comparing the output with
-    the BLAKE2b hash of the mocked entropy.
     """
     mock_entropy = SYMMETRIC_KEY_LENGTH * b'a'
 
