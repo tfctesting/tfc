@@ -329,8 +329,8 @@ class X448(object):
            parameter `0` of the GETRANDOM syscall[8] indicates
            GRND_NONBLOCK flag is not set. This means the ChaCha20 DRNG
            is used, and that it does not yield entropy until it has been
-           properly seeded. This is the same case as with TFC's
-           `csprng()` function.
+           fully seeded. This is the same case as with TFC's `csprng()`
+           function.
 
          [1] https://github.com/pyca/cryptography/blob/2.7/src/cryptography/hazmat/primitives/asymmetric/x448.py#L38
          [2] https://github.com/pyca/cryptography/blob/2.7/src/cryptography/hazmat/backends/openssl/backend.py#L2445
