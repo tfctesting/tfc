@@ -323,7 +323,7 @@ class X448(object):
         5. The fallback option (/dev/urandom) of OS random engine might
            be problematic on pre-3.17 kernels if the CSPRNG has not been
            properly seeded. However, TFC checks that the kernel version
-           of the OS it's running on is at least 4.8. This means that
+           of the OS it's running on is at least 4.17. This means that
            the used source of entropy is always GETRANDOM(0).[7] This
            can be verified from the source code as well: The last
            parameter `0` of the GETRANDOM syscall[8] indicates
@@ -1023,14 +1023,22 @@ def check_kernel_entropy() -> None:
 
 
 def check_kernel_version() -> None:
-    """Check that the Linux kernel version is at least 4.8.
+    """Check that the Linux kernel version is at least 4.17.
 
-    This check ensures that TFC only runs on Linux kernels that use the
-    new ChaCha20 based CSPRNG that among many things, adds backtracking
-    protection:
-        https://lkml.org/lkml/2016/7/25/43
+    This check ensures that TFC only runs on Linux kernels (>4.8) that
+    use the new ChaCha20 based CSPRNG that among many things, adds
+    backtracking protection.[1]
+
+    In addition, the requirement for 4.17 ensures that the ChaCha20
+    DRNG is considered fully seeded only after it has also been
+    seeded by the input_pool, not just fast_pool. If the Kernel
+    trusts the CPU, seeding from input_pool is still skipped.
+    [2; p.141]
+
+     [1] https://lkml.org/lkml/2016/7/25/43
+     [2] https://www.bsi.bund.de/SharedDocs/Downloads/EN/BSI/Publications/Studies/LinuxRNG/LinuxRNG_EN.pdf?__blob=publicationFile&v=16
     """
     major_v, minor_v = [int(i) for i in os.uname()[2].split('.')[:2]]  # type: int, int
 
-    if major_v < 4 or (major_v == 4 and minor_v < 8):
+    if major_v < 4 or (major_v == 4 and minor_v < 17):
         raise CriticalError("Insecure kernel CSPRNG version detected.")
