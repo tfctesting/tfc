@@ -309,7 +309,7 @@ class Gateway(object):
     def client_establish_socket(self) -> None:
         """Initialize the transmitter (IPC client)."""
         try:
-            target = RXP if self.settings.software_operation == NC else RP
+            target = RECEIVER if self.settings.software_operation == NC else RELAY
             phase(f"Connecting to {target}")
             while True:
                 try:
@@ -415,7 +415,7 @@ class GatewaySettings(object):
         Ensure that the serial interface is available before proceeding.
         """
         if not self.local_testing_mode:
-            name = {TX: TXP, NC: RP, RX: RXP}[self.software_operation]
+            name = {TX: TRANSMITTER, NC: RELAY, RX: RECEIVER}[self.software_operation]
 
             self.use_serial_usb_adapter = yes(f"Use USB-to-serial/TTL adapter for {name} Computer?", head=1, tail=1)
 

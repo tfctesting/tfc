@@ -20,11 +20,11 @@ along with TFC. If not, see <https://www.gnu.org/licenses/>.
 """
 
 """Program details"""
-TFC     = 'TFC'
-TXP     = 'Transmitter'
-RXP     = 'Receiver'
-RP      = 'Relay'
-VERSION = '1.19.08'
+TFC         = 'TFC'
+VERSION     = '1.19.08'
+TRANSMITTER = 'Transmitter'
+RECEIVER    = 'Receiver'
+RELAY       = 'Relay'
 
 
 """Identifiers

@@ -213,7 +213,7 @@ def print_key(message:    str,                              # Instructive messag
 
 def print_title(operation: str) -> None:
     """Print the TFC title."""
-    operation_name = {TX: TXP, RX: RXP, NC: RP}[operation]
+    operation_name = {TX: TRANSMITTER, RX: RECEIVER, NC: RELAY}[operation]
     m_print(f"{TFC} - {operation_name} {VERSION}", bold=True, head_clear=True, head=1, tail=1)
 
 
