@@ -993,7 +993,7 @@ def check_kernel_entropy() -> None:
     ChaCha20 DRNG is not initially seeded with a seed from fully seeded
     input_pool, but with a seed from only initially seeded input_pool.
     Majority of the entropy is trusted to come from RDRAND which might
-    not be trustworthy.
+    not be trustworthy.[1]
         To mitigate the issue, this function waits until the input_pool
     is fully seeded, i.e., the entropy_avail counter matches
     CRNG_INIT_CNT_THRESH (=512 bits). The function then writes to the
