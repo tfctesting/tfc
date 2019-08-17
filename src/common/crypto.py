@@ -857,7 +857,7 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH  # Length of the key
     (256-bit entropy) only after, during initialization time of the
     kernel, the input_pool has reached 128-bit entropy, and the DRNG is
     reseeded by XORing 256 bits from the input_pool with the key part of
-    the DRNG.
+    the DRNG.[1; p.141]
         The time to reach this state might take up to 90 seconds, but as
     the installation of TFC via Tor takes longer than that, the DRNG is
     most likely fully seeded by the time it generates keys.
