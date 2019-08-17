@@ -185,7 +185,7 @@ def argon2_kdf(password:    str,    # Password to derive the key from
     expected attacks are against physically compromised data storage
     devices where the encrypted data is at rest.
         Argon2id also adds some some security against side-channel
-    attacks that malicious code running on Destination Computer might
+    attacks that malicious code injected to Destination Computer might
     perform. Considering these two attacks, Argon2id is the most secure
     option.
 
