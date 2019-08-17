@@ -837,8 +837,9 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH  # Length of the key
     Initial seeding and seeding levels of the DRNG
     ----------------------------------------------
     If the RDSEED or RDRAND is available during initialization, and if
-    the CPU HWRNG is trusted by the kernel, the DRNG is considered fully
-    seeded and the seeding steps below are skipped.
+    the CPU HWRNG is trusted by the kernel, the DRNG is seeded by the
+    CPU HWRNG, after which it is considered fully seeded and the seeding
+    steps below are skipped.
 
     **Initially seeded state**
     During initialization time of the kernel, the kernel injects four 
