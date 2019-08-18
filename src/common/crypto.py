@@ -303,10 +303,10 @@ class X448(object):
         1. When `X448PrivateKey.generate()` is called by this method,
            the `generate()` class method imports the OpenSSL backend[1].
 
-        2. Importing the backend causes Python to execute this[2] line
-           of code that runs the `__init__()` method[3] of the Backend
-           class, which then calls the `activate_osrandom_engine()`
-           instance method[4].
+        2. Importing the backend causes Python to call the Backend
+           class[2] that runs the `__init__()` method of the class[3],
+           which then calls the `activate_osrandom_engine()` instance
+           method[4].
 
         3. Calling the `activate_osrandom_engine()` disables the default
            OpenSSL CSPRNG, and activates the pyca/cryptography
