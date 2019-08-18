@@ -138,7 +138,7 @@ class TestArgon2KDF(unittest.TestCase):
     output of the argon2_cffi library to the output of the command-line
     utility under those input parameters.
 
-     [1] https://tools.ietf.org/html/draft-irtf-cfrg-argon2-03#section-6.1
+     [1] https://tools.ietf.org/html/draft-irtf-cfrg-argon2-03#section-6.3
      [2] https://github.com/P-H-C/phc-winner-argon2#command-line-utility
     """
 
@@ -153,7 +153,8 @@ class TestArgon2KDF(unittest.TestCase):
         subprocess.Popen(f'wget {file_url} -O {file_name}', shell=True).wait()
 
         # Verify the SHA256 hash of the zip-file containing the command-line utility.
-        file_data = open(file_name, 'rb').read()
+        with open(file_name, 'rb') as f:
+            file_data = f.read()
         self.assertEqual(hashlib.sha256(file_data).hexdigest(),
                          '2957db15d320b0970a34be9a6ef984b11b2296b1b1f8b051a47e35035c1bc7cf')
 
