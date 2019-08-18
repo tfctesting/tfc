@@ -1036,7 +1036,7 @@ def check_kernel_version() -> None:
     """Check that the Linux kernel version is at least 4.17.
 
     This check ensures that TFC only runs on Linux kernels that use the
-    new ChaCha20 DRNG (>4.8) that among many things, adds backtracking
+    new ChaCha20 DRNG (>=4.8) that among many things, adds backtracking
     protection.[1]
 
     In addition, the requirement for 4.17 ensures that the ChaCha20 DRNG
