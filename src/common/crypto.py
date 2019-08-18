@@ -81,7 +81,7 @@ def blake2b(message:     bytes,                        # Message to hash
 
           "Keccak received a significant amount of cryptanalysis,
            although not quite the depth of analysis applied to BLAKE,
-           Grøstl, or Skein."[2]
+           Grøstl, or Skein."[2; p.13]
 
         o BLAKE shares design elements with SHA-2 that has 11 years of
           cryptanalysis[3] behind it.
@@ -95,13 +95,13 @@ def blake2b(message:     bytes,                        # Message to hash
           means better hash ratchet performance:
 
           "The ARX-based algorithms, BLAKE and Skein, perform extremely
-           well in software."[2]
+           well in software."[2: p.6]
 
         o Compared to SHA3-256, the algorithm runs slower on ASICs which
           means attacks by high-budget adversaries are slower:
 
           "Keccak has a clear advantage in throughput/area performance
-           in hardware implementations."[2]
+           in hardware implementations."[2; p.6]
 
     Note that while the default length of BLAKE2b (the implementation
     optimized for AMD64 systems) digest is 512 bits, the digest size is
@@ -112,7 +112,7 @@ def blake2b(message:     bytes,                        # Message to hash
     known answer tests (KATs).
 
      [1] https://blake2.net/#cr
-     [2] https://nvlpubs.nist.gov/nistpubs/ir/2012/NIST.IR.7896.pdf  # p. 13
+     [2] https://nvlpubs.nist.gov/nistpubs/ir/2012/NIST.IR.7896.pdf
      [3] https://en.wikipedia.org/wiki/SHA-2#Cryptanalysis_and_validation
      [4] https://github.com/python/cpython/tree/3.7/Modules/_blake2
          https://github.com/python/cpython/blob/3.7/Lib/hashlib.py
@@ -146,15 +146,15 @@ def argon2_kdf(password:    str,    # Password to derive the key from
 
         o PBKDF2 and bcrypt are not memory-hard, thus they are weak
           against massively parallel computing attacks with
-          FPGAs/GPUs/ASICs.[1]
+          FPGAs/GPUs/ASICs.[1; p.2]
 
         o scrypt is very complex as it "combines two independent
           cryptographic primitives (the SHA256 hash function, and
           the Salsa20/8 core operation), and four generic operations
-          (HMAC, PBKDF2, Block-Mix, and ROMix)."[2] Furthermore,
+          (HMAC, PBKDF2, Block-Mix, and ROMix)."[2; p.10] Furthermore,
           scrypt is "vulnerable to trivial time-memory trade-off (TMTO)
           attacks that allows compact implementations with the same
-          energy cost."[1]
+          energy cost."[1; p.2]
 
         o Of all of the PHC finalists, only Catena and Argon2i offer
           complete cache-timing resistance by using data-independent
@@ -194,8 +194,8 @@ def argon2_kdf(password:    str,    # Password to derive the key from
     argon2_cffi library with the output of the Argon2 reference
     command-line utility under randomized input parameters.
 
-     [1] https://github.com/P-H-C/phc-winner-argon2/blob/master/argon2-specs.pdf  # p. 2
-     [2] https://password-hashing.net/submissions/specs/Catena-v5.pdf             # p.10
+     [1] https://github.com/P-H-C/phc-winner-argon2/blob/master/argon2-specs.pdf
+     [2] https://password-hashing.net/submissions/specs/Catena-v5.pdf
      [3] https://crypto.stackexchange.com/a/51623
      [4] https://crypto.stanford.edu/balloon/
      [5] https://tools.ietf.org/html/draft-irtf-cfrg-argon2-06#section-9.4
@@ -429,7 +429,7 @@ def encrypt_and_sign(plaintext: bytes,       # Plaintext to encrypt
         o Security against differential and linear cryptanalysis.[9][10]
 
         o Security against cache-timing attacks on all CPUs (unlike AES
-          on CPUs without AES-NI).[11]
+          on CPUs without AES-NI).[11; p.2]
 
         o The increased diffusion over the well-received Salsa20.[12]
 
@@ -452,7 +452,7 @@ def encrypt_and_sign(plaintext: bytes,       # Plaintext to encrypt
       [8] https://eprint.iacr.org/2016/377.pdf
       [9] https://www.cryptrec.go.jp/exreport/cryptrec-ex-2601-2016.pdf
      [10] https://eprint.iacr.org/2013/328.pdf
-     [11] https://cr.yp.to/antiforgery/cachetiming-20050414.pdf  # p. 2
+     [11] https://cr.yp.to/antiforgery/cachetiming-20050414.pdf
      [12] https://cr.yp.to/chacha/chacha-20080128.pdf
      [13] https://www.eff.org/sv/deeplinks/2015/04/remembering-case-established-code-speech
      [14] https://github.com/jedisct1/libsodium/blob/master/src/libsodium/crypto_core/hchacha20/core_hchacha20.c
@@ -573,7 +573,9 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH  # Length of the key
     ===========================
 
     The following schematic of the LRNG and its relation to TFC is based
-    on [1; p.22].
+    on [1; p.19]. (Note: the page number for the BSI report is the PDF
+    page number, not the printed page number in the bottom margin of
+    each page. This makes search faster.)
 
                 X448 private keys          Other TFC keys
                         ↑                         ↑
@@ -619,14 +621,14 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH  # Length of the key
           into the unseeded ChaCha20 DRNG and input_pool during boot
           along with the high-resolution time stamp, XORed with the
           Jiffies (Linux kernel timer). The value is requested only
-          once, and it is not considered to contain any entropy.[1; p.55]
+          once, and it is not considered to contain any entropy.[1; p.52]
 
         o add_hwgenerator_randomness: HWRNGs supported by the Linux
           kernel, if available. The output of the HWRNG device is used
           to seed the ChaCha20 DRNG if needed, and then to seed the
           input_pool directly when the entropy estimator's value falls 
           below the set threshold. (CPU HWRNG is not processed by the
-          add_hwgenerator_randomness service function).[1; p.52]
+          add_hwgenerator_randomness service function).[1; pp.52-53]
 
         o add_input_randomness: Key presses, mouse movements, mouse
           button presses etc. Repeated event values (e.g. key presses or 
@@ -637,15 +639,15 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH  # Length of the key
           event value, all XORed together. The resulting event data is 
           fed into the input_pool via add_timer_randomness, which
           prepends to the event value the 32 LSBs of the 64-bit RDTSC
-          timestamp, plus the 64-bit Jiffies timestamp.[1; p.47]
+          timestamp, plus the 64-bit Jiffies timestamp.[1; pp.44-45]
               Each HID event contains 15.6 bits of Shannon entropy, but
           due to LRNG's conservative heuristic entropy estimation, only
-          1.29 bits of entropy is awarded to the event.[1; p.80]
+          1.29 bits of entropy is awarded to the event.[1; p.77]
 
         o add_disk_randomness: Hardware events of block devices, e.g.
           HDDs (but not e.g. SSDs). When a disk event occurs, the device
           number as well as the timer state variable disk->random is 
-          mixed into the input_pool via add_timer_randomness.[1; p.53]
+          mixed into the input_pool via add_timer_randomness.[1; pp.50-51]
 
         o add_interrupt_randomness: Interrupts (i.e. signals from SW/HW
           to processor that an event needs immediate attention) occur
@@ -669,29 +671,30 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH  # Length of the key
           once it has data about at least 64 interrupt events, and 
           (unless the ChaCha20 DRNG is being seeded) at least one second
           has passed since the fast_pool was last mixed in. The counter
-          keeping track of the interrupt events is then zeroed. [1; p.48]
+          keeping track of the interrupt events is then zeroed.
+          [1; pp.45-49]
               Each interrupt is assumed to contain 1/32 bit of entropy
           per interrupt. However, the measured Shannon entropy for each
           interrupt is 19.2 bits, which means each 128-bit fast_pool is
-          fed 1228.8 bits of entropy. [1; p.80]
+          fed 1228.8 bits of entropy. [1; p.77]
               The entire content of the fast_pool is considered to
           increase the internal entropy of the input_pool by 1 bit. If
           the RDSEED (explained below) instruction is available, it is
           used to obtain a 64-bit value that is also mixed into the
           input_pool, and the internal entropy of the input_pool is
-          considered to have increased by another bit.[1; p.37]
+          considered to have increased by another bit.[1; p.34]
 
     Additional raw entropy sources include
 
         o RDSEED/RDRAND CPU instructions:
-            - Intel: A pair of inverters feeds 512 bits of raw entropy
+            - Intel: A pair of inverters[1] feeds 512 bits of raw entropy
                      to AES256-CBC-MAC based conditioner (as specified
                      in NIST SP 800-90B), that can be requested bytes 
                      with the RDSEED instruction.
                         The conditioner is used to create 256-bit seeds
                      for the AES256-CTR based DRBG available via the
                      RDRAND instruction. The DRBG is re-seeded after 
-                     every 511th sample of 128 bits (~8kB).[2]
+                     every 511th sample of 128 bits (~8kB).[2; p.12]
 
             - AMD:   A set of 16 ring oscillator chains feeds 512 bits
                      of raw entropy to AES256-CBC-MAC based conditioner
@@ -701,25 +704,24 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH  # Length of the key
                      384-bit seed for the AES256-CTR based DRBG 
                      available via the RDRAND instruction. The DRBG is 
                      re-seeded at least every 2048 queries of 32-bits 
-                     (8kB).[3]
+                     (8kB).[4; pp.2-3]
 
           While the RDSEED/RDRAND instructions are used extensively,
           because the CPU HWRNG is not an auditable source, it is 
-          assumed to provide only a very small amount of entropy.[1; p.86]
+          assumed to provide only a very small amount of entropy.[1; p.83]
 
-        o Data written to /dev/(u)random from the user space[1; p.41] such
+        o Data written to /dev/(u)random from the user space[1; p.38] such
           as the 4096-bit seed obtained from the DRNG when the previous
-          session ended and the system was powered off.[1; p.66] While the
+          session ended and the system was powered off.[1; p.63] While the
           value might not be mixed in early enough during boot to benefit
           the kernel, it is mixed into the input_pool before TFC starts.
-          [1; p.41]
 
-        o User space IOCTL of RNDADDENTROPY.[1; p.42]
+        o User space IOCTL of RNDADDENTROPY.[1; p.39]
 
      [1] https://www.bsi.bund.de/SharedDocs/Downloads/EN/BSI/Publications/Studies/LinuxRNG/LinuxRNG_EN.pdf?__blob=publicationFile&v=16
-     [2] https://software.intel.com/sites/default/files/managed/98/4a/DRNG_Software_Implementation_Guide_2.1.pdf
-         https://spectrum.ieee.org/computing/hardware/behind-intels-new-randomnumber-generator
-     [3] https://www.amd.com/system/files/TechDocs/amd-random-number-generator.pdf
+     [2] https://spectrum.ieee.org/computing/hardware/behind-intels-new-randomnumber-generator
+     [3] https://software.intel.com/sites/default/files/managed/98/4a/DRNG_Software_Implementation_Guide_2.1.pdf
+     [4] https://www.amd.com/system/files/TechDocs/amd-random-number-generator.pdf
 
 
     The input_pool
@@ -742,22 +744,22 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH  # Length of the key
         2. Data obtained from CPU HWRNG via RDRAND instruction, if 
            available.
         3. System specific information such as OS name, release, 
-           version, and a HW identifier.[1; p.57]
+           version, and a HW identifier.[1; p.31]
 
     Initial seeding and seeding levels of the input_pool
     ----------------------------------------------------
     After a hardware event has occurred, the entropy of the event value
     is estimated, and both values are mixed into the input_pool using a 
     function based on a linear feedback shift register (LFSR), one byte
-    at a time.[1; p.21]
+    at a time.[1; p.18]
 
     **Minimally seeded state**
-    The `minimally seeded` threshold of the input_pool is 128 bits. This
-    level of entropy is reached at early boot phase (by the time the 
-    user space boots).
+    The `minimally seeded` threshold of the input_pool is 128 bits.[1; p.22]
+    This level of entropy is reached at early boot phase (by the time the
+    user space boots).[2; p.6]
         Once the minimum seed level is reached, only in-kernel API calls
     like wait_for_random_bytes and add_random_ready_callback are
-    available.[1; p.25]
+    available.[2; p.11]
 
     **Fully seeded state**
     The `fully seeded` threshold (256 bits) is reached by the time
@@ -776,17 +778,17 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH  # Length of the key
     of the input_pool with SHA-1 like hash function that has the
     transformation function of SHA-1, but that replaces the constants of
     SHA-1 with random values obtained from CPU HWRNG via RDRAND, if
-    available.
+    available.[1; p.29]
         The output function also "folds" the 160-bit digest by slicing
     it into two 80-bit chunks and by then XORing them together to
-    produce the final output. At the same time, the output function
-    reduces the input_pool entropy estimator by 80 bits.
+    produce the final output.[1; p.29] At the same time, the output
+    function reduces the input_pool entropy estimator by 80 bits.
         The "SHA-1" digest is mixed back into the input_pool using the
     LFSR-based state transition function to provide backtracking
-    resistance.
+    resistance.[1; p.18]
         If more than 80-bits of entropy is requested, the 
     hash-fold-yield-mix-back operation is repeated until the requested
-    number of bytes are generated.[1; pp.32-33]
+    number of bytes are generated.[1; p.30]
 
     Reseeding of the input_pool
     ---------------------------
@@ -798,7 +800,7 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH  # Length of the key
         When the input_pool entropy estimator considers the pool to have
     4096 bits of entropy, it will output 1024 bits to blocking_pool for
     the use of /dev/random, and it will then reduce the input_pool's
-    entropy estimator by 1024 bits.[1; pp.62-63]
+    entropy estimator by 1024 bits.[1; pp.59-60]
 
      [1] https://www.bsi.bund.de/SharedDocs/Downloads/EN/BSI/Publications/Studies/LinuxRNG/LinuxRNG_EN.pdf?__blob=publicationFile&v=16
      [2] https://www.chronox.de/lrng/doc/lrng.pdf
@@ -819,17 +821,18 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH  # Length of the key
 
     In addition, the DRNG state contains a 4-byte timestamp called 
     init_time, that keeps track of when the DRNG was last seeded.
-    [1; pp.35-36]
+    [1; pp.32-33]
 
     Initialization of the DRNG
     --------------------------
-    The DRNG is initialized during the boot time of the kernel by using 
-    the content of the input_pool (considered to have poor entropy at
-    this point) for key, counter, and nonce parts of the DRNG state.
+    The ChaCha DRNG is initialized during the boot time of the kernel
+    by using the content of the input_pool (considered to have poor
+    entropy at this point [1; p.32]) for key, counter, and nonce parts
+    of the DRNG state.
         Each of the three values is XORed with the output from CPU
     HWRNG obtained via RDSEED or RDRAND instruction (if available --
     otherwise only the key is XORed, with the timestamp from RDTSCP
-    instruction).
+    instruction).[1; pp.32-33]
         The initialization is completed by setting the init_time to
     a value that causes the DRNG to reseed the next time it's called.
     [1; p.33]
@@ -839,29 +842,28 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH  # Length of the key
     If the RDSEED or RDRAND is available during initialization, and if
     the CPU HWRNG is trusted by the kernel, the DRNG is seeded by the
     CPU HWRNG, after which it is considered fully seeded and the seeding
-    steps below are skipped.
+    steps below are skipped.[1; p.35]
 
     **Initially seeded state**
     During initialization time of the kernel, the kernel injects four 
     sets of data from fast_pool into the DRNG (instead of the 
     input_pool). Each set contains event data and timestamps of 64 
-    interrupt events from add_interrupt_randomness.
+    interrupt events from add_interrupt_randomness.[1; p. 35]
         In addition, all content from the add_device_randomness source
     is mixed into the DRNG key state using an LFSR with a period of 255.
-    Once the entropy sources have been mixed in, the DRNG is considered
-    to be initially seeded. At that point the add_device_randomness is
-    redirected back to feed the input_pool.
+    [1; p.52]
+        Once the entropy sources have been mixed in, the DRNG is considered
+    to be initially seeded.[1; p.35]
 
     **Fully seeded state**
     As of Linux kernel 4.17, the DRNG is considered fully seeded
     (256-bit entropy) only after, during initialization time of the
     kernel, the input_pool has reached 128-bit entropy, and the DRNG is
     reseeded by XORing 256 bits from the input_pool with the key part of
-    the DRNG.[1; p.141]
-        The time to reach this state might take up to 90 seconds, but as
-    the installation of TFC via Tor takes longer than that, the DRNG is
-    most likely fully seeded by the time it generates keys.
-    [1; p.73]
+    the DRNG.[1; p.138]
+        The time to reach this state might take up to 90 seconds[1; p.70],
+    but as the installation of TFC via Tor takes longer than that, the DRNG
+    is most likely fully seeded by the time it generates keys.
 
     State transition and output of the DRNG
     ---------------------------------------
@@ -870,16 +872,15 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH  # Length of the key
     are generated. Each invoke yields a 64-byte output block that is
     essentially part of the keystream that in the context of stream
     cipher would be XORed with the plaintext to produce the ciphertext.
-        With each generated block the internal 32-bit counter value of 
+        With each generated block the internal 32-bit counter value of
     the ChaCha20 state is incremented by one to ensure unique blocks.
     The state of the DRNG is further stirred by XORing the second 32-bit
     word of the nonce with the output from RDRAND instruction, if
-    available.
-        Once the amount of requested random data has been generated, the 
-    state update function is invoked, which takes a 256-bit block of 
-    unused keystream and XORs it with the key part of the ChaCha20 state 
-    to ensure backtracking resistance.
-    [1; pp.36-37]
+    available. [1; p.33]
+        Once the amount of requested random data has been generated, the state
+    update function is invoked, which takes a 256-bit block of unused
+    keystream and XORs it with the key part of the ChaCha20 state to ensure
+    backtracking resistance. [1; pp.33-34]
 
     The random bytes are obtained with the GETRANDOM syscall instead of
     the /dev/urandom device file. This has two major benefits:
@@ -887,27 +888,12 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH  # Length of the key
            layer, which reduces complexity and possibility of bugs, and
         2. unlike /dev/urandom, GETRANDOM(0) blocks until it has been
            fully seeded.
-    [1; pp.42-43]
-
-    Quoting PEP 524 [3]:
-        "The os.getrandom() is a thin wrapper on the getrandom()
-         syscall/C function and so inherit of its behaviour. For
-         example, on Linux, it can return less bytes than
-         requested if the syscall is interrupted by a signal."
-
-    However, quoting LWN[4] on GETRANDOM:
-        "--reads of 256 bytes or less from /dev/urandom are guaranteed to
-         return the full request once that device has been initialized."
-
-    Since the largest key generated in TFC is the 56-byte X448 private
-    key, GETRANDOM is guaranteed to always return enough bytes. As a
-    good practice however, TFC checks that the length of the obtained
-    entropy is correct.
+    [1; pp.39-40]
 
     Reseeding of the DRNG
     ---------------------
     The DRNG is reseeded automatically every 300 seconds irrespective of
-    the amount of data produced by the DRNG [1; p.35]. Re-seeding also
+    the amount of data produced by the DRNG [1; p.32]. Re-seeding also
     occurs after 2^20 generate operations, or if the DRNG is forced to
     reseed by writing data into /dev/(u)random [2; p.10].
         The DRNG is re-seeded by obtaining (up to) 32 bytes of entropy 
@@ -917,12 +903,10 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH  # Length of the key
         2. 32-byte value obtained via RDRAND CPU instruction, or
         3. eight 4-byte high-resolution time stamps
     The result is then XORed with the key component of the DRNG state
-    [1; p.37].
+    [1; p.34].
 
      [1] https://www.bsi.bund.de/SharedDocs/Downloads/EN/BSI/Publications/Studies/LinuxRNG/LinuxRNG_EN.pdf?__blob=publicationFile&v=16
      [2] https://www.chronox.de/lrng/doc/lrng.pdf
-     [3] https://www.python.org/dev/peps/pep-0524/
-     [4] https://lwn.net/Articles/606141/
 
 
     GETRANDOM and Python
@@ -937,12 +921,31 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH  # Length of the key
         To avoid possibly unsafe key generation, instead of `os.urandom`
     TFC uses the `os.getrandom(size, flags=0)` explicitly. This forces
     use of recent enough Python interpreter (3.6.0 or later) and limits
-    the Linux kernel version to 3.17 or newer (to make use of the LRNG,
-    the actual kernel version required by TFC is 4.8).
+    the Linux kernel version to 3.17 or newer. To make use of the LRNG,
+    the kernel version required by TFC is bumped to 4.8, and to make
+    sure the  ChaCha20 DRNG is always seeded from input_pool before its
+    considered fully seeded, the final minimum requirement is 4.17).
         The flag 0 means GETRANDOM will block if the DRNG is not fully 
-    seeded[1].
+    seeded.[1]
+
+    Quoting PEP 524 [2]:
+        "The os.getrandom() is a thin wrapper on the getrandom()
+         syscall/C function and so inherit of its behaviour. For
+         example, on Linux, it can return less bytes than
+         requested if the syscall is interrupted by a signal."
+
+    However, quoting LWN[3] on GETRANDOM:
+        "--reads of 256 bytes or less from /dev/urandom are guaranteed to
+         return the full request once that device has been initialized."
+
+    Since the largest key generated in TFC is the 56-byte X448 private
+    key, GETRANDOM is guaranteed to always return enough bytes. As a
+    good practice however, TFC checks that the length of the obtained
+    entropy is correct.
 
      [1] https://manpages.debian.org/testing/manpages-dev/getrandom.2.en.html
+     [2] https://www.python.org/dev/peps/pep-0524/
+     [3] https://lwn.net/Articles/606141/
 
     BLAKE2 compression
     ==================
@@ -986,22 +989,25 @@ def check_kernel_entropy() -> None:
     The LRNG is designed not to yield entropy to user space via
     GETRANDOM until the ChaCha20 DRNG has been fully seeded, i.e., until
     the entropy evaluator estimates the internal entropy of the DRNG is
-    256 bits. LRNG is conservative with its estimates, therefore this
-    check is mostly unnecessary.
+    256 bits. LRNG is conservative with its estimates[1; p.81], therefore
+    this check is mostly unnecessary.
 
     However, in a situation where the kernel trusts the CPU's HWRNG, the
     ChaCha20 DRNG is not initially seeded with a seed from fully seeded
     input_pool, but with a seed from only initially seeded input_pool.
-    Majority of the entropy is trusted to come from RDRAND which might
-    not be trustworthy.[1]
+    [1; p.35] Majority of the entropy is trusted to come from RDRAND[2]
+    which might not be trustworthy.[3]
         To mitigate the issue, this function waits until the input_pool
     is fully seeded, i.e., the entropy_avail counter matches
-    CRNG_INIT_CNT_THRESH (=512 bits). The function then writes to the
-    `/dev/urandom` device file, which triggers the reseeding of the
-    ChaCha20 DRNG from the input_pool.[2]
+    CRNG_INIT_CNT_THRESH (=512 bits) [1; p.49]. The function then writes
+    to the `/dev/urandom` device file, which triggers the reseeding of the
+    ChaCha20 DRNG from the input_pool.[4; p.10]
 
-     [1] https://github.com/torvalds/linux/blob/master/drivers/char/random.c#L886
-     [2] https://www.chronox.de/lrng/doc/lrng.pdf p.10
+     [1] https://www.bsi.bund.de/SharedDocs/Downloads/EN/BSI/Publications/Studies/LinuxRNG/LinuxRNG_EN.pdf?__blob=publicationFile&v=16
+     [2] https://github.com/torvalds/linux/blob/master/drivers/char/random.c#L886
+     [3] https://lwn.net/Articles/760584/
+         https://sharps.org/wp-content/uploads/BECKER-CHES.pdf
+     [4] https://www.chronox.de/lrng/doc/lrng.pdf
     """
     message = "Waiting for kernel CSPRNG entropy pool to fill up"
     phase(message, head=1)
@@ -1025,14 +1031,13 @@ def check_kernel_entropy() -> None:
 def check_kernel_version() -> None:
     """Check that the Linux kernel version is at least 4.17.
 
-    This check ensures that TFC only runs on Linux kernels (>4.8) that
-    use the new ChaCha20 based CSPRNG that among many things, adds
-    backtracking protection.[1]
+    This check ensures that TFC only runs on Linux kernels that
+    use the new ChaCha20 DRNG (>4.8) that among many things,
+    adds backtracking protection.[1]
 
     In addition, the requirement for 4.17 ensures that the ChaCha20
     DRNG is considered fully seeded only after it has also been
-    seeded by the input_pool, not just fast_pool. If the Kernel
-    trusts the CPU, seeding from input_pool is still skipped.
+    seeded by the input_pool, not just fast_pool.
     [2; p.141]
 
      [1] https://lkml.org/lkml/2016/7/25/43
