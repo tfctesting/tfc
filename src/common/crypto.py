@@ -151,10 +151,10 @@ def argon2_kdf(password:    str,    # Password to derive the key from
         o scrypt is very complex as it "combines two independent
           cryptographic primitives (the SHA256 hash function, and
           the Salsa20/8 core operation), and four generic operations
-          (HMAC, PBKDF2, Block-Mix, and ROMix)."[2; p.10] Furthermore,
-          scrypt is "vulnerable to trivial time-memory trade-off (TMTO)
-          attacks that allows compact implementations with the same
-          energy cost."[1; p.2]
+          (HMAC, PBKDF2, Block-Mix, and ROMix)."[2; p.10]
+              Furthermore, scrypt is "vulnerable to trivial time-memory
+          trade-off (TMTO) attacks that allows compact implementations
+          with the same energy cost."[1; p.2]
 
         o Of all of the PHC finalists, only Catena and Argon2i offer
           complete cache-timing resistance by using data-independent
