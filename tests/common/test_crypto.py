@@ -350,7 +350,7 @@ class TestXChaCha20Poly1305(unittest.TestCase):
     ciphertext and tag.
 
     IETF test vectors:
-        https://tools.ietf.org/html/draft-irtf-cfrg-xchacha-00#appendix-A.1
+        https://tools.ietf.org/html/draft-irtf-cfrg-xchacha-01#appendix-A.1
 
     Libsodium test vectors:
         Message: https://github.com/jedisct1/libsodium/blob/master/test/default/aead_xchacha20poly1305.c#L22

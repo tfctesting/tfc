@@ -442,7 +442,7 @@ def encrypt_and_sign(plaintext: bytes,       # Plaintext to encrypt
     tested by TFC unit tests. The testing is done in limited scope by
     using the libsodium and official IETF test vectors.
 
-      [1] https://tools.ietf.org/html/draft-irtf-cfrg-xchacha-00
+      [1] https://tools.ietf.org/html/draft-irtf-cfrg-xchacha-01
       [2] https://tools.ietf.org/html/rfc8439
       [3] https://download.libsodium.org/doc/secret-key_cryptography/aead/chacha20-poly1305/xchacha20-poly1305_construction
       [4] https://cr.yp.to/snuffle/keysizes.pdf
