@@ -95,7 +95,7 @@ def blake2b(message:     bytes,                        # Message to hash
           means better hash ratchet performance:
 
           "The ARX-based algorithms, BLAKE and Skein, perform extremely
-           well in software."[2: p.13]
+           well in software."[2; p.13]
 
         o Compared to SHA3-256, the algorithm runs slower on ASICs which
           means attacks by high-budget adversaries are slower:
