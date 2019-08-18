@@ -951,6 +951,7 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH  # Length of the key
      [2] https://www.python.org/dev/peps/pep-0524/
      [3] https://lwn.net/Articles/606141/
 
+
     BLAKE2 compression
     ==================
 
