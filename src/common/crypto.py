@@ -737,11 +737,11 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH  # Length of the key
     Overview
     --------
     The input_pool is the 4096-bit primary entropy pool of the LRNG that
-    compresses truly random events from different noise sources.
+    compresses truly random events from different noise sources.[1; p.19]
     Together the noise sources and the input_pool form a constantly
     seeded, non-deterministic random number generator (NDRNG), that
     seeds the ChaCha20-based deterministic random number generator
-    (DRNG).
+    (DRNG).[1; pp.20]
 
     Initialization of the input_pool
     --------------------------------
@@ -751,14 +751,14 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH  # Length of the key
         2. Data obtained from CPU HWRNG via RDRAND instruction, if 
            available.
         3. System specific information such as OS name, release,
-           version, and a HW identifier.[1; p.31]
+           version, and a HW identifier.[1; pp.30-31]
 
     Initial seeding and seeding levels of the input_pool
     ----------------------------------------------------
     After a hardware event has occurred, the entropy of the event value
     is estimated, and both values are mixed into the input_pool using a 
     function based on a linear feedback shift register (LFSR), one byte
-    at a time.[1; p.18]
+    at a time.[1; p.23]
 
     **Minimally seeded state**
     The `minimally seeded` threshold of the input_pool is 128 bits.[1; p.22]
@@ -774,9 +774,10 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH  # Length of the key
     According to [2; pp.5-6], this happens approximately 1.3 seconds
     after boot.
         Once the input_pool is fully seeded, user space callers waiting
-    for the GETRANDOM syscall are woken up.[2; p.11] This means TFC's
-    GETRANDOM syscall won't even be available until the ChaCha20 DRNG
-    is fully seeded.
+    for the GETRANDOM syscall are woken up.[2; p.11]. According to
+    [1; p.39], the ChaCha20 DRNG blocks until it is fully seeded. This
+    means TFC's key generation blocks until the ChaCha20 DRNG is fully
+    seeded.
     
     State transition and output of the input_pool
     ---------------------------------------------
