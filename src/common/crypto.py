@@ -608,7 +608,7 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH  # Length of the key
     ┃_randomness┃┃  _randomness  ┃┃_randomness┃┃_randomness┃┃ _randomness ┃
     ┗━━━━━━━━━━━┛┗━━━━━━━━━━━━━━━┛┗━━━━━━━━━━━┛┗━━━━━━━━━━━┛┗━━━━━━━━━━━━━┛
     
-    [1] https://www.bsi.bund.de/SharedDocs/Downloads/EN/BSI/Publications/Studies/LinuxRNG/LinuxRNG_EN.pdf?__blob=publicationFile&v=16
+     [1] https://www.bsi.bund.de/SharedDocs/Downloads/EN/BSI/Publications/Studies/LinuxRNG/LinuxRNG_EN.pdf?__blob=publicationFile&v=16
 
 
     Entropy sources
