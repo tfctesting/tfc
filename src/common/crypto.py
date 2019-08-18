@@ -647,13 +647,14 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH  # Length of the key
         o add_disk_randomness: Hardware events of block devices, e.g.
           HDDs (but not e.g. SSDs). When a disk event occurs, the device
           number as well as the timer state variable disk->random is 
-          mixed into the input_pool via add_timer_randomness.[1; pp.50-51]
+          mixed into the input_pool via add_timer_randomness.
+          [1; pp.50-51]
 
         o add_interrupt_randomness: Interrupts (i.e. signals from SW/HW
           to processor that an event needs immediate attention) occur
           hundreds of thousands of times per second under average load. 
               The interrupt timestamps and event data are mixed into
-          128-bit, per-CPU pool called fast_pool. When an interrupt 
+          128-bit, per-CPU pool called fast_pool. When an interrupt
           occurs
             * the 32 LSBs of the RDTSCP timestamp, the coarse Jiffies, 
               and the interrupt number are XORed with the first 32-bit 
@@ -687,10 +688,10 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH  # Length of the key
     Additional raw entropy sources include
 
         o RDSEED/RDRAND CPU instructions:
-            - Intel: A pair of inverters[1] feeds 512 bits of raw entropy
-                     to AES256-CBC-MAC based conditioner (as specified
-                     in NIST SP 800-90B), that can be requested bytes 
-                     with the RDSEED instruction.
+            - Intel: A pair of inverters[1] feeds 512 bits of raw
+                     entropy to AES256-CBC-MAC based conditioner (as
+                     specified in NIST SP 800-90B), that can be
+                     requested bytes with the RDSEED instruction.
                         The conditioner is used to create 256-bit seeds
                      for the AES256-CTR based DRBG available via the
                      RDRAND instruction. The DRBG is re-seeded after 
@@ -708,13 +709,15 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH  # Length of the key
 
           While the RDSEED/RDRAND instructions are used extensively,
           because the CPU HWRNG is not an auditable source, it is 
-          assumed to provide only a very small amount of entropy.[1; p.83]
+          assumed to provide only a very small amount of entropy.
+          [1; p.83]
 
-        o Data written to /dev/(u)random from the user space[1; p.38] such
-          as the 4096-bit seed obtained from the DRNG when the previous
-          session ended and the system was powered off.[1; p.63] While the
-          value might not be mixed in early enough during boot to benefit
-          the kernel, it is mixed into the input_pool before TFC starts.
+        o Data written to /dev/(u)random from the user space[1; p.38]
+          such as the 4096-bit seed obtained from the DRNG when the
+          previous session ended and the system was powered off. [1; p.63]
+              While the value might not be mixed in early enough during
+          boot to benefit the kernel, it is mixed into the input_pool
+          before TFC starts.
 
         o User space IOCTL of RNDADDENTROPY.[1; p.39]
 
@@ -729,12 +732,12 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH  # Length of the key
 
     Overview
     --------
-    The input_pool is the 4096-bit primary entropy pool of the LRNG 
-    that compresses truly random events from different noise sources.
-        Together the noise sources and the input_pool form a 
-    constantly seeded, non-deterministic random number generator 
-    (NDRNG), that seeds the ChaCha20-based deterministic random number 
-    generator (DRNG).
+    The input_pool is the 4096-bit primary entropy pool of the LRNG that
+    compresses truly random events from different noise sources.
+    Together the noise sources and the input_pool form a constantly
+    seeded, non-deterministic random number generator (NDRNG), that
+    seeds the ChaCha20-based deterministic random number generator
+    (DRNG).
 
     Initialization of the input_pool
     --------------------------------
@@ -743,7 +746,7 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH  # Length of the key
         1. The current time with nanosecond precision (64-bit CPUs).
         2. Data obtained from CPU HWRNG via RDRAND instruction, if 
            available.
-        3. System specific information such as OS name, release, 
+        3. System specific information such as OS name, release,
            version, and a HW identifier.[1; p.31]
 
     Initial seeding and seeding levels of the input_pool
@@ -852,8 +855,8 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH  # Length of the key
         In addition, all content from the add_device_randomness source
     is mixed into the DRNG key state using an LFSR with a period of 255.
     [1; p.52]
-        Once the entropy sources have been mixed in, the DRNG is considered
-    to be initially seeded.[1; p.35]
+        Once the entropy sources have been mixed in, the DRNG is
+    considered to be initially seeded.[1; p.35]
 
     **Fully seeded state**
     As of Linux kernel 4.17, the DRNG is considered fully seeded
@@ -861,9 +864,10 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH  # Length of the key
     kernel, the input_pool has reached 128-bit entropy, and the DRNG is
     reseeded by XORing 256 bits from the input_pool with the key part of
     the DRNG.[1; p.138]
-        The time to reach this state might take up to 90 seconds[1; p.70],
-    but as the installation of TFC via Tor takes longer than that, the DRNG
-    is most likely fully seeded by the time it generates keys.
+        The time to reach this state might take up to 90 seconds
+    [1; p.70], but as the installation of TFC via Tor takes longer than
+    that, the DRNG is most likely fully seeded by the time TFC generates
+    keys.
 
     State transition and output of the DRNG
     ---------------------------------------
@@ -877,10 +881,10 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH  # Length of the key
     The state of the DRNG is further stirred by XORing the second 32-bit
     word of the nonce with the output from RDRAND instruction, if
     available. [1; p.33]
-        Once the amount of requested random data has been generated, the state
-    update function is invoked, which takes a 256-bit block of unused
-    keystream and XORs it with the key part of the ChaCha20 state to ensure
-    backtracking resistance. [1; pp.33-34]
+        Once the amount of requested random data has been generated, the
+    state update function is invoked, which takes a 256-bit block of
+    unused keystream and XORs it with the key part of the ChaCha20 state
+    to ensure backtracking resistance. [1; pp.33-34]
 
     The random bytes are obtained with the GETRANDOM syscall instead of
     the /dev/urandom device file. This has two major benefits:
@@ -989,7 +993,7 @@ def check_kernel_entropy() -> None:
     The LRNG is designed not to yield entropy to user space via
     GETRANDOM until the ChaCha20 DRNG has been fully seeded, i.e., until
     the entropy evaluator estimates the internal entropy of the DRNG is
-    256 bits. LRNG is conservative with its estimates[1; p.81], therefore
+    256 bits. LRNG is conservative with its estimates[1; p.81]. Thus,
     this check is mostly unnecessary.
 
     However, in a situation where the kernel trusts the CPU's HWRNG, the
@@ -1000,8 +1004,8 @@ def check_kernel_entropy() -> None:
         To mitigate the issue, this function waits until the input_pool
     is fully seeded, i.e., the entropy_avail counter matches
     CRNG_INIT_CNT_THRESH (=512 bits) [1; p.49]. The function then writes
-    to the `/dev/urandom` device file, which triggers the reseeding of the
-    ChaCha20 DRNG from the input_pool.[4; p.10]
+    to the `/dev/urandom` device file, which triggers the reseeding of
+    the ChaCha20 DRNG from the input_pool.[4; p.10]
 
      [1] https://www.bsi.bund.de/SharedDocs/Downloads/EN/BSI/Publications/Studies/LinuxRNG/LinuxRNG_EN.pdf?__blob=publicationFile&v=16
      [2] https://github.com/torvalds/linux/blob/master/drivers/char/random.c#L886
@@ -1031,14 +1035,13 @@ def check_kernel_entropy() -> None:
 def check_kernel_version() -> None:
     """Check that the Linux kernel version is at least 4.17.
 
-    This check ensures that TFC only runs on Linux kernels that
-    use the new ChaCha20 DRNG (>4.8) that among many things,
-    adds backtracking protection.[1]
+    This check ensures that TFC only runs on Linux kernels that use the
+    new ChaCha20 DRNG (>4.8) that among many things, adds backtracking
+    protection.[1]
 
-    In addition, the requirement for 4.17 ensures that the ChaCha20
-    DRNG is considered fully seeded only after it has also been
-    seeded by the input_pool, not just fast_pool.
-    [2; p.141]
+    In addition, the requirement for 4.17 ensures that the ChaCha20 DRNG
+    is considered fully seeded only after it has also been seeded by the
+    input_pool, not just fast_pool.[2; p.141]
 
      [1] https://lkml.org/lkml/2016/7/25/43
      [2] https://www.bsi.bund.de/SharedDocs/Downloads/EN/BSI/Publications/Studies/LinuxRNG/LinuxRNG_EN.pdf?__blob=publicationFile&v=16
