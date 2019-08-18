@@ -625,8 +625,8 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH  # Length of the key
           kernel, if available. The output of the HWRNG device is used
           to seed the ChaCha20 DRNG if needed, and then to seed the
           input_pool directly when the entropy estimator's value falls 
-          below the set threshold. (The CPU HWRNG is not processed by 
-          the add_hwgenerator_randomness service function).[1; p.52]
+          below the set threshold. (CPU HWRNG is not processed by the
+          add_hwgenerator_randomness service function).[1; p.52]
 
         o add_input_randomness: Key presses, mouse movements, mouse
           button presses etc. Repeated event values (e.g. key presses or 
