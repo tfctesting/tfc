@@ -633,21 +633,23 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH  # Length of the key
         o add_input_randomness: Key presses, mouse movements, mouse
           button presses etc. Repeated event values (e.g. key presses or 
           same direction mouse movements) are ignored by the service
-          function.
+          function.[1; p.44]
               The event data consists of four LSBs of the event type, 
           four MSBs of the event code, the event code itself, and the
-          event value, all XORed together. The resulting event data is 
-          fed into the input_pool via add_timer_randomness, which
-          prepends to the event value the 32 LSBs of the 64-bit RDTSC
-          timestamp, plus the 64-bit Jiffies timestamp.[1; pp.44-45]
+          event value, all XORed together.[1; p.45]
+              The resulting event data is fed into the input_pool via
+          add_timer_randomness, which prepends to the event value the
+          32 LSBs of a high-resolution timestamp, plus the 64-bit
+          Jiffies timestamp.[1; p.55]
               Each HID event contains 15.6 bits of Shannon entropy, but
-          due to LRNG's conservative heuristic entropy estimation, only
-          1.29 bits of entropy is awarded to the event.[1; p.77]
+          due to LRNG's conservative heuristic entropy estimation, on
+          average only 1.29 bits of entropy is awarded to the event.
+          [1; p.77]
 
         o add_disk_randomness: Hardware events of block devices, e.g.
-          HDDs (but not e.g. SSDs). When a disk event occurs, the device
-          number as well as the timer state variable disk->random is 
-          mixed into the input_pool via add_timer_randomness.
+          HDDs (but not e.g. SSDs). When a disk event occurs, the block
+          device number as well as the timer state variable disk->random
+          is mixed into the input_pool via add_timer_randomness.
           [1; pp.50-51]
 
         o add_interrupt_randomness: Interrupts (i.e. signals from SW/HW
@@ -674,10 +676,10 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH  # Length of the key
           has passed since the fast_pool was last mixed in. The counter
           keeping track of the interrupt events is then zeroed.
           [1; pp.45-49]
-              Each interrupt is assumed to contain 1/32 bit of entropy
-          per interrupt. However, the measured Shannon entropy for each
-          interrupt is 19.2 bits, which means each 128-bit fast_pool is
-          fed 1228.8 bits of entropy. [1; p.77]
+              Each interrupt is assumed to contain 1/32 bit of entropy.
+          However, the measured Shannon entropy for each interrupt is
+          19.2 bits, which means each 128-bit fast_pool is fed 1228.8
+          bits of entropy. [1; p.77]
               The entire content of the fast_pool is considered to
           increase the internal entropy of the input_pool by 1 bit. If
           the RDSEED (explained below) instruction is available, it is
@@ -688,14 +690,14 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH  # Length of the key
     Additional raw entropy sources include
 
         o RDSEED/RDRAND CPU instructions:
-            - Intel: A pair of inverters[1] feeds 512 bits of raw
+            - Intel: A pair of inverters[2] feeds 512 bits of raw
                      entropy to AES256-CBC-MAC based conditioner (as
-                     specified in NIST SP 800-90B), that can be
+                     specified in NIST SP 800-38A), that can be
                      requested bytes with the RDSEED instruction.
                         The conditioner is used to create 256-bit seeds
                      for the AES256-CTR based DRBG available via the
                      RDRAND instruction. The DRBG is re-seeded after 
-                     every 511th sample of 128 bits (~8kB).[2; p.12]
+                     every 511th sample of 128 bits (~8kB).[3; p.12]
 
             - AMD:   A set of 16 ring oscillator chains feeds 512 bits
                      of raw entropy to AES256-CBC-MAC based conditioner
@@ -713,10 +715,11 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH  # Length of the key
           [1; p.83]
 
         o Data written to /dev/(u)random from the user space[1; p.38]
-          such as the 4096-bit seed obtained from the DRNG when the
-          previous session ended and the system was powered off. [1; p.63]
+          such as the 4096-bit seed obtained from the ChaCha DRNG when
+          the previous session ended and the system was powered off.
+          [1; p.63]
               While the value might not be mixed in early enough during
-          boot to benefit the kernel, it is mixed into the input_pool
+          boot to benefit the kernel[5], it is mixed into the input_pool
           before TFC starts.
 
         o User space IOCTL of RNDADDENTROPY.[1; p.39]
@@ -725,6 +728,7 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH  # Length of the key
      [2] https://spectrum.ieee.org/computing/hardware/behind-intels-new-randomnumber-generator
      [3] https://software.intel.com/sites/default/files/managed/98/4a/DRNG_Software_Implementation_Guide_2.1.pdf
      [4] https://www.amd.com/system/files/TechDocs/amd-random-number-generator.pdf
+     [5] https://security.stackexchange.com/questions/183506/random-seed-not-propagating-to-the-entropy-pools-in-a-timely-manner
 
 
     The input_pool
