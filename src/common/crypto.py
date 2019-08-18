@@ -997,21 +997,21 @@ def check_kernel_entropy() -> None:
     this check is mostly unnecessary.
 
     However, in a situation where the kernel trusts the CPU's HWRNG, the
-    ChaCha20 DRNG is not initially seeded with a seed from fully seeded
-    input_pool, but with a seed from only initially seeded input_pool.
-    [1; p.35] Majority of the entropy is trusted to come from RDRAND[2]
-    which might not be trustworthy.[3]
+    input_pool that seeds the ChaCha20 DRNG is not fully, but initially
+    seeded.[1; p.35][2] Majority of the entropy is trusted to come from
+    RDSEED/RDRAND[3] which might not be trustworthy.[4]
         To mitigate the issue, this function waits until the input_pool
     is fully seeded, i.e., the entropy_avail counter matches
     CRNG_INIT_CNT_THRESH (=512 bits) [1; p.49]. The function then writes
     to the `/dev/urandom` device file, which triggers the reseeding of
-    the ChaCha20 DRNG from the input_pool.[4; p.10]
+    the ChaCha20 DRNG from the input_pool.[5; p.10]
 
      [1] https://www.bsi.bund.de/SharedDocs/Downloads/EN/BSI/Publications/Studies/LinuxRNG/LinuxRNG_EN.pdf?__blob=publicationFile&v=16
-     [2] https://github.com/torvalds/linux/blob/master/drivers/char/random.c#L886
-     [3] https://lwn.net/Articles/760584/
+     [2] https://github.com/torvalds/linux/blob/master/drivers/char/random.c#L870
+     [3] https://github.com/torvalds/linux/blob/master/drivers/char/random.c#L876
+     [4] https://lwn.net/Articles/760584/
          https://sharps.org/wp-content/uploads/BECKER-CHES.pdf
-     [4] https://www.chronox.de/lrng/doc/lrng.pdf
+     [5] https://www.chronox.de/lrng/doc/lrng.pdf
     """
     message = "Waiting for kernel CSPRNG entropy pool to fill up"
     phase(message, head=1)
