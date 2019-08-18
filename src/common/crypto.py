@@ -709,9 +709,9 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH  # Length of the key
 
         o Data written to /dev/(u)random from the user space[1; p.41] such
           as the 4096-bit seed obtained from the DRNG when the previous
-          session ended and the system was powered off. While the value
-          might not be mixed in early enough during boot to benefit the
-          kernel, it is mixed into the input_pool before TFC starts.
+          session ended and the system was powered off[1; p.66]. While the
+          value might not be mixed in early enough during boot to benefit
+          the kernel, it is mixed into the input_pool before TFC starts.
           [1; p.41]
 
         o User space IOCTL of RNDADDENTROPY.[1; p.42]
