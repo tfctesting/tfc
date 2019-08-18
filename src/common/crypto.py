@@ -95,13 +95,13 @@ def blake2b(message:     bytes,                        # Message to hash
           means better hash ratchet performance:
 
           "The ARX-based algorithms, BLAKE and Skein, perform extremely
-           well in software."[2: p.6]
+           well in software."[2: p.13]
 
         o Compared to SHA3-256, the algorithm runs slower on ASICs which
           means attacks by high-budget adversaries are slower:
 
           "Keccak has a clear advantage in throughput/area performance
-           in hardware implementations."[2; p.6]
+           in hardware implementations."[2; p.13]
 
     Note that while the default length of BLAKE2b (the implementation
     optimized for AMD64 systems) digest is 512 bits, the digest size is
