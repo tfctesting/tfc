@@ -867,7 +867,7 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH  # Length of the key
         The time to reach this state might take up to 90 seconds
     [1; p.70], but as the installation of TFC via Tor takes longer than
     that, the DRNG is most likely fully seeded by the time TFC generates
-    keys.
+    keys and no blocking affects the user experience.
 
     State transition and output of the DRNG
     ---------------------------------------
