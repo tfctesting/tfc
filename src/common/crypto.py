@@ -103,9 +103,9 @@ def blake2b(message:     bytes,                        # Message to hash
           "Keccak has a clear advantage in throughput/area performance
            in hardware implementations."[2; p.13]
 
-    Note that while the default length of BLAKE2b (the implementation
-    optimized for AMD64 systems) digest is 512 bits, the digest size is
-    truncated to 256 bits for the use in TFC.
+    Note that while the default digest length of BLAKE2b (the
+    implementation optimized for AMD64 systems) is 512 bits, the digest
+    size is truncated to 256 bits for the use in TFC.
 
     The correctness of the BLAKE2b implementation[4] is tested by TFC
     unit tests. The testing is done with the complete suite of BLAKE2b
