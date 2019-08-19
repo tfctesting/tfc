@@ -185,8 +185,8 @@ def argon2_kdf(password:    str,    # Password to derive the key from
     protection against TMTO attacks which is great because most of the
     expected attacks are against physically compromised data storage
     devices where the encrypted data is at rest.
-        Argon2id also adds some some security against side-channel
-    attacks that malicious code injected to Destination Computer might
+        Argon2id also adds some security against side-channel attacks
+    that malicious code injected to the Destination Computer might
     perform. Considering these two attacks, Argon2id is the most secure
     option.
 
