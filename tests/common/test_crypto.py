@@ -621,25 +621,40 @@ class TestCSPRNG(unittest.TestCase):
 
 class TestVerifyLRNGEntropy(unittest.TestCase):
 
-    @mock.patch('src.common.crypto.wait_until_input_pool_is_fully_seeded', return_value=None)
-    @mock.patch('src.common.crypto.kernel_does_not_trust_cpu_hwrng',       return_value=True)
-    def test_returns_none_immediately_when_cpu_is_not_trusted(self, mock_trust_check, mock_blocker):
+    @mock.patch('src.common.crypto.wait_until_input_pool_is_fully_seeded',           return_value=None)
+    @mock.patch('src.common.crypto.chacha20_drng_has_been_reseeded_from_input_pool', return_value=False)
+    @mock.patch('src.common.crypto.cpu_does_not_support_rd_instructions',            return_value=False)
+    @mock.patch('src.common.crypto.kernel_does_not_trust_cpu_hwrng',                 return_value=True)
+    def test_returns_none_immediately_when_cpu_is_not_trusted(self, mock_trust_check, mock_instruction_check, mock_reseed_check, mock_blocker):
         self.assertIsNone(verify_lrng_entropy())
         mock_trust_check.assert_called()
+
+        mock_instruction_check.assert_not_called()
+        mock_reseed_check.assert_not_called()
         mock_blocker.assert_not_called()
 
-    @mock.patch('src.common.crypto.wait_until_input_pool_is_fully_seeded', return_value=None)
-    @mock.patch('src.common.crypto.cpu_does_not_support_rd_instructions',  return_value=True)
-    def test_returns_none_immediately_when_cpu_does_not_have_rd_instructions(self, mock_instruction_check, mock_blocker):
+    @mock.patch('src.common.crypto.wait_until_input_pool_is_fully_seeded',           return_value=None)
+    @mock.patch('src.common.crypto.chacha20_drng_has_been_reseeded_from_input_pool', return_value=False)
+    @mock.patch('src.common.crypto.cpu_does_not_support_rd_instructions',            return_value=True)
+    @mock.patch('src.common.crypto.kernel_does_not_trust_cpu_hwrng',                 return_value=False)
+    def test_returns_none_immediately_when_cpu_does_not_have_rd_instructions(self, mock_trust_check, mock_instruction_check, mock_reseed_check, mock_blocker):
         self.assertIsNone(verify_lrng_entropy())
+        mock_trust_check.assert_called()
         mock_instruction_check.assert_called()
+
+        mock_reseed_check.assert_not_called()
         mock_blocker.assert_not_called()
 
     @mock.patch('src.common.crypto.wait_until_input_pool_is_fully_seeded',           return_value=None)
     @mock.patch('src.common.crypto.chacha20_drng_has_been_reseeded_from_input_pool', return_value=True)
-    def test_returns_none_immediately_when_chacha20_drng_has_already_been_reseeded(self, mock_reseed_check, mock_blocker):
+    @mock.patch('src.common.crypto.cpu_does_not_support_rd_instructions',            return_value=False)
+    @mock.patch('src.common.crypto.kernel_does_not_trust_cpu_hwrng',                 return_value=False)
+    def test_returns_none_immediately_when_chacha20_drng_has_already_been_reseeded(self, mock_trust_check, mock_instruction_check, mock_reseed_check, mock_blocker):
         self.assertIsNone(verify_lrng_entropy())
+        mock_trust_check.assert_called()
+        mock_instruction_check.assert_called()
         mock_reseed_check.assert_called()
+
         mock_blocker.assert_not_called()
 
     @mock.patch('src.common.crypto.force_reseed_of_chacha20_drng_from_input_pool',   return_value=None)
@@ -647,8 +662,7 @@ class TestVerifyLRNGEntropy(unittest.TestCase):
     @mock.patch('src.common.crypto.chacha20_drng_has_been_reseeded_from_input_pool', return_value=False)
     @mock.patch('src.common.crypto.cpu_does_not_support_rd_instructions',            return_value=False)
     @mock.patch('src.common.crypto.kernel_does_not_trust_cpu_hwrng',                 return_value=False)
-    def test_passing_checks_makes_function_wait_for_input_pool_and_reseed(self, mock_trust_check, mock_instruction_check,
-                                                                         mock_reseed_check, mock_blocker, mock_reseeder):
+    def test_passing_checks_makes_function_wait_for_input_pool_and_reseed(self, mock_trust_check, mock_instruction_check, mock_reseed_check, mock_blocker, mock_reseeder):
         self.assertIsNone(verify_lrng_entropy())
         mock_trust_check.assert_called()
         mock_instruction_check.assert_called()
