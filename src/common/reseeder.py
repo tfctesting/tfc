@@ -28,7 +28,7 @@ def force_reseed():
     """Force reseed of the LRNG ChaCha20 DNRG.
 
     This is a utility program that is called by the
-    src.common.check_kernel_entropy function once the
+    src.common.verify_lrng_entropy function once the
     /proc/sys/kernel/random/entropy_avail indicates the input_pool has
     been seeded with 512 bits.
         This function calls the RNDRESEEDCRNG IOCTL which forces
