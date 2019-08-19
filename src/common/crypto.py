@@ -1044,7 +1044,7 @@ def kernel_does_not_trust_cpu_hwrng() -> bool:
 
 def cpu_does_not_support_rd_instructions() -> bool:
     """Return True if the CPU supports neither RDSEED nor RDRAND instruction."""
-    with open("/proc/cpuinfo") as f:
+    with open('/proc/cpuinfo') as f:
         cpuinfo = f.read()
         return not any(instruction in cpuinfo for instruction in ['rdseed', 'rdrand'])
 
@@ -1110,7 +1110,7 @@ def force_reseed_of_chacha20_drng_from_input_pool() -> None:
     pwd = '/'.join(os.path.realpath(__file__).split('/')[:-1])
 
     m_print("Re-seeding the ChaCha20 DRNG. Please enter sudo password.", tail=1)
-    exit_code = subprocess.Popen(f"sudo python3.7 {pwd}/reseeder.py", shell=True).wait()
+    exit_code = subprocess.Popen(f'sudo python3.7 {pwd}/reseeder.py', shell=True).wait()
 
     if exit_code != 0:
         raise CriticalError("Failed to reseed the ChaCha20 DRNG.")
