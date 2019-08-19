@@ -1019,10 +1019,10 @@ def verify_lrng_entropy() -> None:
      [4] https://lwn.net/Articles/760584/
          https://sharps.org/wp-content/uploads/BECKER-CHES.pdf
     """
-    if (kernel_does_not_trust_cpu_hwrng
-            or cpu_does_not_support_rd_instructions
-            or chacha20_drng_has_been_reseeded_from_input_pool):
-        return None
+    if (kernel_does_not_trust_cpu_hwrng()
+            or cpu_does_not_support_rd_instructions()
+            or chacha20_drng_has_been_reseeded_from_input_pool()):
+       return None
     else:
         wait_until_input_pool_is_fully_seeded()
         force_reseed_of_chacha20_drng_from_input_pool()

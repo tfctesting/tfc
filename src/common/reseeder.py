@@ -44,5 +44,5 @@ def force_reseed():
         os.close(fd)
 
 
-if __name__ == '__main__':
+if __name__ == '__main__':  # pragma: no cover
     force_reseed()
