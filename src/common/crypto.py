@@ -30,7 +30,7 @@ ChaCha stream cipher
 |  └─ Argon2id password hashing function
 └─ ChaCha20 stream cipher
    ├─ XChaCha20-Poly1305 AEAD (IETF variant)
-   └─ Linux kernel CSPRNG
+   └─ Linux kernel primary DRNG
 """
 
 import hashlib
@@ -812,7 +812,7 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH  # Length of the key
 
     Overview
     --------
-    The LRNG uses the ChaCha20 stream cipher as the default DRNG.
+    The LRNG uses the ChaCha20 stream cipher as its primary DRNG.
 
     The internal 64-byte state of the DRNG consists of
         - 16-byte constant b'Expand 32-byte k' set by the designer (djb)[1; p. 32]
@@ -1125,7 +1125,8 @@ def check_kernel_version() -> None:
 
     In addition, the requirement for 4.17 ensures that the ChaCha20 DRNG
     is considered fully seeded only after it has also been seeded by the
-    input_pool, not just fast_pool (assuming CPU isn't trusted).[2; p.141]
+    input_pool, not just fast_pool (assuming the CPU isn't trusted).
+    [2; p.141]
 
      [1] https://lkml.org/lkml/2016/7/25/43
      [2] https://www.bsi.bund.de/SharedDocs/Downloads/EN/BSI/Publications/Studies/LinuxRNG/LinuxRNG_EN.pdf?__blob=publicationFile&v=16
