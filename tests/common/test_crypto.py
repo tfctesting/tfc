@@ -567,7 +567,7 @@ class TestCSPRNG(unittest.TestCase):
         https://www.chronox.de/lrng/doc/lrng.pdf
 
     Further analysis of the LRNG can be found from Chapters 4-8
-    (pp. 75..130) of the BSI report:
+    (pp. 72..126) of the BSI report:
         https://www.bsi.bund.de/SharedDocs/Downloads/EN/BSI/Publications/Studies/LinuxRNG/LinuxRNG_EN.pdf?__blob=publicationFile&v=16
     """
     mock_entropy = SYMMETRIC_KEY_LENGTH * b'a'
@@ -625,7 +625,10 @@ class TestVerifyLRNGEntropy(unittest.TestCase):
     @mock.patch('src.common.crypto.chacha20_drng_has_been_reseeded_from_input_pool', return_value=False)
     @mock.patch('src.common.crypto.cpu_does_not_support_rd_instructions',            return_value=False)
     @mock.patch('src.common.crypto.kernel_does_not_trust_cpu_hwrng',                 return_value=True)
-    def test_returns_none_immediately_when_cpu_is_not_trusted(self, mock_trust_check, mock_instruction_check, mock_reseed_check, mock_blocker):
+    def test_returns_none_immediately_if_cpu_is_not_trusted(self, mock_trust_check,
+                                                            mock_instruction_check,
+                                                            mock_reseed_check,
+                                                            mock_blocker):
         self.assertIsNone(verify_lrng_entropy())
         mock_trust_check.assert_called()
 
@@ -637,7 +640,10 @@ class TestVerifyLRNGEntropy(unittest.TestCase):
     @mock.patch('src.common.crypto.chacha20_drng_has_been_reseeded_from_input_pool', return_value=False)
     @mock.patch('src.common.crypto.cpu_does_not_support_rd_instructions',            return_value=True)
     @mock.patch('src.common.crypto.kernel_does_not_trust_cpu_hwrng',                 return_value=False)
-    def test_returns_none_immediately_when_cpu_does_not_have_rd_instructions(self, mock_trust_check, mock_instruction_check, mock_reseed_check, mock_blocker):
+    def test_returns_none_immediately_if_cpu_does_not_have_rd_instructions(self, mock_trust_check,
+                                                                           mock_instruction_check,
+                                                                           mock_reseed_check,
+                                                                           mock_blocker):
         self.assertIsNone(verify_lrng_entropy())
         mock_trust_check.assert_called()
         mock_instruction_check.assert_called()
@@ -649,7 +655,10 @@ class TestVerifyLRNGEntropy(unittest.TestCase):
     @mock.patch('src.common.crypto.chacha20_drng_has_been_reseeded_from_input_pool', return_value=True)
     @mock.patch('src.common.crypto.cpu_does_not_support_rd_instructions',            return_value=False)
     @mock.patch('src.common.crypto.kernel_does_not_trust_cpu_hwrng',                 return_value=False)
-    def test_returns_none_immediately_when_chacha20_drng_has_already_been_reseeded(self, mock_trust_check, mock_instruction_check, mock_reseed_check, mock_blocker):
+    def test_returns_none_immediately_if_chacha20_drng_has_already_been_reseeded(self, mock_trust_check,
+                                                                                 mock_instruction_check,
+                                                                                 mock_reseed_check,
+                                                                                 mock_blocker):
         self.assertIsNone(verify_lrng_entropy())
         mock_trust_check.assert_called()
         mock_instruction_check.assert_called()
@@ -662,7 +671,11 @@ class TestVerifyLRNGEntropy(unittest.TestCase):
     @mock.patch('src.common.crypto.chacha20_drng_has_been_reseeded_from_input_pool', return_value=False)
     @mock.patch('src.common.crypto.cpu_does_not_support_rd_instructions',            return_value=False)
     @mock.patch('src.common.crypto.kernel_does_not_trust_cpu_hwrng',                 return_value=False)
-    def test_passing_checks_makes_function_wait_for_input_pool_and_reseed(self, mock_trust_check, mock_instruction_check, mock_reseed_check, mock_blocker, mock_reseeder):
+    def test_passing_checks_makes_function_wait_for_input_pool_and_reseed(self, mock_trust_check,
+                                                                          mock_instruction_check,
+                                                                          mock_reseed_check,
+                                                                          mock_blocker,
+                                                                          mock_reseeder):
         self.assertIsNone(verify_lrng_entropy())
         mock_trust_check.assert_called()
         mock_instruction_check.assert_called()
@@ -702,7 +715,7 @@ class TestCPUDoesNotSupportRDInstructions(unittest.TestCase):
         self.assertFalse(cpu_does_not_support_rd_instructions())
 
     @mock.patch('builtins.open', mock.mock_open(read_data="monitor aes fpu rdseed rdrand"))
-    def test_returns_false_if_rd_seed_and_rdrand_are_supported(self):
+    def test_returns_false_if_rdseed_and_rdrand_are_supported(self):
         self.assertFalse(cpu_does_not_support_rd_instructions())
 
 
@@ -765,7 +778,7 @@ class TestForceReseedOfChaCha20DRNGFromInputPool(unittest.TestCase):
 
     @mock.patch("subprocess.Popen", return_value=MagicMock(wait=MagicMock(return_value=0)))
     def test_function_calls_reseed_utility_and_returns_none_if_exit_code_is_zero(self, mock_popen):
-        force_reseed_of_chacha20_drng_from_input_pool()
+        self.assertIsNone(force_reseed_of_chacha20_drng_from_input_pool())
         call_params = mock_popen.call_args[0][0].split()
         self.assertEqual(call_params[0], 'sudo')
         self.assertEqual(call_params[1], 'python3.7')

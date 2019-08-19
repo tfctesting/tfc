@@ -768,7 +768,8 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH  # Length of the key
     reached at early boot phase (by the time the user space boots).
     [2; p.6]
         Once the input_pool is initialized, the ChaCha20 DRNG is
-    reseeded from the input_pool[3] and at that point it is considered
+    reseeded from the input_pool[3] using 128..256 bits of entropy
+    [1; pp.27-28] from the input_pool and at that point it is considered
     fully seeded.[4]
 
     State transition and output of the input_pool
@@ -816,7 +817,7 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH  # Length of the key
 
     The internal 64-byte state of the DRNG consists of
         - 16-byte constant b'Expand 32-byte k' set by the designer (djb)[1; p. 32]
-        - 32-byte key (The only part that is re-seeded with entropy)
+        - 32-byte key (the only part that is re-seeded with entropy)
         -  4-byte counter (the counter is actually 64-bits[2])
         - 12-byte nonce
 
@@ -860,17 +861,15 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH  # Length of the key
     As of Linux kernel 4.17, the DRNG is considered fully seeded
     (256-bit entropy) only after, during initialization time of the
     kernel, the input_pool has reached 128-bit entropy, and the DRNG is
-    reseeded by XORing 256 bits from the input_pool with the key part of
-    the DRNG.[1; p.138]
+    reseeded by XORing 128..256 bits from the input_pool with the key
+    part of the DRNG state.[1; p.138]
         The time to reach this state might take up to 90 seconds
     [1; p.70], but as the installation of TFC via Tor takes longer than
     that, the DRNG is most likely fully seeded by the time TFC generates
     keys and no blocking affects the user experience.
-    user space callers waiting
-    for the GETRANDOM syscall are woken up.[2; p.11]. According to
-    [1; p.39], the ChaCha20 DRNG blocks until it is fully seeded. This
-    means TFC's key generation blocks until the ChaCha20 DRNG is fully
-    seeded.
+        According to [1; p.39] and [2; p.11], the ChaCha20 DRNG blocks
+    until it is fully seeded. This means TFC's key generation also
+    blocks until the ChaCha20 DRNG is fully seeded.
 
     State transition and output of the DRNG
     ---------------------------------------
@@ -883,14 +882,14 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH  # Length of the key
     the ChaCha20 state is incremented by one to ensure unique blocks.
     The state of the DRNG is further stirred by XORing the second 32-bit
     word of the nonce with the output from RDRAND instruction, if
-    available. [1; p.33]
+    available.[1; p.33]
         Once the amount of requested random data has been generated, the
     state update function is invoked, which takes a 256-bit block of
     unused keystream and XORs it with the key part of the ChaCha20 state
     to ensure backtracking resistance. [1; pp.33-34]
 
-    The random bytes are obtained with the GETRANDOM syscall instead of
-    the /dev/urandom device file. This has two major benefits:
+    The random bytes used in TFC are obtained with the GETRANDOM syscall
+    instead of the /dev/urandom device file. This has two major benefits:
         1. It bypasses the Linux kernel's virtual file system (VFS)
            layer, which reduces complexity and possibility of bugs, and
         2. unlike /dev/urandom, GETRANDOM(0) blocks until it has been
@@ -899,9 +898,9 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH  # Length of the key
 
     Reseeding of the DRNG
     ---------------------
-    The DRNG is reseeded automatically every 300 seconds irrespective of
-    the amount of data produced by the DRNG [1; p.32].
-        The DRNG is re-seeded by obtaining (up to) 32 bytes of entropy 
+    The ChaCha20 DRNG is reseeded automatically every 300 seconds
+    irrespective of the amount of data produced by the DRNG [1; p.32].
+        The DRNG is re-seeded by obtaining 128..256 bits of entropy
     from the input_pool. In the order of preference, the entropy from 
     input_pool is XORed with the output of
         1. 32-byte value obtained via RDSEED CPU instruction, or
@@ -930,7 +929,7 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH  # Length of the key
     use of recent enough Python interpreter (3.6.0 or later) and limits
     the Linux kernel version to 3.17 or newer. To make use of the LRNG,
     the kernel version required by TFC is bumped to 4.8, and to make
-    sure the  ChaCha20 DRNG is always seeded from input_pool before its
+    sure the ChaCha20 DRNG is always seeded from input_pool before its
     considered fully seeded, the final minimum requirement is 4.17).
         The flag 0 means GETRANDOM will block if the DRNG is not fully 
     seeded.[1]
@@ -1001,10 +1000,10 @@ def verify_lrng_entropy() -> None:
     this check is mostly unnecessary.
 
     However, in a situation where the kernel trusts the CPU's HWRNG, and
-    less than 300 seconds have elapsed since the system booted,
-    input_pool that seeds the ChaCha20 DRNG in [2] might not be properly
-    seeded.[1; p.35] Majority of the entropy is trusted to come from
-    RDSEED/RDRAND[3] which might not be trustworthy.[4]
+    less than 300 seconds have elapsed since the the DRNG was set fully
+    seeded[2], input_pool that seeds the ChaCha20 DRNG in [3] might not
+    be properly seeded.[1; p.32]. Majority of the entropy is trusted to
+    come from RDSEED/RDRAND[4] which might not be trustworthy.[5]
 
     In case CPU HWRNG was trusted, RDSEED/RDRAND is available, and less
     than 300 seconds have elapsed, this function mitigates the issue by
@@ -1014,9 +1013,10 @@ def verify_lrng_entropy() -> None:
     triggers the reseeding of the ChaCha20 DRNG from the input_pool.[1; p. 139]
 
      [1] https://www.bsi.bund.de/SharedDocs/Downloads/EN/BSI/Publications/Studies/LinuxRNG/LinuxRNG_EN.pdf?__blob=publicationFile&v=16
-     [2] https://github.com/torvalds/linux/blob/master/drivers/char/random.c#L871
-     [3] https://github.com/torvalds/linux/blob/master/drivers/char/random.c#L876
-     [4] https://lwn.net/Articles/760584/
+     [2] https://github.com/torvalds/linux/blob/master/drivers/char/random.c#L886
+     [3] https://github.com/torvalds/linux/blob/master/drivers/char/random.c#L871
+     [4] https://github.com/torvalds/linux/blob/master/drivers/char/random.c#L876
+     [5] https://lwn.net/Articles/760584/
          https://sharps.org/wp-content/uploads/BECKER-CHES.pdf
     """
     if (kernel_does_not_trust_cpu_hwrng()
@@ -1046,7 +1046,8 @@ def cpu_does_not_support_rd_instructions() -> bool:
     """Return True if the CPU supports neither RDSEED nor RDRAND instruction."""
     with open('/proc/cpuinfo') as f:
         cpuinfo = f.read()
-        return not any(instruction in cpuinfo for instruction in ['rdseed', 'rdrand'])
+
+    return not any(instruction in cpuinfo for instruction in ['rdseed', 'rdrand'])
 
 
 def chacha20_drng_has_been_reseeded_from_input_pool() -> bool:
@@ -1089,7 +1090,7 @@ def wait_until_input_pool_is_fully_seeded() -> None:
     Wait until the entropy_avail counter indicates that the LRNG
     input_pool is fully seeded.
     """
-    message = "Waiting for LRNG entropy pool to fill up"
+    message = "Waiting for the LRNG entropy pool to fill up"
     phase(message, head=1)
 
     ent_avail = 0
