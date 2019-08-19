@@ -19,8 +19,8 @@ You should have received a copy of the GNU General Public License
 along with TFC. If not, see <https://www.gnu.org/licenses/>.
 """
 
-import os
 import fcntl
+import os
 
 RNDRESEEDCRNG = 0x5207  # https://godoc.org/golang.org/x/sys/unix
 
