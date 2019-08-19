@@ -43,5 +43,6 @@ def force_reseed():
     finally:
         os.close(fd)
 
+
 if __name__ == '__main__':
     force_reseed()

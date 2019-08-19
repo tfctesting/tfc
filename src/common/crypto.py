@@ -991,8 +991,8 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH  # Length of the key
     return compressed
 
 
-def check_kernel_entropy() -> None:
-    """Wait until the kernel CSPRNG is sufficiently seeded.
+def verify_lrng_entropy() -> None:
+    """Ensure that the ChaCha20 DRNG has been seeded from the input_pool.
 
     The LRNG is designed not to yield entropy to user space via
     GETRANDOM until the ChaCha20 DRNG has been fully seeded, i.e., until
@@ -1002,45 +1002,94 @@ def check_kernel_entropy() -> None:
 
     However, in a situation where the kernel trusts the CPU's HWRNG, and
     less than 300 seconds have elapsed since the system booted,
-    input_pool that seeds the ChaCha20 DRNG might not be properly seeded.
-    [1; p.35][2] Majority of the entropy is trusted to come from
+    input_pool that seeds the ChaCha20 DRNG in [2] might not be properly
+    seeded.[1; p.35] Majority of the entropy is trusted to come from
     RDSEED/RDRAND[3] which might not be trustworthy.[4]
-        To mitigate the issue, this function waits until the input_pool
-    is fully seeded, i.e., the entropy_avail counter matches
-    CRNG_INIT_CNT_THRESH (=512 bits) [1; p.49]. The function then
-    invokes the RNDRESEEDCRNG IOCTL, which triggers the reseeding of
-    the ChaCha20 DRNG from the input_pool.[5; p.10]
+
+    In case CPU HWRNG was trusted, RDSEED/RDRAND is available, and less
+    than 300 seconds have elapsed, this function mitigates the issue by
+    waiting until the input_pool is fully seeded, i.e., until the
+    entropy_avail counter matches CRNG_INIT_CNT_THRESH (=512 bits).[1; p.49]
+        The function then invokes the RNDRESEEDCRNG IOCTL, which
+    triggers the reseeding of the ChaCha20 DRNG from the input_pool.[1; p. 139]
 
      [1] https://www.bsi.bund.de/SharedDocs/Downloads/EN/BSI/Publications/Studies/LinuxRNG/LinuxRNG_EN.pdf?__blob=publicationFile&v=16
-     [2] https://github.com/torvalds/linux/blob/master/drivers/char/random.c#L870
+     [2] https://github.com/torvalds/linux/blob/master/drivers/char/random.c#L871
      [3] https://github.com/torvalds/linux/blob/master/drivers/char/random.c#L876
      [4] https://lwn.net/Articles/760584/
          https://sharps.org/wp-content/uploads/BECKER-CHES.pdf
-     [5] https://www.chronox.de/lrng/doc/lrng.pdf
     """
-    # If the kernel does not trust the CPU HWRNG, we're good.
-    with open(f'/boot/config-{os.uname()[2]}') as f:
-        safe_kernel_config = 'CONFIG_RANDOM_TRUST_CPU=n' in f.read()
-
-    # If the CPU does not feature RDSEED or RDRAND, we're good.
-    with open("/proc/cpuinfo") as f:
-        cpuinfo                 = f.read()
-        no_cpu_rng_instructions = "rdseed" not in cpuinfo and "rdrand" not in cpuinfo
-
-    # If the Computer has been powered on more than 300 seconds
-    # (+10% for headroom), ChaCha20 DRNG has been seeded from the
-    # input_pool at least once.
-    with open('/proc/uptime') as f:
-        uptime_seconds         = float(f.readline().split()[0])
-        drng_has_been_reseeded = uptime_seconds > 1.1 * CHACHA20_DRNG_RESEED_INTERVAL
-
-    if safe_kernel_config or no_cpu_rng_instructions or drng_has_been_reseeded:
+    if (kernel_does_not_trust_cpu_hwrng
+            or cpu_does_not_support_rd_instructions
+            or chacha20_drng_has_been_reseeded_from_input_pool):
         return None
+    else:
+        wait_until_input_pool_is_fully_seeded()
+        force_reseed_of_chacha20_drng_from_input_pool()
 
-    # If we reach this point, we need to ensure the ChaCha20 DRNG is
-    # safe to use.
 
-    message = "Waiting for LRNG input pool to fill up"
+def kernel_does_not_trust_cpu_hwrng() -> bool:
+    """Return True if the Linux kernel does not trust the CPU HWRNG."""
+
+    with open(f'/boot/config-{os.uname()[2]}') as f:
+        file_data = f.read()
+
+    if 'CONFIG_RANDOM_TRUST_CPU=n' in file_data:
+        return True
+    elif 'CONFIG_RANDOM_TRUST_CPU=y' in file_data:
+        return False
+    else:
+        raise CriticalError("Could not determine if the kernel trusts the CPU HWRNG.")
+
+
+def cpu_does_not_support_rd_instructions() -> bool:
+    """Return True if the CPU supports neither RDSEED nor RDRAND instruction."""
+    with open("/proc/cpuinfo") as f:
+        cpuinfo = f.read()
+        return not any(instruction in cpuinfo for instruction in ['rdseed', 'rdrand'])
+
+
+def chacha20_drng_has_been_reseeded_from_input_pool() -> bool:
+    """\
+    Return True if the ChaCha20 DRNG has been properly reseeded from the
+    input_pool.
+    """
+    # We first look for a message that indicates the ChaCha20 DRNG has
+    # already been properly seeded from the input_pool during boot.
+    try:
+        output = subprocess.check_output('dmesg | grep "random: crng init done"', shell=True).decode()
+        if "random: crng init done" in output:
+            return True
+    except subprocess.CalledProcessError:
+        pass
+
+    # If we don't find message about input_pool being used for seeding,
+    # we search for a message about CPU being trusted to do the seeding.
+    try:
+        output         = subprocess.check_output('dmesg | grep "random: crng done (trusting CPU"', shell=True).decode()
+        init_seed_time = float(output.split(']')[0].strip('[').strip())
+    except subprocess.CalledProcessError:
+        raise CriticalError("ChaCha20 DRNG has not been fully seeded.")
+
+    # We then find out how long the system has been running.
+    with open('/proc/uptime') as f:
+        uptime = float(f.readline().split()[0])
+
+    # If the ChaCha20 DRNG was initially seeded at least least 300
+    # seconds ago (we add +1s for tolerance), we know the DRNG has
+    # been reseeded from the safe input_pool at least once.
+    time_since_init_seed   = uptime - init_seed_time
+    drng_has_been_reseeded = time_since_init_seed > (CHACHA20_DRNG_RESEED_INTERVAL+1)
+
+    return drng_has_been_reseeded
+
+
+def wait_until_input_pool_is_fully_seeded() -> None:
+    """\
+    Wait until the entropy_avail counter indicates that the LRNG
+    input_pool is fully seeded.
+    """
+    message = "Waiting for LRNG entropy pool to fill up"
     phase(message, head=1)
 
     ent_avail = 0
@@ -1055,11 +1104,16 @@ def check_kernel_entropy() -> None:
     phase(message)
     phase(DONE)
 
-    m_print("Re-seeding the LRNG. Please enter sudo password.", tail=1)
+
+def force_reseed_of_chacha20_drng_from_input_pool() -> None:
+    """Force the reseed of ChaCha20 DRNG from the input_pool."""
     pwd = '/'.join(os.path.realpath(__file__).split('/')[:-1])
+
+    m_print("Re-seeding the ChaCha20 DRNG. Please enter sudo password.", tail=1)
     exit_code = subprocess.Popen(f"sudo python3.7 {pwd}/reseeder.py", shell=True).wait()
+
     if exit_code != 0:
-        raise CriticalError("Failed to reseed LRNG.")
+        raise CriticalError("Failed to reseed the ChaCha20 DRNG.")
 
 
 def check_kernel_version() -> None:
