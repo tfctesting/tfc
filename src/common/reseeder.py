@@ -37,10 +37,11 @@ def force_reseed():
     even if the kernel trusts the RDSEED/RDRAND instructions.
     """
     fd = os.open('/dev/urandom', os.O_WRONLY)
-    if fcntl.ioctl(fd, RNDRESEEDCRNG) != 0:
-       exit(1)
-    os.close(fd)
-    exit(0)
+    try:
+        if fcntl.ioctl(fd, RNDRESEEDCRNG) != 0:
+            exit(1)
+    finally:
+        os.close(fd)
 
 if __name__ == '__main__':
     force_reseed()
