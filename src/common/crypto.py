@@ -879,7 +879,7 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH  # Length of the key
     essentially part of the keystream that in the context of stream
     cipher would be XORed with the plaintext to produce the ciphertext.
         With each generated block the internal 32-bit counter value of
-    the ChaCha20 state is incremented by one to ensure unique blocks.
+    the ChaCha20 state is incremented by one to ensure unique blocks.[4]
     The state of the DRNG is further stirred by XORing the second 32-bit
     word of the nonce with the output from RDRAND instruction, if
     available.[1; p.33]
@@ -913,6 +913,8 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH  # Length of the key
      [2] https://lkml.org/lkml/2019/5/30/867
      [3] https://github.com/torvalds/linux/blob/master/drivers/char/random.c#L889
          https://github.com/torvalds/linux/blob/master/drivers/char/random.c#L1058
+     [4] https://github.com/torvalds/linux/blob/master/lib/chacha.c#L87
+         https://github.com/torvalds/linux/blob/master/drivers/char/random.c#L1064
 
 
     GETRANDOM and Python
