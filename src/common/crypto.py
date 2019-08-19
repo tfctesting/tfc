@@ -1024,17 +1024,17 @@ def check_kernel_entropy() -> None:
 
     # If the CPU does not feature RDSEED or RDRAND, we're good.
     with open("/proc/cpuinfo") as f:
-        cpuinfo = f.read()
-        no_rd_instructions = "rdseed" not in cpuinfo and "rdrand" not in cpuinfo
+        cpuinfo                 = f.read()
+        no_cpu_rng_instructions = "rdseed" not in cpuinfo and "rdrand" not in cpuinfo
 
     # If the Computer has been powered on more than 300 seconds
     # (+10% for headroom), ChaCha20 DRNG has been seeded from the
     # input_pool at least once.
     with open('/proc/uptime') as f:
-        uptime_seconds = float(f.readline().split()[0])
-    drng_has_been_reseeded = uptime_seconds > 1.1 * CHACHA20_DRNG_RESEED_INTERVAL
+        uptime_seconds         = float(f.readline().split()[0])
+        drng_has_been_reseeded = uptime_seconds > 1.1 * CHACHA20_DRNG_RESEED_INTERVAL
 
-    if safe_kernel_config or no_rd_instructions or drng_has_been_reseeded:
+    if safe_kernel_config or no_cpu_rng_instructions or drng_has_been_reseeded:
         return None
 
     # If we reach this point, we need to ensure the ChaCha20 DRNG is
@@ -1059,7 +1059,7 @@ def check_kernel_entropy() -> None:
     pwd = '/'.join(os.path.realpath(__file__).split('/')[:-1])
     exit_code = subprocess.Popen(f"sudo python3.7 {pwd}/reseeder.py", shell=True).wait()
     if exit_code != 0:
-        raise CriticalError("Failed to reseed ChaCha20 DRNG.")
+        raise CriticalError("Failed to reseed LRNG.")
 
 
 def check_kernel_version() -> None:
@@ -1071,7 +1071,7 @@ def check_kernel_version() -> None:
 
     In addition, the requirement for 4.17 ensures that the ChaCha20 DRNG
     is considered fully seeded only after it has also been seeded by the
-    input_pool, not just fast_pool.[2; p.141]
+    input_pool, not just fast_pool (assuming CPU isn't trusted).[2; p.141]
 
      [1] https://lkml.org/lkml/2016/7/25/43
      [2] https://www.bsi.bund.de/SharedDocs/Downloads/EN/BSI/Publications/Studies/LinuxRNG/LinuxRNG_EN.pdf?__blob=publicationFile&v=16
