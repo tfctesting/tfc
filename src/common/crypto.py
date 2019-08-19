@@ -35,6 +35,7 @@ ChaCha stream cipher
 
 import hashlib
 import os
+import subprocess
 
 import argon2
 import nacl.bindings
@@ -50,8 +51,8 @@ from src.common.exceptions import CriticalError
 from src.common.misc       import ignored, separate_header
 from src.common.output     import m_print, phase, print_on_previous_line
 from src.common.statics    import ARGON2_SALT_LENGTH, BITS_PER_BYTE, BLAKE2_DIGEST_LENGTH, BLAKE2_DIGEST_LENGTH_MAX
-from src.common.statics    import BLAKE2_DIGEST_LENGTH_MIN, DONE, ENTROPY_THRESHOLD, PADDING_LENGTH
-from src.common.statics    import SYMMETRIC_KEY_LENGTH, XCHACHA20_NONCE_LENGTH
+from src.common.statics    import BLAKE2_DIGEST_LENGTH_MIN, CHACHA20_DRNG_RESEED_INTERVAL, DONE, ENTROPY_THRESHOLD
+from src.common.statics    import PADDING_LENGTH, SYMMETRIC_KEY_LENGTH, XCHACHA20_NONCE_LENGTH
 
 
 def blake2b(message:     bytes,                        # Message to hash
@@ -658,11 +659,12 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH  # Length of the key
               The interrupt timestamps and event data are mixed into
           128-bit, per-CPU pool called fast_pool. When an interrupt
           occurs
-            * the 32 LSBs of the RDTSCP timestamp, the coarse Jiffies, 
-              and the interrupt number are XORed with the first 32-bit 
-              word of the fast_pool.
-            * The 32 LSBs of the Jiffies and the 32 MSBs of the RDTSCP 
-              timestamp are XORed with the second word of the fast_pool.
+            * the 32 LSBs of the high-resolution timestamp, the coarse
+              Jiffies, and the interrupt number are XORed with the first
+              32-bit word of the fast_pool.
+            * The 32 LSBs of the Jiffies and the 32 MSBs of the
+              high-resolution timestamp are XORed with the second word
+              of the fast_pool.
             * The 32 MSBs and LSBs of the 64-bit CPU instruction pointer
               value are XORed with the third and fourth word of the 
               fast_pool. If no pointer is available, the XORed value is
@@ -748,7 +750,7 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH  # Length of the key
     The input_pool is initialized during boot time of the kernel by 
     mixing following data into the entropy pool:
         1. The current time with nanosecond precision (64-bit CPUs).
-        2. Data obtained from CPU HWRNG via RDRAND instruction, if 
+        2. Entropy obtained from CPU HWRNG via RDRAND instruction, if
            available.
         3. System specific information such as OS name, release,
            version, and a HW identifier.[1; pp.30-31]
@@ -760,25 +762,15 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH  # Length of the key
     function based on a linear feedback shift register (LFSR), one byte
     at a time.[1; p.23]
 
-    **Minimally seeded state**
-    The `minimally seeded` threshold of the input_pool is 128 bits.[1; p.22]
-    This level of entropy is reached at early boot phase (by the time the
-    user space boots).[2; p.6]
-        Once the minimum seed level is reached, only in-kernel API calls
-    like wait_for_random_bytes and add_random_ready_callback are
-    available.[2; p.11]
+    The input_pool only keeps track if at one point it has had 128 bits
+    of entropy in it. When that limit is exceeded, the variable
+    `initialized` is set to one.[1; p.22] This level of entropy is
+    reached at early boot phase (by the time the user space boots).
+    [2; p.6]
+        Once the input_pool is initialized, the ChaCha20 DRNG is
+    reseeded from the input_pool[3] and at that point it is considered
+    fully seeded.[4]
 
-    **Fully seeded state**
-    The `fully seeded` threshold (256 bits) is reached by the time
-    initramfs is executed, and before the root partition is mounted.
-    According to [2; pp.5-6], this happens approximately 1.3 seconds
-    after boot.
-        Once the input_pool is fully seeded, user space callers waiting
-    for the GETRANDOM syscall are woken up.[2; p.11]. According to
-    [1; p.39], the ChaCha20 DRNG blocks until it is fully seeded. This
-    means TFC's key generation blocks until the ChaCha20 DRNG is fully
-    seeded.
-    
     State transition and output of the input_pool
     ---------------------------------------------
     When outputting entropy from the input_pool to the ChaCha20 DRNG,
@@ -789,14 +781,14 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH  # Length of the key
     available.[1; p.29]
         The output function also "folds" the 160-bit digest by slicing
     it into two 80-bit chunks and by then XORing them together to
-    produce the final output.[1; p.29] At the same time, the output
-    function reduces the input_pool entropy estimator by 80 bits.
+    produce the final output. At the same time, the output function
+    reduces the input_pool entropy estimator by 80 bits.[1; p.18]
         The "SHA-1" digest is mixed back into the input_pool using the
     LFSR-based state transition function to provide backtracking
     resistance.[1; p.18]
         If more than 80-bits of entropy is requested, the 
     hash-fold-yield-mix-back operation is repeated until the requested
-    number of bytes are generated.[1; p.30]
+    number of bytes are generated.[1; p.18]
 
     Reseeding of the input_pool
     ---------------------------
@@ -804,7 +796,7 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH  # Length of the key
     events are mixed with the LFSR, one byte at a time.
         When the input_pool is full, more entropy keeps getting mixed in
     which is helpful in case the entropy estimator is optimistic: At
-    some point the entropy will for sure reach the maximum of 4096 bits.
+    some point the entropy will have reached the maximum of 4096 bits.
         When the input_pool entropy estimator considers the pool to have
     4096 bits of entropy, it will output 1024 bits to blocking_pool for
     the use of /dev/random, and it will then reduce the input_pool's
@@ -812,7 +804,8 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH  # Length of the key
 
      [1] https://www.bsi.bund.de/SharedDocs/Downloads/EN/BSI/Publications/Studies/LinuxRNG/LinuxRNG_EN.pdf?__blob=publicationFile&v=16
      [2] https://www.chronox.de/lrng/doc/lrng.pdf
-
+     [3] https://github.com/torvalds/linux/blob/master/drivers/char/random.c#L791
+     [4] https://github.com/torvalds/linux/blob/master/drivers/char/random.c#L1032
 
     The ChaCha20 DRNG
     =================
@@ -822,9 +815,9 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH  # Length of the key
     The LRNG uses the ChaCha20 stream cipher as the default DRNG.
 
     The internal 64-byte state of the DRNG consists of
-        - 16-byte constant b'Expand 32-byte k' set by the designer (djb)
+        - 16-byte constant b'Expand 32-byte k' set by the designer (djb)[1; p. 32]
         - 32-byte key (The only part that is re-seeded with entropy)
-        -  4-byte counter
+        -  4-byte counter (the counter is actually 64-bits[2])
         - 12-byte nonce
 
     In addition, the DRNG state contains a 4-byte timestamp called 
@@ -842,8 +835,8 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH  # Length of the key
     otherwise only the key is XORed, with the timestamp from RDTSCP
     instruction).[1; pp.32-33]
         The initialization is completed by setting the init_time to
-    a value that causes the DRNG to reseed the next time it's called.
-    [1; p.33]
+    a value that causes the ChaCha20 DRNG to reseed the next time it's
+    called. [1; p.33][3]
 
     Initial seeding and seeding levels of the DRNG
     ----------------------------------------------
@@ -873,6 +866,11 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH  # Length of the key
     [1; p.70], but as the installation of TFC via Tor takes longer than
     that, the DRNG is most likely fully seeded by the time TFC generates
     keys and no blocking affects the user experience.
+    user space callers waiting
+    for the GETRANDOM syscall are woken up.[2; p.11]. According to
+    [1; p.39], the ChaCha20 DRNG blocks until it is fully seeded. This
+    means TFC's key generation blocks until the ChaCha20 DRNG is fully
+    seeded.
 
     State transition and output of the DRNG
     ---------------------------------------
@@ -902,9 +900,7 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH  # Length of the key
     Reseeding of the DRNG
     ---------------------
     The DRNG is reseeded automatically every 300 seconds irrespective of
-    the amount of data produced by the DRNG [1; p.32]. Re-seeding also
-    occurs after 2^20 generate operations, or if the DRNG is forced to
-    reseed by writing data into /dev/(u)random [2; p.10].
+    the amount of data produced by the DRNG [1; p.32].
         The DRNG is re-seeded by obtaining (up to) 32 bytes of entropy 
     from the input_pool. In the order of preference, the entropy from 
     input_pool is XORed with the output of
@@ -915,7 +911,9 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH  # Length of the key
     [1; p.34].
 
      [1] https://www.bsi.bund.de/SharedDocs/Downloads/EN/BSI/Publications/Studies/LinuxRNG/LinuxRNG_EN.pdf?__blob=publicationFile&v=16
-     [2] https://www.chronox.de/lrng/doc/lrng.pdf
+     [2] https://lkml.org/lkml/2019/5/30/867
+     [3] https://github.com/torvalds/linux/blob/master/drivers/char/random.c#L889
+         https://github.com/torvalds/linux/blob/master/drivers/char/random.c#L1058
 
 
     GETRANDOM and Python
@@ -1002,14 +1000,15 @@ def check_kernel_entropy() -> None:
     256 bits. LRNG is conservative with its estimates[1; p.81]. Thus,
     this check is mostly unnecessary.
 
-    However, in a situation where the kernel trusts the CPU's HWRNG, the
-    input_pool that seeds the ChaCha20 DRNG is not fully, but initially
-    seeded.[1; p.35][2] Majority of the entropy is trusted to come from
+    However, in a situation where the kernel trusts the CPU's HWRNG, and
+    less than 300 seconds have elapsed since the system booted,
+    input_pool that seeds the ChaCha20 DRNG might not be properly seeded.
+    [1; p.35][2] Majority of the entropy is trusted to come from
     RDSEED/RDRAND[3] which might not be trustworthy.[4]
         To mitigate the issue, this function waits until the input_pool
     is fully seeded, i.e., the entropy_avail counter matches
-    CRNG_INIT_CNT_THRESH (=512 bits) [1; p.49]. The function then writes
-    to the `/dev/urandom` device file, which triggers the reseeding of
+    CRNG_INIT_CNT_THRESH (=512 bits) [1; p.49]. The function then
+    invokes the RNDRESEEDCRNG IOCTL, which triggers the reseeding of
     the ChaCha20 DRNG from the input_pool.[5; p.10]
 
      [1] https://www.bsi.bund.de/SharedDocs/Downloads/EN/BSI/Publications/Studies/LinuxRNG/LinuxRNG_EN.pdf?__blob=publicationFile&v=16
@@ -1019,7 +1018,29 @@ def check_kernel_entropy() -> None:
          https://sharps.org/wp-content/uploads/BECKER-CHES.pdf
      [5] https://www.chronox.de/lrng/doc/lrng.pdf
     """
-    message = "Waiting for kernel CSPRNG entropy pool to fill up"
+    # If the kernel does not trust the CPU HWRNG, we're good.
+    with open(f'/boot/config-{os.uname()[2]}') as f:
+        safe_kernel_config = 'CONFIG_RANDOM_TRUST_CPU=n' in f.read()
+
+    # If the CPU does not feature RDSEED or RDRAND, we're good.
+    with open("/proc/cpuinfo") as f:
+        cpuinfo = f.read()
+        no_rd_instructions = "rdseed" not in cpuinfo and "rdrand" not in cpuinfo
+
+    # If the Computer has been powered on more than 300 seconds
+    # (+10% for headroom), ChaCha20 DRNG has been seeded from the
+    # input_pool at least once.
+    with open('/proc/uptime') as f:
+        uptime_seconds = float(f.readline().split()[0])
+    drng_has_been_reseeded = uptime_seconds > 1.1 * CHACHA20_DRNG_RESEED_INTERVAL
+
+    if safe_kernel_config or no_rd_instructions or drng_has_been_reseeded:
+        return None
+
+    # If we reach this point, we need to ensure the ChaCha20 DRNG is
+    # safe to use.
+
+    message = "Waiting for LRNG input pool to fill up"
     phase(message, head=1)
 
     ent_avail = 0
@@ -1030,12 +1051,15 @@ def check_kernel_entropy() -> None:
             m_print(f"{ent_avail}/{ENTROPY_THRESHOLD}")
             print_on_previous_line(delay=0.1)
 
-    with open('/dev/urandom', 'w') as f:
-        f.write('Reseed the DRNG')
-
     print_on_previous_line()
     phase(message)
     phase(DONE)
+
+    m_print("Re-seeding the LRNG. Please enter sudo password.", tail=1)
+    pwd = '/'.join(os.path.realpath(__file__).split('/')[:-1])
+    exit_code = subprocess.Popen(f"sudo python3.7 {pwd}/reseeder.py", shell=True).wait()
+    if exit_code != 0:
+        raise CriticalError("Failed to reseed ChaCha20 DRNG.")
 
 
 def check_kernel_version() -> None:

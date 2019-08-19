@@ -58,7 +58,7 @@ function verify_files {
 
     compare_digest cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce47d0d13c5d85f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e src/ __init__.py
     compare_digest cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce47d0d13c5d85f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e src/common/ __init__.py
-    compare_digest 313a612e56b37d1c89aa282a45f69dd8a858c7d6dfd01a319fcb29ee960e6c661a41f6dc37c3e0aa0df02c667dd069ae6deecaf31cf7b79727f9e0c8b71be66e src/common/ crypto.py
+    compare_digest ffe2e8456e1506a0672f95e5859fe13999a6dfa506537908790d581c36274377faba3e3e1b68eadfc4f7ac0ef81724932dd7f3e4be63cf391bb77e86dc793a8a src/common/ crypto.py
     compare_digest 0b830ad6705f90dc8e554c8b06f31054d9222d3b35db92470eaf3f9af935aae3107b61142ea68129943e4227a45dfe26a87f23e9dd95a7794ae65c397bd35641 src/common/ db_contacts.py
     compare_digest bad54588b3e713caf94aba3216090410f77f92064aecfea004a33487a21f9fffcf5d05782b91104c27ec499e38196881a76d6002ec1149816d8c53560182fba9 src/common/ db_groups.py
     compare_digest 46e503af15fb7a1ea8387fa8f22674d0926eda0d879d43f99076ca967295d5e3727a411aa11c4bb4d832783c5daa9f4b7ef4491b90112c1be405910d269abaf4 src/common/ db_keys.py
@@ -74,7 +74,8 @@ function verify_files {
     compare_digest b4efca327d057f9b3304d9f0415d23e95ba88230576a1a8d8be85c3e25364e7420389af36df4b4dacf62b5df11cb62f1ca7d0b6c03aee6b591282d51bbc119e3 src/common/ output.py
     compare_digest c4d97b497b341f0e7865a4e27a2a2ffd3b3c5a7bfbf72f4676f6b65d6ba66a2adb8fed563f88fa25cef555f0042290ef0ae4cbeed1697a2e19a3b8cff0b9ef1b src/common/ path.py
     compare_digest 9e9db25e73e0abb312b540d7601be7dfecae8d0aef6497feb2570f9ddf788fa0e261e276ed5a40e75fee0e0c6e86ccf3b05c110846fde804c302d4aa80a930e5 src/common/ reed_solomon.py
-    compare_digest 7cfacf18fae9b0aca708561ef467b50f509e85093614cfa03bed4192887b9d923173883cf68a10bb29db4b802b0b0ba16596ff859f79bd710ef72e2c73d3f496 src/common/ statics.py
+    compare_digest 45b6c753a11ebc75e07da234fec63a2020b4f1da6f9f759f7d05263c0aad99ece21ef8a4bbcaea82f5aee4afb734cc7c2b0595e487ac17be96a33cea76c64ee4 src/common/ reseeder.py
+    compare_digest f22b583ca6a9c954369a3070c5f0581302e38762d18c4a17e78880dd18324e93e5b1afe8128bfc9a667a94b0d8cae200aa277a4192fc4de975377adb52461941 src/common/ statics.py
 
     compare_digest cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce47d0d13c5d85f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e src/receiver/ __init__.py
     compare_digest 05251c18afb5e99ce4796b21d6dd407de008f1539acd0db728f5454f04805deda96b78fdfd98b6ac928c21262bf3baed756eb2d7f24e76041b70953116342f20 src/receiver/ commands.py
@@ -220,7 +221,7 @@ function steps_before_network_kill {
 
     sudo torsocks apt update
     sudo torsocks apt install git libssl-dev python3-pip python3-setuptools python3-tk net-tools -y
-    sudo torsocks git clone https://github.com/tfctesting/tfc.git /opt/tfc
+    sudo torsocks git clone --depth 1 https://github.com/tfctesting/tfc.git /opt/tfc
 
     verify_tcb_requirements_files
     sudo torsocks python3.7 -m pip download --no-cache-dir -r /opt/tfc/requirements-venv.txt --require-hashes -d /opt/tfc/
@@ -313,7 +314,7 @@ function install_developer {
     sudo torsocks apt update
     sudo torsocks apt install git libssl-dev python3-pip python3-setuptools python3-tk terminator -y
 
-    torsocks git clone https://github.com/tfctesting/tfc.git $HOME/tfc
+    torsocks git clone --depth 1 https://github.com/tfctesting/tfc.git $HOME/tfc
 
     torsocks python3.7 -m pip install -r $HOME/tfc/requirements-venv.txt --require-hashes
     python3.7 -m virtualenv $HOME/tfc/venv_tfc --system-site-packages
@@ -383,7 +384,7 @@ function install_relay_tails {
     t_sudo apt update
     t_sudo apt install git libssl-dev python3-pip python3-setuptools -y || true  # Ignore error in case packets can not be persistently installed
 
-    git clone https://github.com/tfctesting/tfc.git $HOME/tfc
+    git clone --depth 1 https://github.com/tfctesting/tfc.git $HOME/tfc
     t_sudo mv $HOME/tfc/ /opt/tfc/
 
     verify_tcb_requirements_files
