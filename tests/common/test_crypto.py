@@ -618,7 +618,7 @@ class TestCSPRNG(unittest.TestCase):
 class TestCheckKernelVersion(unittest.TestCase):
 
     invalid_versions = ['3.9.11', '3.19.8', '4.16.0']
-    valid_versions   = ['4.17.0',  '4.18.1', '5.0.0']
+    valid_versions   = ['4.17.0', '4.18.1', '5.0.0']
 
     @mock.patch('os.uname', side_effect=[['', '', f'{version}-0-generic'] for version in invalid_versions])
     def test_invalid_kernel_versions_raise_critical_error(self, mock_uname):
