@@ -647,7 +647,8 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH  # Length of the key
         o add_disk_randomness: Hardware events of block devices, e.g.
           HDDs (but not e.g. SSDs). When a disk event occurs, the block
           device number as well as the timer state variable disk->random
-          is mixed into the input_pool via add_timer_randomness. [1; pp.50-51]
+          is mixed into the input_pool via add_timer_randomness.
+          [1; pp.50-51]
               Each disk event contains on average 17.7 bits of Shannon
           entropy, but only 0.21 bits of entropy is awarded to the event.
           [1; p.77]
@@ -788,7 +789,8 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH  # Length of the key
     resistance.[1; p.18]
         If more than 80-bits of entropy is requested, the 
     hash-fold-yield-mix-back operation is repeated until the requested
-    number of bytes are generated.[1; p.18]
+    number of bytes are generated. Reseeding the ChaCha20 DRNG requires
+    four consecutive requests.[1; p.18]
 
     Reseeding of the input_pool
     ---------------------------
