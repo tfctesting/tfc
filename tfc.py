@@ -25,7 +25,7 @@ import sys
 from multiprocessing import Process, Queue
 from typing          import Any, Dict
 
-from src.common.crypto       import check_kernel_version, verify_lrng_entropy
+from src.common.crypto       import check_kernel_version
 from src.common.db_contacts  import ContactList
 from src.common.db_groups    import GroupList
 from src.common.db_keys      import KeyList
@@ -97,7 +97,6 @@ def main() -> None:
     operation, local_test, data_diode_sockets = process_arguments()
 
     check_kernel_version()
-    verify_lrng_entropy()
 
     print_title(operation)
 
