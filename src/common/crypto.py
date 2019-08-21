@@ -836,7 +836,7 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH  # Length of the key
     The LRNG uses the ChaCha20 stream cipher as its primary DRNG.
 
     The internal 64-byte state of the DRNG consists of
-        - 16-byte constant b'Expand 32-byte k' set by the designer (djb)[1; p. 32]
+        - 16-byte constant b'Expand 32-byte k' set by the designer (djb)[1; p.32]
         - 32-byte key (the only part that is reseeded with entropy)
         -  4-byte counter (the counter is actually 64-bits[2])
         - 12-byte nonce
