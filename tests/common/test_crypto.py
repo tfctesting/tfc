@@ -133,7 +133,7 @@ class TestBLAKE2bWrapper(unittest.TestCase):
             with self.assertRaises(SystemExit):
                 blake2b(b'test_string', salt=os.urandom(salt_length))
 
-    def test_size_invalid_personalization_string_raises_critical_error(self):
+    def test_invalid_size_personalization_string_raises_critical_error(self):
         for person_length in [BLAKE2_PERSON_LENGTH_MAX+1, 1000]:
             with self.assertRaises(SystemExit):
                 blake2b(b'test_string', person=os.urandom(person_length))
