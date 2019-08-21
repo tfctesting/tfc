@@ -639,7 +639,7 @@ class TestCSPRNG(unittest.TestCase):
     (pp.72-126) of the BSI report:
         https://www.bsi.bund.de/SharedDocs/Downloads/EN/BSI/Publications/Studies/LinuxRNG/LinuxRNG_EN.pdf?__blob=publicationFile&v=16
     """
-    mock_entropy = SYMMETRIC_KEY_LENGTH * b'a'
+    mock_entropy = XCHACHA20_NONCE_LENGTH * b'a'
 
     def test_default_key_type_and_size(self):
         key = csprng()
@@ -648,9 +648,9 @@ class TestCSPRNG(unittest.TestCase):
 
     @mock.patch('os.getrandom', return_value=mock_entropy)
     def test_function_calls_getrandom_with_correct_parameters_and_hashes_entropy_with_blake2b(self, mock_getrandom):
-        key = csprng()
-        self.assertEqual(key, blake2b(self.mock_entropy, digest_size=SYMMETRIC_KEY_LENGTH))
-        mock_getrandom.assert_called_with(SYMMETRIC_KEY_LENGTH, flags=0)
+        key = csprng(XCHACHA20_NONCE_LENGTH)
+        self.assertEqual(key, blake2b(self.mock_entropy, digest_size=XCHACHA20_NONCE_LENGTH))
+        mock_getrandom.assert_called_with(XCHACHA20_NONCE_LENGTH, flags=0)
 
     def test_function_returns_key_of_specified_size(self):
         for key_size in range(BLAKE2_DIGEST_LENGTH_MIN, BLAKE2_DIGEST_LENGTH_MAX+1):
