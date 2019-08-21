@@ -39,8 +39,10 @@ from cryptography.hazmat.primitives.asymmetric.x448 import X448PrivateKey
 
 from src.common.crypto  import argon2_kdf, auth_and_decrypt, blake2b, byte_padding, check_kernel_version, csprng
 from src.common.crypto  import encrypt_and_sign, rm_padding_bytes, X448
-from src.common.statics import ARGON2_SALT_LENGTH, BLAKE2_DIGEST_LENGTH_MAX, BLAKE2_DIGEST_LENGTH_MIN, PADDING_LENGTH
-from src.common.statics import SYMMETRIC_KEY_LENGTH, TFC_PUBLIC_KEY_LENGTH, XCHACHA20_NONCE_LENGTH
+from src.common.statics import ARGON2_SALT_LENGTH, BLAKE2_DIGEST_LENGTH, BLAKE2_DIGEST_LENGTH_MAX
+from src.common.statics import BLAKE2_DIGEST_LENGTH_MIN, BLAKE2_KEY_LENGTH_MAX, BLAKE2_PERSON_LENGTH_MAX
+from src.common.statics import BLAKE2_SALT_LENGTH_MAX, PADDING_LENGTH, SYMMETRIC_KEY_LENGTH, TFC_PUBLIC_KEY_LENGTH
+from src.common.statics import  XCHACHA20_NONCE_LENGTH
 
 from tests.utils import cd_unit_test, cleanup
 
@@ -114,12 +116,41 @@ class TestBLAKE2b(unittest.TestCase):
 
 
 class TestBLAKE2bWrapper(unittest.TestCase):
+    """\
+    These tests test the BLAKE2b implementation detects invalid
+    parameters.
+    """
+
+    def test_invalid_size_key_raises_critical_error(self):
+        for key_length in [BLAKE2_KEY_LENGTH_MAX+1, 1000]:
+            with self.assertRaises(SystemExit):
+                blake2b(b'test_string', key=os.urandom(key_length))
+
+    def test_invalid_size_salt_raises_critical_error(self):
+        for salt_length in [BLAKE2_SALT_LENGTH_MAX+1, 1000]:
+            with self.assertRaises(SystemExit):
+                blake2b(b'test_string', salt=os.urandom(salt_length))
+
+    def test_size_invalid_personalization_string_raises_critical_error(self):
+        for person_length in [BLAKE2_PERSON_LENGTH_MAX+1, 1000]:
+            with self.assertRaises(SystemExit):
+                blake2b(b'test_string', person=os.urandom(person_length))
 
     def test_invalid_digest_size_raises_critical_error(self):
         for invalid_digest_size in [-1, BLAKE2_DIGEST_LENGTH_MIN-1,
                                         BLAKE2_DIGEST_LENGTH_MAX+1, 1000]:
             with self.assertRaises(SystemExit):
                 blake2b(b'test_string', digest_size=invalid_digest_size)
+
+    @mock.patch('hashlib.blake2b', return_value=MagicMock(digest=(MagicMock(side_effect=[(BLAKE2_DIGEST_LENGTH-1)*b'a',
+                                                                                         (BLAKE2_DIGEST_LENGTH+1)*b'a']))))
+    def test_invalid_size_blake2b_digest_raises_critical_error(self, mock_blake2):
+        with self.assertRaises(SystemExit):
+            blake2b(b'test_string')
+        with self.assertRaises(SystemExit):
+            blake2b(b'test_string')
+
+        mock_blake2.assert_called()
 
 
 class TestArgon2KDF(unittest.TestCase):
@@ -600,16 +631,6 @@ class TestCSPRNG(unittest.TestCase):
 
         mock_getrandom.assert_called_with(SYMMETRIC_KEY_LENGTH, flags=0)
         mock_blake2.assert_not_called()
-
-    @mock.patch('src.common.crypto.blake2b', side_effect=[(SYMMETRIC_KEY_LENGTH-1) * b'a',
-                                                          (SYMMETRIC_KEY_LENGTH+1) * b'a'])
-    def test_invalid_size_blake2b_digest_raises_critical_error(self, mock_blake2):
-        with self.assertRaises(SystemExit):
-            csprng()
-        with self.assertRaises(SystemExit):
-            csprng()
-
-        mock_blake2.assert_called()
 
 
 class TestCheckKernelVersion(unittest.TestCase):

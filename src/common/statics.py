@@ -533,6 +533,9 @@ POLY1305_TAG_LENGTH              = 16
 BLAKE2_DIGEST_LENGTH             = 32
 BLAKE2_DIGEST_LENGTH_MIN         = 1
 BLAKE2_DIGEST_LENGTH_MAX         = 64
+BLAKE2_KEY_LENGTH_MAX            = 64
+BLAKE2_SALT_LENGTH_MAX           = 16
+BLAKE2_PERSON_LENGTH_MAX         = 16
 HARAC_LENGTH                     = 8
 PADDING_LENGTH                   = 255
 

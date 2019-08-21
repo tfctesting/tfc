@@ -116,10 +116,14 @@ def blake2b(message:     bytes,                        # Message to hash
      [5] https://github.com/python/cpython/tree/3.7/Modules/_blake2
          https://github.com/python/cpython/blob/3.7/Lib/hashlib.py
     """
-    if digest_size < BLAKE2_DIGEST_LENGTH_MIN or digest_size > BLAKE2_DIGEST_LENGTH_MAX:
-        raise CriticalError(f"Invalid digest size parameter ({digest_size}).")
+    try:
+        digest = hashlib.blake2b(message, digest_size=digest_size, key=key, salt=salt, person=person).digest()  # type: bytes
 
-    digest = hashlib.blake2b(message, digest_size=digest_size, key=key, salt=salt, person=person).digest()  # type: bytes
+        if len(digest) != digest_size:
+            raise CriticalError(f"BLAKE2b digest had invalid length ({len(digest)} bytes).")
+
+    except ValueError as e:
+        raise CriticalError(str(e))
 
     return digest
 
@@ -988,9 +992,6 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH  # Length of the key
         raise CriticalError(f"GETRANDOM returned invalid amount of entropy ({len(entropy)} bytes).")
 
     compressed = blake2b(entropy, digest_size=key_length)
-
-    if len(compressed) != key_length:
-        raise CriticalError(f"Invalid final key size ({len(compressed)} bytes).")
 
     return compressed
 
