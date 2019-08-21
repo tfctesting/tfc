@@ -472,6 +472,9 @@ def encrypt_and_sign(plaintext: bytes,       # Plaintext to encrypt
           https://github.com/jedisct1/libsodium/blob/master/src/libsodium/crypto_aead/xchacha20poly1305/sodium/aead_xchacha20poly1305.c
           https://github.com/pyca/pynacl/blob/master/src/nacl/bindings/crypto_aead.py#L349
     """
+    if len(key) != SYMMETRIC_KEY_LENGTH:
+        raise CriticalError(f"Invalid key length ({len(key)} bytes).")
+
     nonce = csprng(XCHACHA20_NONCE_LENGTH)
 
     try:
