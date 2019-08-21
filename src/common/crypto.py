@@ -626,7 +626,7 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH  # Length of the key
           to seed the ChaCha20 DRNG if needed, and then to seed the
           input_pool directly when the entropy estimator's value falls 
           below the set threshold. (CPU HWRNG is not processed by the
-          add_hwgenerator_randomness service function).[1; pp.52-53]
+          add_hwgenerator_randomness service function).[1; pp.52-54]
 
         o add_input_randomness: Key presses, mouse movements, mouse
           button presses etc. Repeated event values (e.g. key presses or 
@@ -650,8 +650,8 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH  # Length of the key
           is mixed into the input_pool via add_timer_randomness.
           [1; pp.50-51]
               Each disk event contains on average 17.7 bits of Shannon
-          entropy, but only 0.21 bits of entropy is awarded to the event.
-          [1; p.77]
+          entropy, but only 0.21 bits of entropy is awarded to the
+          event.[1; p.77]
 
         o add_interrupt_randomness: Interrupts (i.e. signals from SW/HW
           to processor that an event needs immediate attention) occur
@@ -687,7 +687,7 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH  # Length of the key
           the RDSEED (explained below) instruction is available, it is
           used to obtain a 64-bit value that is also mixed into the
           input_pool, and the internal entropy of the input_pool is
-          considered to have increased by another bit.[1; p.34]
+          considered to have increased by another bit.[1; p.48]
 
     Additional raw entropy sources include
 
@@ -717,12 +717,12 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH  # Length of the key
           [1; p.83]
 
         o Data written to /dev/(u)random from the user space[1; p.38]
-          such as the 4096-bit seed obtained from the ChaCha DRNG when
-          the previous session ended and the system was powered off.
-          [1; p.63]
-              While the value might not be mixed in early enough during
-          boot to benefit the kernel[5], it is mixed into the input_pool
-          before TFC starts.
+          such as the 4096-bit random-seed that was obtained from the
+          ChaCha20 DRNG and written on disk when the previous session
+          ended and the system was powered off. [1; p.63]
+              While the random-seed might not be mixed in early enough
+          during boot to benefit the kernel[5], it is mixed into the
+          input_pool before TFC starts.
 
         o User space IOCTL of RNDADDENTROPY.[1; p.39]
 
@@ -789,8 +789,8 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH  # Length of the key
     resistance.[1; p.18]
         If more than 80-bits of entropy is requested, the 
     hash-fold-yield-mix-back operation is repeated until the requested
-    number of bytes are generated. Reseeding the ChaCha20 DRNG requires
-    four consecutive requests.[1; p.18]
+    number of bytes are generated. (Reseeding the ChaCha20 DRNG requires
+    four consecutive requests.)[1; p.18]
 
     Reseeding of the input_pool
     ---------------------------
@@ -828,7 +828,7 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH  # Length of the key
 
     Initialization of the DRNG
     --------------------------
-    The ChaCha DRNG is initialized during the boot time of the kernel
+    The ChaCha20 DRNG is initialized during the boot time of the kernel
     by using the content of the input_pool (considered to have poor
     entropy at this point [1; p.32]) for key, counter, and nonce parts
     of the DRNG state.
@@ -837,15 +837,16 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH  # Length of the key
     otherwise only the key is XORed, with the timestamp from RDTSCP
     instruction).[1; pp.32-33]
         The initialization is completed by setting the init_time to
-    a value that causes the ChaCha20 DRNG to reseed the next time it's
-    called. [1; p.33][3]
+    a value that causes the ChaCha20 DRNG to reseed from the input_pool
+    the next time it's called.[1; p.33][3]
 
     Initial seeding and seeding levels of the DRNG
     ----------------------------------------------
     If the RDSEED or RDRAND is available during initialization, and if
     the CPU HWRNG is trusted by the kernel, the DRNG is seeded by the
     CPU HWRNG, after which it is considered fully seeded and the seeding
-    steps below are skipped.[1; p.35]
+    steps below are skipped. The DRNG will still reseed from the
+    input_pool the next time it is called.[1; p.35]
 
     **Initially seeded state**
     During initialization time of the kernel, the kernel injects four 
@@ -1002,8 +1003,8 @@ def check_kernel_version() -> None:
 
     In addition, the requirement for 4.17 ensures that the ChaCha20 DRNG
     is considered fully seeded only after it has also been seeded by the
-    input_pool, not just fast_pool (assuming the CPU isn't trusted).
-    [2; p.141]
+    input_pool, not just fast_pool (assuming that the CPU HWRNG isn't
+    trusted).[2; p.141]
 
      [1] https://lkml.org/lkml/2016/7/25/43
      [2] https://www.bsi.bund.de/SharedDocs/Downloads/EN/BSI/Publications/Studies/LinuxRNG/LinuxRNG_EN.pdf?__blob=publicationFile&v=16

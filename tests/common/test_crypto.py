@@ -571,9 +571,9 @@ class TestCSPRNG(unittest.TestCase):
         self.assertIsInstance(key, bytes)
 
     @mock.patch('os.getrandom', return_value=mock_entropy)
-    def test_function_calls_getrandom_with_correct_parameters_and_hashes_entropy_with_blake2b(self, mock_get_random):
+    def test_function_calls_getrandom_with_correct_parameters_and_hashes_entropy_with_blake2b(self, mock_getrandom):
         key = csprng()
-        mock_get_random.assert_called_with(SYMMETRIC_KEY_LENGTH, flags=0)
+        mock_getrandom.assert_called_with(SYMMETRIC_KEY_LENGTH, flags=0)
         self.assertEqual(key, blake2b(self.mock_entropy))
 
     def test_function_returns_key_of_specified_size(self):
@@ -592,13 +592,13 @@ class TestCSPRNG(unittest.TestCase):
     @mock.patch('src.common.crypto.blake2b')
     @mock.patch('os.getrandom', side_effect=[(SYMMETRIC_KEY_LENGTH-1) * b'a',
                                              (SYMMETRIC_KEY_LENGTH+1) * b'a'])
-    def test_invalid_size_entropy_from_get_random_raises_critical_error(self, mock_get_random, mock_blake2):
+    def test_invalid_size_entropy_from_getrandom_raises_critical_error(self, mock_getrandom, mock_blake2):
         with self.assertRaises(SystemExit):
             csprng()
         with self.assertRaises(SystemExit):
             csprng()
 
-        mock_get_random.assert_called_with(SYMMETRIC_KEY_LENGTH, flags=0)
+        mock_getrandom.assert_called_with(SYMMETRIC_KEY_LENGTH, flags=0)
         mock_blake2.assert_not_called()
 
     @mock.patch('src.common.crypto.blake2b', side_effect=[(SYMMETRIC_KEY_LENGTH-1) * b'a',
