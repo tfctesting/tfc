@@ -923,7 +923,7 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH  # Length of the key
     irrespective of the amount of data produced by the DRNG[1; p.32].
         The DRNG is reseeded by obtaining 128..256 bits of entropy
     from the input_pool. In the order of preference, the entropy from 
-    input_pool is XORed with the output of
+    the input_pool is XORed with the output of
         1. 32-byte value obtained via RDSEED CPU instruction, or
         2. 32-byte value obtained via RDRAND CPU instruction, or
         3. eight 4-byte high-resolution time stamps
