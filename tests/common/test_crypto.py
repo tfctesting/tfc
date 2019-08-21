@@ -249,9 +249,9 @@ class TestX448(unittest.TestCase):
 
         https://tools.ietf.org/html/rfc7748#section-6.2
 
-    In addition to the X448 test vectors, there also exists two separate
-    sets of test vectors for the internal functionality of X448, namely,
-    for scalar multiplication.
+    In addition to the X448 test vectors above, there also exists two
+    separate sets of test vectors for the internal functionality of
+    X448, namely, for scalar multiplication.
         The first set contains known input scalars and input
     u-coordinates that produce known output u-coordinates.
         The second set contains an input scalar and input u-coordinate,
