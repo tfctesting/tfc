@@ -538,7 +538,7 @@ def byte_padding(bytestring: bytes  # Bytestring to be padded
     distinguish when transmission of packet or series of packets starts
     and stops), as well as the type (message/file) of transferred data.
 
-    TFC uses PKCS #7 padding scheme described in RFC 2315 and RFC 5652:
+    TFC uses the PKCS #7 padding scheme described in RFC 2315 and RFC 5652:
         https://tools.ietf.org/html/rfc2315#section-10.3
         https://tools.ietf.org/html/rfc5652#section-6.3
 
