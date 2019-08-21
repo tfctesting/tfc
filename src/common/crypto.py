@@ -678,7 +678,7 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH  # Length of the key
               The interrupt timestamps and event data are mixed into
           128-bit, per-CPU pool called fast_pool. When an interrupt
           occurs
-            * the 32 LSBs of the high-resolution timestamp, the coarse
+            * The 32 LSBs of the high-resolution timestamp, the coarse
               Jiffies, and the interrupt number are XORed with the first
               32-bit word of the fast_pool.
             * The 32 LSBs of the Jiffies and the 32 MSBs of the
