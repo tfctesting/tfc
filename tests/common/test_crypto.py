@@ -124,19 +124,19 @@ class TestBLAKE2bWrapper(unittest.TestCase):
     """
 
     def test_invalid_size_key_raises_critical_error(self):
-        for key_length in [BLAKE2_KEY_LENGTH_MAX+1, 1000]:
+        for invalid_key_length in [BLAKE2_KEY_LENGTH_MAX+1, 1000]:
             with self.assertRaises(SystemExit):
-                blake2b(b'test_string', key=os.urandom(key_length))
+                blake2b(b'test_string', key=os.urandom(invalid_key_length))
 
     def test_invalid_size_salt_raises_critical_error(self):
-        for salt_length in [BLAKE2_SALT_LENGTH_MAX+1, 1000]:
+        for invalid_salt_length in [BLAKE2_SALT_LENGTH_MAX+1, 1000]:
             with self.assertRaises(SystemExit):
-                blake2b(b'test_string', salt=os.urandom(salt_length))
+                blake2b(b'test_string', salt=os.urandom(invalid_salt_length))
 
     def test_invalid_size_personalization_string_raises_critical_error(self):
-        for person_length in [BLAKE2_PERSON_LENGTH_MAX+1, 1000]:
+        for invalid_person_length in [BLAKE2_PERSON_LENGTH_MAX+1, 1000]:
             with self.assertRaises(SystemExit):
-                blake2b(b'test_string', person=os.urandom(person_length))
+                blake2b(b'test_string', person=os.urandom(invalid_person_length))
 
     def test_invalid_digest_size_raises_critical_error(self):
         for invalid_digest_size in [-1, BLAKE2_DIGEST_LENGTH_MIN-1,
@@ -265,9 +265,9 @@ class TestArgon2Wrapper(unittest.TestCase):
     def test_invalid_length_salt_raises_critical_error(self):
         invalid_salts = [salt_length * b'a' for salt_length in [0, ARGON2_SALT_LENGTH-1,
                                                                    ARGON2_SALT_LENGTH+1, 1000]]
-        for salt in invalid_salts:
+        for invalid_salt in invalid_salts:
             with self.assertRaises(SystemExit):
-                argon2_kdf('password', salt, ARGON2_MIN_TIME_COST, ARGON2_MIN_MEMORY_COST, ARGON2_MIN_PARALLELISM)
+                argon2_kdf('password', invalid_salt, ARGON2_MIN_TIME_COST, ARGON2_MIN_MEMORY_COST, ARGON2_MIN_PARALLELISM)
 
     def test_too_small_time_cost_raises_critical_error(self):
         with self.assertRaises(SystemExit):
