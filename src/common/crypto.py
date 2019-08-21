@@ -762,7 +762,7 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH  # Length of the key
     Together the noise sources and the input_pool form a constantly
     seeded, non-deterministic random number generator (NDRNG), that
     seeds the ChaCha20-based deterministic random number generator
-    (DRNG).[1; pp.20]
+    (DRNG).[1; p.20]
 
     Initialization of the input_pool
     --------------------------------
