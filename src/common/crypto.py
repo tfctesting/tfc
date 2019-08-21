@@ -1013,9 +1013,9 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH  # Length of the key
 def check_kernel_version() -> None:
     """Check that the Linux kernel version is at least 4.17.
 
-    This check ensures that TFC only runs on Linux kernels that use the
-    new ChaCha20 DRNG (4.8 or newer) that among many things, adds
-    backtracking protection.[1]
+    This check ensures that TFC only runs on versions of Linux kernel
+    that use the new ChaCha20 DRNG (4.8 or newer) that among many
+    things, adds backtracking protection.[1]
 
     In addition, the requirement for 4.17 ensures that the ChaCha20 DRNG
     is considered fully seeded only after it has also been seeded by the
