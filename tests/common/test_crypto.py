@@ -632,7 +632,7 @@ class TestCSPRNG(unittest.TestCase):
         https://github.com/smuellerDD/lrng/tree/master/test
 
     The report on the statistical tests of the LRNG can be found from
-    Chapter 3 (p.26) of the whitepaper:
+    Chapter 3 (pp.26-48) of the whitepaper:
         https://www.chronox.de/lrng/doc/lrng.pdf
 
     Further analysis of the LRNG can be found from Chapters 4-8
