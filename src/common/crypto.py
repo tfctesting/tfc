@@ -571,9 +571,9 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH  # Length of the key
     ===========================
 
     The following schematic of the LRNG and its relation to TFC is based
-    on [1; p.19]. (Note: the page number for the BSI report is the PDF
-    page number, not the printed page number in the bottom margin of
-    each page. This makes search faster.)
+    on [1; p.19]. (Note: the page number for the BSI report is always
+    the PDF page number, not the printed page number in the bottom
+    margin of each page. This makes searching of the citations faster.)
 
                 X448 private keys          Other TFC keys
                         ↑                         ↑
