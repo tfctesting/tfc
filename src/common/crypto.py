@@ -1020,7 +1020,7 @@ def check_kernel_version() -> None:
     In addition, the requirement for 4.17 ensures that the ChaCha20 DRNG
     is considered fully seeded only after it has also been seeded by the
     input_pool, not just fast_pool (assuming that the CPU HWRNG isn't
-    trusted).[2; p.141]
+    trusted).[2; p.138]
 
      [1] https://lkml.org/lkml/2016/7/25/43
      [2] https://www.bsi.bund.de/SharedDocs/Downloads/EN/BSI/Publications/Studies/LinuxRNG/LinuxRNG_EN.pdf?__blob=publicationFile&v=16
