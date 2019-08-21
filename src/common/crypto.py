@@ -717,7 +717,7 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH  # Length of the key
                      requested bytes with the RDSEED instruction.
                         The conditioner is used to create 256-bit seeds
                      for the AES256-CTR based DRBG available via the
-                     RDRAND instruction. The DRBG is re-seeded after 
+                     RDRAND instruction. The DRBG is reseeded after
                      every 511th sample of 128 bits (~8kB).[3; p.12]
 
             - AMD:   A set of 16 ring oscillator chains feeds 512 bits
@@ -727,7 +727,7 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH  # Length of the key
                      a process that is repeated thrice to create a 
                      384-bit seed for the AES256-CTR based DRBG 
                      available via the RDRAND instruction. The DRBG is 
-                     re-seeded at least every 2048 queries of 32-bits 
+                     reseeded at least every 2048 queries of 32-bits
                      (8kB).[4; pp.2-3]
 
           While the RDSEED/RDRAND instructions are used extensively,
@@ -837,7 +837,7 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH  # Length of the key
 
     The internal 64-byte state of the DRNG consists of
         - 16-byte constant b'Expand 32-byte k' set by the designer (djb)[1; p. 32]
-        - 32-byte key (the only part that is re-seeded with entropy)
+        - 32-byte key (the only part that is reseeded with entropy)
         -  4-byte counter (the counter is actually 64-bits[2])
         - 12-byte nonce
 
@@ -921,7 +921,7 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH  # Length of the key
     ---------------------
     The ChaCha20 DRNG is reseeded automatically every 300 seconds
     irrespective of the amount of data produced by the DRNG [1; p.32].
-        The DRNG is re-seeded by obtaining 128..256 bits of entropy
+        The DRNG is reseeded by obtaining 128..256 bits of entropy
     from the input_pool. In the order of preference, the entropy from 
     input_pool is XORed with the output of
         1. 32-byte value obtained via RDSEED CPU instruction, or
