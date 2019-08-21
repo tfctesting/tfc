@@ -208,13 +208,18 @@ def argon2_kdf(password:    str,    # Password to derive the key from
     if len(salt) != ARGON2_SALT_LENGTH:
         raise CriticalError(f"Invalid salt length ({len(salt)} bytes).")
 
-    key = argon2.low_level.hash_secret_raw(secret=password.encode(),
-                                           salt=salt,
-                                           time_cost=time_cost,
-                                           memory_cost=memory_cost,
-                                           parallelism=parallelism,
-                                           hash_len=SYMMETRIC_KEY_LENGTH,
-                                           type=argon2.Type.ID)  # type: bytes
+    try:
+        key = argon2.low_level.hash_secret_raw(secret=password.encode(),
+                                               salt=salt,
+                                               time_cost=time_cost,
+                                               memory_cost=memory_cost,
+                                               parallelism=parallelism,
+                                               hash_len=SYMMETRIC_KEY_LENGTH,
+                                               type=argon2.Type.ID)  # type: bytes
+
+    except argon2.exceptions.Argon2Error as e:
+        raise CriticalError(str(e))
+
     return key
 
 
@@ -462,11 +467,12 @@ def encrypt_and_sign(plaintext: bytes,       # Plaintext to encrypt
           https://github.com/jedisct1/libsodium/blob/master/src/libsodium/crypto_aead/xchacha20poly1305/sodium/aead_xchacha20poly1305.c
           https://github.com/pyca/pynacl/blob/master/src/nacl/bindings/crypto_aead.py#L349
     """
-    if len(key) != SYMMETRIC_KEY_LENGTH:
-        raise CriticalError(f"Invalid key length ({len(key)} bytes).")
+    nonce = csprng(XCHACHA20_NONCE_LENGTH)
 
-    nonce  = csprng(XCHACHA20_NONCE_LENGTH)
-    ct_tag = nacl.bindings.crypto_aead_xchacha20poly1305_ietf_encrypt(plaintext, ad, nonce, key)  # type: bytes
+    try:
+        ct_tag = nacl.bindings.crypto_aead_xchacha20poly1305_ietf_encrypt(plaintext, ad, nonce, key)  # type: bytes
+    except nacl.exceptions.CryptoError as e:
+        raise CriticalError(str(e))
 
     return nonce + ct_tag
 

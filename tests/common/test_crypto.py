@@ -39,10 +39,10 @@ from cryptography.hazmat.primitives.asymmetric.x448 import X448PrivateKey
 
 from src.common.crypto  import argon2_kdf, auth_and_decrypt, blake2b, byte_padding, check_kernel_version, csprng
 from src.common.crypto  import encrypt_and_sign, rm_padding_bytes, X448
-from src.common.statics import ARGON2_SALT_LENGTH, BLAKE2_DIGEST_LENGTH, BLAKE2_DIGEST_LENGTH_MAX
-from src.common.statics import BLAKE2_DIGEST_LENGTH_MIN, BLAKE2_KEY_LENGTH_MAX, BLAKE2_PERSON_LENGTH_MAX
-from src.common.statics import BLAKE2_SALT_LENGTH_MAX, PADDING_LENGTH, SYMMETRIC_KEY_LENGTH, TFC_PUBLIC_KEY_LENGTH
-from src.common.statics import XCHACHA20_NONCE_LENGTH
+from src.common.statics import ARGON2_MIN_MEMORY_COST, ARGON2_MIN_TIME_COST, ARGON2_MIN_PARALLELISM, ARGON2_SALT_LENGTH
+from src.common.statics import BLAKE2_DIGEST_LENGTH, BLAKE2_DIGEST_LENGTH_MAX, BLAKE2_DIGEST_LENGTH_MIN
+from src.common.statics import BLAKE2_KEY_LENGTH_MAX, BLAKE2_PERSON_LENGTH_MAX, BLAKE2_SALT_LENGTH_MAX, PADDING_LENGTH
+from src.common.statics import SYMMETRIC_KEY_LENGTH, TFC_PUBLIC_KEY_LENGTH, XCHACHA20_NONCE_LENGTH
 
 from tests.utils import cd_unit_test, cleanup
 
@@ -257,15 +257,26 @@ class TestArgon2KDF(unittest.TestCase):
 
 class TestArgon2Wrapper(unittest.TestCase):
 
+    def setUp(self) -> None:
+        self.salt = os.urandom(ARGON2_SALT_LENGTH)
+
     def test_invalid_length_salt_raises_critical_error(self):
         invalid_salts = [salt_length * b'a' for salt_length in [0, ARGON2_SALT_LENGTH-1,
                                                                    ARGON2_SALT_LENGTH+1, 1000]]
-        for invalid_salt in invalid_salts:
+        for salt in invalid_salts:
             with self.assertRaises(SystemExit):
-                argon2_kdf('password', invalid_salt, time_cost=1, memory_cost=100, parallelism=1)
+                argon2_kdf('password', salt, ARGON2_MIN_TIME_COST, ARGON2_MIN_MEMORY_COST, ARGON2_MIN_PARALLELISM)
+
+    def test_too_small_time_cost_raises_critical_error(self):
+        with self.assertRaises(SystemExit):
+            argon2_kdf('password', self.salt, ARGON2_MIN_TIME_COST, ARGON2_MIN_MEMORY_COST, ARGON2_MIN_PARALLELISM)
+
+    def test_too_small_memory_cost_raises_critical_error(self):
+        with self.assertRaises(SystemExit):
+            argon2_kdf('password', self.salt, ARGON2_MIN_TIME_COST, ARGON2_MIN_MEMORY_COST, ARGON2_MIN_PARALLELISM)
 
     def test_argon2_kdf_key_type_and_length(self):
-        key = argon2_kdf('password', os.urandom(ARGON2_SALT_LENGTH), time_cost=1, memory_cost=100, parallelism=1)
+        key = argon2_kdf('password', self.salt, ARGON2_MIN_TIME_COST, ARGON2_MIN_MEMORY_COST, ARGON2_MIN_PARALLELISM)
         self.assertIsInstance(key, bytes)
         self.assertEqual(len(key), SYMMETRIC_KEY_LENGTH)
 

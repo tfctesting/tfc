@@ -140,7 +140,7 @@ class MasterKey(object):
         """
         password  = MasterKey.new_password()
         salt      = csprng(ARGON2_SALT_LENGTH)
-        time_cost = 1
+        time_cost = ARGON2_MIN_TIME_COST
 
         # Determine the amount of memory used from the amount of free RAM in the system.
         memory_cost = self.get_free_memory()
@@ -150,7 +150,7 @@ class MasterKey(object):
         # Determine the amount of threads to use
         parallelism = multiprocessing.cpu_count()
         if self.local_test:
-            parallelism = max(1, parallelism // 2)
+            parallelism = max(ARGON2_MIN_PARALLELISM, parallelism // 2)
 
         phase("Deriving master key", head=2)
 
@@ -172,7 +172,7 @@ class MasterKey(object):
 
         if kd_time > MAX_KEY_DERIVATION_TIME:
 
-            lower_bound = ARGON_2_MIN_MEMORY_COST
+            lower_bound = ARGON2_MIN_MEMORY_COST
             upper_bound = memory_cost
 
             while kd_time < MIN_KEY_DERIVATION_TIME or kd_time > MAX_KEY_DERIVATION_TIME:
@@ -187,7 +187,7 @@ class MasterKey(object):
                 # memory_cost value faster. Increasing MAX_KEY_DERIVATION_TIME slightly affects security (positively)
                 # and user experience (negatively).
                 if middle == lower_bound or middle == upper_bound:
-                    lower_bound = ARGON_2_MIN_MEMORY_COST
+                    lower_bound = ARGON2_MIN_MEMORY_COST
                     upper_bound = memory_cost
                     continue
 
