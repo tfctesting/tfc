@@ -119,7 +119,7 @@ class TestBLAKE2b(unittest.TestCase):
 
 class TestBLAKE2bWrapper(unittest.TestCase):
     """\
-    These tests test the BLAKE2b implementation detects invalid
+    These tests ensure the BLAKE2b implementation detects invalid
     parameters.
     """
 
