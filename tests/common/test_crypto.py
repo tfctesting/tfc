@@ -649,7 +649,7 @@ class TestCSPRNG(unittest.TestCase):
     @mock.patch('os.getrandom', return_value=mock_entropy)
     def test_function_calls_getrandom_with_correct_parameters_and_hashes_entropy_with_blake2b(self, mock_getrandom):
         key = csprng()
-        self.assertEqual(key, blake2b(self.mock_entropy))
+        self.assertEqual(key, blake2b(self.mock_entropy, digest_size=SYMMETRIC_KEY_LENGTH))
         mock_getrandom.assert_called_with(SYMMETRIC_KEY_LENGTH, flags=0)
 
     def test_function_returns_key_of_specified_size(self):
