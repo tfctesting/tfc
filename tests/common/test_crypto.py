@@ -60,7 +60,6 @@ class TestBLAKE2b(unittest.TestCase):
     TFC does its best to verify the BLAKE2b implementation is correct by
     using the full suite of BLAKE2b KATs available in the official
     BLAKE2 GitHub repository:
-
         https://github.com/BLAKE2/BLAKE2/blob/master/testvectors/blake2b-kat.txt
     """
 
@@ -246,7 +245,6 @@ class TestX448(unittest.TestCase):
     value (a random point on the curve), the easiest way to verify the
     correct implementation of the algorithm is with the official test
     vectors:
-
         https://tools.ietf.org/html/rfc7748#section-6.2
 
     In addition to the X448 test vectors above, there also exists two
@@ -257,7 +255,6 @@ class TestX448(unittest.TestCase):
         The second set contains an input scalar and input u-coordinate,
     plus the output values after the scalar multiplication has been
     performed 1,000 and 1,000,000 times:
-
         https://tools.ietf.org/html/rfc7748#section-5.2
 
     The pyca/cryptography library does not provide bindings for the
