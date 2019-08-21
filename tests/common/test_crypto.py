@@ -42,7 +42,7 @@ from src.common.crypto  import encrypt_and_sign, rm_padding_bytes, X448
 from src.common.statics import ARGON2_SALT_LENGTH, BLAKE2_DIGEST_LENGTH, BLAKE2_DIGEST_LENGTH_MAX
 from src.common.statics import BLAKE2_DIGEST_LENGTH_MIN, BLAKE2_KEY_LENGTH_MAX, BLAKE2_PERSON_LENGTH_MAX
 from src.common.statics import BLAKE2_SALT_LENGTH_MAX, PADDING_LENGTH, SYMMETRIC_KEY_LENGTH, TFC_PUBLIC_KEY_LENGTH
-from src.common.statics import  XCHACHA20_NONCE_LENGTH
+from src.common.statics import XCHACHA20_NONCE_LENGTH
 
 from tests.utils import cd_unit_test, cleanup
 
