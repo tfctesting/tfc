@@ -70,6 +70,7 @@ def blake2b(message:     bytes,                        # Message to hash
 
     For more details, see
         https://blake2.net/
+        https://tools.ietf.org/html/rfc7693.html
         https://leastauthority.com/blog/BLAKE2-harder-better-faster-stronger-than-MD5/
         https://docs.python.org/3.7/library/hashlib.html#blake2
 
