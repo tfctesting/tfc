@@ -853,8 +853,8 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH  # Length of the key
     of the DRNG state.
         Each of the three values is XORed with the output from CPU
     HWRNG obtained via RDSEED or RDRAND instruction (if available --
-    otherwise only the key is XORed, with the timestamp from RDTSCP
-    instruction).[1; pp.32-33]
+    otherwise only the key is XORed, and that's done with a timestamp
+    obtained via the RDTSCP instruction).[1; pp.32-33]
         The initialization is completed by setting the init_time to
     a value that causes the ChaCha20 DRNG to reseed from the input_pool
     the next time it's called.[1; p.33][3]
