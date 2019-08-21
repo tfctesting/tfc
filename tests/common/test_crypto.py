@@ -307,7 +307,6 @@ class TestX448(unittest.TestCase):
 
     The pyca/cryptography library does not provide bindings for the
     OpenSSL's X448 internals, but both KATs are done by OpenSSL tests:
-
         https://github.com/openssl/openssl/blob/master/test/curve448_internal_test.c#L654
         https://github.com/openssl/openssl/blob/master/test/curve448_internal_test.c#L668
     """
