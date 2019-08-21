@@ -738,7 +738,7 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH  # Length of the key
         o Data written to /dev/(u)random from the user space[1; p.38]
           such as the 4096-bit random-seed that was obtained from the
           ChaCha20 DRNG and written on disk when the previous session
-          ended and the system was powered off. [1; p.63]
+          ended and the system was powered off.[1; p.63]
               While the random-seed might not be mixed in early enough
           during boot to benefit the kernel[5], it is mixed into the
           input_pool before TFC starts.
@@ -849,7 +849,7 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH  # Length of the key
     --------------------------
     The ChaCha20 DRNG is initialized during the boot time of the kernel
     by using the content of the input_pool (considered to have poor
-    entropy at this point [1; p.32]) for key, counter, and nonce parts
+    entropy at this point[1; p.32]) for key, counter, and nonce parts
     of the DRNG state.
         Each of the three values is XORed with the output from CPU
     HWRNG obtained via RDSEED or RDRAND instruction (if available --
@@ -907,7 +907,7 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH  # Length of the key
         Once the amount of requested random data has been generated, the
     state update function is invoked, which takes a 256-bit block of
     unused keystream and XORs it with the key part of the ChaCha20 state
-    to ensure backtracking resistance. [1; pp.33-34]
+    to ensure backtracking resistance.[1; pp.33-34]
 
     The random bytes used in TFC are obtained with the GETRANDOM syscall
     instead of the /dev/urandom device file. This has two major benefits:
@@ -920,7 +920,7 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH  # Length of the key
     Reseeding of the DRNG
     ---------------------
     The ChaCha20 DRNG is reseeded automatically every 300 seconds
-    irrespective of the amount of data produced by the DRNG [1; p.32].
+    irrespective of the amount of data produced by the DRNG[1; p.32].
         The DRNG is reseeded by obtaining 128..256 bits of entropy
     from the input_pool. In the order of preference, the entropy from 
     input_pool is XORed with the output of
