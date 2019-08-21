@@ -632,11 +632,11 @@ class TestCSPRNG(unittest.TestCase):
         https://github.com/smuellerDD/lrng/tree/master/test
 
     The report on the statistical tests of the LRNG can be found from
-    Chapter 3 (p. 26) of the whitepaper:
+    Chapter 3 (p.26) of the whitepaper:
         https://www.chronox.de/lrng/doc/lrng.pdf
 
     Further analysis of the LRNG can be found from Chapters 4-8
-    (pp. 72..126) of the BSI report:
+    (pp.72-126) of the BSI report:
         https://www.bsi.bund.de/SharedDocs/Downloads/EN/BSI/Publications/Studies/LinuxRNG/LinuxRNG_EN.pdf?__blob=publicationFile&v=16
     """
     mock_entropy = SYMMETRIC_KEY_LENGTH * b'a'
