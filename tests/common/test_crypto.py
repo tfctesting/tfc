@@ -339,7 +339,7 @@ class TestX448(unittest.TestCase):
                                                                       encryption_algorithm=NoEncryption())
         self.assertEqual(len(private_key_bytes), TFC_PRIVATE_KEY_LENGTH)
 
-    def test_derive_public_key_type_and_size(self):
+    def test_derive_public_key_returns_public_key_with_correct_type_and_size(self):
         private_key = X448.generate_private_key()
         public_key  = X448.derive_public_key(private_key)
         self.assertIsInstance(public_key, bytes)
