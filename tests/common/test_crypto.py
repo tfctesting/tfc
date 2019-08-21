@@ -146,13 +146,13 @@ class TestBLAKE2bWrapper(unittest.TestCase):
 
     @mock.patch('hashlib.blake2b', return_value=MagicMock(digest=(MagicMock(side_effect=[(BLAKE2_DIGEST_LENGTH-1)*b'a',
                                                                                          (BLAKE2_DIGEST_LENGTH+1)*b'a']))))
-    def test_invalid_size_blake2b_digest_raises_critical_error(self, mock_blake2):
+    def test_invalid_size_blake2b_digest_raises_critical_error(self, mock_blake2b):
         with self.assertRaises(SystemExit):
             blake2b(b'test_string')
         with self.assertRaises(SystemExit):
             blake2b(b'test_string')
 
-        mock_blake2.assert_called()
+        mock_blake2b.assert_called()
 
 
 class TestArgon2KDF(unittest.TestCase):
