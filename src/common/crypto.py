@@ -49,7 +49,8 @@ from cryptography.hazmat.primitives.serialization   import Encoding, PublicForma
 from src.common.exceptions import CriticalError
 from src.common.misc       import separate_header
 from src.common.statics    import ARGON2_SALT_LENGTH, BITS_PER_BYTE, BLAKE2_DIGEST_LENGTH, BLAKE2_DIGEST_LENGTH_MAX
-from src.common.statics    import BLAKE2_DIGEST_LENGTH_MIN, PADDING_LENGTH, SYMMETRIC_KEY_LENGTH, XCHACHA20_NONCE_LENGTH
+from src.common.statics    import BLAKE2_DIGEST_LENGTH_MIN, PADDING_LENGTH, SYMMETRIC_KEY_LENGTH, TFC_PUBLIC_KEY_LENGTH
+from src.common.statics    import XCHACHA20_NONCE_LENGTH
 
 
 def blake2b(message:     bytes,                        # Message to hash
@@ -353,13 +354,13 @@ class X448(object):
 
     @staticmethod
     def derive_public_key(private_key: 'X448PrivateKey') -> bytes:
-        """Derive public key from an X448 private key.
-
-        The public key is validated by the pyca/cryptography library:
-            https://github.com/pyca/cryptography/blob/master/src/cryptography/hazmat/backends/openssl/x448.py#L58
-        """
+        """Derive public key from an X448 private key."""
         public_key = private_key.public_key().public_bytes(encoding=Encoding.Raw,
                                                            format=PublicFormat.Raw)  # type: bytes
+
+        if len(public_key) != TFC_PUBLIC_KEY_LENGTH:
+            raise CriticalError(f"Generated invalid size public key from private key ({len(public_key)} bytes).")
+
         return public_key
 
     @staticmethod

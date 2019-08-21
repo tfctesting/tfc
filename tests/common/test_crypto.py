@@ -328,6 +328,23 @@ class TestX448(unittest.TestCase):
     def test_generate_private_key_function_returns_private_key_object(self):
         self.assertIsInstance(X448.generate_private_key(), X448PrivateKey)
 
+    def test_deriving_invalid_size_public_key_raises_critical_error(self):
+        """
+        The public key is already validated by the pyca/cryptography
+        library[1], but assertive programming is a good practice, so
+        this test ensures TFC also detects invalid public keys sizes
+        from pyca/cryptography library.
+
+         [1] https://github.com/pyca/cryptography/blob/master/src/cryptography/hazmat/backends/openssl/x448.py#L58
+        """
+        private_key = MagicMock(public_key=MagicMock(return_value=MagicMock(
+            public_bytes=MagicMock(side_effect=[(TFC_PUBLIC_KEY_LENGTH - 1) * b'a',
+                                                (TFC_PUBLIC_KEY_LENGTH + 1) * b'a']))))
+        with self.assertRaises(SystemExit):
+            X448.derive_public_key(private_key)
+        with self.assertRaises(SystemExit):
+            X448.derive_public_key(private_key)
+
     def test_deriving_shared_secret_with_an_invalid_size_public_key_raises_critical_error(self):
         private_key         = X448.generate_private_key()
         invalid_public_keys = [key_length * b'a' for key_length in (1, TFC_PUBLIC_KEY_LENGTH-1,
