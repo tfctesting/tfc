@@ -942,11 +942,11 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH  # Length of the key
     ====================
 
     Since Python 3.6.0, `os.urandom` has been a wrapper for the best 
-    available CSPRNG. The 3.17 and earlier versions of Linux kernel do 
-    not support the GETRANDOM call, and Python 3.7's `os.urandom` will 
-    in those cases fall back to non-blocking `/dev/urandom` that is not 
-    secure on live distros as they have low entropy at the start of the 
-    session.
+    available CSPRNG. The 3.17 and earlier versions of the Linux kernel
+    do not support the GETRANDOM call, and Python 3.7's `os.urandom`
+    will in those cases fall back to non-blocking `/dev/urandom` that is
+    not secure on live distros as they have low entropy at the start of
+    the session.
         To avoid possibly unsafe key generation, instead of `os.urandom`
     TFC uses the `os.getrandom(size, flags=0)` explicitly. This forces
     use of recent enough Python interpreter (3.6.0 or later) and limits
