@@ -36,13 +36,15 @@ import nacl.public
 import nacl.utils
 
 from cryptography.hazmat.primitives.asymmetric.x448 import X448PrivateKey
+from cryptography.hazmat.primitives.serialization   import Encoding, NoEncryption, PrivateFormat
 
 from src.common.crypto  import argon2_kdf, auth_and_decrypt, blake2b, byte_padding, check_kernel_version, csprng
 from src.common.crypto  import encrypt_and_sign, rm_padding_bytes, X448
 from src.common.statics import ARGON2_MIN_MEMORY_COST, ARGON2_MIN_TIME_COST, ARGON2_MIN_PARALLELISM, ARGON2_SALT_LENGTH
 from src.common.statics import BLAKE2_DIGEST_LENGTH, BLAKE2_DIGEST_LENGTH_MAX, BLAKE2_DIGEST_LENGTH_MIN
 from src.common.statics import BLAKE2_KEY_LENGTH_MAX, BLAKE2_PERSON_LENGTH_MAX, BLAKE2_SALT_LENGTH_MAX, PADDING_LENGTH
-from src.common.statics import SYMMETRIC_KEY_LENGTH, TFC_PUBLIC_KEY_LENGTH, XCHACHA20_NONCE_LENGTH
+from src.common.statics import SYMMETRIC_KEY_LENGTH, TFC_PRIVATE_KEY_LENGTH, TFC_PUBLIC_KEY_LENGTH
+from src.common.statics import XCHACHA20_NONCE_LENGTH
 
 from tests.utils import cd_unit_test, cleanup
 
@@ -269,11 +271,11 @@ class TestArgon2Wrapper(unittest.TestCase):
 
     def test_too_small_time_cost_raises_critical_error(self):
         with self.assertRaises(SystemExit):
-            argon2_kdf('password', self.salt, ARGON2_MIN_TIME_COST, ARGON2_MIN_MEMORY_COST, ARGON2_MIN_PARALLELISM)
+            argon2_kdf('password', self.salt, ARGON2_MIN_TIME_COST-1, ARGON2_MIN_MEMORY_COST, ARGON2_MIN_PARALLELISM)
 
     def test_too_small_memory_cost_raises_critical_error(self):
         with self.assertRaises(SystemExit):
-            argon2_kdf('password', self.salt, ARGON2_MIN_TIME_COST, ARGON2_MIN_MEMORY_COST, ARGON2_MIN_PARALLELISM)
+            argon2_kdf('password', self.salt, ARGON2_MIN_TIME_COST, ARGON2_MIN_MEMORY_COST-1, ARGON2_MIN_PARALLELISM)
 
     def test_argon2_kdf_key_type_and_length(self):
         key = argon2_kdf('password', self.salt, ARGON2_MIN_TIME_COST, ARGON2_MIN_MEMORY_COST, ARGON2_MIN_PARALLELISM)
@@ -328,6 +330,18 @@ class TestX448(unittest.TestCase):
     def test_generate_private_key_function_returns_private_key_object(self):
         self.assertIsInstance(X448.generate_private_key(), X448PrivateKey)
 
+    def test_x448_private_key_size(self):
+        private_key_bytes = X448.generate_private_key().private_bytes(encoding=Encoding.Raw,
+                                                                      format=PrivateFormat.Raw,
+                                                                      encryption_algorithm=NoEncryption())
+        self.assertEqual(len(private_key_bytes), TFC_PRIVATE_KEY_LENGTH)
+
+    def test_derive_public_key_type_and_size(self):
+        private_key = X448.generate_private_key()
+        public_key  = X448.derive_public_key(private_key)
+        self.assertIsInstance(public_key, bytes)
+        self.assertEqual(len(public_key), TFC_PUBLIC_KEY_LENGTH)
+
     def test_deriving_invalid_size_public_key_raises_critical_error(self):
         """
         The public key is already validated by the pyca/cryptography
@@ -338,8 +352,8 @@ class TestX448(unittest.TestCase):
          [1] https://github.com/pyca/cryptography/blob/master/src/cryptography/hazmat/backends/openssl/x448.py#L58
         """
         private_key = MagicMock(public_key=MagicMock(return_value=MagicMock(
-            public_bytes=MagicMock(side_effect=[(TFC_PUBLIC_KEY_LENGTH - 1) * b'a',
-                                                (TFC_PUBLIC_KEY_LENGTH + 1) * b'a']))))
+            public_bytes=MagicMock(side_effect=[(TFC_PUBLIC_KEY_LENGTH-1) * b'a',
+                                                (TFC_PUBLIC_KEY_LENGTH+1) * b'a']))))
         with self.assertRaises(SystemExit):
             X448.derive_public_key(private_key)
         with self.assertRaises(SystemExit):
