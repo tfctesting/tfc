@@ -668,14 +668,14 @@ class TestCSPRNG(unittest.TestCase):
     @mock.patch('src.common.crypto.blake2b')
     @mock.patch('os.getrandom', side_effect=[(SYMMETRIC_KEY_LENGTH-1) * b'a',
                                              (SYMMETRIC_KEY_LENGTH+1) * b'a'])
-    def test_invalid_size_entropy_from_getrandom_raises_critical_error(self, mock_getrandom, mock_blake2):
+    def test_invalid_size_entropy_from_getrandom_raises_critical_error(self, mock_getrandom, mock_blake2b):
         with self.assertRaises(SystemExit):
             csprng()
         with self.assertRaises(SystemExit):
             csprng()
 
         mock_getrandom.assert_called_with(SYMMETRIC_KEY_LENGTH, flags=0)
-        mock_blake2.assert_not_called()
+        mock_blake2b.assert_not_called()
 
 
 class TestCheckKernelVersion(unittest.TestCase):
