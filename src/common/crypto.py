@@ -871,7 +871,7 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH  # Length of the key
     During initialization time of the kernel, the kernel injects four 
     sets of data from fast_pool into the DRNG (instead of the 
     input_pool). Each set contains event data and timestamps of 64 
-    interrupt events from add_interrupt_randomness.[1; p. 35]
+    interrupt events from add_interrupt_randomness.[1; p.35]
         In addition, all content from the add_device_randomness source
     is mixed into the DRNG key state using an LFSR with a period of 255.
     [1; p.52]
