@@ -117,7 +117,7 @@ def blake2b(message:     bytes,                        # Message to hash
          https://github.com/python/cpython/blob/3.7/Lib/hashlib.py
     """
     if digest_size < BLAKE2_DIGEST_LENGTH_MIN or digest_size > BLAKE2_DIGEST_LENGTH_MAX:
-        raise CriticalError(f"Invalid digest size ({digest_size} bytes).")
+        raise CriticalError(f"Invalid digest size parameter ({digest_size}).")
 
     digest = hashlib.blake2b(message, digest_size=digest_size, key=key, salt=salt, person=person).digest()  # type: bytes
 
