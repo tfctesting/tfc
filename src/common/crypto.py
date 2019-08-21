@@ -353,7 +353,11 @@ class X448(object):
 
     @staticmethod
     def derive_public_key(private_key: 'X448PrivateKey') -> bytes:
-        """Derive public key from an X448 private key."""
+        """Derive public key from an X448 private key.
+
+        The public key is validated by the pyca/cryptography library:
+            https://github.com/pyca/cryptography/blob/master/src/cryptography/hazmat/backends/openssl/x448.py#L58
+        """
         public_key = private_key.public_key().public_bytes(encoding=Encoding.Raw,
                                                            format=PublicFormat.Raw)  # type: bytes
         return public_key
