@@ -277,6 +277,10 @@ class TestArgon2Wrapper(unittest.TestCase):
         with self.assertRaises(SystemExit):
             argon2_kdf('password', self.salt, ARGON2_MIN_TIME_COST, ARGON2_MIN_MEMORY_COST-1, ARGON2_MIN_PARALLELISM)
 
+    def test_too_small_parallelism_raises_critical_error(self):
+        with self.assertRaises(SystemExit):
+            argon2_kdf('password', self.salt, ARGON2_MIN_TIME_COST, ARGON2_MIN_MEMORY_COST, ARGON2_MIN_PARALLELISM-1)
+
     def test_argon2_kdf_key_type_and_length(self):
         key = argon2_kdf('password', self.salt, ARGON2_MIN_TIME_COST, ARGON2_MIN_MEMORY_COST, ARGON2_MIN_PARALLELISM)
         self.assertIsInstance(key, bytes)
