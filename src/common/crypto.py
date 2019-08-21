@@ -185,7 +185,7 @@ def argon2_kdf(password:    str,    # Password to derive the key from
         Argon2id also adds some security against side-channel attacks
     that malicious code injected to the Destination Computer might
     perform. Considering these two attacks, Argon2id is the most secure
-    option.
+    choice.
 
     The correctness of the Argon2id implementation[6] is tested by TFC
     unit tests. The testing is done by comparing the output of the
