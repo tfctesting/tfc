@@ -71,7 +71,6 @@ def blake2b(message:     bytes,                        # Message to hash
     For more details, see
         https://blake2.net/
         https://tools.ietf.org/html/rfc7693.html
-        https://leastauthority.com/blog/BLAKE2-harder-better-faster-stronger-than-MD5/
         https://docs.python.org/3.7/library/hashlib.html#blake2
 
     The reasons for using BLAKE2b in TFC include
@@ -82,8 +81,8 @@ def blake2b(message:     bytes,                        # Message to hash
            although not quite the depth of analysis applied to BLAKE,
            Grøstl, or Skein."[2; p.13]
 
-        o BLAKE shares design elements with SHA-2 that has 11 years of
-          cryptanalysis[3] behind it.
+        o BLAKE shares design elements with SHA-2[3] that has 11 years
+          of cryptanalysis[4] behind it.
 
         o 128-bit collision/preimage/second-preimage resistance against
           Grover's algorithm running on a quantum Turing machine.
@@ -106,14 +105,15 @@ def blake2b(message:     bytes,                        # Message to hash
     implementation optimized for AMD64 systems) is 512 bits, the digest
     size is truncated to 256 bits for the use in TFC.
 
-    The correctness of the BLAKE2b implementation[4] is tested by TFC
+    The correctness of the BLAKE2b implementation[5] is tested by TFC
     unit tests. The testing is done with the complete suite of BLAKE2b
     known answer tests (KATs).
 
      [1] https://blake2.net/#cr
      [2] https://nvlpubs.nist.gov/nistpubs/ir/2012/NIST.IR.7896.pdf
-     [3] https://en.wikipedia.org/wiki/SHA-2#Cryptanalysis_and_validation
-     [4] https://github.com/python/cpython/tree/3.7/Modules/_blake2
+     [3] https://leastauthority.com/blog/BLAKE2-harder-better-faster-stronger-than-MD5/
+     [4] https://en.wikipedia.org/wiki/SHA-2#Cryptanalysis_and_validation
+     [5] https://github.com/python/cpython/tree/3.7/Modules/_blake2
          https://github.com/python/cpython/blob/3.7/Lib/hashlib.py
     """
     if digest_size < BLAKE2_DIGEST_LENGTH_MIN or digest_size > BLAKE2_DIGEST_LENGTH_MAX:
