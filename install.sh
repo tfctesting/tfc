@@ -32,7 +32,7 @@ function compare_digest {
 function verify_tcb_requirements_files {
 # To minimize the time TCB installer configuration stays online, only
 # the requirements files are authenticated between downloads.
-    compare_digest a52d96aa42f4aa00958e3778d8048f31ae64d7b602a4998d88ff4649328df3c53b73e529a6e672058c609ff31009d71e98838a634c4b71550742c6cdc6c3cfbb '' requirements.txt
+    compare_digest c3f27d766f2795bf0c87ddb0cec43f1f9919c2cf20db5eff62e818d67436f1520b6001bf9e7649c5508e62b221c02039b6cb29f7393ba1dbacf9a442cb3bb8b2 '' requirements.txt
     compare_digest 2c9e865be4231d346504bef99159d987803944b4ed7a1f0dbb7e674d4043e83c45771da34b7c4772f25101b81f41f2bafc75bfd07e58d37ddf7d3dc1aa32da24 '' requirements-venv.txt
 }
 
@@ -44,7 +44,7 @@ function verify_files {
     compare_digest 651fccf97f1a1a3541078a19191b834448cb0c3256c6c2822989b572d67bc4b16932edea226ecf0cbd792fc6a11f4db841367d3ecd93efa67b27eaee0cc04cb7 '' LICENSE-3RD-PARTY
     compare_digest 8777f5cb718ee574e11a2f1d04007e560ec9546084feeda239799d2b93a5e1ed3b04ba0c16d6ab40830a15daaef98d5b06113ae3b7cbf5e66a783f1d4023175e '' relay.py
     compare_digest 2865708ab24c3ceeaf0a6ec382fb7c331fdee52af55a111c1afb862a336dd757d597f91b94267da009eb74bbc77d01bf78824474fa6f0aa820cd8c62ddb72138 '' requirements-dev.txt
-    compare_digest a92b332a150f306d4294b6a667c4232ccd78b9b114d1651219ea317bd24d0f5d04498f560ba9fe785ca023093135c3fbe87a74fb79a094e29b2f96adc52e267d '' requirements-relay.txt
+    compare_digest 1ab71b773a0451807eda87a1442dd79529de62f617e8087a21c0f3ad77e4fe22218e05a94d19d1660b2967a9908fb722f750a64a75e650b178c818c8536f64db '' requirements-relay.txt
     compare_digest 6d93d5513f66389778262031cbba95e1e38138edaec66ced278db2c2897573247d1de749cf85362ec715355c5dfa5c276c8a07a394fd5cf9b45c7a7ae6249a66 '' tfc.png
     compare_digest a7b8090855295adfc22528b2f89bed88617b5e990ffe58e3a42142a9a4bea6b1b67c757c9b7d1eafeec22eddee9f9891b44afffa52d31ce5d050f08a1734874d '' tfc.py
     compare_digest c6a61b3050624874cabc28cc51e947aa1ba629b0fd62564466b902cc433c08be6ae64d53bb2f33158e198c60ef2eb7c38b0bee1a64ef9659d101dee07557ddc7 '' uninstall.sh
@@ -74,7 +74,7 @@ function verify_files {
     compare_digest b4efca327d057f9b3304d9f0415d23e95ba88230576a1a8d8be85c3e25364e7420389af36df4b4dacf62b5df11cb62f1ca7d0b6c03aee6b591282d51bbc119e3 src/common/ output.py
     compare_digest c4d97b497b341f0e7865a4e27a2a2ffd3b3c5a7bfbf72f4676f6b65d6ba66a2adb8fed563f88fa25cef555f0042290ef0ae4cbeed1697a2e19a3b8cff0b9ef1b src/common/ path.py
     compare_digest 9e9db25e73e0abb312b540d7601be7dfecae8d0aef6497feb2570f9ddf788fa0e261e276ed5a40e75fee0e0c6e86ccf3b05c110846fde804c302d4aa80a930e5 src/common/ reed_solomon.py
-    compare_digest c399ec57fabed7d26f5efb6064ef3d59265bf5245d2db35d26dbbcc1189f451abdd131eca9321b98e5025cf2f8f555f6b4bc537ac3d69ed936cac7befd525b85 src/common/ statics.py
+    compare_digest fc71f20136bcff032970dd986e28cabfd519cbfd1224a9da4df0201d000b191d38681d591421923163be3c2d57d68169adf6575205b9ef54d8444fc9b23ef2ce src/common/ statics.py
 
     compare_digest cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce47d0d13c5d85f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e src/receiver/ __init__.py
     compare_digest 05251c18afb5e99ce4796b21d6dd407de008f1539acd0db728f5454f04805deda96b78fdfd98b6ac928c21262bf3baed756eb2d7f24e76041b70953116342f20 src/receiver/ commands.py
@@ -88,7 +88,7 @@ function verify_files {
     compare_digest 17ab4e845274ac6901902537cbea19841de56b5d6e92175599d22b74a3451ecafa3681420e2fcc7f53f6b2ebb7994e5903aabb63a5403fbf7fb892509bb5d11c src/receiver/ windows.py
 
     compare_digest cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce47d0d13c5d85f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e src/relay/ __init__.py
-    compare_digest 19887ad118b1814fef10a9c80142d803bac82b9b4f7c9603b324026260d7ca7910ff3cc084ee84551721fc63846d8a9b1a92e56ff9fc8fa70b9871deb913749e src/relay/ client.py
+    compare_digest a324e4b065c2bb8c66c1e0e7fbc11de85f4408e4a3c3afd81bbd6829fae4f6cf6a3bba284864476356a57947670e7dffcd6f30faf03e38b38dbed84305def042 src/relay/ client.py
     compare_digest 6f0f916f7c879c0383e8dc39593385de8f1ab2f7ba99f59b7fcbee947f8fcfae0935a98dcd8de1db3a600a0d8469a369ea38915fe2932c00b6756fb4944c938d src/relay/ commands.py
     compare_digest 261c9a0e7cb552c900f5234136c6251896bb03277c9ceaf175791012433a282373d6af1eec6be916aa955e04d5ffde2fc4bf3d153077baf00731249132b90658 src/relay/ onion.py
     compare_digest a18aa0ca4ffff7be99721c094ae44a95ed407e5e4cb25016ce14bf9fca7fef950d0b0460fd91689f2003aeb7f8385cb4f88a5f2e3f7f4ba7b88634412853d888 src/relay/ server.py
@@ -219,7 +219,7 @@ function steps_before_network_kill {
     check_rm_existing_installation
 
     sudo torsocks apt update
-    sudo torsocks apt install git libssl-dev python3-pip python3-setuptools python3-tk net-tools -y
+    sudo torsocks apt install git libssl-dev python3-pip python3-tk net-tools -y
     sudo torsocks git clone --depth 1 https://github.com/tfctesting/tfc.git /opt/tfc
 
     verify_tcb_requirements_files
@@ -311,7 +311,7 @@ function install_developer {
     create_user_data_dir
 
     sudo torsocks apt update
-    sudo torsocks apt install git libssl-dev python3-pip python3-setuptools python3-tk terminator -y
+    sudo torsocks apt install git libssl-dev python3-pip python3-tk terminator -y
 
     torsocks git clone --depth 1 https://github.com/tfctesting/tfc.git $HOME/tfc
 
@@ -381,7 +381,7 @@ function install_relay_tails {
     read_sudo_pwd
 
     t_sudo apt update
-    t_sudo apt install git libssl-dev python3-pip python3-setuptools -y || true  # Ignore error in case packets can not be persistently installed
+    t_sudo apt install git libssl-dev python3-pip -y || true  # Ignore error in case packets can not be persistently installed
 
     git clone --depth 1 https://github.com/tfctesting/tfc.git $HOME/tfc
     t_sudo mv $HOME/tfc/ /opt/tfc/
