@@ -316,7 +316,7 @@ function install_developer {
     sudo torsocks apt update
     sudo torsocks apt install git libssl-dev python3-pip python3-tk terminator -y
 
-    torsocks git clone --depth 1 https://github.com/tfctesting/tfc.git $HOME/tfc
+    torsocks git clone https://github.com/tfctesting/tfc.git $HOME/tfc
 
     torsocks python3.7 -m pip install -r $HOME/tfc/requirements-venv.txt --require-hashes
     python3.7 -m virtualenv $HOME/tfc/venv_tfc --system-site-packages
