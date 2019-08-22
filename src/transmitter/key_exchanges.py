@@ -347,10 +347,10 @@ def start_key_exchange(onion_pub_key: bytes,          # Public key of contact's 
 
         # Domain separate unidirectional keys from shared key by using public
         # keys as message and the context variable as personalization string.
-        tx_mk = blake2b(tfc_public_key_contact, dh_shared_key, person=b'message_key', digest_size=SYMMETRIC_KEY_LENGTH)
-        rx_mk = blake2b(tfc_public_key_user,    dh_shared_key, person=b'message_key', digest_size=SYMMETRIC_KEY_LENGTH)
-        tx_hk = blake2b(tfc_public_key_contact, dh_shared_key, person=b'header_key',  digest_size=SYMMETRIC_KEY_LENGTH)
-        rx_hk = blake2b(tfc_public_key_user,    dh_shared_key, person=b'header_key',  digest_size=SYMMETRIC_KEY_LENGTH)
+        tx_mk = blake2b(tfc_public_key_contact, dh_shared_key, person=MESSAGE_KEY, digest_size=SYMMETRIC_KEY_LENGTH)
+        rx_mk = blake2b(tfc_public_key_user,    dh_shared_key, person=MESSAGE_KEY, digest_size=SYMMETRIC_KEY_LENGTH)
+        tx_hk = blake2b(tfc_public_key_contact, dh_shared_key, person=HEADER_KEY,  digest_size=SYMMETRIC_KEY_LENGTH)
+        rx_hk = blake2b(tfc_public_key_user,    dh_shared_key, person=HEADER_KEY,  digest_size=SYMMETRIC_KEY_LENGTH)
 
         # Domain separate fingerprints of public keys by using the
         # shared secret as key and the context variable as
@@ -362,8 +362,8 @@ def start_key_exchange(onion_pub_key: bytes,          # Public key of contact's 
         # and fingerprints can not be derived from public key without
         # the X448 shared key. Using the context variable ensures
         # fingerprints are distinct from derived message and header keys.
-        tx_fp = blake2b(tfc_public_key_user,    dh_shared_key, person=b'fingerprint', digest_size=FINGERPRINT_LENGTH)
-        rx_fp = blake2b(tfc_public_key_contact, dh_shared_key, person=b'fingerprint', digest_size=FINGERPRINT_LENGTH)
+        tx_fp = blake2b(tfc_public_key_user,    dh_shared_key, person=FINGERPRINT, digest_size=FINGERPRINT_LENGTH)
+        rx_fp = blake2b(tfc_public_key_contact, dh_shared_key, person=FINGERPRINT, digest_size=FINGERPRINT_LENGTH)
 
         # Verify fingerprints
         try:

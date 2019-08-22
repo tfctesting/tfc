@@ -71,12 +71,16 @@ NOT_IN_GROUP     = 'not_in_group'
 UNKNOWN_ACCOUNTS = 'unknown_accounts'
 
 
+"""Base58 alphabet"""
+B58_ALPHABET = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz'
+
+
 """Base58 key types"""
 B58_PUBLIC_KEY = 'b58_public_key'
 B58_LOCAL_KEY  = 'b58_local_key'
 
 
-"""Key input guides"""
+"""Base58 key input guides"""
 B58_PUBLIC_KEY_GUIDE = '   A       B       C       D       E       F       H       H       I       J       K       L   '
 B58_LOCAL_KEY_GUIDE  = ' A   B   C   D   E   F   G   H   I   J   K   L   M   N   O   P   Q '
 
@@ -540,6 +544,11 @@ BLAKE2_SALT_LENGTH_MAX           = 16
 BLAKE2_PERSON_LENGTH_MAX         = 16
 HARAC_LENGTH                     = 8
 PADDING_LENGTH                   = 255
+
+# Domain separation
+MESSAGE_KEY = b'message_key'
+HEADER_KEY  = b'header_key'
+FINGERPRINT = b'fingerprint'
 
 # Forward secrecy
 INITIAL_HARAC        = 0
