@@ -787,8 +787,8 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH  # Length of the key
     [2; p.6]
         Once the input_pool is initialized, the ChaCha20 DRNG is
     reseeded from the input_pool[3] using 128..256 bits of entropy
-    [1; pp.27-28] from the input_pool and at that point it is considered
-    fully seeded.[4]
+    [1; pp.27-28] from the input_pool and at that point the DRNG is
+    considered fully seeded.[4]
 
     State transition and output of the input_pool
     ---------------------------------------------
