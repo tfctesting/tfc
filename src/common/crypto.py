@@ -786,9 +786,9 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH  # Length of the key
     reached at early boot phase (by the time the user space boots).
     [2; p.6]
         Once the input_pool is initialized, the ChaCha20 DRNG is
-    reseeded from the input_pool[3] using 128..256 bits of entropy
+    reseeded from the input_pool[2] using 128..256 bits of entropy
     [1; pp.27-28] from the input_pool and at that point the DRNG is
-    considered fully seeded.[4]
+    considered fully seeded.[3]
 
     State transition and output of the input_pool
     ---------------------------------------------
@@ -823,9 +823,8 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH  # Length of the key
     entropy estimator by 1024 bits.[1; pp.59-60]
 
      [1] https://www.bsi.bund.de/SharedDocs/Downloads/EN/BSI/Publications/Studies/LinuxRNG/LinuxRNG_EN.pdf?__blob=publicationFile&v=16
-     [2] https://www.chronox.de/lrng/doc/lrng.pdf
-     [3] https://github.com/torvalds/linux/blob/master/drivers/char/random.c#L791
-     [4] https://github.com/torvalds/linux/blob/master/drivers/char/random.c#L1032
+     [2] https://github.com/torvalds/linux/blob/master/drivers/char/random.c#L791
+     [3] https://github.com/torvalds/linux/blob/master/drivers/char/random.c#L1032
 
     The ChaCha20 DRNG
     =================
