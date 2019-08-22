@@ -110,10 +110,10 @@ class MasterKey(object):
            seconds, with the maximum being 4 seconds. The minimum value
            is the same as the recommendation for hard-drive encryption.
 
-        5) The salt length is set to 256-bits which is double the recommend
-           length. The salt size ensures that even in a group of 4.8*10^29
-           users, the probability that two users share the same salt is just
-           10^(-18).*
+        5) The salt length is set to 256-bits which is double the
+           recommended length. The salt size ensures that even in a
+           group of 4.8*10^29 users, the probability that two users
+           share the same salt is just 10^(-18).*
             * https://en.wikipedia.org/wiki/Birthday_attack
 
            The salt does not need additional protection as the security it

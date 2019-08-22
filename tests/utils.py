@@ -96,9 +96,10 @@ def ignored(*exceptions):
 
 
 def cd_unit_test():
-    """Change working directory to one for unit tests.
+    """Create a directory for the unit test and change to it.
 
-    Separate working directory for unit tests protects existing user data.
+    Separate working directory for unit test protects existing user data
+    and allows running tests in parallel.
     """
     name = f"unit_test_{(os.urandom(16)).hex()}/"
     try:
