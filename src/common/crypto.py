@@ -104,7 +104,7 @@ def blake2b(message:     bytes,                        # Message to hash
 
     Note that while the default digest length of BLAKE2b (the
     implementation optimized for AMD64 systems) is 512 bits, the digest
-    size is truncated to 256 bits for the use in TFC.
+    length is truncated to 256 bits for the use in TFC.
 
     The correctness of the BLAKE2b implementation[5] is tested by TFC
     unit tests. The testing is done with the complete suite of BLAKE2b
