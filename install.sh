@@ -33,7 +33,7 @@ function verify_tcb_requirements_files {
 # To minimize the time TCB installer configuration stays online, only
 # the requirements files are authenticated between downloads.
     compare_digest a52d96aa42f4aa00958e3778d8048f31ae64d7b602a4998d88ff4649328df3c53b73e529a6e672058c609ff31009d71e98838a634c4b71550742c6cdc6c3cfbb '' requirements.txt
-    compare_digest 4f50e39e12e255e07d8a33c3bf8affc7eecbe5c5f6c4e4188c44a7747c0475b8f9e74086dff48d5e17ce199ba91c54608d5d3d32a8b865e47b16d4b2f78009ff '' requirements-venv.txt
+    compare_digest 2c9e865be4231d346504bef99159d987803944b4ed7a1f0dbb7e674d4043e83c45771da34b7c4772f25101b81f41f2bafc75bfd07e58d37ddf7d3dc1aa32da24 '' requirements-venv.txt
 }
 
 
@@ -130,7 +130,7 @@ REQUESTS=requests-2.22.0-py2.py3-none-any.whl
 SIX=six-1.12.0-py2.py3-none-any.whl
 STEM=stem-1.7.1.tar.gz
 URLLIB3=urllib3-1.25.3-py2.py3-none-any.whl
-VIRTUALENV=virtualenv-16.7.2-py2.py3-none-any.whl
+VIRTUALENV=virtualenv-16.7.3-py2.py3-none-any.whl
 WERKZEUG=Werkzeug-0.15.5-py2.py3-none-any.whl
 
 
