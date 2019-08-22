@@ -714,7 +714,7 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH  # Length of the key
                      entropy to AES256-CBC-MAC based conditioner (as
                      specified in NIST SP 800-38A), that can be
                      requested bytes with the RDSEED instruction.
-                        The conditioner is used to create 256-bit seeds
+                         The conditioner is used to create 256-bit seeds
                      for the AES256-CTR based DRBG available via the
                      RDRAND instruction. The DRBG is reseeded after
                      every 511th sample of 128 bits (~8kB).[3; p.12]
