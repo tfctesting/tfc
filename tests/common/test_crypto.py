@@ -543,6 +543,12 @@ class TestXChaCha20Poly1305(unittest.TestCase):
             with self.assertRaises(SystemExit):
                 auth_and_decrypt(self.nonce_ct_tag_ietf, invalid_key)
 
+    @mock.patch('src.common.crypto.csprng', return_value=(XCHACHA20_NONCE_LENGTH-1)*b'a')
+    def test_invalid_nonce_when_encrypting_raises_critical_error(self, mock_csprng):
+        with self.assertRaises(SystemExit):
+            encrypt_and_sign(self.plaintext, self.key)
+        mock_csprng.assert_called_with(XCHACHA20_NONCE_LENGTH)
+
     def test_invalid_tag_in_data_from_database_raises_critical_error(self):
         with self.assertRaises(SystemExit):
             auth_and_decrypt(self.nonce_ct_tag_ietf, key=bytes(SYMMETRIC_KEY_LENGTH), database='path/database_filename')
