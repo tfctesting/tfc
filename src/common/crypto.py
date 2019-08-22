@@ -699,7 +699,7 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH  # Length of the key
               Each interrupt is assumed to contain 1/32 bit of entropy.
           However, the measured Shannon entropy for each interrupt is
           19.2 bits, which means each 128-bit fast_pool is fed 1228.8
-          bits of entropy.[1; p.77]
+          bits of Shannon entropy.[1; p.77]
               The entire content of the fast_pool is considered to
           increase the internal entropy of the input_pool by 1 bit. If
           the RDSEED (explained below) instruction is available, it is
