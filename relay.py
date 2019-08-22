@@ -28,7 +28,6 @@ from typing          import Any, Dict
 from cryptography.hazmat.primitives.asymmetric.x448 import X448PrivateKey
 from cryptography.hazmat.primitives.serialization   import Encoding, PublicFormat
 
-from src.common.crypto  import check_kernel_version
 from src.common.gateway import Gateway, gateway_loop
 from src.common.misc    import ensure_dir, monitor_processes, process_arguments
 from src.common.output  import print_title
@@ -138,8 +137,6 @@ def main() -> None:
     os.chdir(working_dir)
 
     _, local_test, data_diode_sockets = process_arguments()
-
-    check_kernel_version()
 
     gateway = Gateway(NC, local_test, data_diode_sockets)
 
