@@ -118,7 +118,7 @@ def client(onion_pub_key:         bytes,
     if onion_addr_user:
         while True:
             try:
-                reply = session.get(f'http://{onion_addr}.onion/contact_request/{onion_addr_user}', timeout=45).text
+                reply = session.get(f'http://{onion_addr}.onion/contact_request/{onion_addr_user}', timeout=5).text
                 if reply == "OK":
                     break
             except requests.exceptions.RequestException:
@@ -133,7 +133,7 @@ def client(onion_pub_key:         bytes,
 
             # Load URL token public key from contact's Onion Service root domain
             try:
-                url_token_public_key_hex = session.get(f'http://{onion_addr}.onion/', timeout=45).text
+                url_token_public_key_hex = session.get(f'http://{onion_addr}.onion/', timeout=5).text
             except requests.exceptions.RequestException:
                 url_token_public_key_hex = ''
 
