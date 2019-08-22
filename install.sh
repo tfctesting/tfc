@@ -127,6 +127,7 @@ PYNACL=PyNaCl-1.3.0-cp34-abi3-manylinux1_x86_64.whl
 PYSERIAL=pyserial-3.4-py2.py3-none-any.whl
 PYSOCKS=PySocks-1.7.0-py3-none-any.whl
 REQUESTS=requests-2.22.0-py2.py3-none-any.whl
+SETUPTOOLS=setuptools-41.2.0-py2.py3-none-any.whl
 SIX=six-1.12.0-py2.py3-none-any.whl
 STEM=stem-1.7.1.tar.gz
 URLLIB3=urllib3-1.25.3-py2.py3-none-any.whl
@@ -141,6 +142,7 @@ function process_tcb_dependencies {
     sudo $1 /opt/tfc/${PYCPARSER}
     sudo $1 /opt/tfc/${CFFI}
     sudo $1 /opt/tfc/${ARGON2}
+    sudo $1 /opt/tfc/${SETUPTOOLS}
     sudo $1 /opt/tfc/${PYNACL}
     sudo $1 /opt/tfc/${PYSERIAL}
     sudo $1 /opt/tfc/${ASN1CRYPTO}
@@ -177,6 +179,7 @@ function process_tails_dependencies {
     t_sudo $1 /opt/tfc/${FLASK}
 
     # Cryptography
+    t_sudo $1 /opt/tfc/${SETUPTOOLS}
     t_sudo $1 /opt/tfc/${SIX}
     t_sudo $1 /opt/tfc/${ASN1CRYPTO}
     t_sudo $1 /opt/tfc/${PYCPARSER}
