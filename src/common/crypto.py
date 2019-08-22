@@ -162,13 +162,13 @@ def argon2_kdf(password:    str,    # Password to derive the key from
 
         o Of all of the PHC finalists, only Catena and Argon2i offer
           complete cache-timing resistance by using data-independent
-          memory access. Catena does not support parallelism[3], thus if
-          it later turns out TFC needs stronger protection from
+          memory access. Catena does not support parallelism[2; p.49],
+          thus if it later turns out TFC needs stronger protection from
           cache-timing attacks, the selection of Argon2 (that always
           supports parallelism) is ideal, as switching from Argon2id
           to Argon2i is trivial.
 
-        o More secure algorithms such as the Balloon hash function[4] do
+        o More secure algorithms such as the Balloon hash function[3] do
           not have robust implementations.
 
     The purpose of Argon2 is to stretch a password into a 256-bit key.
@@ -182,7 +182,7 @@ def argon2_kdf(password:    str,    # Password to derive the key from
     or PSK transmission media.
 
     The Argon2 version used is the Argon2id, that is the current
-    recommendation of the draft RFC[5]. Argon2id uses data-independent
+    recommendation of the draft RFC[4]. Argon2id uses data-independent
     memory access for the first half of the first iteration, and
     data-dependent memory access for the rest. This provides a lot of
     protection against TMTO attacks which is great because most of the
@@ -193,17 +193,16 @@ def argon2_kdf(password:    str,    # Password to derive the key from
     perform. Considering these two attacks, Argon2id is the most secure
     choice.
 
-    The correctness of the Argon2id implementation[6] is tested by TFC
+    The correctness of the Argon2id implementation[5] is tested by TFC
     unit tests. The testing is done by comparing the output of the
     argon2_cffi library with the output of the Argon2 reference
     command-line utility under randomized input parameters.
 
      [1] https://github.com/P-H-C/phc-winner-argon2/blob/master/argon2-specs.pdf
      [2] https://password-hashing.net/submissions/specs/Catena-v5.pdf
-     [3] https://crypto.stackexchange.com/a/51623
-     [4] https://crypto.stanford.edu/balloon/
-     [5] https://tools.ietf.org/html/draft-irtf-cfrg-argon2-06#section-9.4
-     [6] https://github.com/P-H-C/phc-winner-argon2
+     [3] https://crypto.stanford.edu/balloon/
+     [4] https://tools.ietf.org/html/draft-irtf-cfrg-argon2-06#section-9.4
+     [5] https://github.com/P-H-C/phc-winner-argon2
          https://github.com/hynek/argon2_cffi
     """
     if len(salt) != ARGON2_SALT_LENGTH:
