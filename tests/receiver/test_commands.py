@@ -21,7 +21,6 @@ along with TFC. If not, see <https://www.gnu.org/licenses/>.
 
 import os
 import struct
-import time
 import unittest
 
 from datetime        import datetime
@@ -154,95 +153,41 @@ class TestExitTFC(unittest.TestCase):
 
 class TestLogCommand(TFCTestCase):
 
-    def setUp(self, *_):
+    def setUp(self):
+        self.unit_test_dir     = cd_unit_test()
+        self.cmd_data          = int_to_bytes(1) + nick_to_pub_key("Bob")
+        self.ts                = datetime.now()
+        self.window_list       = WindowList(nicks=['Alice', 'Bob'])
+        self.window            = self.window_list.get_window(nick_to_pub_key("Bob"))
+        self.window.type_print = WIN_TYPE_CONTACT
+        self.window.name       = 'Bob'
+        self.window.type       = WIN_TYPE_CONTACT
+        self.contact_list      = ContactList(nicks=['Alice', 'Bob'])
+        self.group_list        = GroupList()
+        self.settings          = Settings(software_operation=RX)
+        self.master_key        = MasterKey(operation=RX, local_test=True)
+        self.args              = (self.ts, self.window_list, self.contact_list,
+                                  self.group_list, self.settings, self.master_key)
 
-        self.unit_test_dir = cd_unit_test()
-        self.time_float    = time.time()
+        time_float = struct.unpack('<L', bytes.fromhex('08ceae02'))[0]
+        self.time  = datetime.fromtimestamp(time_float).strftime("%H:%M:%S.%f")[:-4]
 
     def tearDown(self):
         cleanup(self.unit_test_dir)
         with ignored(OSError):
-            os.remove('Unittest - Plaintext log (None)')
+            os.remove('Receiver - Plaintext log (None)')
 
     def test_print(self):
-        self.cmd_data          = int_to_bytes(1) + nick_to_pub_key("Bob")
-        self.ts                = datetime.now()
-        self.window_list       = WindowList(nicks=['Alice', 'Bob'])
-        self.window            = self.window_list.get_window(nick_to_pub_key("Bob"))
-        self.window.type_print = WIN_TYPE_CONTACT
-        self.window.name       = 'Bob'
-        self.window.type       = WIN_TYPE_CONTACT
-        self.contact_list      = ContactList(nicks=['Alice', 'Bob'])
-        self.group_list        = GroupList()
-        self.settings          = Settings()
+        self.assert_fr(f"No log database available.", log_command, self.cmd_data, *self.args)
 
-        time_float = struct.unpack('<L', bytes.fromhex('08ceae02'))[0]
-        self.time  = datetime.fromtimestamp(time_float).strftime("%H:%M:%S.%f")[:-4]
-        master_key = MasterKey(operation=RX, local_test=True)
-        args       = (None, self.window_list, self.contact_list, self.group_list, self.settings, master_key)
-
-        self.assert_fr(f"No log database available.", log_command, self.cmd_data, *args)
-
-    @mock.patch('src.common.db_masterkey.MIN_KEY_DERIVATION_TIME', 0.1)
-    @mock.patch('src.common.db_masterkey.MAX_KEY_DERIVATION_TIME', 1.0)
-    @mock.patch('multiprocessing.cpu_count', return_value=1)
-    @mock.patch('time.sleep',                return_value=None)
-    @mock.patch('getpass.getpass',           side_effect=['test_password', 'test_password', KeyboardInterrupt])
-    @mock.patch('os.popen',                  return_value=MagicMock(read=MagicMock(return_value=MagicMock(splitlines=MagicMock(return_value=["MemFree 10240"])))))
-    def test_keyboard_interrupt_during_export_pwd_entry_raises_fr(self, *_):
+    @mock.patch('struct.pack', return_value=bytes.fromhex('08ceae02'))
+    def test_export(self, _):
         # Setup
-        from src.common.db_masterkey import MasterKey
-        master_key = MasterKey(operation=RX, local_test=True)
-
-        self.cmd_data          = int_to_bytes(1) + nick_to_pub_key("Bob")
-        self.ts                = datetime.now()
-        self.window_list       = WindowList(nicks=['Alice', 'Bob'])
-        self.window            = self.window_list.get_window(nick_to_pub_key("Bob"))
-        self.window.type_print = WIN_TYPE_CONTACT
-        self.window.name       = 'Bob'
-        self.window.type       = WIN_TYPE_CONTACT
-        self.contact_list      = ContactList(nicks=['Alice', 'Bob'])
-        self.group_list        = GroupList()
-        self.settings          = Settings()
-
-        time_float = struct.unpack('<L', bytes.fromhex('08ceae02'))[0]
-        self.time  = datetime.fromtimestamp(time_float).strftime("%H:%M:%S.%f")[:-4]
-        args       = (self.ts, self.window_list, self.contact_list, self.group_list, self.settings, master_key)
-
-        self.assert_fr(f"Log file export aborted.", log_command, self.cmd_data, *args)
-
-    @mock.patch('src.common.db_masterkey.MIN_KEY_DERIVATION_TIME', 0.1)
-    @mock.patch('src.common.db_masterkey.MAX_KEY_DERIVATION_TIME', 1.0)
-    @mock.patch('multiprocessing.cpu_count', return_value=1)
-    @mock.patch("getpass.getpass",           return_value='test_password')
-    @mock.patch('time.time',                 return_value=1561335313.0)
-    @mock.patch('time.sleep',                return_value=None)
-    @mock.patch('os.popen',                  return_value=MagicMock(read=MagicMock(return_value=MagicMock(splitlines=MagicMock(return_value=["MemFree 10240"])))))
-    def test_export(self, *_):
-        # Setup
-        from src.common.db_masterkey import MasterKey
-        master_key = MasterKey(operation=RX, local_test=False)
-
-        self.ts                = datetime.now()
-        self.contact_list      = ContactList(nicks=['Alice', 'Bob'])
-        self.window_list       = WindowList(nicks=['Alice', 'Bob'])
-        self.window            = self.window_list.get_window(nick_to_pub_key("Bob"))
-        self.window.type       = WIN_TYPE_CONTACT
-        self.window.type_print = WIN_TYPE_CONTACT
-        self.window.name       = 'Bob'
-        self.group_list        = GroupList()
-        self.settings          = Settings(software_operation=RX)
-
-        self.time     = datetime.fromtimestamp(1561335313.0).strftime("%H:%M:%S.%f")[:-6]+'00'
-        self.cmd_data = int_to_bytes(1) + nick_to_pub_key("Bob")
-        args          = (self.ts, self.window_list, self.contact_list, self.group_list, self.settings, master_key)
-
-        # Store message plaintext to log database
         for p in assembly_packet_creator(MESSAGE, 'A short message'):
-            write_log_entry(p, nick_to_pub_key("Bob"), self.settings, master_key, origin=ORIGIN_CONTACT_HEADER)
+            write_log_entry(p, nick_to_pub_key("Bob"), self.settings, self.master_key, origin=ORIGIN_CONTACT_HEADER)
 
         # Test
-        self.assertIsNone(log_command(self.cmd_data, *args))
+        self.assertIsNone(log_command(self.cmd_data, *self.args))
 
         with open('Receiver - Plaintext log (Bob)') as f:
             data = f.read()

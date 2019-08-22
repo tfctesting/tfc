@@ -165,21 +165,11 @@ def log_command(cmd_data:     bytes,
     no_messages     = bytes_to_int(ser_no_msg)
     window          = window_list.get_window(uid)
 
+    access_logs(window, contact_list, group_list, settings, master_key, msg_to_load=no_messages, export=export)
+
     if export:
-        m_print("Export logfile", bold=True, head_clear=True, head=1, tail=1)
-
-        try:
-            purp_master_key = master_key.load_master_key()
-        except (EOFError, KeyboardInterrupt):
-            raise FunctionReturn("Log file export aborted.", tail_clear=True, head=2, delay=1)
-
-        if purp_master_key == master_key.master_key:
-            access_logs(window, contact_list, group_list, settings, master_key, msg_to_load=no_messages, export=True)
-            local_win = window_list.get_local_window()
-            local_win.add_new(ts, f"Exported log file of {window.type} '{window.name}'.", output=True)
-
-    else:
-        access_logs(window, contact_list, group_list, settings, master_key, msg_to_load=no_messages)
+        local_win = window_list.get_local_window()
+        local_win.add_new(ts, f"Exported log file of {window.type} '{window.name}'.", output=True)
 
 
 def remove_log(cmd_data:     bytes,

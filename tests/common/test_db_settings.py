@@ -187,6 +187,11 @@ log_file_masking                False           False           True hides real
                                                                 during traffic
                                                                 masking
 
+ask_password_for_log_access     True            True            False disables
+                                                                password prompt
+                                                                when viewing/exp
+                                                                orting logs
+
 nc_bypass_messages              False           False           False removes
                                                                 Networked
                                                                 Computer bypass

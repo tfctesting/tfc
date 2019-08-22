@@ -19,6 +19,7 @@ You should have received a copy of the GNU General Public License
 along with TFC. If not, see <https://www.gnu.org/licenses/>.
 """
 
+import getpass
 import time
 
 from datetime import datetime
@@ -207,6 +208,11 @@ class MasterKey(OrigMasterKey):
         for key, value in kwargs.items():
             setattr(self, key, value)
 
+    def load_master_key(self) -> bytes:
+        if getpass.getpass() == 'test_password':
+            return self.master_key
+        else:
+            return SYMMETRIC_KEY_LENGTH * b'f'
 
 class OnionService(OrigOnionService):
     """Mock the object for unit testing."""
@@ -238,6 +244,7 @@ class Settings(OrigSettings):
         self.accept_files_by_default       = False
         self.show_notifications_by_default = True
         self.log_file_masking              = False
+        self.ask_password_for_log_access   = True
 
         # Transmitter settings
         self.nc_bypass_messages = False

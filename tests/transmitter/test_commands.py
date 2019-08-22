@@ -215,12 +215,23 @@ class TestLogCommand(TFCTestCase):
         self.assert_fr("Error: Invalid number of messages.",
                        log_command, UserInput("history a"), *self.args)
 
-    def test_log_printing(self):
+    @mock.patch("getpass.getpass", return_value='test_password')
+    def test_log_printing(self, _):
         self.assert_fr(f"No log database available.",
                        log_command, UserInput("history 4"), *self.args)
         self.assertEqual(self.queues[COMMAND_PACKET_QUEUE].qsize(), 1)
 
-    def test_log_printing_all(self):
+    def test_log_printing_when_no_password_is_asked(self):
+        # Setup
+        self.settings.ask_password_for_log_access = False
+
+        # Test
+        self.assert_fr(f"No log database available.",
+                       log_command, UserInput("history 4"), *self.args)
+        self.assertEqual(self.queues[COMMAND_PACKET_QUEUE].qsize(), 1)
+
+    @mock.patch("getpass.getpass", return_value='test_password')
+    def test_log_printing_all(self, _):
         self.assert_fr(f"No log database available.",
                        log_command, UserInput("history"), *self.args)
         self.assertEqual(self.queues[COMMAND_PACKET_QUEUE].qsize(), 1)
@@ -635,8 +646,10 @@ class TestChangeSetting(TFCTestCase):
         self.group_list   = GroupList()
         self.settings     = Settings()
         self.queues       = gen_queue_dict()
+        self.master_key   = MasterKey()
         self.gateway      = Gateway()
-        self.args         = self.window, self.contact_list, self.group_list, self.settings, self.queues, self.gateway
+        self.args         = self.window, self.contact_list, self.group_list, \
+                            self.settings, self.queues, self.master_key, self.gateway
 
     def tearDown(self):
         tear_queues(self.queues)
@@ -659,6 +672,18 @@ class TestChangeSetting(TFCTestCase):
 
         self.assert_fr("Error: Serial interface setting can only be changed manually.",
                        change_setting, UserInput("set built_in_serial_interface Truej"), *self.args)
+
+    @mock.patch('time.sleep',      return_value=None)
+    @mock.patch('getpass.getpass', side_effect=[KeyboardInterrupt])
+    def test_changing_ask_password_for_log_access_asks_for_password(self, *_):
+        self.assert_fr("Setting change aborted.",
+                       change_setting, UserInput("set ask_password_for_log_access False"), *self.args)
+
+    @mock.patch('time.sleep',      return_value=None)
+    @mock.patch('getpass.getpass', return_value='invalid_password')
+    def test_invalid_password_raises_function_return(self, *_):
+        self.assert_fr("Error: No permission to change setting.",
+                       change_setting, UserInput("set ask_password_for_log_access False"), *self.args)
 
     def test_relay_commands_raise_fr_when_traffic_masking_is_enabled(self):
         # Setup
@@ -740,6 +765,11 @@ log_file_masking                False           False           True hides real
                                                                 size of log file
                                                                 during traffic
                                                                 masking
+
+ask_password_for_log_access     True            True            False disables
+                                                                password prompt
+                                                                when viewing/exp
+                                                                orting logs
 
 nc_bypass_messages              False           False           False removes
                                                                 Networked
