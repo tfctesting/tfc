@@ -154,13 +154,8 @@ function process_tails_dependencies {
     # Manage Tails dependencies in batch. The command that uses the
     # files is passed to the function as a parameter.
 
-    # Pyserial
     t_sudo $1 /opt/tfc/${PYSERIAL}
-
-    # Stem
     t_sudo $1 /opt/tfc/${STEM}
-
-    # PySocks
     t_sudo $1 /opt/tfc/${PYSOCKS}
 
     # Requests
@@ -185,6 +180,72 @@ function process_tails_dependencies {
     t_sudo $1 /opt/tfc/${PYCPARSER}
     t_sudo $1 /opt/tfc/${CFFI}
     t_sudo $1 /opt/tfc/${CRYPTOGRAPHY}
+}
+
+
+function move_tails_dependencies {
+    # Move Tails dependencies in batch.
+
+    t_sudo mv $HOME/${PYSERIAL} /opt/tfc/
+    t_sudo mv $HOME/${STEM}     /opt/tfc/
+    t_sudo mv $HOME/${PYSOCKS}  /opt/tfc/
+
+    # Requests
+    t_sudo mv $HOME/${URLLIB3}  /opt/tfc/
+    t_sudo mv $HOME/${IDNA}     /opt/tfc/
+    t_sudo mv $HOME/${CHARDET}  /opt/tfc/
+    t_sudo mv $HOME/${CERTIFI}  /opt/tfc/
+    t_sudo mv $HOME/${REQUESTS} /opt/tfc/
+
+    # Flask
+    t_sudo mv $HOME/${WERKZEUG}     /opt/tfc/
+    t_sudo mv $HOME/${MARKUPSAFE}   /opt/tfc/
+    t_sudo mv $HOME/${JINJA2}       /opt/tfc/
+    t_sudo mv $HOME/${ITSDANGEROUS} /opt/tfc/
+    t_sudo mv $HOME/${CLICK}        /opt/tfc/
+    t_sudo mv $HOME/${FLASK}        /opt/tfc/
+
+    # Cryptography
+    t_sudo mv $HOME/${SETUPTOOLS}   /opt/tfc/
+    t_sudo mv $HOME/${SIX}          /opt/tfc/
+    t_sudo mv $HOME/${ASN1CRYPTO}   /opt/tfc/
+    t_sudo mv $HOME/${PYCPARSER}    /opt/tfc/
+    t_sudo mv $HOME/${CFFI}         /opt/tfc/
+    t_sudo mv $HOME/${CRYPTOGRAPHY} /opt/tfc/
+}
+
+
+function verify_tails_dependencies {
+    # Tails doesn't allow downloading over PIP to /opt/tfc, so we
+    # first download to $HOME, move the files to /opt/tfc, and then
+    # perform additional hash verification
+
+    compare_digest 8333ac2843fd136d5d0d63b527b37866f7d18afc3bb33c4938b63af077492aeb118eb32a89ac78547f14d59a2adb1e5d00728728275de62317da48dadf6cdff9 '' ${PYSERIAL}
+    compare_digest a275f59bba650cb5bb151cf53fb1dd820334f9abbeae1a25e64502adc854c7f54c51bc3d6c1656b595d142fc0695ffad53aab3c57bc285421c1f4f10c9c3db4c '' ${STEM}
+    compare_digest 5bbffb2714a04fb53417058703d8112c5e5dca768df627e64618e8ab8a36a8bdbc27f5d6852f39cff6b8fb4c9a5d13909f86eeb5fe9741ba42bdc985685e5d51 '' ${PYSOCKS}
+
+    # Requests
+    compare_digest 46d144af3633080b9ec8a642ab855b401b8224edb839c237639998b004f19b8cb191155c57e633954cf70b100d6d8b21105cd280acd1ea975aef1dec9a4a5860 '' ${URLLIB3}
+    compare_digest fb07dbec1de86efbad82a4f73d98123c59b083c1f1277445204bef75de99ca200377ad2f1db8924ae79b31b3dd984891c87d0a6344ec4d07a0ddbbbc655821a3 '' ${IDNA}
+    compare_digest bfae58c8ea19c87cc9c9bf3d0b6146bfdb3630346bd954fe8e9f7da1f09da1fc0d6943ff04802798a665ea3b610ee2d65658ce84fe5a89f9e93625ea396a17f4 '' ${CHARDET}
+    compare_digest d81fe3a75ea611466d5ece7788f47c7946a4226bf4622c2accfd28c1e37b817e748609710c176c51ef2621cbc7ee200dd8d8106e738f1ef7cb96d7f2f82539cc '' ${CERTIFI}
+    compare_digest 9186ce4e39bb64f5931a205ffc9afac61657bc42078bc4754ed12a2b66a12b7a620583440849fc2e161d1061ac0750ddef4670f54916931ace1e9abd2a9fb09c '' ${REQUESTS}
+
+    # Flask
+    compare_digest 19728875a846f895b7e20f1e8762455147253b295c29e4fb981f734a7ec6a491ae4a5427b0fcac54013c9fcca3d9a53d2639c00a0913c8d9ce69d8e8e24cab42 '' ${WERKZEUG}
+    compare_digest 69e9b9c9ac4fdf3cfa1a3de23d14964b843989128f8cc6ea58617fc5d6ef937bcc3eae9cb32b5164b5f54b06f96bdff9bc249529f20671cc26adc9e6ce8f6bec '' ${MARKUPSAFE}
+    compare_digest 04860c7ff7086f051368787289f75198eec3357c7da7565dc5045353122650a887e063b1a5297578ddefcc77bfdfe3d9a23c868cb3e7f18a0b5f1c475e29339e '' ${JINJA2}
+    compare_digest 891c294867f705eb9c66274bd04ac5d93140d6e9beea6cbf9a44e7f9c13c0e2efa3554bdf56620712759a5cd579e112a782d25f3f91ba9419d60b2b4d2bc5b7c '' ${ITSDANGEROUS}
+    compare_digest 6b30987349df7c45c5f41cff9076ed45b178b444fca1ab1965f4ae33d1631522ce0a2868392c736666e83672b8b20e9503ae9ce5016dce3fa8f77bc8a3674130 '' ${CLICK}
+    compare_digest bd49cb364307569480196289fa61fbb5493e46199620333f67617367278e1f56b20fc0d40fd540bef15642a8065e488c24e97f50535e8ec143875095157d8069 '' ${FLASK}
+
+    # Cryptography
+    compare_digest 125341f0c22e11d2bd24c453b22e8fd7fd71605ee7a44eb61228686326eaca2e8f35b7ad4d0eacde4865f4d8cb8acb5cb5e3ff2856e756632b71af2f0dbdbee9 '' ${SETUPTOOLS}
+    compare_digest 326574c7542110d2cd8071136a36a6cffc7637ba948b55e0abb7f30f3821843073223301ecbec1d48b8361b0d7ccb338725eeb0424696efedc3f6bd2a23331d3 '' ${SIX}
+    compare_digest 8d9bc344981079ac6c00e71e161c34b6f403e575bbfe1ad06e30a3bcb33e0db317bdcb7aed2d18d510cb1b3ee340a649f7f77a00d271fcf3cc388e6655b67533 '' ${ASN1CRYPTO}
+    compare_digest 7f830e1c9066ee2d297a55e2bf6db4bf6447b6d9da0145d11a88c3bb98505755fb7986eafa6e06ae0b7680838f5e5d6a6d188245ca5ad45c2a727587bac93ab5 '' ${PYCPARSER}
+    compare_digest 69a2d725395a1a3585556cb44b62c49bd7f88f41ff194b60d4b9b591c4878a907c0770ef4052b588eaa9d420a53cbeb6b13237fff4054bf26ba5deaa84e25afa '' ${CFFI}
+    compare_digest 1285c3f5181da41bace4f9fd5ce5fc4bfba71143b39a4f3d8bab642db65bec9556b1965b1c2990236fed9d6b156bf81e6c0642d1531eadf7b92379c25cc4aeac '' ${CRYPTOGRAPHY}
 }
 
 
@@ -386,15 +447,16 @@ function install_relay_tails {
     t_sudo apt update
     t_sudo apt install git libssl-dev python3-pip -y || true  # Ignore error in case packets can not be persistently installed
 
-    git clone --depth 1 https://github.com/tfctesting/tfc.git $HOME/tfc
+    torsocks git clone --depth 1 https://github.com/tfctesting/tfc.git $HOME/tfc
     t_sudo mv $HOME/tfc/ /opt/tfc/
 
     verify_tcb_requirements_files
     verify_files
     create_user_data_dir
 
-    t_sudo python3.7 -m pip download --no-cache-dir -r /opt/tfc/requirements-relay.txt --require-hashes -d /opt/tfc/
-
+    torsocks python3.7 -m pip download --no-cache-dir -r /opt/tfc/requirements-relay.txt --require-hashes -d $HOME/
+    move_tails_dependencies
+    verify_tails_dependencies
     process_tails_dependencies "python3.7 -m pip install"
 
     t_sudo mv /opt/tfc/tfc.png                        /usr/share/pixmaps/
