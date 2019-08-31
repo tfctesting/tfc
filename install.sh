@@ -155,7 +155,6 @@ function process_tails_dependencies {
     # files is passed to the function as a parameter.
 
     t_sudo -E $1 /opt/tfc/${PYSERIAL}
-    t_sudo -E $1 /opt/tfc/${STEM}
     t_sudo -E $1 /opt/tfc/${PYSOCKS}
 
     # Requests
@@ -532,6 +531,9 @@ function install_relay_tails {
 
     debug "t_sudo rm /opt/tfc/${VIRTUALENV}"
     t_sudo rm /opt/tfc/${VIRTUALENV}
+
+    debug "t_sudo rm /opt/tfc/${STEM}"
+    t_sudo rm /opt/tfc/${STEM}
 
     t_sudo rm -r /opt/tfc/src/receiver/
     t_sudo rm -r /opt/tfc/src/transmitter/
