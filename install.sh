@@ -624,6 +624,12 @@ function root_check {
 
 function sudoer_check {
     # Check that the user who launched the installer is on the sudoers list.
+
+    # Tails allows sudo without the user `amnesia` being on sudoers list.
+    if ! [[ "$(lsb_release -a 2>/dev/null | grep Tails)" ]]; then
+        return
+    fi
+
     sudoers=$(getent group sudo |cut -d: -f4 | tr "," "\n")
     user_is_sudoer=false
 
