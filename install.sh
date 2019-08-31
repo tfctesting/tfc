@@ -481,7 +481,7 @@ function t_sudo {
 
 function install_relay {
     # Determine the Networked Computer OS for Relay Program installation.
-    if [[ "$(lsb_release -a 2>/dev/null | grep Tails)" ]]; then
+    if [[ "$(cat /etc/os-release 2>/dev/null | grep Tails)" ]]; then
         install_relay_tails
     else
         install_relay_ubuntu
