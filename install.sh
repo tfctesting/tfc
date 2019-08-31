@@ -52,7 +52,7 @@ function verify_files {
     compare_digest d4f503df2186db02641f54a545739d90974b6d9d920f76ad7e93fe1a38a68a85c167da6c19f7574d11fbb69e57d563845d174d420c55691bc2cd75a1a72806dc launchers/ terminator-config-local-test
     compare_digest fed9f056541afe1822ec41bce315fc6ce94652318088ecc905ddc657a15525d740ca83ff335e5090b9e3844027a706990da72a754ffa3dcd255b21e263597c78 launchers/ TFC-Local-test.desktop
     compare_digest 011a64aa7790253b008f0adfe940108dc94c08adec9b3a42efd1ac0d6405a82d828b3d416736ad64235b6b90ef2f6712fc10a70d8e97870670e5b84cf25fe54e launchers/ TFC-RP.desktop
-    compare_digest 12c86594b28f5dae48e4d216781034917ab80ca46f30cb3d33a0dec615d415830fdc41228f933c8fef651eb51643390fe5521e70f9efc642ea5c8b2e34442e00 launchers/ TFC-RP-Tails.desktop
+    compare_digest 011a64aa7790253b008f0adfe940108dc94c08adec9b3a42efd1ac0d6405a82d828b3d416736ad64235b6b90ef2f6712fc10a70d8e97870670e5b84cf25fe54e launchers/ TFC-RP-Tails.desktop
     compare_digest 270153a45e5426db326ba2144ca454bb57ddf8f53731c1948ee8fa33dedcb98e32e19506b0fa923e5a7f6fca9a5b67338216c19417e52289726721efe12abd98 launchers/ TFC-RxP.desktop
     compare_digest 691d0cc4f03bd9c2874711ba97e347e705e4eadf53c5b14562e7e1a419ae892a9ce156b6e5a26945bde72c0b3e56ec6ca2d24fb3bf23848fb44808b7681e4141 launchers/ TFC-TxP.desktop
 
@@ -455,17 +455,21 @@ function install_relay_tails {
     debug "read_sudo_pwd"
     read_sudo_pwd
 
+    # Apt dependencies
     debug "t_sudo apt update"
     t_sudo apt update
 
     debug "apt install git libssl-dev python3-pip -y || true"
     t_sudo apt install git libssl-dev python3-pip -y || true  # Ignore error in case packets can not be persistently installed
 
+    # Clone, move and verify git-repository
     debug "git clone --depth 1 https://github.com/tfctesting/tfc.git $HOME/tfc"
     torsocks git clone --depth 1 https://github.com/tfctesting/tfc.git $HOME/tfc
 
     debug "t_sudo mv $HOME/tfc/ /opt/tfc/"
     t_sudo mv $HOME/tfc/ /opt/tfc/
+
+    t_sudo chown -R root /opt/tfc/
 
     debug "verify_tcb_requirements_files"
     verify_tcb_requirements_files
@@ -476,6 +480,20 @@ function install_relay_tails {
     debug "create_user_data_dir"
     create_user_data_dir
 
+    # Virtualenv
+    debug "torsocks python3.7 -m pip download --no-cache-dir -r /opt/tfc/requirements-venv.txt --require-hashes -d $HOME/"
+    torsocks python3.7 -m pip download --no-cache-dir -r /opt/tfc/requirements-venv.txt --require-hashes -d $HOME/
+
+    debug "t_sudo mv $HOME/${VIRTUALENV} /opt/tfc/"
+    t_sudo mv $HOME/${VIRTUALENV} /opt/tfc/
+
+    debug "compare_digest 760587ac587609607526d20d62c5ef2d768d4bc2dc1f7d5ce338d3525ec49cdb60782311dfd4b814defc486292e181a802f561508980f4eb332366355c5e8cb1 '' ${VIRTUALENV}"
+    compare_digest 760587ac587609607526d20d62c5ef2d768d4bc2dc1f7d5ce338d3525ec49cdb60782311dfd4b814defc486292e181a802f561508980f4eb332366355c5e8cb1 '' ${VIRTUALENV}
+
+    debug "t_sudo python3.7 -m pip install /opt/tfc/${VIRTUALENV}"
+    t_sudo python3.7 -m pip install /opt/tfc/${VIRTUALENV}
+
+    # PIP Dependencies
     debug "torsocks python3.7 -m pip download --no-cache-dir -r /opt/tfc/requirements-relay.txt --require-hashes -d $HOME/"
     torsocks python3.7 -m pip download --no-cache-dir -r /opt/tfc/requirements-relay.txt --require-hashes -d $HOME/
 
@@ -485,9 +503,20 @@ function install_relay_tails {
     debug "verify_tails_dependencies"
     verify_tails_dependencies
 
+    # Create venv
+    debug "sudo python3.7 -m virtualenv /opt/tfc/venv_relay --system-site-packages"
+    sudo python3.7 -m virtualenv /opt/tfc/venv_relay --system-site-packages
+
+    debug ". /opt/tfc/venv_relay/bin/activate"
+    . /opt/tfc/venv_relay/bin/activate
+
     debug 'process_tails_dependencies "python3.7 -m pip install"'
     process_tails_dependencies "python3.7 -m pip install"
 
+    debug "deactivate"
+    deactivate
+
+    # Rest of install steps
     debug "t_sudo mv /opt/tfc/tfc.png                        /usr/share/pixmaps/"
     t_sudo mv /opt/tfc/tfc.png                        /usr/share/pixmaps/
 
@@ -518,10 +547,10 @@ function t_sudo {
 function install_relay {
     # Determine the Networked Computer OS for Relay Program installation.
     if [[ "$(cat /etc/os-release 2>/dev/null | grep Tails)" ]]; then
-        debug tails detected
+        debug "tails detected"
         install_relay_tails
     else
-        debug ubuntu deteted
+        debug "ubuntu deteted"
         install_relay_ubuntu
     fi
 }
@@ -529,7 +558,7 @@ function install_relay {
 
 function debug {
   echo $@
-  sleep 2
+  sleep 3
 }
 
 function install_virtualenv {
