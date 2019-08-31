@@ -460,7 +460,7 @@ function install_relay_tails {
 
     torsocks git clone --depth 1 https://github.com/tfctesting/tfc.git $HOME/tfc
 
-    torsocks python3.7 -m pip install --no-cache-dir -r $HOME/tfc/requirements-venv.txt --require-hashes -d $HOME/tfc/
+    torsocks python3.7 -m pip download --no-cache-dir -r $HOME/tfc/requirements-venv.txt --require-hashes -d $HOME/tfc/
     t_sudo python3.7 -m pip install $HOME/tfc/${VIRTUALENV}
 
     t_sudo python3.7 -m virtualenv $HOME/tfc/venv_relay --system-site-packages
