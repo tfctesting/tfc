@@ -180,6 +180,9 @@ function process_tails_dependencies {
     t_sudo $1 /opt/tfc/${PYCPARSER}
     t_sudo $1 /opt/tfc/${CFFI}
     t_sudo $1 /opt/tfc/${CRYPTOGRAPHY}
+
+    # PyNaCl
+    t_sudo $1 /opt/tfc/${PYNACL}
 }
 
 
@@ -212,6 +215,9 @@ function move_tails_dependencies {
     t_sudo mv $HOME/${PYCPARSER}    /opt/tfc/
     t_sudo mv $HOME/${CFFI}         /opt/tfc/
     t_sudo mv $HOME/${CRYPTOGRAPHY} /opt/tfc/
+
+    # PyNaCl
+    t_sudo mv $HOME/${PYNACL} /opt/tfc/
 }
 
 
@@ -246,6 +252,9 @@ function verify_tails_dependencies {
     compare_digest 7f830e1c9066ee2d297a55e2bf6db4bf6447b6d9da0145d11a88c3bb98505755fb7986eafa6e06ae0b7680838f5e5d6a6d188245ca5ad45c2a727587bac93ab5 '' ${PYCPARSER}
     compare_digest 69a2d725395a1a3585556cb44b62c49bd7f88f41ff194b60d4b9b591c4878a907c0770ef4052b588eaa9d420a53cbeb6b13237fff4054bf26ba5deaa84e25afa '' ${CFFI}
     compare_digest 1285c3f5181da41bace4f9fd5ce5fc4bfba71143b39a4f3d8bab642db65bec9556b1965b1c2990236fed9d6b156bf81e6c0642d1531eadf7b92379c25cc4aeac '' ${CRYPTOGRAPHY}
+
+    # PyNaCl
+    compare_digest 125341f0c22e11d2bd24c453b22e8fd7fd71605ee7a44eb61228686326eaca2e8f35b7ad4d0eacde4865f4d8cb8acb5cb5e3ff2856e756632b71af2f0dbdbee9 '' ${PYNACL}
 }
 
 
