@@ -440,30 +440,57 @@ function install_relay_ubuntu {
 function install_relay_tails {
     # Install TFC Relay configuration on Networked Computer running
     # Tails live distro (https://tails.boum.org/).
+    debug "check_tails_tor_version"
     check_tails_tor_version
 
+    debug "read_sudo_pwd"
     read_sudo_pwd
 
+    debug "t_sudo apt update"
     t_sudo apt update
+
+    debug "apt install git libssl-dev python3-pip -y || true"
     t_sudo apt install git libssl-dev python3-pip -y || true  # Ignore error in case packets can not be persistently installed
 
+    debug "git clone --depth 1 https://github.com/tfctesting/tfc.git $HOME/tfc"
     torsocks git clone --depth 1 https://github.com/tfctesting/tfc.git $HOME/tfc
+
+    debug "t_sudo mv $HOME/tfc/ /opt/tfc/"
     t_sudo mv $HOME/tfc/ /opt/tfc/
 
+    debug "verify_tcb_requirements_files"
     verify_tcb_requirements_files
+
+    debug "verify_files"
     verify_files
+
+    debug "create_user_data_dir"
     create_user_data_dir
 
+    debug "torsocks python3.7 -m pip download --no-cache-dir -r /opt/tfc/requirements-relay.txt --require-hashes -d $HOME/"
     torsocks python3.7 -m pip download --no-cache-dir -r /opt/tfc/requirements-relay.txt --require-hashes -d $HOME/
+
+    debug "move_tails_dependencies"
     move_tails_dependencies
+
+    debug "verify_tails_dependencies"
     verify_tails_dependencies
+
+    debug 'process_tails_dependencies "python3.7 -m pip install"'
     process_tails_dependencies "python3.7 -m pip install"
 
+    debug "t_sudo mv /opt/tfc/tfc.png                        /usr/share/pixmaps/"
     t_sudo mv /opt/tfc/tfc.png                        /usr/share/pixmaps/
+
+    debug "t_sudo mv /opt/tfc/launchers/TFC-RP-Tails.desktop /usr/share/applications/"
     t_sudo mv /opt/tfc/launchers/TFC-RP-Tails.desktop /usr/share/applications/
 
+    debug 'remove_common_files        "t_sudo"'
     remove_common_files        "t_sudo"
+
+    debug 'process_tails_dependencies "rm"'
     process_tails_dependencies "rm"
+
     t_sudo rm -r /opt/tfc/src/receiver/
     t_sudo rm -r /opt/tfc/src/transmitter/
     t_sudo rm    /opt/tfc/dd.py
@@ -482,12 +509,19 @@ function t_sudo {
 function install_relay {
     # Determine the Networked Computer OS for Relay Program installation.
     if [[ "$(cat /etc/os-release 2>/dev/null | grep Tails)" ]]; then
+        debug tails detected
         install_relay_tails
     else
+        debug ubuntu deteted
         install_relay_ubuntu
     fi
 }
 
+
+function debug {
+  echo $@
+  sleep 2
+}
 
 function install_virtualenv {
     # Determine if OS is debian and install virtualenv as sudo so that
