@@ -90,7 +90,7 @@ function verify_files {
     compare_digest cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce47d0d13c5d85f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e src/relay/ __init__.py
     compare_digest a324e4b065c2bb8c66c1e0e7fbc11de85f4408e4a3c3afd81bbd6829fae4f6cf6a3bba284864476356a57947670e7dffcd6f30faf03e38b38dbed84305def042 src/relay/ client.py
     compare_digest 6f0f916f7c879c0383e8dc39593385de8f1ab2f7ba99f59b7fcbee947f8fcfae0935a98dcd8de1db3a600a0d8469a369ea38915fe2932c00b6756fb4944c938d src/relay/ commands.py
-    compare_digest 261c9a0e7cb552c900f5234136c6251896bb03277c9ceaf175791012433a282373d6af1eec6be916aa955e04d5ffde2fc4bf3d153077baf00731249132b90658 src/relay/ onion.py
+    compare_digest 008970f37adda455c6378ecaae9548b4d63120509e1b0a1006c3f1977ace93aace837c9874dc86a14bb58d68824eeac27de421fa669015933d9d41c8e3fae9e5 src/relay/ onion.py
     compare_digest a18aa0ca4ffff7be99721c094ae44a95ed407e5e4cb25016ce14bf9fca7fef950d0b0460fd91689f2003aeb7f8385cb4f88a5f2e3f7f4ba7b88634412853d888 src/relay/ server.py
     compare_digest e03b2896049d6c4f98cc9b52ae43a32078ffe93f6a18848fb96cf4051752872ad20463754fad61244e914b2082839d8297f0d3357e20c8dd22881e885bfbd32a src/relay/ tcb.py
 
@@ -522,6 +522,9 @@ function install_relay_tails {
 
     debug "t_sudo mv /opt/tfc/launchers/TFC-RP-Tails.desktop /usr/share/applications/"
     t_sudo mv /opt/tfc/launchers/TFC-RP-Tails.desktop /usr/share/applications/
+
+    debug "t_sudo mv /opt/tfc/tfc.yml /etc/onion-grater.d/"
+    t_sudo mv /opt/tfc/tfc.yml /etc/onion-grater.d/
 
     debug 'remove_common_files        "t_sudo"'
     remove_common_files        "t_sudo"

@@ -1,0 +1,30 @@
+---
+- apparmor-profiles:
+    - '/opt/tfc/relay.py'
+  users:
+    - 'amnesia'
+  commands:
+    GETINFO:
+      - 'version'
+      - 'circuit-status'
+      - 'onions/current'
+      - 'status/bootstrap-phase
+      - 'ns/id/[a-fA-F0-9]+'
+      - 'ip-to-country/\d+\.\d+\.\d+\.\d+'
+      -
+    ADD_ONION:
+      - 'NEW:BEST Flags=BasicAuth Port=1,1 ClientAuth=tfc'
+      - 'NEW:(BEST|ED25519-V3) Port=80,176([0-4][0-9]|50)'
+    DEL_ONION:
+      - '.+'
+    GETCONF:
+      - 'hiddenservicesinglehopmode'
+  confs:
+    __owningcontrollerprocess:
+  events:
+    SIGNAL:
+      suppress: true
+    CONF_CHANGED:
+      suppress: true
+    HS_DESC:
+    STATUS_SERVER:
