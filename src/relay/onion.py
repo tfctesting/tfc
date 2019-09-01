@@ -36,6 +36,8 @@ import nacl.signing
 import stem.control
 import stem.process
 
+from stem.control import Controller
+
 from src.common.encoding   import pub_key_to_onion_address
 from src.common.exceptions import CriticalError
 from src.common.output     import m_print, rp_print
@@ -62,8 +64,24 @@ class Tor(object):
         self.tor_process = None  # type: Any
         self.controller  = None  # type: Any
 
+    @staticmethod
+    def platform_is_tails() -> bool:
+        """Return true if Relay Program is running on Tails."""
+        with open('/etc/os-release') as f:
+            data = f.read()
+        return 'TAILS_PRODUCT_NAME="Tails"' in data
+
     def connect(self, port: str) -> None:
-        """Launch Tor as a subprocess."""
+        """Launch Tor as a subprocess.
+
+        If TFC is running on top of Tails, do not launch a separate
+        instance of Tor.
+        """
+        if self.platform_is_tails():
+            self.controller = Controller.from_port(port=9051)
+            self.controller.authenticate()
+            return
+
         tor_data_directory = tempfile.TemporaryDirectory()
         tor_control_socket = os.path.join(tor_data_directory.name, 'control_socket')
 
@@ -113,7 +131,7 @@ class Tor(object):
 
     def stop(self) -> None:
         """Stop the Tor subprocess."""
-        if self.tor_process:
+        if self.tor_process is not None:
             self.tor_process.terminate()
             time.sleep(0.1)
             if not self.tor_process.poll():
