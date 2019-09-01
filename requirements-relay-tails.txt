@@ -7,22 +7,22 @@
 # stem==1.7.1         --hash=sha512:a275f59bba650cb5bb151cf53fb1dd820334f9abbeae1a25e64502adc854c7f54c51bc3d6c1656b595d142fc0695ffad53aab3c57bc285421c1f4f10c9c3db4c  # Tails4: OK          OnionShare2: OK
 
 # PySocks (Routes requests library through SOCKS5 proxy making Onion Service connections possible)
-# pysocks==1.7.0      --hash=sha512:5bbffb2714a04fb53417058703d8112c5e5dca768df627e64618e8ab8a36a8bdbc27f5d6852f39cff6b8fb4c9a5d13909f86eeb5fe9741ba42bdc985685e5d51  # Tails4: 1.6.8       OnionShare2: 1.6.8
+# pysocks==1.7.0      --hash=sha512:5bbffb2714a04fb53417058703d8112c5e5dca768df627e64618e8ab8a36a8bdbc27f5d6852f39cff6b8fb4c9a5d13909f86eeb5fe9741ba42bdc985685e5d51  # Tails4: 1.6.8       OnionShare2: OK
 
 # Requests (Connects to the contact's Tor Onion Service)
-# requests==2.22.0    --hash=sha512:9186ce4e39bb64f5931a205ffc9afac61657bc42078bc4754ed12a2b66a12b7a620583440849fc2e161d1061ac0750ddef4670f54916931ace1e9abd2a9fb09c  # Tails4: 2.21.0      OnionShare2: 2.21.0
-# certifi==2019.6.16  --hash=sha512:d81fe3a75ea611466d5ece7788f47c7946a4226bf4622c2accfd28c1e37b817e748609710c176c51ef2621cbc7ee200dd8d8106e738f1ef7cb96d7f2f82539cc  # Tails4: 2018.8.24   OnionShare2: 2019.3.9
+# requests==2.22.0    --hash=sha512:9186ce4e39bb64f5931a205ffc9afac61657bc42078bc4754ed12a2b66a12b7a620583440849fc2e161d1061ac0750ddef4670f54916931ace1e9abd2a9fb09c  # Tails4: 2.21.0      OnionShare2: OK
+# certifi==2019.6.16  --hash=sha512:d81fe3a75ea611466d5ece7788f47c7946a4226bf4622c2accfd28c1e37b817e748609710c176c51ef2621cbc7ee200dd8d8106e738f1ef7cb96d7f2f82539cc  # Tails4: 2018.8.24   OnionShare2: OK
 # chardet==3.0.4      --hash=sha512:bfae58c8ea19c87cc9c9bf3d0b6146bfdb3630346bd954fe8e9f7da1f09da1fc0d6943ff04802798a665ea3b610ee2d65658ce84fe5a89f9e93625ea396a17f4  # Tails4: OK          OnionShare2: OK
 # idna==2.8           --hash=sha512:fb07dbec1de86efbad82a4f73d98123c59b083c1f1277445204bef75de99ca200377ad2f1db8924ae79b31b3dd984891c87d0a6344ec4d07a0ddbbbc655821a3  # Tails4: 2.6         OnionShare2: OK
-# urllib3==1.25.3     --hash=sha512:46d144af3633080b9ec8a642ab855b401b8224edb839c237639998b004f19b8cb191155c57e633954cf70b100d6d8b21105cd280acd1ea975aef1dec9a4a5860  # Tails4: 1.24.1 CVE  OnionShare2: 1.24.2
+# urllib3==1.25.3     --hash=sha512:46d144af3633080b9ec8a642ab855b401b8224edb839c237639998b004f19b8cb191155c57e633954cf70b100d6d8b21105cd280acd1ea975aef1dec9a4a5860  # Tails4: 1.24.1 CVE  OnionShare2: OK
 
 # Flask (Onion Service web server that serves TFC public keys and ciphertexts to contacts)
-# flask==1.1.1        --hash=sha512:bd49cb364307569480196289fa61fbb5493e46199620333f67617367278e1f56b20fc0d40fd540bef15642a8065e488c24e97f50535e8ec143875095157d8069  # Tails4: 1.0.2       OnionShare2: 1.0.2
+# flask==1.1.1        --hash=sha512:bd49cb364307569480196289fa61fbb5493e46199620333f67617367278e1f56b20fc0d40fd540bef15642a8065e488c24e97f50535e8ec143875095157d8069  # Tails4: 1.0.2       OnionShare2: OK
 # click==7.0          --hash=sha512:6b30987349df7c45c5f41cff9076ed45b178b444fca1ab1965f4ae33d1631522ce0a2868392c736666e83672b8b20e9503ae9ce5016dce3fa8f77bc8a3674130  # Tails4: OK          OnionShare2: OK
 # itsdangerous==1.1.0 --hash=sha512:891c294867f705eb9c66274bd04ac5d93140d6e9beea6cbf9a44e7f9c13c0e2efa3554bdf56620712759a5cd579e112a782d25f3f91ba9419d60b2b4d2bc5b7c  # Tails4: 0.24        OnionShare2: OK
 # jinja2==2.10.1      --hash=sha512:04860c7ff7086f051368787289f75198eec3357c7da7565dc5045353122650a887e063b1a5297578ddefcc77bfdfe3d9a23c868cb3e7f18a0b5f1c475e29339e  # Tails4: 2.10   CVE  OnionShare2: OK
 # markupsafe==1.1.1   --hash=sha512:69e9b9c9ac4fdf3cfa1a3de23d14964b843989128f8cc6ea58617fc5d6ef937bcc3eae9cb32b5164b5f54b06f96bdff9bc249529f20671cc26adc9e6ce8f6bec  # Tails4: 1.1.0       OnionShare2: OK
-# werkzeug==0.15.5    --hash=sha512:19728875a846f895b7e20f1e8762455147253b295c29e4fb981f734a7ec6a491ae4a5427b0fcac54013c9fcca3d9a53d2639c00a0913c8d9ce69d8e8e24cab42  # Tails4: 0.14.1 CVE  OnionShare2: 0.15.2 CVE
+# werkzeug==0.15.5    --hash=sha512:19728875a846f895b7e20f1e8762455147253b295c29e4fb981f734a7ec6a491ae4a5427b0fcac54013c9fcca3d9a53d2639c00a0913c8d9ce69d8e8e24cab42  # Tails4: 0.14.1 CVE  OnionShare2: OK
 
 # Cryptography (Handles URL token derivation)
 cryptography==2.7     --hash=sha512:1285c3f5181da41bace4f9fd5ce5fc4bfba71143b39a4f3d8bab642db65bec9556b1965b1c2990236fed9d6b156bf81e6c0642d1531eadf7b92379c25cc4aeac  # Tails4: -           OnionShare2: -
