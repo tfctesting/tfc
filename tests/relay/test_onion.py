@@ -171,6 +171,13 @@ class TestOnionService(unittest.TestCase):
         # Teardown
         tear_queues(queues)
 
+    @mock.patch('stem.control.Controller.from_port', MagicMock())
+    @mock.patch('builtins.open',                     mock.mock_open(read_data='TAILS_PRODUCT_NAME="Tails"'))
+    def test_no_tor_process_is_created_when_tails_is_used(self):
+        tor = Tor()
+        self.assertIsNone(tor.connect('1234'))
+        self.assertIsNone(tor.tor_process)
+
 
 if __name__ == '__main__':
     unittest.main(exit=False)

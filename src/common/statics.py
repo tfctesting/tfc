@@ -514,6 +514,7 @@ BITS_PER_BYTE        = 8
 MAX_INT              = 2 ** 64 - 1
 B58_CHECKSUM_LENGTH  = 4
 TRUNC_ADDRESS_LENGTH = 5
+TOR_CONTROL_PORT     = 9051
 
 # Key derivation
 ARGON2_MIN_TIME_COST    = 1

@@ -66,7 +66,7 @@ class Tor(object):
 
     @staticmethod
     def platform_is_tails() -> bool:
-        """Return true if Relay Program is running on Tails."""
+        """Return True if Relay Program is running on Tails."""
         with open('/etc/os-release') as f:
             data = f.read()
         return 'TAILS_PRODUCT_NAME="Tails"' in data
@@ -78,9 +78,9 @@ class Tor(object):
         instance of Tor.
         """
         if self.platform_is_tails():
-            self.controller = Controller.from_port(port=9051)
+            self.controller = Controller.from_port(port=TOR_CONTROL_PORT)
             self.controller.authenticate()
-            return
+            return None
 
         tor_data_directory = tempfile.TemporaryDirectory()
         tor_control_socket = os.path.join(tor_data_directory.name, 'control_socket')
@@ -177,14 +177,10 @@ def stem_compatible_ed25519_key_from_private_key(private_key: bytes) -> str:
 def onion_service(queues: Dict[bytes, 'Queue[Any]']) -> None:
     """Manage the Tor Onion Service and control Tor via stem."""
     rp_print("Setup   0% - Waiting for Onion Service configuration...", bold=True)
-    # TODO: Enable
-    # while queues[ONION_KEY_QUEUE].qsize() == 0:
-    #    time.sleep(0.1)
-    #
-    # private_key, c_code = queues[ONION_KEY_QUEUE].get()  # type: bytes, bytes
-    c_code = b'a'  # TODO: Remove
-    private_key = os.urandom(ONION_SERVICE_PRIVATE_KEY_LENGTH)  # TODO: Remove
+    while queues[ONION_KEY_QUEUE].qsize() == 0:
+       time.sleep(0.1)
 
+    private_key, c_code = queues[ONION_KEY_QUEUE].get()  # type: bytes, bytes
     public_key_user     = bytes(nacl.signing.SigningKey(seed=private_key).verify_key)
     onion_addr_user     = pub_key_to_onion_address(public_key_user)
 
