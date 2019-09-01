@@ -176,7 +176,7 @@ function process_tails_dependencies {
 
     # Cryptography
     # t_sudo -E $1 /opt/tfc/${SETUPTOOLS}
-    # t_sudo -E $1 /opt/tfc/${SIX}
+    t_sudo -E $1 /opt/tfc/${SIX}
     t_sudo -E $1 /opt/tfc/${ASN1CRYPTO}
     t_sudo -E $1 /opt/tfc/${PYCPARSER}
     t_sudo -E $1 /opt/tfc/${CFFI}
@@ -211,7 +211,7 @@ function move_tails_dependencies {
 
     # Cryptography
     # t_sudo mv $HOME/${SETUPTOOLS}   /opt/tfc/
-    # t_sudo mv $HOME/${SIX}          /opt/tfc/
+    t_sudo mv $HOME/${SIX}          /opt/tfc/
     t_sudo mv $HOME/${ASN1CRYPTO}   /opt/tfc/
     t_sudo mv $HOME/${PYCPARSER}    /opt/tfc/
     t_sudo mv $HOME/${CFFI}         /opt/tfc/
@@ -248,7 +248,7 @@ function verify_tails_dependencies {
 
     # Cryptography
     # compare_digest 125341f0c22e11d2bd24c453b22e8fd7fd71605ee7a44eb61228686326eaca2e8f35b7ad4d0eacde4865f4d8cb8acb5cb5e3ff2856e756632b71af2f0dbdbee9 '' ${SETUPTOOLS}
-    # compare_digest 326574c7542110d2cd8071136a36a6cffc7637ba948b55e0abb7f30f3821843073223301ecbec1d48b8361b0d7ccb338725eeb0424696efedc3f6bd2a23331d3 '' ${SIX}
+    compare_digest 326574c7542110d2cd8071136a36a6cffc7637ba948b55e0abb7f30f3821843073223301ecbec1d48b8361b0d7ccb338725eeb0424696efedc3f6bd2a23331d3 '' ${SIX}
     compare_digest 8d9bc344981079ac6c00e71e161c34b6f403e575bbfe1ad06e30a3bcb33e0db317bdcb7aed2d18d510cb1b3ee340a649f7f77a00d271fcf3cc388e6655b67533 '' ${ASN1CRYPTO}
     compare_digest 7f830e1c9066ee2d297a55e2bf6db4bf6447b6d9da0145d11a88c3bb98505755fb7986eafa6e06ae0b7680838f5e5d6a6d188245ca5ad45c2a727587bac93ab5 '' ${PYCPARSER}
     compare_digest 69a2d725395a1a3585556cb44b62c49bd7f88f41ff194b60d4b9b591c4878a907c0770ef4052b588eaa9d420a53cbeb6b13237fff4054bf26ba5deaa84e25afa '' ${CFFI}
