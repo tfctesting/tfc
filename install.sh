@@ -167,9 +167,9 @@ function process_tails_dependencies {
     # t_sudo -E $1 /opt/tfc/${REQUESTS}
 
     # Flask
-    # t_sudo -E $1 /opt/tfc/${WERKZEUG}
-    # t_sudo -E $1 /opt/tfc/${MARKUPSAFE}
-    # t_sudo -E $1 /opt/tfc/${JINJA2}
+    t_sudo -E $1 /opt/tfc/${WERKZEUG}
+    t_sudo -E $1 /opt/tfc/${MARKUPSAFE}
+    t_sudo -E $1 /opt/tfc/${JINJA2}
     # t_sudo -E $1 /opt/tfc/${ITSDANGEROUS}
     # t_sudo -E $1 /opt/tfc/${CLICK}
     # t_sudo -E $1 /opt/tfc/${FLASK}
@@ -202,9 +202,9 @@ function move_tails_dependencies {
     # t_sudo mv $HOME/${REQUESTS} /opt/tfc/
 
     # Flask
-    # t_sudo mv $HOME/${WERKZEUG}     /opt/tfc/
-    # t_sudo mv $HOME/${MARKUPSAFE}   /opt/tfc/
-    # t_sudo mv $HOME/${JINJA2}       /opt/tfc/
+    t_sudo mv $HOME/${WERKZEUG}     /opt/tfc/
+    t_sudo mv $HOME/${MARKUPSAFE}   /opt/tfc/
+    t_sudo mv $HOME/${JINJA2}       /opt/tfc/
     # t_sudo mv $HOME/${ITSDANGEROUS} /opt/tfc/
     # t_sudo mv $HOME/${CLICK}        /opt/tfc/
     # t_sudo mv $HOME/${FLASK}        /opt/tfc/
@@ -239,9 +239,9 @@ function verify_tails_dependencies {
     # compare_digest 9186ce4e39bb64f5931a205ffc9afac61657bc42078bc4754ed12a2b66a12b7a620583440849fc2e161d1061ac0750ddef4670f54916931ace1e9abd2a9fb09c '' ${REQUESTS}
 
     # Flask
-    # compare_digest 19728875a846f895b7e20f1e8762455147253b295c29e4fb981f734a7ec6a491ae4a5427b0fcac54013c9fcca3d9a53d2639c00a0913c8d9ce69d8e8e24cab42 '' ${WERKZEUG}
-    # compare_digest 69e9b9c9ac4fdf3cfa1a3de23d14964b843989128f8cc6ea58617fc5d6ef937bcc3eae9cb32b5164b5f54b06f96bdff9bc249529f20671cc26adc9e6ce8f6bec '' ${MARKUPSAFE}
-    # compare_digest 04860c7ff7086f051368787289f75198eec3357c7da7565dc5045353122650a887e063b1a5297578ddefcc77bfdfe3d9a23c868cb3e7f18a0b5f1c475e29339e '' ${JINJA2}
+    compare_digest 19728875a846f895b7e20f1e8762455147253b295c29e4fb981f734a7ec6a491ae4a5427b0fcac54013c9fcca3d9a53d2639c00a0913c8d9ce69d8e8e24cab42 '' ${WERKZEUG}
+    compare_digest 69e9b9c9ac4fdf3cfa1a3de23d14964b843989128f8cc6ea58617fc5d6ef937bcc3eae9cb32b5164b5f54b06f96bdff9bc249529f20671cc26adc9e6ce8f6bec '' ${MARKUPSAFE}
+    compare_digest 04860c7ff7086f051368787289f75198eec3357c7da7565dc5045353122650a887e063b1a5297578ddefcc77bfdfe3d9a23c868cb3e7f18a0b5f1c475e29339e '' ${JINJA2}
     # compare_digest 891c294867f705eb9c66274bd04ac5d93140d6e9beea6cbf9a44e7f9c13c0e2efa3554bdf56620712759a5cd579e112a782d25f3f91ba9419d60b2b4d2bc5b7c '' ${ITSDANGEROUS}
     # compare_digest 6b30987349df7c45c5f41cff9076ed45b178b444fca1ab1965f4ae33d1631522ce0a2868392c736666e83672b8b20e9503ae9ce5016dce3fa8f77bc8a3674130 '' ${CLICK}
     # compare_digest bd49cb364307569480196289fa61fbb5493e46199620333f67617367278e1f56b20fc0d40fd540bef15642a8065e488c24e97f50535e8ec143875095157d8069 '' ${FLASK}
