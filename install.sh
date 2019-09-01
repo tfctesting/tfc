@@ -16,6 +16,31 @@
 # You should have received a copy of the GNU General Public License
 # along with TFC. If not, see <https://www.gnu.org/licenses/>.
 
+# PIP dependency file names
+ARGON2=argon2_cffi-19.1.0-cp34-abi3-manylinux1_x86_64.whl
+ASN1CRYPTO=asn1crypto-0.24.0-py2.py3-none-any.whl
+CERTIFI=certifi-2019.6.16-py2.py3-none-any.whl
+CFFI=cffi-1.12.3-cp37-cp37m-manylinux1_x86_64.whl
+CHARDET=chardet-3.0.4-py2.py3-none-any.whl
+CLICK=Click-7.0-py2.py3-none-any.whl
+CRYPTOGRAPHY=cryptography-2.7-cp34-abi3-manylinux1_x86_64.whl
+FLASK=Flask-1.1.1-py2.py3-none-any.whl
+IDNA=idna-2.8-py2.py3-none-any.whl
+ITSDANGEROUS=itsdangerous-1.1.0-py2.py3-none-any.whl
+JINJA2=Jinja2-2.10.1-py2.py3-none-any.whl
+MARKUPSAFE=MarkupSafe-1.1.1-cp37-cp37m-manylinux1_x86_64.whl
+PYCPARSER=pycparser-2.19.tar.gz
+PYNACL=PyNaCl-1.3.0-cp34-abi3-manylinux1_x86_64.whl
+PYSERIAL=pyserial-3.4-py2.py3-none-any.whl
+PYSOCKS=PySocks-1.7.0-py3-none-any.whl
+REQUESTS=requests-2.22.0-py2.py3-none-any.whl
+SETUPTOOLS=setuptools-41.2.0-py2.py3-none-any.whl
+SIX=six-1.12.0-py2.py3-none-any.whl
+STEM=stem-1.7.1.tar.gz
+URLLIB3=urllib3-1.25.3-py2.py3-none-any.whl
+VIRTUALENV=virtualenv-16.7.3-py2.py3-none-any.whl
+WERKZEUG=Werkzeug-0.15.5-py2.py3-none-any.whl
+
 
 function compare_digest {
     # Compare the SHA512 digest of TFC file against the digest pinned in
@@ -30,8 +55,8 @@ function compare_digest {
 
 
 function verify_tcb_requirements_files {
-# To minimize the time TCB installer configuration stays online, only
-# the requirements files are authenticated between downloads.
+    # To minimize the time TCB installer configuration stays online, only
+    # the requirements files are authenticated between downloads.
     compare_digest c3f27d766f2795bf0c87ddb0cec43f1f9919c2cf20db5eff62e818d67436f1520b6001bf9e7649c5508e62b221c02039b6cb29f7393ba1dbacf9a442cb3bb8b2 '' requirements.txt
     compare_digest 2c9e865be4231d346504bef99159d987803944b4ed7a1f0dbb7e674d4043e83c45771da34b7c4772f25101b81f41f2bafc75bfd07e58d37ddf7d3dc1aa32da24 '' requirements-venv.txt
 }
@@ -45,8 +70,10 @@ function verify_files {
     compare_digest 84a4e5b287ba4f600fc170913f5bdcd3db67c6d75a57804331a04336a9931c7ce9c58257ad874d3f197c097869438bb1d2932f06f5762c44f264617681eab287 '' relay.py
     compare_digest 2865708ab24c3ceeaf0a6ec382fb7c331fdee52af55a111c1afb862a336dd757d597f91b94267da009eb74bbc77d01bf78824474fa6f0aa820cd8c62ddb72138 '' requirements-dev.txt
     compare_digest 1ab71b773a0451807eda87a1442dd79529de62f617e8087a21c0f3ad77e4fe22218e05a94d19d1660b2967a9908fb722f750a64a75e650b178c818c8536f64db '' requirements-relay.txt
+    compare_digest 2554740210b2b501c0ce77b01ccc54b6ab01242b56624378dfc0d003a8124df5c5afd97dcbfac20df5affbc40cdd46fb0fa886c439cc6b1feda389810545d0bb '' requirements-relay-tails.txt
     compare_digest 6d93d5513f66389778262031cbba95e1e38138edaec66ced278db2c2897573247d1de749cf85362ec715355c5dfa5c276c8a07a394fd5cf9b45c7a7ae6249a66 '' tfc.png
     compare_digest a7b8090855295adfc22528b2f89bed88617b5e990ffe58e3a42142a9a4bea6b1b67c757c9b7d1eafeec22eddee9f9891b44afffa52d31ce5d050f08a1734874d '' tfc.py
+    compare_digest 7e58d29ec7771e004f856280b7c04f4c8fa9270451d92e287004292403c834136cc4306b8fed38b834c13092fb1ce3fac5e49a0d7112ba88a0fc5ae85851ad6c '' tfc.yml
     compare_digest c6a61b3050624874cabc28cc51e947aa1ba629b0fd62564466b902cc433c08be6ae64d53bb2f33158e198c60ef2eb7c38b0bee1a64ef9659d101dee07557ddc7 '' uninstall.sh
 
     compare_digest d4f503df2186db02641f54a545739d90974b6d9d920f76ad7e93fe1a38a68a85c167da6c19f7574d11fbb69e57d563845d174d420c55691bc2cd75a1a72806dc launchers/ terminator-config-local-test
@@ -109,32 +136,6 @@ function verify_files {
 }
 
 
-# PIP dependency file names
-ARGON2=argon2_cffi-19.1.0-cp34-abi3-manylinux1_x86_64.whl
-ASN1CRYPTO=asn1crypto-0.24.0-py2.py3-none-any.whl
-CERTIFI=certifi-2019.6.16-py2.py3-none-any.whl
-CFFI=cffi-1.12.3-cp37-cp37m-manylinux1_x86_64.whl
-CHARDET=chardet-3.0.4-py2.py3-none-any.whl
-CLICK=Click-7.0-py2.py3-none-any.whl
-CRYPTOGRAPHY=cryptography-2.7-cp34-abi3-manylinux1_x86_64.whl
-FLASK=Flask-1.1.1-py2.py3-none-any.whl
-IDNA=idna-2.8-py2.py3-none-any.whl
-ITSDANGEROUS=itsdangerous-1.1.0-py2.py3-none-any.whl
-JINJA2=Jinja2-2.10.1-py2.py3-none-any.whl
-MARKUPSAFE=MarkupSafe-1.1.1-cp37-cp37m-manylinux1_x86_64.whl
-PYCPARSER=pycparser-2.19.tar.gz
-PYNACL=PyNaCl-1.3.0-cp34-abi3-manylinux1_x86_64.whl
-PYSERIAL=pyserial-3.4-py2.py3-none-any.whl
-PYSOCKS=PySocks-1.7.0-py3-none-any.whl
-REQUESTS=requests-2.22.0-py2.py3-none-any.whl
-SETUPTOOLS=setuptools-41.2.0-py2.py3-none-any.whl
-SIX=six-1.12.0-py2.py3-none-any.whl
-STEM=stem-1.7.1.tar.gz
-URLLIB3=urllib3-1.25.3-py2.py3-none-any.whl
-VIRTUALENV=virtualenv-16.7.3-py2.py3-none-any.whl
-WERKZEUG=Werkzeug-0.15.5-py2.py3-none-any.whl
-
-
 function process_tcb_dependencies {
     # Manage TCB dependencies in batch. The command that uses the files
     # is passed to the function as a parameter.
@@ -154,27 +155,28 @@ function process_tails_dependencies {
     # Manage Tails dependencies in batch. The command that uses the
     # files is passed to the function as a parameter.
 
-    t_sudo -E $1 /opt/tfc/${PYSERIAL}
-    t_sudo -E $1 /opt/tfc/${PYSOCKS}
+    # t_sudo -E $1 /opt/tfc/${PYSERIAL}
+    # t_sudo -E $1 /opt/tfc/${STEM}
+    # t_sudo -E $1 /opt/tfc/${PYSOCKS}
 
     # Requests
-    t_sudo -E $1 /opt/tfc/${URLLIB3}
-    t_sudo -E $1 /opt/tfc/${IDNA}
-    t_sudo -E $1 /opt/tfc/${CHARDET}
-    t_sudo -E $1 /opt/tfc/${CERTIFI}
-    t_sudo -E $1 /opt/tfc/${REQUESTS}
+    # t_sudo -E $1 /opt/tfc/${URLLIB3}
+    # t_sudo -E $1 /opt/tfc/${IDNA}
+    # t_sudo -E $1 /opt/tfc/${CHARDET}
+    # t_sudo -E $1 /opt/tfc/${CERTIFI}
+    # t_sudo -E $1 /opt/tfc/${REQUESTS}
 
     # Flask
-    t_sudo -E $1 /opt/tfc/${WERKZEUG}
-    t_sudo -E $1 /opt/tfc/${MARKUPSAFE}
-    t_sudo -E $1 /opt/tfc/${JINJA2}
-    t_sudo -E $1 /opt/tfc/${ITSDANGEROUS}
-    t_sudo -E $1 /opt/tfc/${CLICK}
-    t_sudo -E $1 /opt/tfc/${FLASK}
+    # t_sudo -E $1 /opt/tfc/${WERKZEUG}
+    # t_sudo -E $1 /opt/tfc/${MARKUPSAFE}
+    # t_sudo -E $1 /opt/tfc/${JINJA2}
+    # t_sudo -E $1 /opt/tfc/${ITSDANGEROUS}
+    # t_sudo -E $1 /opt/tfc/${CLICK}
+    # t_sudo -E $1 /opt/tfc/${FLASK}
 
     # Cryptography
-    t_sudo -E $1 /opt/tfc/${SETUPTOOLS}
-    t_sudo -E $1 /opt/tfc/${SIX}
+    # t_sudo -E $1 /opt/tfc/${SETUPTOOLS}
+    # t_sudo -E $1 /opt/tfc/${SIX}
     t_sudo -E $1 /opt/tfc/${ASN1CRYPTO}
     t_sudo -E $1 /opt/tfc/${PYCPARSER}
     t_sudo -E $1 /opt/tfc/${CFFI}
@@ -187,29 +189,29 @@ function process_tails_dependencies {
 
 function move_tails_dependencies {
     # Move Tails dependencies in batch.
-
-    t_sudo mv $HOME/${PYSERIAL} /opt/tfc/
-    t_sudo mv $HOME/${STEM}     /opt/tfc/
-    t_sudo mv $HOME/${PYSOCKS}  /opt/tfc/
+    t_sudo mv $HOME/${VIRTUALENV} /opt/tfc/
+    #t_sudo mv $HOME/${PYSERIAL} /opt/tfc/
+    #t_sudo mv $HOME/${STEM}     /opt/tfc/
+    #t_sudo mv $HOME/${PYSOCKS}  /opt/tfc/
 
     # Requests
-    t_sudo mv $HOME/${URLLIB3}  /opt/tfc/
-    t_sudo mv $HOME/${IDNA}     /opt/tfc/
-    t_sudo mv $HOME/${CHARDET}  /opt/tfc/
-    t_sudo mv $HOME/${CERTIFI}  /opt/tfc/
-    t_sudo mv $HOME/${REQUESTS} /opt/tfc/
+    # t_sudo mv $HOME/${URLLIB3}  /opt/tfc/
+    # t_sudo mv $HOME/${IDNA}     /opt/tfc/
+    # t_sudo mv $HOME/${CHARDET}  /opt/tfc/
+    # t_sudo mv $HOME/${CERTIFI}  /opt/tfc/
+    # t_sudo mv $HOME/${REQUESTS} /opt/tfc/
 
     # Flask
-    t_sudo mv $HOME/${WERKZEUG}     /opt/tfc/
-    t_sudo mv $HOME/${MARKUPSAFE}   /opt/tfc/
-    t_sudo mv $HOME/${JINJA2}       /opt/tfc/
-    t_sudo mv $HOME/${ITSDANGEROUS} /opt/tfc/
-    t_sudo mv $HOME/${CLICK}        /opt/tfc/
-    t_sudo mv $HOME/${FLASK}        /opt/tfc/
+    # t_sudo mv $HOME/${WERKZEUG}     /opt/tfc/
+    # t_sudo mv $HOME/${MARKUPSAFE}   /opt/tfc/
+    # t_sudo mv $HOME/${JINJA2}       /opt/tfc/
+    # t_sudo mv $HOME/${ITSDANGEROUS} /opt/tfc/
+    # t_sudo mv $HOME/${CLICK}        /opt/tfc/
+    # t_sudo mv $HOME/${FLASK}        /opt/tfc/
 
     # Cryptography
-    t_sudo mv $HOME/${SETUPTOOLS}   /opt/tfc/
-    t_sudo mv $HOME/${SIX}          /opt/tfc/
+    # t_sudo mv $HOME/${SETUPTOOLS}   /opt/tfc/
+    # t_sudo mv $HOME/${SIX}          /opt/tfc/
     t_sudo mv $HOME/${ASN1CRYPTO}   /opt/tfc/
     t_sudo mv $HOME/${PYCPARSER}    /opt/tfc/
     t_sudo mv $HOME/${CFFI}         /opt/tfc/
@@ -224,29 +226,29 @@ function verify_tails_dependencies {
     # Tails doesn't allow downloading over PIP to /opt/tfc, so we
     # first download to $HOME, move the files to /opt/tfc, and then
     # perform additional hash verification
-
-    compare_digest 8333ac2843fd136d5d0d63b527b37866f7d18afc3bb33c4938b63af077492aeb118eb32a89ac78547f14d59a2adb1e5d00728728275de62317da48dadf6cdff9 '' ${PYSERIAL}
-    compare_digest a275f59bba650cb5bb151cf53fb1dd820334f9abbeae1a25e64502adc854c7f54c51bc3d6c1656b595d142fc0695ffad53aab3c57bc285421c1f4f10c9c3db4c '' ${STEM}
-    compare_digest 5bbffb2714a04fb53417058703d8112c5e5dca768df627e64618e8ab8a36a8bdbc27f5d6852f39cff6b8fb4c9a5d13909f86eeb5fe9741ba42bdc985685e5d51 '' ${PYSOCKS}
+    compare_digest 760587ac587609607526d20d62c5ef2d768d4bc2dc1f7d5ce338d3525ec49cdb60782311dfd4b814defc486292e181a802f561508980f4eb332366355c5e8cb1 '' ${VIRTUALENV}
+    # compare_digest 8333ac2843fd136d5d0d63b527b37866f7d18afc3bb33c4938b63af077492aeb118eb32a89ac78547f14d59a2adb1e5d00728728275de62317da48dadf6cdff9 '' ${PYSERIAL}
+    # compare_digest a275f59bba650cb5bb151cf53fb1dd820334f9abbeae1a25e64502adc854c7f54c51bc3d6c1656b595d142fc0695ffad53aab3c57bc285421c1f4f10c9c3db4c '' ${STEM}
+    # compare_digest 5bbffb2714a04fb53417058703d8112c5e5dca768df627e64618e8ab8a36a8bdbc27f5d6852f39cff6b8fb4c9a5d13909f86eeb5fe9741ba42bdc985685e5d51 '' ${PYSOCKS}
 
     # Requests
-    compare_digest 46d144af3633080b9ec8a642ab855b401b8224edb839c237639998b004f19b8cb191155c57e633954cf70b100d6d8b21105cd280acd1ea975aef1dec9a4a5860 '' ${URLLIB3}
-    compare_digest fb07dbec1de86efbad82a4f73d98123c59b083c1f1277445204bef75de99ca200377ad2f1db8924ae79b31b3dd984891c87d0a6344ec4d07a0ddbbbc655821a3 '' ${IDNA}
-    compare_digest bfae58c8ea19c87cc9c9bf3d0b6146bfdb3630346bd954fe8e9f7da1f09da1fc0d6943ff04802798a665ea3b610ee2d65658ce84fe5a89f9e93625ea396a17f4 '' ${CHARDET}
-    compare_digest d81fe3a75ea611466d5ece7788f47c7946a4226bf4622c2accfd28c1e37b817e748609710c176c51ef2621cbc7ee200dd8d8106e738f1ef7cb96d7f2f82539cc '' ${CERTIFI}
-    compare_digest 9186ce4e39bb64f5931a205ffc9afac61657bc42078bc4754ed12a2b66a12b7a620583440849fc2e161d1061ac0750ddef4670f54916931ace1e9abd2a9fb09c '' ${REQUESTS}
+    # compare_digest 46d144af3633080b9ec8a642ab855b401b8224edb839c237639998b004f19b8cb191155c57e633954cf70b100d6d8b21105cd280acd1ea975aef1dec9a4a5860 '' ${URLLIB3}
+    # compare_digest fb07dbec1de86efbad82a4f73d98123c59b083c1f1277445204bef75de99ca200377ad2f1db8924ae79b31b3dd984891c87d0a6344ec4d07a0ddbbbc655821a3 '' ${IDNA}
+    # compare_digest bfae58c8ea19c87cc9c9bf3d0b6146bfdb3630346bd954fe8e9f7da1f09da1fc0d6943ff04802798a665ea3b610ee2d65658ce84fe5a89f9e93625ea396a17f4 '' ${CHARDET}
+    # compare_digest d81fe3a75ea611466d5ece7788f47c7946a4226bf4622c2accfd28c1e37b817e748609710c176c51ef2621cbc7ee200dd8d8106e738f1ef7cb96d7f2f82539cc '' ${CERTIFI}
+    # compare_digest 9186ce4e39bb64f5931a205ffc9afac61657bc42078bc4754ed12a2b66a12b7a620583440849fc2e161d1061ac0750ddef4670f54916931ace1e9abd2a9fb09c '' ${REQUESTS}
 
     # Flask
-    compare_digest 19728875a846f895b7e20f1e8762455147253b295c29e4fb981f734a7ec6a491ae4a5427b0fcac54013c9fcca3d9a53d2639c00a0913c8d9ce69d8e8e24cab42 '' ${WERKZEUG}
-    compare_digest 69e9b9c9ac4fdf3cfa1a3de23d14964b843989128f8cc6ea58617fc5d6ef937bcc3eae9cb32b5164b5f54b06f96bdff9bc249529f20671cc26adc9e6ce8f6bec '' ${MARKUPSAFE}
-    compare_digest 04860c7ff7086f051368787289f75198eec3357c7da7565dc5045353122650a887e063b1a5297578ddefcc77bfdfe3d9a23c868cb3e7f18a0b5f1c475e29339e '' ${JINJA2}
-    compare_digest 891c294867f705eb9c66274bd04ac5d93140d6e9beea6cbf9a44e7f9c13c0e2efa3554bdf56620712759a5cd579e112a782d25f3f91ba9419d60b2b4d2bc5b7c '' ${ITSDANGEROUS}
-    compare_digest 6b30987349df7c45c5f41cff9076ed45b178b444fca1ab1965f4ae33d1631522ce0a2868392c736666e83672b8b20e9503ae9ce5016dce3fa8f77bc8a3674130 '' ${CLICK}
-    compare_digest bd49cb364307569480196289fa61fbb5493e46199620333f67617367278e1f56b20fc0d40fd540bef15642a8065e488c24e97f50535e8ec143875095157d8069 '' ${FLASK}
+    # compare_digest 19728875a846f895b7e20f1e8762455147253b295c29e4fb981f734a7ec6a491ae4a5427b0fcac54013c9fcca3d9a53d2639c00a0913c8d9ce69d8e8e24cab42 '' ${WERKZEUG}
+    # compare_digest 69e9b9c9ac4fdf3cfa1a3de23d14964b843989128f8cc6ea58617fc5d6ef937bcc3eae9cb32b5164b5f54b06f96bdff9bc249529f20671cc26adc9e6ce8f6bec '' ${MARKUPSAFE}
+    # compare_digest 04860c7ff7086f051368787289f75198eec3357c7da7565dc5045353122650a887e063b1a5297578ddefcc77bfdfe3d9a23c868cb3e7f18a0b5f1c475e29339e '' ${JINJA2}
+    # compare_digest 891c294867f705eb9c66274bd04ac5d93140d6e9beea6cbf9a44e7f9c13c0e2efa3554bdf56620712759a5cd579e112a782d25f3f91ba9419d60b2b4d2bc5b7c '' ${ITSDANGEROUS}
+    # compare_digest 6b30987349df7c45c5f41cff9076ed45b178b444fca1ab1965f4ae33d1631522ce0a2868392c736666e83672b8b20e9503ae9ce5016dce3fa8f77bc8a3674130 '' ${CLICK}
+    # compare_digest bd49cb364307569480196289fa61fbb5493e46199620333f67617367278e1f56b20fc0d40fd540bef15642a8065e488c24e97f50535e8ec143875095157d8069 '' ${FLASK}
 
     # Cryptography
-    compare_digest 125341f0c22e11d2bd24c453b22e8fd7fd71605ee7a44eb61228686326eaca2e8f35b7ad4d0eacde4865f4d8cb8acb5cb5e3ff2856e756632b71af2f0dbdbee9 '' ${SETUPTOOLS}
-    compare_digest 326574c7542110d2cd8071136a36a6cffc7637ba948b55e0abb7f30f3821843073223301ecbec1d48b8361b0d7ccb338725eeb0424696efedc3f6bd2a23331d3 '' ${SIX}
+    # compare_digest 125341f0c22e11d2bd24c453b22e8fd7fd71605ee7a44eb61228686326eaca2e8f35b7ad4d0eacde4865f4d8cb8acb5cb5e3ff2856e756632b71af2f0dbdbee9 '' ${SETUPTOOLS}
+    # compare_digest 326574c7542110d2cd8071136a36a6cffc7637ba948b55e0abb7f30f3821843073223301ecbec1d48b8361b0d7ccb338725eeb0424696efedc3f6bd2a23331d3 '' ${SIX}
     compare_digest 8d9bc344981079ac6c00e71e161c34b6f403e575bbfe1ad06e30a3bcb33e0db317bdcb7aed2d18d510cb1b3ee340a649f7f77a00d271fcf3cc388e6655b67533 '' ${ASN1CRYPTO}
     compare_digest 7f830e1c9066ee2d297a55e2bf6db4bf6447b6d9da0145d11a88c3bb98505755fb7986eafa6e06ae0b7680838f5e5d6a6d188245ca5ad45c2a727587bac93ab5 '' ${PYCPARSER}
     compare_digest 69a2d725395a1a3585556cb44b62c49bd7f88f41ff194b60d4b9b591c4878a907c0770ef4052b588eaa9d420a53cbeb6b13237fff4054bf26ba5deaa84e25afa '' ${CFFI}
@@ -272,6 +274,7 @@ function remove_common_files {
     $1 rm    /opt/tfc/requirements.txt
     $1 rm    /opt/tfc/requirements-dev.txt
     $1 rm    /opt/tfc/requirements-relay.txt
+    $1 rm    /opt/tfc/requirements-relay-tails.txt
     $1 rm    /opt/tfc/requirements-venv.txt
     $1 rm -f /opt/install.sh
     $1 rm -f /opt/install.sh.asc
@@ -330,6 +333,7 @@ function install_tcb {
     sudo rm -r /opt/tfc/src/relay/
     sudo rm    /opt/tfc/dd.py
     sudo rm    /opt/tfc/relay.py
+    sudo rm    /opt/tfc/tfc.yml
     sudo rm    /opt/tfc/${VIRTUALENV}
 
     add_serial_permissions
@@ -363,6 +367,7 @@ function install_local_test {
     # Remove unnecessary files
     remove_common_files      "sudo"
     process_tcb_dependencies "rm"
+    sudo rm /opt/tfc/tfc.yml
     sudo rm /opt/tfc/${VIRTUALENV}
 
     install_complete "Installation of TFC for local testing is now complete."
@@ -437,6 +442,7 @@ function install_relay_ubuntu {
     sudo rm -r /opt/tfc/src/transmitter/
     sudo rm    /opt/tfc/dd.py
     sudo rm    /opt/tfc/tfc.py
+    sudo rm    /opt/tfc/tfc.yml
     sudo rm    /opt/tfc/${VIRTUALENV}
 
     add_serial_permissions
@@ -448,96 +454,44 @@ function install_relay_ubuntu {
 function install_relay_tails {
     # Install TFC Relay configuration on Networked Computer running
     # Tails live distro (https://tails.boum.org/).
-    debug "check_tails_tor_version"
     check_tails_tor_version
-
-    debug "read_sudo_pwd"
     read_sudo_pwd
 
     # Apt dependencies
-    debug "t_sudo apt update"
     t_sudo apt update
-
-    debug "apt install git libssl-dev python3-pip -y || true"
     t_sudo apt install git libssl-dev python3-pip -y || true  # Ignore error in case packets can not be persistently installed
 
-    # Clone, move and verify git-repository
-    debug "git clone --depth 1 https://github.com/tfctesting/tfc.git $HOME/tfc"
     torsocks git clone --depth 1 https://github.com/tfctesting/tfc.git $HOME/tfc
-
-    debug "t_sudo mv $HOME/tfc/ /opt/tfc/"
     t_sudo mv $HOME/tfc/ /opt/tfc/
-
-    debug "t_sudo chown -R root /opt/tfc/"
     t_sudo chown -R root /opt/tfc/
 
-    debug "verify_tcb_requirements_files"
     verify_tcb_requirements_files
-
-    debug "verify_files"
     verify_files
 
-    debug "create_user_data_dir"
     create_user_data_dir
 
-    # Virtualenv
-    debug "torsocks python3.7 -m pip download --no-cache-dir -r /opt/tfc/requirements-venv.txt --require-hashes -d $HOME/"
-    torsocks python3.7 -m pip download --no-cache-dir -r /opt/tfc/requirements-venv.txt --require-hashes -d $HOME/
+    torsocks python3.7 -m pip download --no-cache-dir -r /opt/tfc/requirements-venv.txt        --require-hashes -d $HOME/
+    torsocks python3.7 -m pip download --no-cache-dir -r /opt/tfc/requirements-relay-tails.txt --require-hashes -d $HOME/
 
-    debug "t_sudo mv $HOME/${VIRTUALENV} /opt/tfc/"
-    t_sudo mv $HOME/${VIRTUALENV} /opt/tfc/
-
-    debug "compare_digest 760587ac587609607526d20d62c5ef2d768d4bc2dc1f7d5ce338d3525ec49cdb60782311dfd4b814defc486292e181a802f561508980f4eb332366355c5e8cb1 '' ${VIRTUALENV}"
-    compare_digest 760587ac587609607526d20d62c5ef2d768d4bc2dc1f7d5ce338d3525ec49cdb60782311dfd4b814defc486292e181a802f561508980f4eb332366355c5e8cb1 '' ${VIRTUALENV}
-
-    debug "t_sudo python3.7 -m pip install /opt/tfc/${VIRTUALENV}"
-    t_sudo python3.7 -m pip install /opt/tfc/${VIRTUALENV}
-
-    # PIP Dependencies
-    debug "torsocks python3.7 -m pip download --no-cache-dir -r /opt/tfc/requirements-relay.txt --require-hashes -d $HOME/"
-    torsocks python3.7 -m pip download --no-cache-dir -r /opt/tfc/requirements-relay.txt --require-hashes -d $HOME/
-
-    debug "move_tails_dependencies"
     move_tails_dependencies
-
-    debug "verify_tails_dependencies"
     verify_tails_dependencies
 
-    # Create venv
-    debug "t_sudo python3.7 -m virtualenv /opt/tfc/venv_relay --system-site-packages"
+    t_sudo python3.7 -m pip install /opt/tfc/${VIRTUALENV}
     t_sudo python3.7 -m virtualenv /opt/tfc/venv_relay --system-site-packages
 
-    debug ". /opt/tfc/venv_relay/bin/activate"
     . /opt/tfc/venv_relay/bin/activate
-
-    debug 'process_tails_dependencies "python3.7 -m pip install"'
     process_tails_dependencies "python3.7 -m pip install"
-
-    debug "deactivate"
     deactivate
 
-    # Rest of install steps
-    debug "t_sudo mv /opt/tfc/tfc.png                        /usr/share/pixmaps/"
+    # Complete setup
     t_sudo mv /opt/tfc/tfc.png                        /usr/share/pixmaps/
-
-    debug "t_sudo mv /opt/tfc/launchers/TFC-RP-Tails.desktop /usr/share/applications/"
     t_sudo mv /opt/tfc/launchers/TFC-RP-Tails.desktop /usr/share/applications/
+    t_sudo mv /opt/tfc/tfc.yml                        /etc/onion-grater.d/
 
-    debug "t_sudo mv /opt/tfc/tfc.yml /etc/onion-grater.d/"
-    t_sudo mv /opt/tfc/tfc.yml /etc/onion-grater.d/
-
-    debug 'remove_common_files        "t_sudo"'
     remove_common_files        "t_sudo"
-
-    debug 'process_tails_dependencies "rm"'
     process_tails_dependencies "rm"
 
-    debug "t_sudo rm /opt/tfc/${VIRTUALENV}"
     t_sudo rm /opt/tfc/${VIRTUALENV}
-
-    debug "t_sudo rm /opt/tfc/${STEM}"
-    t_sudo rm /opt/tfc/${STEM}
-
     t_sudo rm -r /opt/tfc/src/receiver/
     t_sudo rm -r /opt/tfc/src/transmitter/
     t_sudo rm    /opt/tfc/dd.py
