@@ -238,7 +238,6 @@ class RxWindow(Iterable[MsgTuple]):
                 event_msg:     bool  = False                # When True, uses "-!-" as message handle
                 ) -> None:
         """Add message tuple to message log and optionally print it."""
-
         self.update_handle_dict(onion_pub_key)
 
         msg_tuple = (timestamp, message, onion_pub_key, origin, whisper, event_msg)

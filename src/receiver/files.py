@@ -171,10 +171,9 @@ def process_file(ts:            'datetime',     # Timestamp of received_packet
     if not file_name.isprintable() or not file_name or '/' in file_name:
         raise FunctionReturn(f"Error: Name of file from {nick} was invalid.")
 
-    f_data = file_dc[PADDED_UTF32_STR_LENGTH:]
-
+    file_data  = file_dc[PADDED_UTF32_STR_LENGTH:]
     file_dir   = f'{DIR_RECV_FILES}{nick}/'
-    final_name = store_unique(f_data, file_dir, file_name)
+    final_name = store_unique(file_data, file_dir, file_name)
     message    = f"Stored file from {nick} as '{final_name}'."
 
     if settings.traffic_masking and window_list.active_win is not None:

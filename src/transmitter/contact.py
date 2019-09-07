@@ -176,7 +176,7 @@ def remove_contact(user_input:   'UserInput',
 
                 # If the last member of the group is removed, deselect
                 # the group. Deselection is not done in
-                # update_group_win_members because it would prevent
+                # `TxWindow.update_window()` because it would prevent
                 # selecting the empty group for group related commands
                 # such as notifications.
                 if not window.window_contacts:

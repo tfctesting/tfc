@@ -57,8 +57,8 @@ def process_message(ts:                 'datetime',
     """Process received private / group message."""
     local_window = window_list.get_local_window()
 
-    onion_pub_key, origin, assembly_packet_ct \
-        = separate_headers(assembly_packet_ct, [ONION_SERVICE_PUBLIC_KEY_LENGTH, ORIGIN_HEADER_LENGTH])
+    onion_pub_key, origin, assembly_packet_ct = separate_headers(assembly_packet_ct, [ONION_SERVICE_PUBLIC_KEY_LENGTH,
+                                                                                      ORIGIN_HEADER_LENGTH])
 
     if onion_pub_key == LOCAL_PUBKEY:
         raise FunctionReturn("Warning! Received packet masqueraded as a command.",   window=local_window)
@@ -123,6 +123,7 @@ def process_message(ts:                 'datetime',
             else:
                 raise FunctionReturn("Error: Message from contact had an invalid header.")
 
+            # Logging
             if whisper:
                 raise FunctionReturn("Whisper message complete.", output=False)
 

@@ -205,7 +205,7 @@ def get_data_loop(onion_addr:    str,
             except requests.exceptions.RequestException:
                 return None
 
-            for line in r.iter_lines():  # Iterates over newline-separated datagrams
+            for line in r.iter_lines():  # Iterate over newline-separated datagrams
 
                 if not line:
                     continue
@@ -219,14 +219,16 @@ def get_data_loop(onion_addr:    str,
                 ts       = datetime.now()
                 ts_bytes = int_to_bytes(int(ts.strftime('%Y%m%d%H%M%S%f')[:-4]))
 
+                # Packet type specific handling
+
                 if header == PUBLIC_KEY_DATAGRAM_HEADER:
                     if len(payload_bytes) == TFC_PUBLIC_KEY_LENGTH:
                         msg = f"Received public key from {short_addr} at {ts.strftime('%b %d - %H:%M:%S.%f')[:-4]}:"
                         print_key(msg, payload_bytes, gateway.settings, public_key=True)
 
                 elif header == MESSAGE_DATAGRAM_HEADER:
-                    queues[DST_MESSAGE_QUEUE].put(header + ts_bytes + onion_pub_key
-                                                  + ORIGIN_CONTACT_HEADER + payload_bytes)
+                    queues[DST_MESSAGE_QUEUE].put(header + ts_bytes
+                                                  + onion_pub_key + ORIGIN_CONTACT_HEADER + payload_bytes)
                     rp_print(f"Message   from contact {short_addr}", ts)
 
                 elif header in [GROUP_MSG_INVITE_HEADER,     GROUP_MSG_JOIN_HEADER,

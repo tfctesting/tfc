@@ -43,11 +43,7 @@ def b58encode(byte_string: bytes, public_key: bool = False) -> str:
     (WIF) for mainnet and testnet addresses.
         https://en.bitcoin.it/wiki/Wallet_import_format
     """
-
-    mainnet_header = b'\x80'
-    testnet_header = b'\xef'
-    net_id         = testnet_header if public_key else mainnet_header
-
+    net_id       = TESTNET_HEADER if public_key else MAINNET_HEADER
     byte_string  = net_id + byte_string
     byte_string += sha256d(byte_string)[:B58_CHECKSUM_LENGTH]
 
@@ -70,11 +66,7 @@ def b58encode(byte_string: bytes, public_key: bool = False) -> str:
 
 def b58decode(string: str, public_key: bool = False) -> bytes:
     """Decode a Base58-encoded string and verify the checksum."""
-
-    mainnet_header = b'\x80'
-    testnet_header = b'\xef'
-    net_id         = testnet_header if public_key else mainnet_header
-
+    net_id   = TESTNET_HEADER if public_key else MAINNET_HEADER
     orig_len = len(string)
     string   = string.lstrip(B58_ALPHABET[0])
     new_len  = len(string)

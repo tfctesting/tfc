@@ -205,9 +205,9 @@ def print_key(message:    str,                              # Instructive messag
     if settings.local_testing_mode:
         m_print([message, b58key], box=True)
     else:
-        guide, chunk_len = (B58_PUBLIC_KEY_GUIDE, 7) if public_key else (B58_LOCAL_KEY_GUIDE, 3)
+        guide, chunk_length = (B58_PUBLIC_KEY_GUIDE, 7) if public_key else (B58_LOCAL_KEY_GUIDE, 3)
 
-        key = ' '.join(split_string(b58key, item_len=chunk_len))
+        key = ' '.join(split_string(b58key, item_len=chunk_length))
         m_print([message, guide, key], box=True)
 
 

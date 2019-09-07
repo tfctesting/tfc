@@ -71,8 +71,10 @@ NOT_IN_GROUP     = 'not_in_group'
 UNKNOWN_ACCOUNTS = 'unknown_accounts'
 
 
-"""Base58 alphabet"""
-B58_ALPHABET = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz'
+"""Base58 encoding"""
+B58_ALPHABET   = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz'
+MAINNET_HEADER = b'\x80'
+TESTNET_HEADER = b'\xef'
 
 
 """Base58 key types"""

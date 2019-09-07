@@ -100,16 +100,16 @@ def decrypt_assembly_packet(packet:        bytes,          # Assembly packet cip
     try:
         harac_bytes = auth_and_decrypt(ct_harac, header_key)
     except nacl.exceptions.CryptoError:
-        raise FunctionReturn(
-            f"Warning! Received {p_type} {direction} {nick} had an invalid hash ratchet MAC.", window=local_window)
+        raise FunctionReturn(f"Warning! Received {p_type} {direction} {nick} had an invalid hash ratchet MAC.",
+                             window=local_window)
 
     # Catch up with hash ratchet offset
     purp_harac   = bytes_to_int(harac_bytes)
     stored_harac = getattr(keyset, f'{key_dir}_harac')
     offset       = purp_harac - stored_harac
     if offset < 0:
-        raise FunctionReturn(
-            f"Warning! Received {p_type} {direction} {nick} had an expired hash ratchet counter.", window=local_window)
+        raise FunctionReturn(f"Warning! Received {p_type} {direction} {nick} had an expired hash ratchet counter.",
+                             window=local_window)
 
     process_offset(offset, origin, direction, nick, local_window)
     for harac in range(stored_harac, stored_harac + offset):
@@ -119,7 +119,8 @@ def decrypt_assembly_packet(packet:        bytes,          # Assembly packet cip
     try:
         assembly_packet = auth_and_decrypt(ct_assemby_packet, message_key)
     except nacl.exceptions.CryptoError:
-        raise FunctionReturn(f"Warning! Received {p_type} {direction} {nick} had an invalid MAC.", window=local_window)
+        raise FunctionReturn(f"Warning! Received {p_type} {direction} {nick} had an invalid MAC.",
+                             window=local_window)
 
     # Update message key and harac
     new_key = blake2b(message_key + int_to_bytes(stored_harac + offset), digest_size=SYMMETRIC_KEY_LENGTH)

@@ -131,9 +131,9 @@ class Gateway(object):
         the time it takes to send one byte with given baud rate.
         """
         try:
-            serial_interface                = self.search_serial_interface()
-            baudrate                        = self.settings.session_serial_baudrate
-            self.tx_serial = self.rx_serial = serial.Serial(serial_interface, baudrate, timeout=0)
+            self.tx_serial = self.rx_serial = serial.Serial(self.search_serial_interface(),
+                                                            self.settings.session_serial_baudrate,
+                                                            timeout=0)
         except SerialException:
             raise CriticalError("SerialException. Ensure $USER is in the dialout group by restarting this computer.")
 
