@@ -70,7 +70,7 @@ function verify_files {
     compare_digest 84a4e5b287ba4f600fc170913f5bdcd3db67c6d75a57804331a04336a9931c7ce9c58257ad874d3f197c097869438bb1d2932f06f5762c44f264617681eab287 '' relay.py
     compare_digest 2865708ab24c3ceeaf0a6ec382fb7c331fdee52af55a111c1afb862a336dd757d597f91b94267da009eb74bbc77d01bf78824474fa6f0aa820cd8c62ddb72138 '' requirements-dev.txt
     compare_digest 04a73ead3a4e4e61647588eb744f60bfab20983da9c26f3224dafe9bb7a78897841be8cdd26bf68857c0da2e169fc949a67af79de5d972158c40a945c15b3af4 '' requirements-relay.txt
-    compare_digest 1a864d73c85fb8935e34c96a6618c8f77b13d01333436a66f691df66045e6b5d845d5a866464b9543218fbcb60c742c01f876ee4635901a77ba6e748a2c2c69f '' requirements-relay-tails.txt
+    compare_digest 7b32996efd946767b9acb88bcdb902392fe58dad7999ab14dc6908818d0a589d3a38731edbb07fecd9b24edcd3d27bbcd9c5d0dfc387ee4a878b20ac216d6d76 '' requirements-relay-tails.txt
     compare_digest 6d93d5513f66389778262031cbba95e1e38138edaec66ced278db2c2897573247d1de749cf85362ec715355c5dfa5c276c8a07a394fd5cf9b45c7a7ae6249a66 '' tfc.png
     compare_digest a7b8090855295adfc22528b2f89bed88617b5e990ffe58e3a42142a9a4bea6b1b67c757c9b7d1eafeec22eddee9f9891b44afffa52d31ce5d050f08a1734874d '' tfc.py
     compare_digest 7ae1c2a393d96761843bea90edd569244bfb4e0f9943e68a4549ee46d93180d26d4101c2471c1a37785ccdfaef45eedecf15057c0a9cc6c056460c5f9a69d37b '' tfc.yml
@@ -155,27 +155,27 @@ function process_tails_dependencies {
     # Manage Tails dependencies in batch. The command that uses the
     # files is passed to the function as a parameter.
 
-    # t_sudo -E $1 /opt/tfc/${PYSERIAL}
-    # t_sudo -E $1 /opt/tfc/${STEM}
-    # t_sudo -E $1 /opt/tfc/${PYSOCKS}
+    t_sudo -E $1 /opt/tfc/${PYSERIAL}
+    t_sudo -E $1 /opt/tfc/${STEM}
+    t_sudo -E $1 /opt/tfc/${PYSOCKS}
 
     # Requests
-    # t_sudo -E $1 /opt/tfc/${URLLIB3}
-    # t_sudo -E $1 /opt/tfc/${IDNA}
-    # t_sudo -E $1 /opt/tfc/${CHARDET}
-    # t_sudo -E $1 /opt/tfc/${CERTIFI}
-    # t_sudo -E $1 /opt/tfc/${REQUESTS}
+    t_sudo -E $1 /opt/tfc/${URLLIB3}
+    t_sudo -E $1 /opt/tfc/${IDNA}
+    t_sudo -E $1 /opt/tfc/${CHARDET}
+    t_sudo -E $1 /opt/tfc/${CERTIFI}
+    t_sudo -E $1 /opt/tfc/${REQUESTS}
 
     # Flask
-    # t_sudo -E $1 /opt/tfc/${WERKZEUG}
-    # t_sudo -E $1 /opt/tfc/${MARKUPSAFE}
-    # t_sudo -E $1 /opt/tfc/${JINJA2}
-    # t_sudo -E $1 /opt/tfc/${ITSDANGEROUS}
-    # t_sudo -E $1 /opt/tfc/${CLICK}
-    # t_sudo -E $1 /opt/tfc/${FLASK}
+    t_sudo -E $1 /opt/tfc/${WERKZEUG}
+    t_sudo -E $1 /opt/tfc/${MARKUPSAFE}
+    t_sudo -E $1 /opt/tfc/${JINJA2}
+    t_sudo -E $1 /opt/tfc/${ITSDANGEROUS}
+    t_sudo -E $1 /opt/tfc/${CLICK}
+    t_sudo -E $1 /opt/tfc/${FLASK}
 
     # Cryptography
-    # t_sudo -E $1 /opt/tfc/${SETUPTOOLS}
+    t_sudo -E $1 /opt/tfc/${SETUPTOOLS}
     t_sudo -E $1 /opt/tfc/${SIX}
     t_sudo -E $1 /opt/tfc/${ASN1CRYPTO}
     t_sudo -E $1 /opt/tfc/${PYCPARSER}
@@ -190,27 +190,27 @@ function process_tails_dependencies {
 function move_tails_dependencies {
     # Move Tails dependencies in batch.
     t_sudo mv $HOME/${VIRTUALENV} /opt/tfc/
-    #t_sudo mv $HOME/${PYSERIAL} /opt/tfc/
-    #t_sudo mv $HOME/${STEM}     /opt/tfc/
-    #t_sudo mv $HOME/${PYSOCKS}  /opt/tfc/
+    t_sudo mv $HOME/${PYSERIAL} /opt/tfc/
+    t_sudo mv $HOME/${STEM}     /opt/tfc/
+    t_sudo mv $HOME/${PYSOCKS}  /opt/tfc/
 
     # Requests
-    # t_sudo mv $HOME/${URLLIB3}  /opt/tfc/
-    # t_sudo mv $HOME/${IDNA}     /opt/tfc/
-    # t_sudo mv $HOME/${CHARDET}  /opt/tfc/
-    # t_sudo mv $HOME/${CERTIFI}  /opt/tfc/
-    # t_sudo mv $HOME/${REQUESTS} /opt/tfc/
+    t_sudo mv $HOME/${URLLIB3}  /opt/tfc/
+    t_sudo mv $HOME/${IDNA}     /opt/tfc/
+    t_sudo mv $HOME/${CHARDET}  /opt/tfc/
+    t_sudo mv $HOME/${CERTIFI}  /opt/tfc/
+    t_sudo mv $HOME/${REQUESTS} /opt/tfc/
 
     # Flask
-    # t_sudo mv $HOME/${WERKZEUG}     /opt/tfc/
-    # t_sudo mv $HOME/${MARKUPSAFE}   /opt/tfc/
-    # t_sudo mv $HOME/${JINJA2}       /opt/tfc/
-    # t_sudo mv $HOME/${ITSDANGEROUS} /opt/tfc/
-    # t_sudo mv $HOME/${CLICK}        /opt/tfc/
-    # t_sudo mv $HOME/${FLASK}        /opt/tfc/
+    t_sudo mv $HOME/${WERKZEUG}     /opt/tfc/
+    t_sudo mv $HOME/${MARKUPSAFE}   /opt/tfc/
+    t_sudo mv $HOME/${JINJA2}       /opt/tfc/
+    t_sudo mv $HOME/${ITSDANGEROUS} /opt/tfc/
+    t_sudo mv $HOME/${CLICK}        /opt/tfc/
+    t_sudo mv $HOME/${FLASK}        /opt/tfc/
 
     # Cryptography
-    # t_sudo mv $HOME/${SETUPTOOLS}   /opt/tfc/
+    t_sudo mv $HOME/${SETUPTOOLS}   /opt/tfc/
     t_sudo mv $HOME/${SIX}          /opt/tfc/
     t_sudo mv $HOME/${ASN1CRYPTO}   /opt/tfc/
     t_sudo mv $HOME/${PYCPARSER}    /opt/tfc/
@@ -227,27 +227,27 @@ function verify_tails_dependencies {
     # first download to $HOME, move the files to /opt/tfc, and then
     # perform additional hash verification
     compare_digest 42141b21e096571329da88383bc977509608c0992b12c7d19cc2dae5c70efb7c0220abcd4f61d23d3133ea9ea47a15dbed8a15bd081049af9827272bcec02507 '' ${VIRTUALENV}
-    # compare_digest 8333ac2843fd136d5d0d63b527b37866f7d18afc3bb33c4938b63af077492aeb118eb32a89ac78547f14d59a2adb1e5d00728728275de62317da48dadf6cdff9 '' ${PYSERIAL}
-    # compare_digest a275f59bba650cb5bb151cf53fb1dd820334f9abbeae1a25e64502adc854c7f54c51bc3d6c1656b595d142fc0695ffad53aab3c57bc285421c1f4f10c9c3db4c '' ${STEM}
-    # compare_digest 5bbffb2714a04fb53417058703d8112c5e5dca768df627e64618e8ab8a36a8bdbc27f5d6852f39cff6b8fb4c9a5d13909f86eeb5fe9741ba42bdc985685e5d51 '' ${PYSOCKS}
+    compare_digest 8333ac2843fd136d5d0d63b527b37866f7d18afc3bb33c4938b63af077492aeb118eb32a89ac78547f14d59a2adb1e5d00728728275de62317da48dadf6cdff9 '' ${PYSERIAL}
+    compare_digest a275f59bba650cb5bb151cf53fb1dd820334f9abbeae1a25e64502adc854c7f54c51bc3d6c1656b595d142fc0695ffad53aab3c57bc285421c1f4f10c9c3db4c '' ${STEM}
+    compare_digest 5bbffb2714a04fb53417058703d8112c5e5dca768df627e64618e8ab8a36a8bdbc27f5d6852f39cff6b8fb4c9a5d13909f86eeb5fe9741ba42bdc985685e5d51 '' ${PYSOCKS}
 
     # Requests
-    # compare_digest 46d144af3633080b9ec8a642ab855b401b8224edb839c237639998b004f19b8cb191155c57e633954cf70b100d6d8b21105cd280acd1ea975aef1dec9a4a5860 '' ${URLLIB3}
-    # compare_digest fb07dbec1de86efbad82a4f73d98123c59b083c1f1277445204bef75de99ca200377ad2f1db8924ae79b31b3dd984891c87d0a6344ec4d07a0ddbbbc655821a3 '' ${IDNA}
-    # compare_digest bfae58c8ea19c87cc9c9bf3d0b6146bfdb3630346bd954fe8e9f7da1f09da1fc0d6943ff04802798a665ea3b610ee2d65658ce84fe5a89f9e93625ea396a17f4 '' ${CHARDET}
-    # compare_digest d81fe3a75ea611466d5ece7788f47c7946a4226bf4622c2accfd28c1e37b817e748609710c176c51ef2621cbc7ee200dd8d8106e738f1ef7cb96d7f2f82539cc '' ${CERTIFI}
-    # compare_digest 9186ce4e39bb64f5931a205ffc9afac61657bc42078bc4754ed12a2b66a12b7a620583440849fc2e161d1061ac0750ddef4670f54916931ace1e9abd2a9fb09c '' ${REQUESTS}
+    compare_digest 46d144af3633080b9ec8a642ab855b401b8224edb839c237639998b004f19b8cb191155c57e633954cf70b100d6d8b21105cd280acd1ea975aef1dec9a4a5860 '' ${URLLIB3}
+    compare_digest fb07dbec1de86efbad82a4f73d98123c59b083c1f1277445204bef75de99ca200377ad2f1db8924ae79b31b3dd984891c87d0a6344ec4d07a0ddbbbc655821a3 '' ${IDNA}
+    compare_digest bfae58c8ea19c87cc9c9bf3d0b6146bfdb3630346bd954fe8e9f7da1f09da1fc0d6943ff04802798a665ea3b610ee2d65658ce84fe5a89f9e93625ea396a17f4 '' ${CHARDET}
+    compare_digest d81fe3a75ea611466d5ece7788f47c7946a4226bf4622c2accfd28c1e37b817e748609710c176c51ef2621cbc7ee200dd8d8106e738f1ef7cb96d7f2f82539cc '' ${CERTIFI}
+    compare_digest 9186ce4e39bb64f5931a205ffc9afac61657bc42078bc4754ed12a2b66a12b7a620583440849fc2e161d1061ac0750ddef4670f54916931ace1e9abd2a9fb09c '' ${REQUESTS}
 
     # Flask
-    # compare_digest 19728875a846f895b7e20f1e8762455147253b295c29e4fb981f734a7ec6a491ae4a5427b0fcac54013c9fcca3d9a53d2639c00a0913c8d9ce69d8e8e24cab42 '' ${WERKZEUG}
-    # compare_digest 69e9b9c9ac4fdf3cfa1a3de23d14964b843989128f8cc6ea58617fc5d6ef937bcc3eae9cb32b5164b5f54b06f96bdff9bc249529f20671cc26adc9e6ce8f6bec '' ${MARKUPSAFE}
-    # compare_digest 04860c7ff7086f051368787289f75198eec3357c7da7565dc5045353122650a887e063b1a5297578ddefcc77bfdfe3d9a23c868cb3e7f18a0b5f1c475e29339e '' ${JINJA2}
-    # compare_digest 891c294867f705eb9c66274bd04ac5d93140d6e9beea6cbf9a44e7f9c13c0e2efa3554bdf56620712759a5cd579e112a782d25f3f91ba9419d60b2b4d2bc5b7c '' ${ITSDANGEROUS}
-    # compare_digest 6b30987349df7c45c5f41cff9076ed45b178b444fca1ab1965f4ae33d1631522ce0a2868392c736666e83672b8b20e9503ae9ce5016dce3fa8f77bc8a3674130 '' ${CLICK}
-    # compare_digest bd49cb364307569480196289fa61fbb5493e46199620333f67617367278e1f56b20fc0d40fd540bef15642a8065e488c24e97f50535e8ec143875095157d8069 '' ${FLASK}
+    compare_digest 70c09ba678e06b7631cd9a2e4c40225f56eb2f3fa76246234e40a8de809aeee2904630817843a16ae446497c5e1e462889e92bbc6ca342e4f9e8efbad4b0a70c '' ${WERKZEUG}
+    compare_digest 69e9b9c9ac4fdf3cfa1a3de23d14964b843989128f8cc6ea58617fc5d6ef937bcc3eae9cb32b5164b5f54b06f96bdff9bc249529f20671cc26adc9e6ce8f6bec '' ${MARKUPSAFE}
+    compare_digest 04860c7ff7086f051368787289f75198eec3357c7da7565dc5045353122650a887e063b1a5297578ddefcc77bfdfe3d9a23c868cb3e7f18a0b5f1c475e29339e '' ${JINJA2}
+    compare_digest 891c294867f705eb9c66274bd04ac5d93140d6e9beea6cbf9a44e7f9c13c0e2efa3554bdf56620712759a5cd579e112a782d25f3f91ba9419d60b2b4d2bc5b7c '' ${ITSDANGEROUS}
+    compare_digest 6b30987349df7c45c5f41cff9076ed45b178b444fca1ab1965f4ae33d1631522ce0a2868392c736666e83672b8b20e9503ae9ce5016dce3fa8f77bc8a3674130 '' ${CLICK}
+    compare_digest bd49cb364307569480196289fa61fbb5493e46199620333f67617367278e1f56b20fc0d40fd540bef15642a8065e488c24e97f50535e8ec143875095157d8069 '' ${FLASK}
 
     # Cryptography
-    # compare_digest 125341f0c22e11d2bd24c453b22e8fd7fd71605ee7a44eb61228686326eaca2e8f35b7ad4d0eacde4865f4d8cb8acb5cb5e3ff2856e756632b71af2f0dbdbee9 '' ${SETUPTOOLS}
+    compare_digest 125341f0c22e11d2bd24c453b22e8fd7fd71605ee7a44eb61228686326eaca2e8f35b7ad4d0eacde4865f4d8cb8acb5cb5e3ff2856e756632b71af2f0dbdbee9 '' ${SETUPTOOLS}
     compare_digest 326574c7542110d2cd8071136a36a6cffc7637ba948b55e0abb7f30f3821843073223301ecbec1d48b8361b0d7ccb338725eeb0424696efedc3f6bd2a23331d3 '' ${SIX}
     compare_digest 8d9bc344981079ac6c00e71e161c34b6f403e575bbfe1ad06e30a3bcb33e0db317bdcb7aed2d18d510cb1b3ee340a649f7f77a00d271fcf3cc388e6655b67533 '' ${ASN1CRYPTO}
     compare_digest 7f830e1c9066ee2d297a55e2bf6db4bf6447b6d9da0145d11a88c3bb98505755fb7986eafa6e06ae0b7680838f5e5d6a6d188245ca5ad45c2a727587bac93ab5 '' ${PYCPARSER}
