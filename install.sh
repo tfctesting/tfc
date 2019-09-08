@@ -39,7 +39,7 @@ SIX=six-1.12.0-py2.py3-none-any.whl
 STEM=stem-1.7.1.tar.gz
 URLLIB3=urllib3-1.25.3-py2.py3-none-any.whl
 VIRTUALENV=virtualenv-16.7.5-py2.py3-none-any.whl
-WERKZEUG=Werkzeug-0.15.5-py2.py3-none-any.whl
+WERKZEUG=Werkzeug-0.15.6-py2.py3-none-any.whl
 
 
 function compare_digest {
