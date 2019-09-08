@@ -70,7 +70,7 @@ function verify_files {
     compare_digest 84a4e5b287ba4f600fc170913f5bdcd3db67c6d75a57804331a04336a9931c7ce9c58257ad874d3f197c097869438bb1d2932f06f5762c44f264617681eab287 '' relay.py
     compare_digest 2865708ab24c3ceeaf0a6ec382fb7c331fdee52af55a111c1afb862a336dd757d597f91b94267da009eb74bbc77d01bf78824474fa6f0aa820cd8c62ddb72138 '' requirements-dev.txt
     compare_digest 04a73ead3a4e4e61647588eb744f60bfab20983da9c26f3224dafe9bb7a78897841be8cdd26bf68857c0da2e169fc949a67af79de5d972158c40a945c15b3af4 '' requirements-relay.txt
-    compare_digest 6e11d4928b23a0af977360b7ebb206888a6fcfd204be057c6210488494b828e1f372e6d180fc479c73c45dedf78bd7767bda8c4263ca0bb1c05432bf9de3b213 '' requirements-relay-tails.txt
+    compare_digest 5e621cbf1b435ec4d86e4dc3298c3c03f3d89a65397c4570a85216027524a11a3e94dd453be11f247cae6ceae35440192871ecf95618b5970afdf1cc3fcb1a84 '' requirements-relay-tails.txt
     compare_digest 6d93d5513f66389778262031cbba95e1e38138edaec66ced278db2c2897573247d1de749cf85362ec715355c5dfa5c276c8a07a394fd5cf9b45c7a7ae6249a66 '' tfc.png
     compare_digest a7b8090855295adfc22528b2f89bed88617b5e990ffe58e3a42142a9a4bea6b1b67c757c9b7d1eafeec22eddee9f9891b44afffa52d31ce5d050f08a1734874d '' tfc.py
     compare_digest 7ae1c2a393d96761843bea90edd569244bfb4e0f9943e68a4549ee46d93180d26d4101c2471c1a37785ccdfaef45eedecf15057c0a9cc6c056460c5f9a69d37b '' tfc.yml
@@ -156,7 +156,7 @@ function process_tails_dependencies {
     # files is passed to the function as a parameter.
 
     t_sudo -E $1 /opt/tfc/${PYSERIAL}
-    t_sudo -E $1 /opt/tfc/${STEM}
+    # t_sudo -E $1 /opt/tfc/${STEM}
     t_sudo -E $1 /opt/tfc/${PYSOCKS}
 
     # Requests
@@ -191,7 +191,7 @@ function move_tails_dependencies {
     # Move Tails dependencies in batch.
     t_sudo mv $HOME/${VIRTUALENV} /opt/tfc/
     t_sudo mv $HOME/${PYSERIAL} /opt/tfc/
-    t_sudo mv $HOME/${STEM}     /opt/tfc/
+    # t_sudo mv $HOME/${STEM}     /opt/tfc/
     t_sudo mv $HOME/${PYSOCKS}  /opt/tfc/
 
     # Requests
@@ -228,7 +228,7 @@ function verify_tails_dependencies {
     # perform additional hash verification
     compare_digest 42141b21e096571329da88383bc977509608c0992b12c7d19cc2dae5c70efb7c0220abcd4f61d23d3133ea9ea47a15dbed8a15bd081049af9827272bcec02507 '' ${VIRTUALENV}
     compare_digest 8333ac2843fd136d5d0d63b527b37866f7d18afc3bb33c4938b63af077492aeb118eb32a89ac78547f14d59a2adb1e5d00728728275de62317da48dadf6cdff9 '' ${PYSERIAL}
-    compare_digest a275f59bba650cb5bb151cf53fb1dd820334f9abbeae1a25e64502adc854c7f54c51bc3d6c1656b595d142fc0695ffad53aab3c57bc285421c1f4f10c9c3db4c '' ${STEM}
+    # compare_digest a275f59bba650cb5bb151cf53fb1dd820334f9abbeae1a25e64502adc854c7f54c51bc3d6c1656b595d142fc0695ffad53aab3c57bc285421c1f4f10c9c3db4c '' ${STEM}
     compare_digest 5bbffb2714a04fb53417058703d8112c5e5dca768df627e64618e8ab8a36a8bdbc27f5d6852f39cff6b8fb4c9a5d13909f86eeb5fe9741ba42bdc985685e5d51 '' ${PYSOCKS}
 
     # Requests
