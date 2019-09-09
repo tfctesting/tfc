@@ -75,9 +75,11 @@ def src_incoming(queues:    'QueueDict',
     # TODO REMOVE
     # Here we merely attempt to add a pinned server to see why Requests client is having problems
     from src.common.encoding import onion_address_to_pub_key
+    from datetime import datetime
     account = 'vhsdftnma2v7uivg4zw57r7qjaibphnspwwijpcley7audl6aj2kukid'
     test_packet = UNENCRYPTED_DATAGRAM_HEADER + UNENCRYPTED_ADD_NEW_CONTACT + onion_address_to_pub_key(account)
-    packets_from_sc.put(test_packet)
+    ts = datetime.now()
+    packets_from_sc.put((ts, test_packet))
 
     while True:
         with ignored(EOFError, KeyboardInterrupt):
