@@ -54,6 +54,10 @@ def get_available_port(min_port: int, max_port: int) -> str:
             except OSError:
                 pass
         _, port = temp_sock.getsockname()  # type: Any, str
+
+    if Tor.platform_is_tails():
+        return TOR_SOCKS_PORT
+
     return port
 
 
@@ -177,13 +181,10 @@ def stem_compatible_ed25519_key_from_private_key(private_key: bytes) -> str:
 def onion_service(queues: Dict[bytes, 'Queue[Any]']) -> None:
     """Manage the Tor Onion Service and control Tor via stem."""
     rp_print("Setup   0% - Waiting for Onion Service configuration...", bold=True)
-    #while queues[ONION_KEY_QUEUE].qsize() == 0:  # TODO FIX
-    #   time.sleep(0.1)
+    while queues[ONION_KEY_QUEUE].qsize() == 0:
+       time.sleep(0.1)
 
-    #private_key, c_code = queues[ONION_KEY_QUEUE].get()  # type: bytes, bytes
-    private_key = os.urandom(32)
-    c_code = b'a'
-
+    private_key, c_code = queues[ONION_KEY_QUEUE].get()  # type: bytes, bytes
     public_key_user     = bytes(nacl.signing.SigningKey(seed=private_key).verify_key)
     onion_addr_user     = pub_key_to_onion_address(public_key_user)
 
