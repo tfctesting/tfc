@@ -56,7 +56,7 @@ def get_available_port(min_port: int, max_port: int) -> str:
         _, port = temp_sock.getsockname()  # type: Any, str
 
     if Tor.platform_is_tails():
-        return TOR_SOCKS_PORT
+        return str(TOR_SOCKS_PORT)
 
     return port
 
