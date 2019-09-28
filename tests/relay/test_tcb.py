@@ -200,10 +200,11 @@ class TestDSTOutGoing(unittest.TestCase):
 
         def queue_delayer():
             """Place packets into queue after delay."""
-            time.sleep(0.01)
+            time.sleep(0.015)
             queues[DST_COMMAND_QUEUE].put(packet)
+            time.sleep(0.015)
             queues[DST_MESSAGE_QUEUE].put(packet)
-            time.sleep(0.01)
+            time.sleep(0.015)
             queues[UNIT_TEST_QUEUE].put(EXIT)
 
         threading.Thread(target=queue_delayer).start()

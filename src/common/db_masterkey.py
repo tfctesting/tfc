@@ -180,8 +180,8 @@ class MasterKey(object):
                 middle              = (lower_bound + upper_bound) // 2
                 master_key, kd_time = self.timed_key_derivation(password, salt, time_cost, middle, parallelism)
 
-                # End of search might happen e.g. if external CPU load causes delay in key derivation, which causes
-                # the search to continue into wrong branch. In such situation the search is restarted. The binary search
+                # The search might fail e.g. if external CPU load causes delay in key derivation, which causes the
+                # search to continue into wrong branch. In such a situation the search is restarted. The binary search
                 # is problematic with tight key derivation time target ranges, so if the search keeps restarting,
                 # increasing MAX_KEY_DERIVATION_TIME (and thus expanding the range) will help finding suitable
                 # memory_cost value faster. Increasing MAX_KEY_DERIVATION_TIME slightly affects security (positively)

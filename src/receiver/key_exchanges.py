@@ -259,11 +259,12 @@ def key_ex_psk_tx(packet:       bytes,
                         tx_hk=tx_hk,
                         rx_hk=bytes(SYMMETRIC_KEY_LENGTH))
 
+    c_code    = blake2b(onion_pub_key, digest_size=CONFIRM_CODE_LENGTH)
     message   = f"Added Tx-side PSK for {nick} ({pub_key_to_short_address(onion_pub_key)})."
     local_win = window_list.get_local_window()
     local_win.add_new(ts, message)
 
-    m_print(message, bold=True, tail_clear=True, delay=1)
+    m_print([message, f"Confirmation code (to Transmitter): {c_code.hex()}"], box=True)
 
 
 def key_ex_psk_rx(packet:       bytes,

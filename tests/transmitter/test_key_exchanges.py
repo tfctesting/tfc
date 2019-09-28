@@ -250,7 +250,7 @@ class TestPSK(TFCTestCase):
 
         tear_queues(self.queues)
 
-    @mock.patch('builtins.input',  side_effect=['/root/', '.'])
+    @mock.patch('builtins.input',  side_effect=['/root/', '.', 'fc'])
     @mock.patch('time.sleep',      return_value=None)
     @mock.patch('getpass.getpass', return_value='test_password')
     @mock.patch('src.transmitter.key_exchanges.ARGON2_PSK_MEMORY_COST', 1000)

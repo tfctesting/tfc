@@ -484,6 +484,7 @@ def create_pre_shared_key(onion_pub_key: bytes,           # Public key of contac
                 m_print("Error: Did not have permission to write to the directory.", delay=0.5)
                 continue
 
+        c_code  = blake2b(onion_pub_key, digest_size=CONFIRM_CODE_LENGTH)
         command = (KEY_EX_PSK_TX
                    + onion_pub_key
                    + tx_mk + csprng()
@@ -491,6 +492,22 @@ def create_pre_shared_key(onion_pub_key: bytes,           # Public key of contac
                    + str_to_bytes(nick))
 
         queue_command(command, settings, queues)
+
+        while True:
+            purp_code = ask_confirmation_code('Receiver')
+            if purp_code == c_code.hex():
+                break
+
+            elif purp_code == '':
+                phase("Resending contact data", head=2)
+                queue_command(command, settings, queues)
+                phase(DONE)
+                print_on_previous_line(reps=5)
+
+            else:
+                m_print("Incorrect confirmation code.", head=1)
+                print_on_previous_line(reps=4, delay=2)
+
 
         contact_list.add_contact(onion_pub_key, nick,
                                  bytes(FINGERPRINT_LENGTH), bytes(FINGERPRINT_LENGTH),
