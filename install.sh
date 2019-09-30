@@ -19,7 +19,7 @@
 # PIP dependency file names
 ARGON2=argon2_cffi-19.1.0-cp34-abi3-manylinux1_x86_64.whl
 ASN1CRYPTO=asn1crypto-0.24.0-py2.py3-none-any.whl
-CERTIFI=certifi-2019.6.16-py2.py3-none-any.whl
+CERTIFI=certifi-2019.9.11-py2.py3-none-any.whl
 CFFI=cffi-1.12.3-cp37-cp37m-manylinux1_x86_64.whl
 CHARDET=chardet-3.0.4-py2.py3-none-any.whl
 CLICK=Click-7.0-py2.py3-none-any.whl
@@ -32,14 +32,14 @@ MARKUPSAFE=MarkupSafe-1.1.1-cp37-cp37m-manylinux1_x86_64.whl
 PYCPARSER=pycparser-2.19.tar.gz
 PYNACL=PyNaCl-1.3.0-cp34-abi3-manylinux1_x86_64.whl
 PYSERIAL=pyserial-3.4-py2.py3-none-any.whl
-PYSOCKS=PySocks-1.7.0-py3-none-any.whl
+PYSOCKS=PySocks-1.7.1-py3-none-any.whl
 REQUESTS=requests-2.22.0-py2.py3-none-any.whl
 SETUPTOOLS=setuptools-41.2.0-py2.py3-none-any.whl
 SIX=six-1.12.0-py2.py3-none-any.whl
 STEM=stem-1.7.1.tar.gz
-URLLIB3=urllib3-1.25.3-py2.py3-none-any.whl
+URLLIB3=urllib3-1.25.6-py2.py3-none-any.whl
 VIRTUALENV=virtualenv-16.7.5-py2.py3-none-any.whl
-WERKZEUG=Werkzeug-0.15.6-py2.py3-none-any.whl
+WERKZEUG=Werkzeug-0.16.0-py2.py3-none-any.whl
 
 
 function compare_digest {
@@ -69,7 +69,7 @@ function verify_files {
     compare_digest 651fccf97f1a1a3541078a19191b834448cb0c3256c6c2822989b572d67bc4b16932edea226ecf0cbd792fc6a11f4db841367d3ecd93efa67b27eaee0cc04cb7 '' LICENSE-3RD-PARTY
     compare_digest 84a4e5b287ba4f600fc170913f5bdcd3db67c6d75a57804331a04336a9931c7ce9c58257ad874d3f197c097869438bb1d2932f06f5762c44f264617681eab287 '' relay.py
     compare_digest 2865708ab24c3ceeaf0a6ec382fb7c331fdee52af55a111c1afb862a336dd757d597f91b94267da009eb74bbc77d01bf78824474fa6f0aa820cd8c62ddb72138 '' requirements-dev.txt
-    compare_digest 04a73ead3a4e4e61647588eb744f60bfab20983da9c26f3224dafe9bb7a78897841be8cdd26bf68857c0da2e169fc949a67af79de5d972158c40a945c15b3af4 '' requirements-relay.txt
+    compare_digest 7be65726d37fdbd699ed82ef069aa904f158234ae76a2c08ef5814c7a89a044f3564e980e14273621e63e5a9886ecb14b0357dc5c94bdb377b99715b1fce7318 '' requirements-relay.txt
     compare_digest 5e621cbf1b435ec4d86e4dc3298c3c03f3d89a65397c4570a85216027524a11a3e94dd453be11f247cae6ceae35440192871ecf95618b5970afdf1cc3fcb1a84 '' requirements-relay-tails.txt
     compare_digest 6d93d5513f66389778262031cbba95e1e38138edaec66ced278db2c2897573247d1de749cf85362ec715355c5dfa5c276c8a07a394fd5cf9b45c7a7ae6249a66 '' tfc.png
     compare_digest a7b8090855295adfc22528b2f89bed88617b5e990ffe58e3a42142a9a4bea6b1b67c757c9b7d1eafeec22eddee9f9891b44afffa52d31ce5d050f08a1734874d '' tfc.py
@@ -229,17 +229,17 @@ function verify_tails_dependencies {
     compare_digest 42141b21e096571329da88383bc977509608c0992b12c7d19cc2dae5c70efb7c0220abcd4f61d23d3133ea9ea47a15dbed8a15bd081049af9827272bcec02507 '' ${VIRTUALENV}
     compare_digest 8333ac2843fd136d5d0d63b527b37866f7d18afc3bb33c4938b63af077492aeb118eb32a89ac78547f14d59a2adb1e5d00728728275de62317da48dadf6cdff9 '' ${PYSERIAL}
     # compare_digest a275f59bba650cb5bb151cf53fb1dd820334f9abbeae1a25e64502adc854c7f54c51bc3d6c1656b595d142fc0695ffad53aab3c57bc285421c1f4f10c9c3db4c '' ${STEM}
-    compare_digest 5bbffb2714a04fb53417058703d8112c5e5dca768df627e64618e8ab8a36a8bdbc27f5d6852f39cff6b8fb4c9a5d13909f86eeb5fe9741ba42bdc985685e5d51 '' ${PYSOCKS}
+    compare_digest 313b954102231d038d52ab58f41e3642579be29f827135b8dd92c06acb362effcb0a7fd5f35de9273372b92d9fe29f38381ae44f8b41aa90d2564d6dd07ecd12 '' ${PYSOCKS}
 
     # Requests
-    compare_digest 46d144af3633080b9ec8a642ab855b401b8224edb839c237639998b004f19b8cb191155c57e633954cf70b100d6d8b21105cd280acd1ea975aef1dec9a4a5860 '' ${URLLIB3}
+    compare_digest 719cfa3841d0fe7c7f0a1901b8029df6685825da7f510ba61f095df64f115fae8bfa4118fa7536231ed8187cdf3385cb2d52e53c1b35b8f4aa42f7117cc4d447 '' ${URLLIB3}
     compare_digest fb07dbec1de86efbad82a4f73d98123c59b083c1f1277445204bef75de99ca200377ad2f1db8924ae79b31b3dd984891c87d0a6344ec4d07a0ddbbbc655821a3 '' ${IDNA}
     compare_digest bfae58c8ea19c87cc9c9bf3d0b6146bfdb3630346bd954fe8e9f7da1f09da1fc0d6943ff04802798a665ea3b610ee2d65658ce84fe5a89f9e93625ea396a17f4 '' ${CHARDET}
-    compare_digest d81fe3a75ea611466d5ece7788f47c7946a4226bf4622c2accfd28c1e37b817e748609710c176c51ef2621cbc7ee200dd8d8106e738f1ef7cb96d7f2f82539cc '' ${CERTIFI}
+    compare_digest 06e8e1546d375e528a1486e1dee4fda3e585a03ef23ede85d1dad006e0eda837ebade1edde62fdc987a7f310bda69159e94ec36b79a066e0e13bbe8bf7019cfc '' ${CERTIFI}
     compare_digest 9186ce4e39bb64f5931a205ffc9afac61657bc42078bc4754ed12a2b66a12b7a620583440849fc2e161d1061ac0750ddef4670f54916931ace1e9abd2a9fb09c '' ${REQUESTS}
 
     # Flask
-    compare_digest 70c09ba678e06b7631cd9a2e4c40225f56eb2f3fa76246234e40a8de809aeee2904630817843a16ae446497c5e1e462889e92bbc6ca342e4f9e8efbad4b0a70c '' ${WERKZEUG}
+    compare_digest 3905022d0c398856b30d2ed6bae046c1532e87f56a0a40060030c18124c6c9c98976d9429e2ab03676c4ce75be4ea915ffc2719e04e4b4912a96e498dcd9eb89 '' ${WERKZEUG}
     compare_digest 69e9b9c9ac4fdf3cfa1a3de23d14964b843989128f8cc6ea58617fc5d6ef937bcc3eae9cb32b5164b5f54b06f96bdff9bc249529f20671cc26adc9e6ce8f6bec '' ${MARKUPSAFE}
     compare_digest 04860c7ff7086f051368787289f75198eec3357c7da7565dc5045353122650a887e063b1a5297578ddefcc77bfdfe3d9a23c868cb3e7f18a0b5f1c475e29339e '' ${JINJA2}
     compare_digest 891c294867f705eb9c66274bd04ac5d93140d6e9beea6cbf9a44e7f9c13c0e2efa3554bdf56620712759a5cd579e112a782d25f3f91ba9419d60b2b4d2bc5b7c '' ${ITSDANGEROUS}
