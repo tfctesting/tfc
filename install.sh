@@ -18,7 +18,7 @@
 
 # PIP dependency file names
 ARGON2=argon2_cffi-19.1.0-cp34-abi3-manylinux1_x86_64.whl
-ASN1CRYPTO=asn1crypto-0.24.0-py2.py3-none-any.whl
+ASN1CRYPTO=asn1crypto-1.0.1-py2.py3-none-any.whl
 CERTIFI=certifi-2019.9.11-py2.py3-none-any.whl
 CFFI=cffi-1.12.3-cp37-cp37m-manylinux1_x86_64.whl
 CHARDET=chardet-3.0.4-py2.py3-none-any.whl
@@ -27,7 +27,7 @@ CRYPTOGRAPHY=cryptography-2.7-cp34-abi3-manylinux1_x86_64.whl
 FLASK=Flask-1.1.1-py2.py3-none-any.whl
 IDNA=idna-2.8-py2.py3-none-any.whl
 ITSDANGEROUS=itsdangerous-1.1.0-py2.py3-none-any.whl
-JINJA2=Jinja2-2.10.1-py2.py3-none-any.whl
+JINJA2=Jinja2-2.10.3-py2.py3-none-any.whl
 MARKUPSAFE=MarkupSafe-1.1.1-cp37-cp37m-manylinux1_x86_64.whl
 PYCPARSER=pycparser-2.19.tar.gz
 PYNACL=PyNaCl-1.3.0-cp34-abi3-manylinux1_x86_64.whl
@@ -57,7 +57,7 @@ function compare_digest {
 function verify_tcb_requirements_files {
     # To minimize the time TCB installer configuration stays online, only
     # the requirements files are authenticated between downloads.
-    compare_digest c3f27d766f2795bf0c87ddb0cec43f1f9919c2cf20db5eff62e818d67436f1520b6001bf9e7649c5508e62b221c02039b6cb29f7393ba1dbacf9a442cb3bb8b2 '' requirements.txt
+    compare_digest 7dd26a460f4ffd7bb26da16a94bab2c8b287686f3c967da18d8e6b7b32b64894c374e4f5bbb29e46c7d6cf154a0fe656265e5490a65bb59a91633cbaf547bd4b '' requirements.txt
     compare_digest 26e05619aeb1b39ea9d7a44e425ad33c83337ef3d04bd8dafdea6d725a0dfc8f896220bce74446edc9ed49811db8725340ae786d7c7e67b0f775f09377306625 '' requirements-venv.txt
 }
 
@@ -69,8 +69,8 @@ function verify_files {
     compare_digest 651fccf97f1a1a3541078a19191b834448cb0c3256c6c2822989b572d67bc4b16932edea226ecf0cbd792fc6a11f4db841367d3ecd93efa67b27eaee0cc04cb7 '' LICENSE-3RD-PARTY
     compare_digest 84a4e5b287ba4f600fc170913f5bdcd3db67c6d75a57804331a04336a9931c7ce9c58257ad874d3f197c097869438bb1d2932f06f5762c44f264617681eab287 '' relay.py
     compare_digest 2865708ab24c3ceeaf0a6ec382fb7c331fdee52af55a111c1afb862a336dd757d597f91b94267da009eb74bbc77d01bf78824474fa6f0aa820cd8c62ddb72138 '' requirements-dev.txt
-    compare_digest 7be65726d37fdbd699ed82ef069aa904f158234ae76a2c08ef5814c7a89a044f3564e980e14273621e63e5a9886ecb14b0357dc5c94bdb377b99715b1fce7318 '' requirements-relay.txt
-    compare_digest 5e621cbf1b435ec4d86e4dc3298c3c03f3d89a65397c4570a85216027524a11a3e94dd453be11f247cae6ceae35440192871ecf95618b5970afdf1cc3fcb1a84 '' requirements-relay-tails.txt
+    compare_digest a3ddb5ed691b201aeb021efe2b358200e8bdb7094b24486008744cb53a465546b929d0f07530415be33e01b1e54760909c4e8f18fa1138c99313c4ebc23b2c12 '' requirements-relay.txt
+    compare_digest 0c8879f7e5b5241053b84a6f01b52b3b0f96c5d1ab351867aaa53b7c24873a53967fc5d1b13be2550725068e7b13522017de995b7058776bb88441aa82a71867 '' requirements-relay-tails.txt
     compare_digest 6d93d5513f66389778262031cbba95e1e38138edaec66ced278db2c2897573247d1de749cf85362ec715355c5dfa5c276c8a07a394fd5cf9b45c7a7ae6249a66 '' tfc.png
     compare_digest a7b8090855295adfc22528b2f89bed88617b5e990ffe58e3a42142a9a4bea6b1b67c757c9b7d1eafeec22eddee9f9891b44afffa52d31ce5d050f08a1734874d '' tfc.py
     compare_digest 7ae1c2a393d96761843bea90edd569244bfb4e0f9943e68a4549ee46d93180d26d4101c2471c1a37785ccdfaef45eedecf15057c0a9cc6c056460c5f9a69d37b '' tfc.yml
@@ -93,7 +93,7 @@ function verify_files {
     compare_digest 514598cf0e2f1ebe8304a89f3023233fe2e0df8894b7f6851907e016e0337b723625252f71b20baa954bdd0732d9ad2f1d7473edfe48cd5c9fa4b1ae852e2760 src/common/ db_masterkey.py
     compare_digest 5befbe864e2b09125be2b04cdfee8d13e7616715fc20a0fa06da270e34b555602b2df825fd429059056b2beb1497c50dafdc682d59a43a483837445861647e9d src/common/ db_onion.py
     compare_digest 328375464a5064829621fb8154c94cf15a1e7564122d99f03c9e578dcd6d6f264a671412b738b4971a6e505062673df40cc89f7b67c7ef2a761236c3f1247e93 src/common/ db_settings.py
-    compare_digest 1e28086030d316a212053683dd204f05fbde48e94a913fa3c545b16d7e5842750b01af60e5b08771cce85e65a8394ad6208330a36e0ed8449a1a5e72b3fac285 src/common/ encoding.py
+    compare_digest b1c149138ae31619b3235e141a7e9fa9d6f424fa2a17e9447f40cfb845153bdc52ed03490b6502ec811af7ab3ea9fa5ed775f1f654583189141d82602028a870 src/common/ encoding.py
     compare_digest f7ff99c8a5f84b892b959fe391cdfe416d103a5a4d25fcd46842f768583a5b241036ee9c4b6713a938e8234f5af82a770ffe28975292d162b6d5bea69a120ad8 src/common/ exceptions.py
     compare_digest 6cbdbf90e4e427a645a3a8bafe40cf13b4d7c13e30836b8c23323b7f0f0d8ea10f0f6ec011d7f7a026e1cac156e125428fd0755c5321b108be09e07d62450a8e src/common/ gateway.py
     compare_digest 618cbaccb4f50bc6e551cd13570693d4d53cfdfdc00b7ff42ff9fd14f0dadf7a15c9bc32c8e53801aca42348826568a2aa9117bdbf79bbcc4217a07c94c9efd3 src/common/ input.py
@@ -241,7 +241,7 @@ function verify_tails_dependencies {
     # Flask
     compare_digest 3905022d0c398856b30d2ed6bae046c1532e87f56a0a40060030c18124c6c9c98976d9429e2ab03676c4ce75be4ea915ffc2719e04e4b4912a96e498dcd9eb89 '' ${WERKZEUG}
     compare_digest 69e9b9c9ac4fdf3cfa1a3de23d14964b843989128f8cc6ea58617fc5d6ef937bcc3eae9cb32b5164b5f54b06f96bdff9bc249529f20671cc26adc9e6ce8f6bec '' ${MARKUPSAFE}
-    compare_digest 04860c7ff7086f051368787289f75198eec3357c7da7565dc5045353122650a887e063b1a5297578ddefcc77bfdfe3d9a23c868cb3e7f18a0b5f1c475e29339e '' ${JINJA2}
+    compare_digest 658d069944c81f9d8b2e90577a9d2c844b4c6a26764efefd7a86f26c05276baf6c7255f381e20e5178782be1786b7400cab12dec15653e7262b36194228bf649 '' ${JINJA2}
     compare_digest 891c294867f705eb9c66274bd04ac5d93140d6e9beea6cbf9a44e7f9c13c0e2efa3554bdf56620712759a5cd579e112a782d25f3f91ba9419d60b2b4d2bc5b7c '' ${ITSDANGEROUS}
     compare_digest 6b30987349df7c45c5f41cff9076ed45b178b444fca1ab1965f4ae33d1631522ce0a2868392c736666e83672b8b20e9503ae9ce5016dce3fa8f77bc8a3674130 '' ${CLICK}
     compare_digest bd49cb364307569480196289fa61fbb5493e46199620333f67617367278e1f56b20fc0d40fd540bef15642a8065e488c24e97f50535e8ec143875095157d8069 '' ${FLASK}
@@ -249,7 +249,7 @@ function verify_tails_dependencies {
     # Cryptography
     compare_digest 125341f0c22e11d2bd24c453b22e8fd7fd71605ee7a44eb61228686326eaca2e8f35b7ad4d0eacde4865f4d8cb8acb5cb5e3ff2856e756632b71af2f0dbdbee9 '' ${SETUPTOOLS}
     compare_digest 326574c7542110d2cd8071136a36a6cffc7637ba948b55e0abb7f30f3821843073223301ecbec1d48b8361b0d7ccb338725eeb0424696efedc3f6bd2a23331d3 '' ${SIX}
-    compare_digest 8d9bc344981079ac6c00e71e161c34b6f403e575bbfe1ad06e30a3bcb33e0db317bdcb7aed2d18d510cb1b3ee340a649f7f77a00d271fcf3cc388e6655b67533 '' ${ASN1CRYPTO}
+    compare_digest 6751fb6d487158758b4d508cdde3d1ae795d4ceb22a88ae681008e3fc90781a004ce6977f26babd22599a8fb7f108831a3c8e7b00510d78cb91c0c7f5e893683 '' ${ASN1CRYPTO}
     compare_digest 7f830e1c9066ee2d297a55e2bf6db4bf6447b6d9da0145d11a88c3bb98505755fb7986eafa6e06ae0b7680838f5e5d6a6d188245ca5ad45c2a727587bac93ab5 '' ${PYCPARSER}
     compare_digest 69a2d725395a1a3585556cb44b62c49bd7f88f41ff194b60d4b9b591c4878a907c0770ef4052b588eaa9d420a53cbeb6b13237fff4054bf26ba5deaa84e25afa '' ${CFFI}
     compare_digest 1285c3f5181da41bace4f9fd5ce5fc4bfba71143b39a4f3d8bab642db65bec9556b1965b1c2990236fed9d6b156bf81e6c0642d1531eadf7b92379c25cc4aeac '' ${CRYPTOGRAPHY}

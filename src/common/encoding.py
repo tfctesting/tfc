@@ -121,10 +121,10 @@ def b10encode(fingerprint: bytes) -> str:
            (fingerprints are usually read aloud over off band call).
 
     Base10 has 41% efficiency but natural languages have evolved in a
-    way that makes a clear distinction between the way different numbers
-    are pronounced: reading them is faster and less error-prone.
-    Compliments to Signal/WA developers for discovering this.
-        https://signal.org/blog/safety-number-updates/
+           way that makes a clear distinction between the way different
+           numbers are pronounced: reading them is faster and less
+           error-prone. Compliments to Signal/WA developers for
+           discovering this: https://signal.org/blog/safety-number-updates/
     """
     return str(int(fingerprint.hex(), base=16))
 
