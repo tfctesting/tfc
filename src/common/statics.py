@@ -21,7 +21,7 @@ along with TFC. If not, see <https://www.gnu.org/licenses/>.
 
 """Program details"""
 TFC         = 'TFC'
-VERSION     = '1.19.08'
+VERSION     = '1.19.10'
 TRANSMITTER = 'Transmitter'
 RECEIVER    = 'Receiver'
 RELAY       = 'Relay'
@@ -102,6 +102,7 @@ NOTIFY  = 'notify'
 CLEAR    = 'clear'
 RESET    = 'reset'
 POWEROFF = 'poweroff'
+GENERATE = 'generate'
 
 """Contact setting management"""
 CONTACT_SETTING_HEADER_LENGTH = 2
@@ -520,15 +521,16 @@ TOR_CONTROL_PORT     = 9051
 TOR_SOCKS_PORT       = 9050
 
 # Key derivation
-ARGON2_MIN_TIME_COST    = 1
-ARGON2_MIN_MEMORY_COST  = 8
-ARGON2_MIN_PARALLELISM  = 1
-ARGON2_SALT_LENGTH      = 32
-ARGON2_PSK_TIME_COST    = 25
-ARGON2_PSK_MEMORY_COST  = 512 * 1024  # kibibytes
-ARGON2_PSK_PARALLELISM  = 2
-MIN_KEY_DERIVATION_TIME = 3.0         # seconds
-MAX_KEY_DERIVATION_TIME = 4.0         # seconds
+ARGON2_MIN_TIME_COST      = 1
+ARGON2_MIN_MEMORY_COST    = 8
+ARGON2_MIN_PARALLELISM    = 1
+ARGON2_SALT_LENGTH        = 32
+ARGON2_PSK_TIME_COST      = 25
+ARGON2_PSK_MEMORY_COST    = 512 * 1024  # kibibytes
+ARGON2_PSK_PARALLELISM    = 2
+MIN_KEY_DERIVATION_TIME   = 3.0         # seconds
+MAX_KEY_DERIVATION_TIME   = 4.0         # seconds
+PASSWORD_MIN_BIT_STRENGTH = 128
 
 # Cryptographic field sizes
 TFC_PRIVATE_KEY_LENGTH           = 56

@@ -252,7 +252,8 @@ class TestLogCommand(TFCTestCase):
 
     @mock.patch('src.common.db_masterkey.MIN_KEY_DERIVATION_TIME', 0.1)
     @mock.patch('src.common.db_masterkey.MAX_KEY_DERIVATION_TIME', 1.0)
-    @mock.patch('os.popen',                  return_value=MagicMock(read=MagicMock(return_value=MagicMock(splitlines=MagicMock(return_value=["MemFree 10240"])))))
+    @mock.patch('os.popen',                  return_value=MagicMock(
+        read=MagicMock(return_value=MagicMock(splitlines=MagicMock(return_value=["MemAvailable 10240"])))))
     @mock.patch("multiprocessing.cpu_count", return_value=1)
     @mock.patch('time.sleep',                return_value=None)
     @mock.patch('builtins.input',            return_value='Yes')
@@ -266,7 +267,8 @@ class TestLogCommand(TFCTestCase):
 
     @mock.patch('src.common.db_masterkey.MIN_KEY_DERIVATION_TIME', 0.1)
     @mock.patch('src.common.db_masterkey.MAX_KEY_DERIVATION_TIME', 1.0)
-    @mock.patch('os.popen',                  return_value=MagicMock(read=MagicMock(return_value=MagicMock(splitlines=MagicMock(return_value=["MemFree 10240"])))))
+    @mock.patch('os.popen',                  return_value=MagicMock(
+        read=MagicMock(return_value=MagicMock(splitlines=MagicMock(return_value=["MemAvailable 10240"])))))
     @mock.patch("multiprocessing.cpu_count", return_value=1)
     @mock.patch("getpass.getpass",           side_effect=3*['test_password'] + ['invalid_password'] + ['test_password'])
     @mock.patch('time.sleep',                return_value=None)
@@ -508,7 +510,7 @@ class TestChangeMasterKey(TFCTestCase):
         self.assert_fr("Error: Invalid target system 't'.",
                        change_master_key, UserInput("passwd t"), *self.args)
 
-    @mock.patch('os.popen',        return_value=MagicMock(read=MagicMock(return_value='foo\nMemFree 200')))
+    @mock.patch('os.popen',        return_value=MagicMock(read=MagicMock(return_value='foo\nMemAvailable 200')))
     @mock.patch('getpass.getpass', return_value='a')
     @mock.patch('time.sleep',      return_value=None)
     @mock.patch('src.common.db_masterkey.MIN_KEY_DERIVATION_TIME', 0.01)

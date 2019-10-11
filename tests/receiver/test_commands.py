@@ -238,7 +238,8 @@ class TestChMasterKey(TFCTestCase):
 
     @mock.patch('src.common.db_masterkey.MIN_KEY_DERIVATION_TIME', 0.1)
     @mock.patch('src.common.db_masterkey.MIN_KEY_DERIVATION_TIME', 1.0)
-    @mock.patch('os.popen',                  return_value=MagicMock(read=MagicMock(return_value=MagicMock(splitlines=MagicMock(return_value=["MemFree 10240"])))))
+    @mock.patch('os.popen',                  return_value=MagicMock(
+        read=MagicMock(return_value=MagicMock(splitlines=MagicMock(return_value=["MemAvailable 10240"])))))
     @mock.patch('multiprocessing.cpu_count', return_value=1)
     @mock.patch('getpass.getpass',           return_value='a')
     @mock.patch('time.sleep',                return_value=None)

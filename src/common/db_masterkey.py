@@ -19,11 +19,13 @@ You should have received a copy of the GNU General Public License
 along with TFC. If not, see <https://www.gnu.org/licenses/>.
 """
 
+import math
 import multiprocessing
 import os.path
+import random
 import time
 
-from typing import Tuple
+from typing import List, Tuple
 
 from src.common.crypto     import argon2_kdf, blake2b, csprng
 from src.common.encoding   import bytes_to_int, int_to_bytes
@@ -32,6 +34,7 @@ from src.common.input      import pwd_prompt
 from src.common.misc       import ensure_dir, separate_headers
 from src.common.output     import clear_screen, m_print, phase, print_on_previous_line
 from src.common.statics    import *
+from src.common.word_list  import eff_wordlist
 
 
 class MasterKey(object):
@@ -71,11 +74,28 @@ class MasterKey(object):
     @staticmethod
     def get_free_memory() -> int:
         """Return the amount of free memory in the system."""
-        fields   = os.popen("cat /proc/meminfo").read().splitlines()
-        field    = [f for f in fields if f.startswith('MemFree')][0]
-        mem_free = int(field.split()[1])
+        fields    = os.popen("cat /proc/meminfo").read().splitlines()
+        field     = [f for f in fields if f.startswith('MemAvailable')][0]
+        mem_avail = int(field.split()[1])
 
-        return mem_free
+        return mem_avail
+
+    @staticmethod
+    def generate_master_password() -> Tuple[int, str]:
+        """Generate a strong password using the EFF wordlist."""
+        word_space = len(eff_wordlist)
+        sys_rand   = random.SystemRandom()
+
+        pwd_bit_strength = 0.0
+        password_words   = []  # type: List[str]
+
+        while pwd_bit_strength < PASSWORD_MIN_BIT_STRENGTH:
+            password_words.append(sys_rand.choice(eff_wordlist))
+            pwd_bit_strength = math.log2(word_space ** len(password_words))
+
+        password = ' '.join(password_words)
+
+        return int(pwd_bit_strength), password
 
     def new_master_key(self) -> bytes:
         """Create a new master key from password and salt.
@@ -251,7 +271,19 @@ class MasterKey(object):
     def new_password(cls, purpose: str = "master password") -> str:
         """Prompt the user to enter and confirm a new password."""
         password_1 = pwd_prompt(f"Enter a new {purpose}: ")
-        password_2 = pwd_prompt(f"Confirm the {purpose}: ", repeat=True)
+
+        if password_1 == GENERATE:
+            pwd_bit_strength, password_1 = MasterKey.generate_master_password()
+
+            m_print([f"Generated a {pwd_bit_strength}-bit password:",
+                     '', password_1, '',
+                     "Write down this password and dispose of the copy once you remember it.",
+                     "Press <Enter> to continue."], manual_proceed=True, box=True, head=1, tail=1)
+            os.system(RESET)
+
+            password_2 = password_1
+        else:
+            password_2 = pwd_prompt(f"Confirm the {purpose}: ", repeat=True)
 
         if password_1 == password_2:
             return password_1
