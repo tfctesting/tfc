@@ -283,6 +283,7 @@ function remove_common_files {
     $1 rm    /opt/tfc/requirements-dev.txt
     $1 rm    /opt/tfc/requirements-relay.txt
     $1 rm    /opt/tfc/requirements-relay-tails.txt
+    $1 rm    /opt/tfc/requirements-setuptools.txt
     $1 rm    /opt/tfc/requirements-venv.txt
     $1 rm -f /opt/install.sh
     $1 rm -f /opt/install.sh.asc
