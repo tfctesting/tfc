@@ -34,7 +34,7 @@ PYNACL=PyNaCl-1.3.0-cp34-abi3-manylinux1_x86_64.whl
 PYSERIAL=pyserial-3.4-py2.py3-none-any.whl
 PYSOCKS=PySocks-1.7.1-py3-none-any.whl
 REQUESTS=requests-2.22.0-py2.py3-none-any.whl
-SETUPTOOLS=setuptools-41.2.0-py2.py3-none-any.whl
+SETUPTOOLS=setuptools-41.4.0-py2.py3-none-any.whl
 SIX=six-1.12.0-py2.py3-none-any.whl
 STEM=stem-1.7.1.tar.gz
 URLLIB3=urllib3-1.25.6-py2.py3-none-any.whl
@@ -69,8 +69,8 @@ function verify_files {
     compare_digest 651fccf97f1a1a3541078a19191b834448cb0c3256c6c2822989b572d67bc4b16932edea226ecf0cbd792fc6a11f4db841367d3ecd93efa67b27eaee0cc04cb7 '' LICENSE-3RD-PARTY
     compare_digest 84a4e5b287ba4f600fc170913f5bdcd3db67c6d75a57804331a04336a9931c7ce9c58257ad874d3f197c097869438bb1d2932f06f5762c44f264617681eab287 '' relay.py
     compare_digest 2865708ab24c3ceeaf0a6ec382fb7c331fdee52af55a111c1afb862a336dd757d597f91b94267da009eb74bbc77d01bf78824474fa6f0aa820cd8c62ddb72138 '' requirements-dev.txt
-    compare_digest a3ddb5ed691b201aeb021efe2b358200e8bdb7094b24486008744cb53a465546b929d0f07530415be33e01b1e54760909c4e8f18fa1138c99313c4ebc23b2c12 '' requirements-relay.txt
-    compare_digest 0c8879f7e5b5241053b84a6f01b52b3b0f96c5d1ab351867aaa53b7c24873a53967fc5d1b13be2550725068e7b13522017de995b7058776bb88441aa82a71867 '' requirements-relay-tails.txt
+    compare_digest 9989f99100604c385c244af7d456e01e2d127ba0f5bf483237149cdd89acfe8af42deebe0e3dbf5fcb3219a3d8d11c599c12eb48d53cba4fbc940565058e0742 '' requirements-relay.txt
+    compare_digest 3de2bd0fb715895e95e53df69f3393bfc545dbad352a85e836bbcb556d4d7b4207446e2a8b65f34159c61550882c9b46f70062b5fdf8f0a93040bd77818a8116 '' requirements-relay-tails.txt
     compare_digest 6d93d5513f66389778262031cbba95e1e38138edaec66ced278db2c2897573247d1de749cf85362ec715355c5dfa5c276c8a07a394fd5cf9b45c7a7ae6249a66 '' tfc.png
     compare_digest a7b8090855295adfc22528b2f89bed88617b5e990ffe58e3a42142a9a4bea6b1b67c757c9b7d1eafeec22eddee9f9891b44afffa52d31ce5d050f08a1734874d '' tfc.py
     compare_digest 7ae1c2a393d96761843bea90edd569244bfb4e0f9943e68a4549ee46d93180d26d4101c2471c1a37785ccdfaef45eedecf15057c0a9cc6c056460c5f9a69d37b '' tfc.yml
@@ -248,7 +248,7 @@ function verify_tails_dependencies {
     compare_digest bd49cb364307569480196289fa61fbb5493e46199620333f67617367278e1f56b20fc0d40fd540bef15642a8065e488c24e97f50535e8ec143875095157d8069 '' ${FLASK}
 
     # Cryptography
-    compare_digest 125341f0c22e11d2bd24c453b22e8fd7fd71605ee7a44eb61228686326eaca2e8f35b7ad4d0eacde4865f4d8cb8acb5cb5e3ff2856e756632b71af2f0dbdbee9 '' ${SETUPTOOLS}
+    compare_digest a27b38d596931dfef81d705d05689b7748ce0e02d21af4a37204fc74b0913fa7241b8135535eb7749f09af361cad90c475af98493fef11c4ad974780ee01243d '' ${SETUPTOOLS}
     compare_digest 326574c7542110d2cd8071136a36a6cffc7637ba948b55e0abb7f30f3821843073223301ecbec1d48b8361b0d7ccb338725eeb0424696efedc3f6bd2a23331d3 '' ${SIX}
     compare_digest 6751fb6d487158758b4d508cdde3d1ae795d4ceb22a88ae681008e3fc90781a004ce6977f26babd22599a8fb7f108831a3c8e7b00510d78cb91c0c7f5e893683 '' ${ASN1CRYPTO}
     compare_digest 7f830e1c9066ee2d297a55e2bf6db4bf6447b6d9da0145d11a88c3bb98505755fb7986eafa6e06ae0b7680838f5e5d6a6d188245ca5ad45c2a727587bac93ab5 '' ${PYCPARSER}
