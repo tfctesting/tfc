@@ -70,7 +70,8 @@ function verify_files {
     compare_digest 84a4e5b287ba4f600fc170913f5bdcd3db67c6d75a57804331a04336a9931c7ce9c58257ad874d3f197c097869438bb1d2932f06f5762c44f264617681eab287 '' relay.py
     compare_digest 2865708ab24c3ceeaf0a6ec382fb7c331fdee52af55a111c1afb862a336dd757d597f91b94267da009eb74bbc77d01bf78824474fa6f0aa820cd8c62ddb72138 '' requirements-dev.txt
     compare_digest 9989f99100604c385c244af7d456e01e2d127ba0f5bf483237149cdd89acfe8af42deebe0e3dbf5fcb3219a3d8d11c599c12eb48d53cba4fbc940565058e0742 '' requirements-relay.txt
-    compare_digest 8343c3ccb04657355b137d6fbcbc0700dbb3accd339adebb47fc19c5486232eec222084b6cae006e7a0b376340197164c7d25c26128893a386b730ffb4f6bed8 '' requirements-relay-tails.txt
+    compare_digest 7930475c99a3abb59dc506ba2a9445473bb6022ccee408cd69d4538047cdbea4254ded10cd8dce11233e7e020e6b9d596496c0ac9cf8a59476f123e372259476 '' requirements-relay-tails.txt
+    compare_digest 2352c1499bab9120ee5f3928e016d0dc238d60db948b717aead4f0f7df18fb454706c23c5572dfad728b3125704f32f8189af00c8ccfd4304df11a2d41b84cf0 '' requirements-setuptools.txt
     compare_digest 6d93d5513f66389778262031cbba95e1e38138edaec66ced278db2c2897573247d1de749cf85362ec715355c5dfa5c276c8a07a394fd5cf9b45c7a7ae6249a66 '' tfc.png
     compare_digest a7b8090855295adfc22528b2f89bed88617b5e990ffe58e3a42142a9a4bea6b1b67c757c9b7d1eafeec22eddee9f9891b44afffa52d31ce5d050f08a1734874d '' tfc.py
     compare_digest 7ae1c2a393d96761843bea90edd569244bfb4e0f9943e68a4549ee46d93180d26d4101c2471c1a37785ccdfaef45eedecf15057c0a9cc6c056460c5f9a69d37b '' tfc.yml
@@ -176,7 +177,6 @@ function process_tails_dependencies {
     t_sudo -E $1 /opt/tfc/${FLASK}
 
     # Cryptography
-    t_sudo -E $1 /opt/tfc/${SETUPTOOLS}
     t_sudo -E $1 /opt/tfc/${SIX}
     t_sudo -E $1 /opt/tfc/${ASN1CRYPTO}
     t_sudo -E $1 /opt/tfc/${PYCPARSER}
@@ -211,7 +211,6 @@ function move_tails_dependencies {
     t_sudo mv $HOME/${FLASK}        /opt/tfc/
 
     # Cryptography
-    t_sudo mv $HOME/${SETUPTOOLS}   /opt/tfc/
     t_sudo mv $HOME/${SIX}          /opt/tfc/
     t_sudo mv $HOME/${ASN1CRYPTO}   /opt/tfc/
     t_sudo mv $HOME/${PYCPARSER}    /opt/tfc/
@@ -248,7 +247,6 @@ function verify_tails_dependencies {
     compare_digest bd49cb364307569480196289fa61fbb5493e46199620333f67617367278e1f56b20fc0d40fd540bef15642a8065e488c24e97f50535e8ec143875095157d8069 '' ${FLASK}
 
     # Cryptography
-    compare_digest a27b38d596931dfef81d705d05689b7748ce0e02d21af4a37204fc74b0913fa7241b8135535eb7749f09af361cad90c475af98493fef11c4ad974780ee01243d '' ${SETUPTOOLS}
     compare_digest 326574c7542110d2cd8071136a36a6cffc7637ba948b55e0abb7f30f3821843073223301ecbec1d48b8361b0d7ccb338725eeb0424696efedc3f6bd2a23331d3 '' ${SIX}
     compare_digest 6751fb6d487158758b4d508cdde3d1ae795d4ceb22a88ae681008e3fc90781a004ce6977f26babd22599a8fb7f108831a3c8e7b00510d78cb91c0c7f5e893683 '' ${ASN1CRYPTO}
     compare_digest 7f830e1c9066ee2d297a55e2bf6db4bf6447b6d9da0145d11a88c3bb98505755fb7986eafa6e06ae0b7680838f5e5d6a6d188245ca5ad45c2a727587bac93ab5 '' ${PYCPARSER}
@@ -257,6 +255,15 @@ function verify_tails_dependencies {
 
     # PyNaCl
     compare_digest c4017c38b026a5c531b15839b8d61d1fae9907ba1960c2f97f4cd67fe0827729346d5186a6d6927ba84f64b4cbfdece12b287aa7750a039f4160831be871cea3 '' ${PYNACL}
+}
+
+function install_tails_setuptools {
+    # Download setuptools package for Tails and then authenticate and install it.
+    torsocks python3.7 -m pip download --no-cache-dir -r /opt/tfc/requirements-setuptools.txt  --require-hashes -d $HOME/
+    t_sudo mv $HOME/${SETUPTOOLS} /opt/tfc/
+    compare_digest a27b38d596931dfef81d705d05689b7748ce0e02d21af4a37204fc74b0913fa7241b8135535eb7749f09af361cad90c475af98493fef11c4ad974780ee01243d '' ${SETUPTOOLS}
+    t_sudo python3.7 -m pip install /opt/tfc/${VIRTUALENV}
+    t_sudo -E $1 /opt/tfc/${SETUPTOOLS}
 }
 
 
@@ -470,6 +477,8 @@ function install_relay_tails {
     verify_files
 
     create_user_data_dir
+
+    install_tails_setuptools
 
     torsocks python3.7 -m pip download --no-cache-dir -r /opt/tfc/requirements-venv.txt        --require-hashes -d $HOME/
     torsocks python3.7 -m pip download --no-cache-dir -r /opt/tfc/requirements-relay-tails.txt --require-hashes -d $HOME/
