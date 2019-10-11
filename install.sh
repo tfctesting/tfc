@@ -57,7 +57,7 @@ function compare_digest {
 function verify_tcb_requirements_files {
     # To minimize the time TCB installer configuration stays online, only
     # the requirements files are authenticated between downloads.
-    compare_digest 7dd26a460f4ffd7bb26da16a94bab2c8b287686f3c967da18d8e6b7b32b64894c374e4f5bbb29e46c7d6cf154a0fe656265e5490a65bb59a91633cbaf547bd4b '' requirements.txt
+    compare_digest 4acf6d081fb74b0f88a8fd53a7b237f8d5fcfb5938506de22c14ccabbb3174772f272dc0f938bc849fd4609e96832ba667067ce7e8c55386aae4391454082471 '' requirements.txt
     compare_digest 26e05619aeb1b39ea9d7a44e425ad33c83337ef3d04bd8dafdea6d725a0dfc8f896220bce74446edc9ed49811db8725340ae786d7c7e67b0f775f09377306625 '' requirements-venv.txt
 }
 
