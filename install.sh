@@ -262,8 +262,8 @@ function install_tails_setuptools {
     torsocks python3.7 -m pip download --no-cache-dir -r /opt/tfc/requirements-setuptools.txt  --require-hashes -d $HOME/
     t_sudo mv $HOME/${SETUPTOOLS} /opt/tfc/
     compare_digest a27b38d596931dfef81d705d05689b7748ce0e02d21af4a37204fc74b0913fa7241b8135535eb7749f09af361cad90c475af98493fef11c4ad974780ee01243d '' ${SETUPTOOLS}
-    t_sudo python3.7 -m pip install /opt/tfc/${VIRTUALENV}
-    t_sudo -E $1 /opt/tfc/${SETUPTOOLS}
+    t_sudo python3.7 -m pip install /opt/tfc/${SETUPTOOLS}
+    t_sudo -E rm /opt/tfc/${SETUPTOOLS}
 }
 
 
