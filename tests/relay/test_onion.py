@@ -178,10 +178,30 @@ class TestOnionService(unittest.TestCase):
 
     @mock.patch('stem.control.Controller.from_port', MagicMock())
     @mock.patch('builtins.open',                     mock.mock_open(read_data='TAILS_PRODUCT_NAME="Tails"'))
-    def test_no_tor_process_is_created_when_tails_is_used(self):
+    def test_no_tor_process_is_created_when_tails_is_used(self, *_):
         tor = Tor()
         self.assertIsNone(tor.connect(1234))
         self.assertIsNone(tor.tor_process)
+
+    @mock.patch('time.sleep', return_value=None)
+    def test_missing_tor_controller_raises_critical_error(self, *_):
+        # Setup
+        queues           = gen_queue_dict()
+        orig_tor_connect = Tor.connect
+        Tor.connect      = MagicMock(return_value=None)
+
+        controller = stem.control.Controller
+        controller.create_ephemeral_hidden_service = MagicMock()
+
+        queues[ONION_KEY_QUEUE].put((bytes(ONION_SERVICE_PRIVATE_KEY_LENGTH), b'\x01'))
+
+        # Test
+        with self.assertRaises(SystemExit):
+            onion_service(queues)
+
+        # Teardown
+        tear_queues(queues)
+        Tor.connect = orig_tor_connect
 
 
 if __name__ == '__main__':

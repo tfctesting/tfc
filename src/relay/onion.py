@@ -29,7 +29,8 @@ import tempfile
 import time
 
 from multiprocessing import Queue
-from typing          import Any, Dict
+from subprocess      import Popen
+from typing          import Any, Dict, Optional
 
 import nacl.signing
 
@@ -65,8 +66,8 @@ class Tor(object):
     """Tor class manages the starting and stopping of Tor client."""
 
     def __init__(self) -> None:
-        self.tor_process = None  # type: Any
-        self.controller  = None  # type: Any
+        self.tor_process = None  # type: Optional[Popen]
+        self.controller  = None  # type: Optional[Controller]
 
     @staticmethod
     def platform_is_tails() -> bool:
@@ -195,6 +196,9 @@ def onion_service(queues: Dict[bytes, 'Queue[Any]']) -> None:
         tor.connect(tor_port)
     except (EOFError, KeyboardInterrupt):
         return
+
+    if tor.controller is None:
+        raise CriticalError("No Tor controller")
 
     try:
         rp_print("Setup  75% - Launching Onion Service...", bold=True)
