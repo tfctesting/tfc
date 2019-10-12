@@ -22,7 +22,7 @@ along with TFC. If not, see <https://www.gnu.org/licenses/>.
 import os
 import typing
 
-from typing import Any, Callable, Dict, List, Optional
+from typing import Callable, Dict, List, Optional
 
 from src.common.db_logs    import remove_logs
 from src.common.encoding   import b58decode, int_to_bytes
@@ -42,7 +42,7 @@ if typing.TYPE_CHECKING:
     from src.common.db_masterkey import MasterKey
     from src.common.db_settings  import Settings
     from src.transmitter.windows import TxWindow
-    QueueDict = Dict[bytes, Queue[Any]]
+    QueueDict = Dict[bytes, Queue[bytes]]
     FuncDict  = (Dict[str, Callable[[str,
                                      List[bytes],
                                      ContactList,

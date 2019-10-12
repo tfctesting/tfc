@@ -164,7 +164,7 @@ def ignored(*exceptions: Type[BaseException]) -> Iterator[Any]:
 
 def monitor_processes(process_list:       List[Process],
                       software_operation: str,
-                      queues:             Dict[bytes, 'Queue[Any]'],
+                      queues:             Dict[bytes, 'Queue[bytes]'],
                       error_exit_code:    int = 1
                       ) -> None:
     """Monitor the status of `process_list` and EXIT_QUEUE.

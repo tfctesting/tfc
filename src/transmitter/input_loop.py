@@ -24,7 +24,7 @@ import readline
 import sys
 import typing
 
-from typing import Any, Dict, NoReturn
+from typing import Dict, NoReturn
 
 from src.common.exceptions import FunctionReturn
 from src.common.misc       import get_tab_completer, ignored
@@ -47,7 +47,7 @@ if typing.TYPE_CHECKING:
     from src.common.gateway      import Gateway
 
 
-def input_loop(queues:        Dict[bytes, 'Queue[Any]'],
+def input_loop(queues:        Dict[bytes, 'Queue[bytes]'],
                settings:      'Settings',
                gateway:       'Gateway',
                contact_list:  'ContactList',

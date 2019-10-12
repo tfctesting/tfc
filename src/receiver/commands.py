@@ -58,7 +58,7 @@ def process_command(ts:           'datetime',
                     settings:     'Settings',
                     master_key:   'MasterKey',
                     gateway:      'Gateway',
-                    exit_queue:   'Queue[Any]'
+                    exit_queue:   'Queue[bytes]'
                     ) -> None:
     """Decrypt command assembly packet and process command."""
     assembly_packet = decrypt_assembly_packet(assembly_ct, LOCAL_PUBKEY, ORIGIN_USER_HEADER,
@@ -136,7 +136,7 @@ def reset_screen(win_uid: bytes, window_list: 'WindowList') -> None:
     os.system(RESET)
 
 
-def exit_tfc(exit_queue: 'Queue[Any]') -> None:
+def exit_tfc(exit_queue: 'Queue[str]') -> None:
     """Exit TFC."""
     exit_queue.put(EXIT)
 

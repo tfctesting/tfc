@@ -24,7 +24,7 @@ import os
 import typing
 import zlib
 
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 from src.common.crypto     import blake2b, byte_padding, csprng, encrypt_and_sign
 from src.common.encoding   import bool_to_bytes, int_to_bytes, str_to_bytes
@@ -41,14 +41,16 @@ from src.transmitter.user_input import UserInput
 if typing.TYPE_CHECKING:
     from multiprocessing         import Queue
     from src.common.db_keys      import KeyList
+    from src.common.db_masterkey import MasterKey
     from src.common.db_settings  import Settings
     from src.common.gateway      import Gateway
     from src.transmitter.windows import TxWindow, MockWindow
-    QueueDict = Dict[bytes, Queue[Any]]
+    QueueDict      = Dict[bytes, Queue[Any]]
+    log_queue_data = Tuple[Optional[bytes], bytes, Optional[bool], Optional[bool], MasterKey]
 
 
 def queue_to_nc(packet:   bytes,
-                nc_queue: 'Queue[Any]',
+                nc_queue: 'Queue[bytes]',
                 ) -> None:
     """Queue unencrypted command/exported file to Networked Computer.
 
@@ -388,13 +390,13 @@ def queue_assembly_packets(assembly_packet_list: List[bytes],
             queue.put(assembly_packet)
 
 
-def send_packet(key_list:        'KeyList',               # Key list object
-                gateway:         'Gateway',               # Gateway object
-                log_queue:       'Queue[Any]',            # Multiprocessing queue for logged messages
-                assembly_packet: bytes,                   # Padded plaintext assembly packet
-                onion_pub_key:   Optional[bytes] = None,  # Recipient v3 Onion Service address
-                log_messages:    Optional[bool]  = None,  # When True, log the message assembly packet
-                log_as_ph:       Optional[bool]  = None   # When True, log assembly packet as placeholder data
+def send_packet(key_list:        'KeyList',                # Key list object
+                gateway:         'Gateway',                # Gateway object
+                log_queue:       'Queue[log_queue_data]',  # Multiprocessing queue for logged messages
+                assembly_packet: bytes,                    # Padded plaintext assembly packet
+                onion_pub_key:   Optional[bytes] = None,   # Recipient v3 Onion Service address
+                log_messages:    Optional[bool]  = None,   # When True, log the message assembly packet
+                log_as_ph:       Optional[bool]  = None    # When True, log assembly packet as placeholder data
                 ) -> None:
     """Encrypt and send assembly packet.
 

@@ -27,7 +27,7 @@ import subprocess
 import tkinter
 import typing
 
-from typing import Any, List, Tuple
+from typing import List, Tuple
 
 import nacl.exceptions
 
@@ -60,7 +60,7 @@ def process_local_key(ts:            'datetime',
                       settings:      'Settings',
                       kdk_hashes:     List[bytes],
                       packet_hashes:  List[bytes],
-                      l_queue:        'Queue[Any]'
+                      l_queue:        'Queue[Tuple[datetime, bytes]]'
                       ) -> None:
     """Decrypt local key packet and add local contact/keyset."""
     bootstrap = not key_list.has_local_keyset()

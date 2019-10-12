@@ -31,7 +31,7 @@ import time
 import typing
 
 from datetime import datetime
-from typing   import Any, Dict, Optional, Tuple, Union
+from typing   import Dict, Optional, Tuple, Union
 
 from serial.serialutil import SerialException
 
@@ -47,7 +47,7 @@ if typing.TYPE_CHECKING:
     from multiprocessing import Queue
 
 
-def gateway_loop(queues:    Dict[bytes, 'Queue[Any]'],
+def gateway_loop(queues:    Dict[bytes, 'Queue[Tuple[datetime, bytes]]'],
                  gateway:   'Gateway',
                  unit_test: bool = False
                  ) -> None:
