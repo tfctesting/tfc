@@ -509,7 +509,7 @@ class GatewaySettings(object):
                 raise CriticalError("Invalid attribute type in settings.")
 
         except (KeyError, ValueError):
-            raise FunctionReturn(f"Error: Invalid value '{value_str}'.", delay=1, tail_clear=True)
+            raise FunctionReturn(f"Error: Invalid setting value '{value_str}'.", delay=1, tail_clear=True)
 
         self.validate_key_value_pair(key, value)
 

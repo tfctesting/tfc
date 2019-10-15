@@ -520,7 +520,7 @@ class TestReEncrypt(TFCTestCase):
         cleanup(self.unit_test_dir)
 
     def test_missing_log_database_raises_fr(self):
-        self.assert_fr(f"Error: Could not find log database.",
+        self.assert_fr(f"No log database available.",
                        change_log_db_key, self.old_key.master_key, self.new_key.master_key, self.settings)
 
     @mock.patch('struct.pack', return_value=TIMESTAMP_BYTES)

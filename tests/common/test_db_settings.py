@@ -99,15 +99,15 @@ class TestSettings(TFCTestCase):
             self.assertIsNone(self.settings.change_setting('traffic_masking', 'True', *self.args))
 
     def test_change_settings(self):
-        self.assert_fr("Error: Invalid value 'Falsee'.",
+        self.assert_fr("Error: Invalid setting value 'Falsee'.",
                        self.settings.change_setting, 'disable_gui_dialog', 'Falsee',           *self.args)
-        self.assert_fr("Error: Invalid value '1.1'.",
+        self.assert_fr("Error: Invalid setting value '1.1'.",
                        self.settings.change_setting, 'max_number_of_group_members',     '1.1', *self.args)
-        self.assert_fr("Error: Invalid value '18446744073709551616'.",
+        self.assert_fr("Error: Invalid setting value '18446744073709551616'.",
                        self.settings.change_setting, 'max_number_of_contacts',   str(2 ** 64), *self.args)
-        self.assert_fr("Error: Invalid value '-1.1'.",
+        self.assert_fr("Error: Invalid setting value '-1.1'.",
                        self.settings.change_setting, 'tm_static_delay',                '-1.1', *self.args)
-        self.assert_fr("Error: Invalid value 'True'.",
+        self.assert_fr("Error: Invalid setting value 'True'.",
                        self.settings.change_setting, 'tm_static_delay',                'True', *self.args)
 
         self.assertIsNone(self.settings.change_setting('traffic_masking',             'True', *self.args))

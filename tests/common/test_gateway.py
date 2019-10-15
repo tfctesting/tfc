@@ -462,13 +462,13 @@ class TestGatewaySettings(TFCTestCase):
     @mock.patch('time.sleep', return_value=None)
     def test_change_setting(self, _):
         settings = GatewaySettings(operation=TX, local_test=True, dd_sockets=True)
-        self.assert_fr("Error: Invalid value 'Falsee'.",
+        self.assert_fr("Error: Invalid setting value 'Falsee'.",
                        settings.change_setting, 'serial_baudrate',        'Falsee')
-        self.assert_fr("Error: Invalid value '1.1'.",
+        self.assert_fr("Error: Invalid setting value '1.1'.",
                        settings.change_setting, 'serial_baudrate',         '1.1', )
-        self.assert_fr("Error: Invalid value '18446744073709551616'.",
+        self.assert_fr("Error: Invalid setting value '18446744073709551616'.",
                        settings.change_setting, 'serial_baudrate',    str(2 ** 64))
-        self.assert_fr("Error: Invalid value 'Falsee'.",
+        self.assert_fr("Error: Invalid setting value 'Falsee'.",
                        settings.change_setting, 'use_serial_usb_adapter', 'Falsee')
 
         self.assertIsNone(settings.change_setting('serial_baudrate', '9600'))

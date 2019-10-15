@@ -299,7 +299,7 @@ def change_log_db_key(previous_key: bytes,
     temp_name = f'{file_name}_temp'
 
     if not os.path.isfile(file_name):
-        raise FunctionReturn("Error: Could not find log database.")
+        raise FunctionReturn("No log database available.")
 
     if os.path.isfile(temp_name):
         os.remove(temp_name)
