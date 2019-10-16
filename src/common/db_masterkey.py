@@ -72,8 +72,8 @@ class MasterKey(object):
         return master_key, kd_time
 
     @staticmethod
-    def get_free_memory() -> int:
-        """Return the amount of free memory in the system."""
+    def get_available_memory() -> int:
+        """Return the amount of available memory in the system."""
         fields    = os.popen("cat /proc/meminfo").read().splitlines()
         field     = [f for f in fields if f.startswith('MemAvailable')][0]
         mem_avail = int(field.split()[1])
@@ -163,7 +163,7 @@ class MasterKey(object):
         time_cost = ARGON2_MIN_TIME_COST
 
         # Determine the amount of memory used from the amount of free RAM in the system.
-        memory_cost = self.get_free_memory()
+        memory_cost = self.get_available_memory()
         if self.local_test:
             memory_cost //= 2
 
