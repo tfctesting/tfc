@@ -18,9 +18,9 @@
 
 # PIP dependency file names
 ARGON2=argon2_cffi-19.1.0-cp34-abi3-manylinux1_x86_64.whl
-ASN1CRYPTO=asn1crypto-1.0.1-py2.py3-none-any.whl
+ASN1CRYPTO=asn1crypto-1.1.0-py2.py3-none-any.whl
 CERTIFI=certifi-2019.9.11-py2.py3-none-any.whl
-CFFI=cffi-1.12.3-cp37-cp37m-manylinux1_x86_64.whl
+CFFI=cffi-1.13.0-cp37-cp37m-manylinux1_x86_64.whl
 CHARDET=chardet-3.0.4-py2.py3-none-any.whl
 CLICK=Click-7.0-py2.py3-none-any.whl
 CRYPTOGRAPHY=cryptography-2.7-cp34-abi3-manylinux1_x86_64.whl
@@ -38,7 +38,7 @@ SETUPTOOLS=setuptools-41.4.0-py2.py3-none-any.whl
 SIX=six-1.12.0-py2.py3-none-any.whl
 STEM=stem-1.7.1.tar.gz
 URLLIB3=urllib3-1.25.6-py2.py3-none-any.whl
-VIRTUALENV=virtualenv-16.7.5-py2.py3-none-any.whl
+VIRTUALENV=virtualenv-16.7.6-py2.py3-none-any.whl
 WERKZEUG=Werkzeug-0.16.0-py2.py3-none-any.whl
 
 
@@ -57,8 +57,8 @@ function compare_digest {
 function verify_tcb_requirements_files {
     # To minimize the time TCB installer configuration stays online, only
     # the requirements files are authenticated between downloads.
-    compare_digest 4acf6d081fb74b0f88a8fd53a7b237f8d5fcfb5938506de22c14ccabbb3174772f272dc0f938bc849fd4609e96832ba667067ce7e8c55386aae4391454082471 '' requirements.txt
-    compare_digest 26e05619aeb1b39ea9d7a44e425ad33c83337ef3d04bd8dafdea6d725a0dfc8f896220bce74446edc9ed49811db8725340ae786d7c7e67b0f775f09377306625 '' requirements-venv.txt
+    compare_digest d1cc7f94b404eb41472ab63e202082acb5164b471394672ace0fea3663597e545678b6a952cbecbe32cf9c15e014696c913bae8d86fe8d5cdafa395875e432f1 '' requirements.txt
+    compare_digest 4317c7d0d753e77f754b801c8d604bc4b9b283be2c41e1026b25c3b459422f899e4eb8eb2337cf560d3b36f791347220938a540f6628a2479903c07f622737be '' requirements-venv.txt
 }
 
 
@@ -69,8 +69,8 @@ function verify_files {
     compare_digest 651fccf97f1a1a3541078a19191b834448cb0c3256c6c2822989b572d67bc4b16932edea226ecf0cbd792fc6a11f4db841367d3ecd93efa67b27eaee0cc04cb7 '' LICENSE-3RD-PARTY
     compare_digest 84a4e5b287ba4f600fc170913f5bdcd3db67c6d75a57804331a04336a9931c7ce9c58257ad874d3f197c097869438bb1d2932f06f5762c44f264617681eab287 '' relay.py
     compare_digest 2865708ab24c3ceeaf0a6ec382fb7c331fdee52af55a111c1afb862a336dd757d597f91b94267da009eb74bbc77d01bf78824474fa6f0aa820cd8c62ddb72138 '' requirements-dev.txt
-    compare_digest 9989f99100604c385c244af7d456e01e2d127ba0f5bf483237149cdd89acfe8af42deebe0e3dbf5fcb3219a3d8d11c599c12eb48d53cba4fbc940565058e0742 '' requirements-relay.txt
-    compare_digest 7930475c99a3abb59dc506ba2a9445473bb6022ccee408cd69d4538047cdbea4254ded10cd8dce11233e7e020e6b9d596496c0ac9cf8a59476f123e372259476 '' requirements-relay-tails.txt
+    compare_digest 93a03fbab17e0bb176ec036443959597f5aefdde0389805c882b64c0042d4bf92e17518e291db433ed3c68ac4264b83055576fb073680bd92f727fde07748ae1 '' requirements-relay.txt
+    compare_digest f2968e0463d820e7ed66a7dd1c2fb19e8ae3b9061ceb1fc19717124a47ad197adb9f0e06d36e9e3ae34d8630ca45806cf134e4169b703b1a364c2dbe56fd65d3 '' requirements-relay-tails.txt
     compare_digest 4a44501e21d463ff8569a1665b75c2e4d8de741d445dc3e442479cbb7282646045129233bd7313df4b9c2e64ec86b7615a8196ae2b3350de933731926d39bbda '' requirements-setuptools.txt
     compare_digest 6d93d5513f66389778262031cbba95e1e38138edaec66ced278db2c2897573247d1de749cf85362ec715355c5dfa5c276c8a07a394fd5cf9b45c7a7ae6249a66 '' tfc.png
     compare_digest a7b8090855295adfc22528b2f89bed88617b5e990ffe58e3a42142a9a4bea6b1b67c757c9b7d1eafeec22eddee9f9891b44afffa52d31ce5d050f08a1734874d '' tfc.py
@@ -90,13 +90,13 @@ function verify_files {
     compare_digest 0b830ad6705f90dc8e554c8b06f31054d9222d3b35db92470eaf3f9af935aae3107b61142ea68129943e4227a45dfe26a87f23e9dd95a7794ae65c397bd35641 src/common/ db_contacts.py
     compare_digest bad54588b3e713caf94aba3216090410f77f92064aecfea004a33487a21f9fffcf5d05782b91104c27ec499e38196881a76d6002ec1149816d8c53560182fba9 src/common/ db_groups.py
     compare_digest 46e503af15fb7a1ea8387fa8f22674d0926eda0d879d43f99076ca967295d5e3727a411aa11c4bb4d832783c5daa9f4b7ef4491b90112c1be405910d269abaf4 src/common/ db_keys.py
-    compare_digest 68b2c7761623ff9e4ce596e170c8e1ce2b6129bbbbb9fc9e48a120974d30db6e471bb5d514f5dc8d7edc8e0abcb0cd0c2b4e5da739f4d98c6fa8c8e07af0d8ef src/common/ db_logs.py
+    compare_digest 00c8b1fc67f39c9b0177537a71272154dc1458ff17e4d977767771e951b7066973663f6e1ce1b7ef0722a74ca9a74ccc8db4e8933614b41fee95087e5f453610 src/common/ db_logs.py
     compare_digest c1d50a8f034fc97dd6effcb831ed53a727a114e432a25b7c3e63ce529b525328f95fb7e6586d30f20fb36b8b85ca808b3d0f923dd2d8ee0508206971fdb95331 src/common/ db_masterkey.py
     compare_digest 5befbe864e2b09125be2b04cdfee8d13e7616715fc20a0fa06da270e34b555602b2df825fd429059056b2beb1497c50dafdc682d59a43a483837445861647e9d src/common/ db_onion.py
-    compare_digest 328375464a5064829621fb8154c94cf15a1e7564122d99f03c9e578dcd6d6f264a671412b738b4971a6e505062673df40cc89f7b67c7ef2a761236c3f1247e93 src/common/ db_settings.py
+    compare_digest 4f6a51fb56126d075886ef74ffb5408e12d2aa9cbaaffb8d646e8b7d891af31a0b74797d39716fa299ed9a3e5598b13f5862d0088de4516e09e19b3388e4f0fc src/common/ db_settings.py
     compare_digest b1c149138ae31619b3235e141a7e9fa9d6f424fa2a17e9447f40cfb845153bdc52ed03490b6502ec811af7ab3ea9fa5ed775f1f654583189141d82602028a870 src/common/ encoding.py
     compare_digest f7ff99c8a5f84b892b959fe391cdfe416d103a5a4d25fcd46842f768583a5b241036ee9c4b6713a938e8234f5af82a770ffe28975292d162b6d5bea69a120ad8 src/common/ exceptions.py
-    compare_digest 8d5fc3044a1d44afbd3fdae62af8bfca3acc63e063d91acb49976d1e7a44c62a0ae4d1b37bfccd95e25baedd84ba0e12386cc5b6ff9366fef05cb9da041d48d3 src/common/ gateway.py
+    compare_digest 9984086a39e8ce2f6d8760be4575c514aa82e2379577124ac94f8bf271a26284e420f2987b282b1afcc40532463419512818f16ff696f259090ff89cd38a002a src/common/ gateway.py
     compare_digest 618cbaccb4f50bc6e551cd13570693d4d53cfdfdc00b7ff42ff9fd14f0dadf7a15c9bc32c8e53801aca42348826568a2aa9117bdbf79bbcc4217a07c94c9efd3 src/common/ input.py
     compare_digest 7fb76fa176bee13d34ea934ce822cbe6332bd190b06a8b890196eadb4f6f9d90d7482c8284dd27eb93151ef51ced0706564fa8372b9b28c1c2c5081c46cc3005 src/common/ misc.py
     compare_digest b6c05c8fdbe90dd4b6e358bcaa0becc3a33536f6e1bee4fee0f3f797be3cf8b85fdd1a0a8cb87a2ca7263399ae88ac1754cc050678c537f00b8303720e05809b src/common/ output.py
@@ -226,7 +226,7 @@ function verify_tails_dependencies {
     # Tails doesn't allow downloading over PIP to /opt/tfc, so we
     # first download to $HOME, move the files to /opt/tfc, and then
     # perform additional hash verification
-    compare_digest 42141b21e096571329da88383bc977509608c0992b12c7d19cc2dae5c70efb7c0220abcd4f61d23d3133ea9ea47a15dbed8a15bd081049af9827272bcec02507 '' ${VIRTUALENV}
+    compare_digest ccdd41d89e81cba9cb04e2086a8f17aa9800d07048a801cd62128a0a5ef1a2a3db0bf525b444653a23e2441775bad2a4fba34959fe7294eb9c456f2acaa34c37 '' ${VIRTUALENV}
     compare_digest 8333ac2843fd136d5d0d63b527b37866f7d18afc3bb33c4938b63af077492aeb118eb32a89ac78547f14d59a2adb1e5d00728728275de62317da48dadf6cdff9 '' ${PYSERIAL}
     # compare_digest a275f59bba650cb5bb151cf53fb1dd820334f9abbeae1a25e64502adc854c7f54c51bc3d6c1656b595d142fc0695ffad53aab3c57bc285421c1f4f10c9c3db4c '' ${STEM}
     compare_digest 313b954102231d038d52ab58f41e3642579be29f827135b8dd92c06acb362effcb0a7fd5f35de9273372b92d9fe29f38381ae44f8b41aa90d2564d6dd07ecd12 '' ${PYSOCKS}
@@ -248,9 +248,9 @@ function verify_tails_dependencies {
 
     # Cryptography
     compare_digest 326574c7542110d2cd8071136a36a6cffc7637ba948b55e0abb7f30f3821843073223301ecbec1d48b8361b0d7ccb338725eeb0424696efedc3f6bd2a23331d3 '' ${SIX}
-    compare_digest 6751fb6d487158758b4d508cdde3d1ae795d4ceb22a88ae681008e3fc90781a004ce6977f26babd22599a8fb7f108831a3c8e7b00510d78cb91c0c7f5e893683 '' ${ASN1CRYPTO}
+    compare_digest c9de440256c1b5c4ce31dbc1f5309003ff29c9ed6e928fa0426ae48a3cf1125dc2c5de94edb3785e5963ea175dd758e2a0aee24f92b9b8616cc4010220d05f10 '' ${ASN1CRYPTO}
     compare_digest 7f830e1c9066ee2d297a55e2bf6db4bf6447b6d9da0145d11a88c3bb98505755fb7986eafa6e06ae0b7680838f5e5d6a6d188245ca5ad45c2a727587bac93ab5 '' ${PYCPARSER}
-    compare_digest 69a2d725395a1a3585556cb44b62c49bd7f88f41ff194b60d4b9b591c4878a907c0770ef4052b588eaa9d420a53cbeb6b13237fff4054bf26ba5deaa84e25afa '' ${CFFI}
+    compare_digest db5da5710282d46a6d82f10c2bdd7e641b357c56745e820fbabd1c329d80b093bcd568621c28f8911abb2af227220c2f9f450e0977634ed17ffa646adb474040 '' ${CFFI}
     compare_digest 1285c3f5181da41bace4f9fd5ce5fc4bfba71143b39a4f3d8bab642db65bec9556b1965b1c2990236fed9d6b156bf81e6c0642d1531eadf7b92379c25cc4aeac '' ${CRYPTOGRAPHY}
 
     # PyNaCl
