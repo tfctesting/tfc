@@ -531,6 +531,11 @@ Public License instead of this License.
         - The src.relay.onion Tor class, Copyright © 2014-2019, Micah Lee <micah@micahflee.com>
           (https://github.com/micahflee/onionshare)
 
+        - gnome-terminal, Copyright © Guilherme de S. Pastore <gpastore@gnome.org>,
+                                      Havoc Pennington <hp@redhat.com>,
+                                      Mariano Suárez-Alvarez <mariano@gnome.org>
+          (https://gitlab.gnome.org/GNOME/gnome-terminal)
+
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
                             Preamble
