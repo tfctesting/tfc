@@ -365,8 +365,11 @@ class X448(object):
         public_key = private_key.public_key().public_bytes(encoding=Encoding.Raw,
                                                            format=PublicFormat.Raw)  # type: bytes
 
+        if not isinstance(public_key, bytes):
+            raise CriticalError(f"Generated an invalid type ({type(public_key)}) public key.")
+
         if len(public_key) != TFC_PUBLIC_KEY_LENGTH:
-            raise CriticalError(f"Generated invalid size public key from private key ({len(public_key)} bytes).")
+            raise CriticalError(f"Generated an invalid size public key from private key ({len(public_key)} bytes).")
 
         return public_key
 
@@ -555,6 +558,9 @@ def byte_padding(bytestring: bytes  # Bytestring to be padded
     padder  = padding.PKCS7(PADDING_LENGTH * BITS_PER_BYTE).padder()
     padded  = padder.update(bytestring)  # type: bytes
     padded += padder.finalize()
+
+    if not isinstance(padded, bytes):
+        raise CriticalError(f"Padded message had invalid type ({type(padded)}).")
 
     if len(padded) % PADDING_LENGTH != 0:
         raise CriticalError(f"Padded message had an invalid length ({len(padded)}).")
@@ -1007,6 +1013,9 @@ def csprng(key_length: int = SYMMETRIC_KEY_LENGTH  # Length of the key
         raise CriticalError(f"Invalid key size ({key_length} bytes).")
 
     entropy = os.getrandom(key_length, flags=0)  # type: bytes
+
+    if not isinstance(entropy, bytes):
+        raise CriticalError(f"GETRANDOM returned invalid type data ({type(entropy)}).")
 
     if len(entropy) != key_length:
         raise CriticalError(f"GETRANDOM returned invalid amount of entropy ({len(entropy)} bytes).")

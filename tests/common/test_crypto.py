@@ -364,6 +364,13 @@ class TestX448(unittest.TestCase):
         self.assertIsInstance(public_key, bytes)
         self.assertEqual(len(public_key), TFC_PUBLIC_KEY_LENGTH)
 
+    def test_deriving_invalid_type_public_key_raises_critical_error(self):
+        private_key = MagicMock(public_key=MagicMock(return_value=MagicMock(
+            public_bytes=MagicMock(side_effect=[TFC_PUBLIC_KEY_LENGTH * 'a']))))
+
+        with self.assertRaises(SystemExit):
+            X448.derive_public_key(private_key)
+
     def test_deriving_invalid_size_public_key_raises_critical_error(self):
         """
         The public key is already validated by the pyca/cryptography
@@ -611,6 +618,16 @@ class TestBytePadding(unittest.TestCase):
     @mock.patch('cryptography.hazmat.primitives.padding.PKCS7',
                 return_value=MagicMock(
                     padder=MagicMock(return_value=MagicMock(
+                        update=MagicMock(return_value=''),
+                        finalize=MagicMock(return_value=(PADDING_LENGTH*'a'))))))
+    def test_invalid_padding_type_raises_critical_error(self, mock_padder):
+        with self.assertRaises(SystemExit):
+            byte_padding(b'test_string')
+        mock_padder.assert_called()
+
+    @mock.patch('cryptography.hazmat.primitives.padding.PKCS7',
+                return_value=MagicMock(
+                    padder=MagicMock(return_value=MagicMock(
                         update=MagicMock(return_value=b''),
                         finalize=MagicMock(return_value=(PADDING_LENGTH+1)*b'a')))))
     def test_invalid_padding_size_raises_critical_error(self, mock_padder):
@@ -681,6 +698,11 @@ class TestCSPRNG(unittest.TestCase):
         for key_size in range(BLAKE2_DIGEST_LENGTH_MIN, BLAKE2_DIGEST_LENGTH_MAX+1):
             key = csprng(key_size)
             self.assertEqual(len(key), key_size)
+
+    @mock.patch('os.getrandom', return_value=SYMMETRIC_KEY_LENGTH*'a')
+    def test_invalid_entropy_type_from_getrandom_raises_critical_error(self, _):
+        with self.assertRaises(SystemExit):
+            csprng()
 
     def test_subceeding_hash_function_min_digest_size_raises_critical_error(self):
         with self.assertRaises(SystemExit):
