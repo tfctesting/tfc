@@ -303,7 +303,7 @@ function steps_before_network_kill {
     check_rm_existing_installation
 
     sudo torsocks apt update
-    sudo torsocks apt install git libssl-dev python3-pip python3-tk net-tools -y
+    sudo torsocks apt install git gnome-terminal libssl-dev python3-pip python3-tk net-tools -y
     sudo torsocks git clone --depth 1 https://github.com/tfctesting/tfc.git /opt/tfc
 
     verify_tcb_requirements_files
@@ -510,7 +510,6 @@ function install_relay_tails {
 
     install_complete "Installation of the TFC Relay configuration is now complete."
 }
-
 
 
 function t_sudo {
