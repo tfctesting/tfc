@@ -144,6 +144,12 @@ class TestBLAKE2bWrapper(unittest.TestCase):
             with self.assertRaises(SystemExit):
                 blake2b(b'test_string', digest_size=invalid_digest_size)
 
+    @mock.patch('hashlib.blake2b', return_value=MagicMock(digest=(MagicMock(side_effect=[BLAKE2_DIGEST_LENGTH*'a']))))
+    def test_invalid_blake2b_digest_type_raises_critical_error(self, mock_blake2b):
+        with self.assertRaises(SystemExit):
+            blake2b(b'test_string')
+        mock_blake2b.assert_called()
+
     @mock.patch('hashlib.blake2b', return_value=MagicMock(digest=(MagicMock(side_effect=[(BLAKE2_DIGEST_LENGTH-1)*b'a',
                                                                                          (BLAKE2_DIGEST_LENGTH+1)*b'a']))))
     def test_invalid_size_blake2b_digest_raises_critical_error(self, mock_blake2b):
@@ -269,9 +275,14 @@ class TestArgon2Wrapper(unittest.TestCase):
             with self.assertRaises(SystemExit):
                 argon2_kdf('password', invalid_salt, ARGON2_MIN_TIME_COST, ARGON2_MIN_MEMORY_COST, ARGON2_MIN_PARALLELISM)
 
+    @mock.patch("argon2.low_level.hash_secret_raw", MagicMock(side_effect=[SYMMETRIC_KEY_LENGTH*'a']))
+    def test_invalid_type_key_from_argon2_raises_critical_error(self):
+        with self.assertRaises(SystemExit):
+            argon2_kdf('password', self.salt, ARGON2_MIN_TIME_COST, ARGON2_MIN_MEMORY_COST, ARGON2_MIN_PARALLELISM)
+
     @mock.patch("argon2.low_level.hash_secret_raw", MagicMock(side_effect=[(SYMMETRIC_KEY_LENGTH-1)*b'a',
                                                                            (SYMMETRIC_KEY_LENGTH+1)*b'a']))
-    def test_invalid_key_from_argon2_raises_critical_error(self):
+    def test_invalid_size_key_from_argon2_raises_critical_error(self):
         with self.assertRaises(SystemExit):
             argon2_kdf('password', self.salt, ARGON2_MIN_TIME_COST, ARGON2_MIN_MEMORY_COST, ARGON2_MIN_PARALLELISM)
         with self.assertRaises(SystemExit):

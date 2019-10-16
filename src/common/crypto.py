@@ -119,12 +119,14 @@ def blake2b(message:     bytes,                        # Message to hash
     """
     try:
         digest = hashlib.blake2b(message, digest_size=digest_size, key=key, salt=salt, person=person).digest()  # type: bytes
-
-        if len(digest) != digest_size:
-            raise CriticalError(f"BLAKE2b digest had invalid length ({len(digest)} bytes).")
-
     except ValueError as e:
         raise CriticalError(str(e))
+
+    if not isinstance(digest, bytes):
+        raise CriticalError(f"BLAKE2b returned an invalid type ({type(digest)}) digest.")
+
+    if len(digest) != digest_size:
+        raise CriticalError(f"BLAKE2b digest had invalid length ({len(digest)} bytes).")
 
     return digest
 
@@ -219,6 +221,9 @@ def argon2_kdf(password:    str,    # Password to derive the key from
 
     except argon2.exceptions.Argon2Error as e:
         raise CriticalError(str(e))
+
+    if not isinstance(key, bytes):
+        raise CriticalError(f"Argon2 returned an invalid type ({type(key)}) key.")
 
     if len(key) != SYMMETRIC_KEY_LENGTH:
         raise CriticalError(f"Derived an invalid length key from password ({len(key)} bytes).")
