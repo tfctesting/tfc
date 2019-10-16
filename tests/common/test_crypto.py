@@ -269,6 +269,14 @@ class TestArgon2Wrapper(unittest.TestCase):
             with self.assertRaises(SystemExit):
                 argon2_kdf('password', invalid_salt, ARGON2_MIN_TIME_COST, ARGON2_MIN_MEMORY_COST, ARGON2_MIN_PARALLELISM)
 
+    @mock.patch("argon2.low_level.hash_secret_raw", MagicMock(side_effect=[(SYMMETRIC_KEY_LENGTH-1)*b'a',
+                                                                           (SYMMETRIC_KEY_LENGTH+1)*b'a']))
+    def test_invalid_key_from_argon2_raises_critical_error(self):
+        with self.assertRaises(SystemExit):
+            argon2_kdf('password', self.salt, ARGON2_MIN_TIME_COST, ARGON2_MIN_MEMORY_COST, ARGON2_MIN_PARALLELISM)
+        with self.assertRaises(SystemExit):
+            argon2_kdf('password', self.salt, ARGON2_MIN_TIME_COST, ARGON2_MIN_MEMORY_COST, ARGON2_MIN_PARALLELISM)
+
     def test_too_small_time_cost_raises_critical_error(self):
         with self.assertRaises(SystemExit):
             argon2_kdf('password', self.salt, ARGON2_MIN_TIME_COST-1, ARGON2_MIN_MEMORY_COST, ARGON2_MIN_PARALLELISM)

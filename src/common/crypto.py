@@ -220,6 +220,9 @@ def argon2_kdf(password:    str,    # Password to derive the key from
     except argon2.exceptions.Argon2Error as e:
         raise CriticalError(str(e))
 
+    if len(key) != SYMMETRIC_KEY_LENGTH:
+        raise CriticalError(f"Derived an invalid length key from password ({len(key)} bytes).")
+
     return key
 
 
