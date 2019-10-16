@@ -539,6 +539,8 @@ function install_virtualenv {
         sudo torsocks python3.7 -m pip install -r /opt/tfc/requirements-venv.txt --require-hashes
     elif [[ "$distro" =~ Eoan* ]]; then
         sudo torsocks python3.7 -m pip install -r /opt/tfc/requirements-venv.txt --require-hashes
+    elif [[ "$distro" =~ PureOS* ]]; then
+        sudo torsocks python3.7 -m pip install -r /opt/tfc/requirements-venv.txt --require-hashes
     else
         torsocks python3.7 -m pip install -r /opt/tfc/requirements-venv.txt --require-hashes
     fi
