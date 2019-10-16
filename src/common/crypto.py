@@ -50,7 +50,7 @@ from src.common.exceptions import CriticalError
 from src.common.misc       import separate_header
 from src.common.statics    import ARGON2_SALT_LENGTH, BITS_PER_BYTE, BLAKE2_DIGEST_LENGTH, BLAKE2_DIGEST_LENGTH_MAX
 from src.common.statics    import BLAKE2_DIGEST_LENGTH_MIN, PADDING_LENGTH, SYMMETRIC_KEY_LENGTH, TFC_PUBLIC_KEY_LENGTH
-from src.common.statics    import XCHACHA20_NONCE_LENGTH
+from src.common.statics    import X448_SHARED_SECRET_LENGTH, XCHACHA20_NONCE_LENGTH
 
 
 def blake2b(message:     bytes,                        # Message to hash
@@ -402,6 +402,12 @@ class X448(object):
             shared_secret = private_key.exchange(X448PublicKey.from_public_bytes(public_key))  # type: bytes
         except ValueError as e:
             raise CriticalError(str(e))
+
+        if not isinstance(shared_secret, bytes):  # pragma: no cover
+            raise CriticalError(f"Derived an invalid type ({type(shared_secret)}) shared secret.")
+
+        if len(shared_secret) != X448_SHARED_SECRET_LENGTH:  # pragma: no cover
+            raise CriticalError(f"Generated an invalid size shared secret ({len(shared_secret)} bytes).")
 
         return blake2b(shared_secret, digest_size=SYMMETRIC_KEY_LENGTH)
 
