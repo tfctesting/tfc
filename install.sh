@@ -257,6 +257,7 @@ function verify_tails_dependencies {
     compare_digest c4017c38b026a5c531b15839b8d61d1fae9907ba1960c2f97f4cd67fe0827729346d5186a6d6927ba84f64b4cbfdece12b287aa7750a039f4160831be871cea3 '' ${PYNACL}
 }
 
+
 function install_tails_setuptools {
     # Download setuptools package for Tails and then authenticate and install it.
     torsocks python3.7 -m pip download --no-cache-dir -r /opt/tfc/requirements-setuptools.txt  --require-hashes -d $HOME/
