@@ -27,13 +27,13 @@ werkzeug==0.16.0    --hash=sha512:3905022d0c398856b30d2ed6bae046c1532e87f56a0a40
 # Cryptography (Handles URL token derivation)
 cryptography==2.7   --hash=sha512:1285c3f5181da41bace4f9fd5ce5fc4bfba71143b39a4f3d8bab642db65bec9556b1965b1c2990236fed9d6b156bf81e6c0642d1531eadf7b92379c25cc4aeac  # Tails4: -           OnionShare2: -
 asn1crypto==1.1.0   --hash=sha512:c9de440256c1b5c4ce31dbc1f5309003ff29c9ed6e928fa0426ae48a3cf1125dc2c5de94edb3785e5963ea175dd758e2a0aee24f92b9b8616cc4010220d05f10  # Tails4: -           OnionShare2: -
-six==1.12.0         --hash=sha512:326574c7542110d2cd8071136a36a6cffc7637ba948b55e0abb7f30f3821843073223301ecbec1d48b8361b0d7ccb338725eeb0424696efedc3f6bd2a23331d3  # Tails4: OK          OnionShare2: -
 cffi==1.13.0        --hash=sha512:db5da5710282d46a6d82f10c2bdd7e641b357c56745e820fbabd1c329d80b093bcd568621c28f8911abb2af227220c2f9f450e0977634ed17ffa646adb474040  # Tails4: -           OnionShare2: -
 pycparser==2.19     --hash=sha512:7f830e1c9066ee2d297a55e2bf6db4bf6447b6d9da0145d11a88c3bb98505755fb7986eafa6e06ae0b7680838f5e5d6a6d188245ca5ad45c2a727587bac93ab5  # Tails4: -           OnionShare2: -
+six==1.12.0         --hash=sha512:326574c7542110d2cd8071136a36a6cffc7637ba948b55e0abb7f30f3821843073223301ecbec1d48b8361b0d7ccb338725eeb0424696efedc3f6bd2a23331d3  # Tails4: OK          OnionShare2: -
 
 # PyNaCl (Derives TFC account from Onion Service private key)
 PyNaCl==1.3.0       --hash=sha512:c4017c38b026a5c531b15839b8d61d1fae9907ba1960c2f97f4cd67fe0827729346d5186a6d6927ba84f64b4cbfdece12b287aa7750a039f4160831be871cea3  # Tails4: -           OnionShare2: -
 # Duplicate sub-dependencies
-# six==1.12.0       --hash=sha512:326574c7542110d2cd8071136a36a6cffc7637ba948b55e0abb7f30f3821843073223301ecbec1d48b8361b0d7ccb338725eeb0424696efedc3f6bd2a23331d3  # duplicate sub-dependency
 # cffi==1.13.0      --hash=sha512:db5da5710282d46a6d82f10c2bdd7e641b357c56745e820fbabd1c329d80b093bcd568621c28f8911abb2af227220c2f9f450e0977634ed17ffa646adb474040  # duplicate sub-dependency
 # pycparser==2.19   --hash=sha512:7f830e1c9066ee2d297a55e2bf6db4bf6447b6d9da0145d11a88c3bb98505755fb7986eafa6e06ae0b7680838f5e5d6a6d188245ca5ad45c2a727587bac93ab5  # duplicate sub-dependency
+# six==1.12.0       --hash=sha512:326574c7542110d2cd8071136a36a6cffc7637ba948b55e0abb7f30f3821843073223301ecbec1d48b8361b0d7ccb338725eeb0424696efedc3f6bd2a23331d3  # duplicate sub-dependency
