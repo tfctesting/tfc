@@ -27,10 +27,9 @@ import shlex
 import socket
 import tempfile
 import time
+import typing
 
-from multiprocessing import Queue
-from subprocess      import Popen
-from typing          import Any, Dict, Optional
+from typing import Any, Dict, Optional
 
 import nacl.signing
 
@@ -43,6 +42,10 @@ from src.common.encoding   import pub_key_to_onion_address
 from src.common.exceptions import CriticalError
 from src.common.output     import m_print, rp_print
 from src.common.statics    import *
+
+if typing.TYPE_CHECKING:
+    from multiprocessing import Queue
+    from subprocess      import Popen
 
 
 def get_available_port(min_port: int, max_port: int) -> int:
@@ -183,7 +186,7 @@ def onion_service(queues: Dict[bytes, 'Queue[Any]']) -> None:
     """Manage the Tor Onion Service and control Tor via stem."""
     rp_print("Setup   0% - Waiting for Onion Service configuration...", bold=True)
     while queues[ONION_KEY_QUEUE].qsize() == 0:
-       time.sleep(0.1)
+        time.sleep(0.1)
 
     private_key, c_code = queues[ONION_KEY_QUEUE].get()  # type: bytes, bytes
     public_key_user     = bytes(nacl.signing.SigningKey(seed=private_key).verify_key)

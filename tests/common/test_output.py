@@ -41,6 +41,7 @@ class TestClearScreen(TFCTestCase):
 class TestGroupManagementPrint(TFCTestCase):
 
     def setUp(self):
+        """Pre-test actions."""
         self.contact_list = ContactList(nicks=['Alice'])
         self.lines        = [nick_to_pub_key('Alice'), nick_to_pub_key('Bob')]
         self.group_name   = 'test_group'
@@ -238,6 +239,7 @@ class TestPrintFingerprint(TFCTestCase):
 class TestPrintKey(TFCTestCase):
 
     def setUp(self):
+        """Pre-test actions."""
         self.settings = Settings()
 
     def test_print_kdk(self):
@@ -294,6 +296,7 @@ class TestPrintSpacing(TFCTestCase):
 class TestRPPrint(TFCTestCase):
 
     def setUp(self):
+        """Pre-test actions."""
         self.ts        = datetime.now()
         self.timestamp = self.ts.strftime("%b %d - %H:%M:%S.%f")[:-4]
 

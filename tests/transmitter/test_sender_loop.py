@@ -54,7 +54,7 @@ class TestSenderLoop(unittest.TestCase):
 
         settings.traffic_masking = False
         queues[SENDER_MODE_QUEUE].put(settings)
-        self.assertIsNone(sender_loop(queues, settings, gateway, key_list, unit_test=True))  # Output Alice and Bob again
+        self.assertIsNone(sender_loop(queues, settings, gateway, key_list, unit_test=True))  # Output Alice & Bob again
         self.assertEqual(len(gateway.packets), 1)
 
 

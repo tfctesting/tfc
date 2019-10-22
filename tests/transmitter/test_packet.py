@@ -40,11 +40,13 @@ from tests.utils        import cd_unit_test, cleanup, gen_queue_dict, tear_queue
 class TestQueueMessage(unittest.TestCase):
 
     def setUp(self):
+        """Pre-test actions."""
         self.queues   = gen_queue_dict()
         self.settings = Settings()
         self.args     = self.settings, self.queues
 
     def tearDown(self):
+        """Post-test actions."""
         tear_queues(self.queues)
 
     def test_private_message_header(self):
@@ -84,15 +86,17 @@ class TestQueueMessage(unittest.TestCase):
 class TestSendFile(TFCTestCase):
 
     def setUp(self):
-        self.unit_test_dir  = cd_unit_test()
-        self.settings       = Settings()
-        self.queues         = gen_queue_dict()
-        self.window         = TxWindow()
-        self.onion_service  = OnionService()
-        self.contact_list   = ContactList(nicks=['Alice', 'Bob', 'Charlie'])
-        self.args           = self.settings, self.queues, self.window
+        """Pre-test actions."""
+        self.unit_test_dir = cd_unit_test()
+        self.settings      = Settings()
+        self.queues        = gen_queue_dict()
+        self.window        = TxWindow()
+        self.onion_service = OnionService()
+        self.contact_list  = ContactList(nicks=['Alice', 'Bob', 'Charlie'])
+        self.args          = self.settings, self.queues, self.window
 
     def tearDown(self):
+        """Post-test actions."""
         cleanup(self.unit_test_dir)
         tear_queues(self.queues)
 
@@ -149,10 +153,12 @@ class TestQueueFile(TFCTestCase):
                  'rx_serial_settings.json', 'tx_onion_db')
 
     def setUp(self):
+        """Pre-test actions."""
         self.unit_test_dir = cd_unit_test()
-        self.queues       = gen_queue_dict()
+        self.queues        = gen_queue_dict()
 
     def tearDown(self):
+        """Post-test actions."""
         cleanup(self.unit_test_dir)
         tear_queues(self.queues)
 
@@ -266,10 +272,12 @@ class TestQueueFile(TFCTestCase):
 class TestQueueCommand(unittest.TestCase):
 
     def setUp(self):
+        """Pre-test actions."""
         self.settings = Settings()
         self.queues   = gen_queue_dict()
 
     def tearDown(self):
+        """Post-test actions."""
         tear_queues(self.queues)
 
     def test_queue_command(self):
@@ -323,14 +331,16 @@ class TestSplitToAssemblyPackets(unittest.TestCase):
 class TestQueueAssemblyPackets(unittest.TestCase):
 
     def setUp(self):
+        """Pre-test actions."""
         self.settings = Settings()
         self.queues   = gen_queue_dict()
         self.window   = TxWindow(uid=nick_to_pub_key("Alice"),
                                  log_messages=True)
         self.window.window_contacts = [create_contact('Alice')]
-        self.args     = self.settings, self.queues, self.window
+        self.args                   = self.settings, self.queues, self.window
     
     def tearDown(self):
+        """Post-test actions."""
         tear_queues(self.queues)
 
     def test_queue_message_traffic_masking(self):
@@ -425,6 +435,7 @@ class TestSendPacket(unittest.TestCase):
     """
 
     def setUp(self):
+        """Pre-test actions."""
         self.l_queue       = Queue()
         self.key_list      = KeyList(nicks=['Alice'])
         self.settings      = Settings()
@@ -432,6 +443,7 @@ class TestSendPacket(unittest.TestCase):
         self.onion_service = OnionService()
 
     def tearDown(self):
+        """Post-test actions."""
         tear_queue(self.l_queue)
 
     def test_message_length(self):
@@ -497,9 +509,11 @@ class TestSendPacket(unittest.TestCase):
 class TestCancelPacket(TFCTestCase):
 
     def setUp(self):
+        """Pre-test actions."""
         self.queues = gen_queue_dict()
 
     def tearDown(self):
+        """Post-test actions."""
         tear_queues(self.queues)
 
     def test_cancel_message_during_normal(self):

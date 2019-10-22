@@ -52,7 +52,7 @@ MsgTuple = Tuple[datetime, str, bytes, bytes, bool, bool]
 
 def log_writer_loop(queues:    Dict[bytes, 'Queue[Any]'],  # Dictionary of queues
                     settings:  'Settings',                 # Settings object
-                    unit_test: bool = False                # When True, exits the loop when UNIT_TEST_QUEUE is no longer empty.
+                    unit_test: bool = False                # True, exits loop when UNIT_TEST_QUEUE is no longer empty.
                     ) -> None:
     """Write assembly packets to log database.
 

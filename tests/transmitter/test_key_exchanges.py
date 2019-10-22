@@ -39,6 +39,7 @@ from tests.utils        import nick_to_short_address, tear_queues, TFCTestCase, 
 class TestOnionService(TFCTestCase):
 
     def setUp(self):
+        """Pre-test actions."""
         self.contact_list  = ContactList()
         self.settings      = Settings()
         self.onion_service = OnionService()
@@ -56,12 +57,14 @@ class TestOnionService(TFCTestCase):
 class TestLocalKey(TFCTestCase):
 
     def setUp(self):
+        """Pre-test actions."""
         self.contact_list = ContactList()
         self.settings     = Settings()
         self.queues       = gen_queue_dict()
         self.args         = self.contact_list, self.settings, self.queues
 
     def tearDown(self):
+        """Post-test actions."""
         tear_queues(self.queues)
 
     def test_new_local_key_when_traffic_masking_is_enabled_raises_fr(self):
@@ -127,12 +130,14 @@ class TestVerifyFingerprints(unittest.TestCase):
 class TestKeyExchange(TFCTestCase):
 
     def setUp(self):
+        """Pre-test actions."""
         self.contact_list = ContactList()
         self.settings     = Settings()
         self.queues       = gen_queue_dict()
         self.args         = self.contact_list, self.settings, self.queues
 
     def tearDown(self):
+        """Post-test actions."""
         tear_queues(self.queues)
 
     @mock.patch('shutil.get_terminal_size', return_value=[200, 200])
@@ -235,14 +240,16 @@ class TestKeyExchange(TFCTestCase):
 class TestPSK(TFCTestCase):
 
     def setUp(self):
-        self.unit_test_dir  = cd_unit_test()
-        self.contact_list   = ContactList()
-        self.settings       = Settings(disable_gui_dialog=True)
-        self.queues         = gen_queue_dict()
-        self.onion_service  = OnionService()
-        self.args           = self.contact_list, self.settings, self.onion_service, self.queues
+        """Pre-test actions."""
+        self.unit_test_dir = cd_unit_test()
+        self.contact_list  = ContactList()
+        self.settings      = Settings(disable_gui_dialog=True)
+        self.queues        = gen_queue_dict()
+        self.onion_service = OnionService()
+        self.args          = self.contact_list, self.settings, self.onion_service, self.queues
 
     def tearDown(self):
+        """Post-test actions."""
         cleanup(self.unit_test_dir)
 
         with ignored(OSError):
@@ -292,11 +299,13 @@ class TestPSK(TFCTestCase):
 class TestReceiverLoadPSK(TFCTestCase):
 
     def setUp(self):
+        """Pre-test actions."""
         self.settings = Settings()
         self.queues   = gen_queue_dict()
         self.args     = self.settings, self.queues
 
     def tearDown(self):
+        """Post-test actions."""
         tear_queues(self.queues)
 
     def test_raises_fr_when_traffic_masking_is_enabled(self):

@@ -42,6 +42,7 @@ from tests.utils        import UNDECODABLE_UNICODE
 class TestDecryptAssemblyPacket(TFCTestCase):
 
     def setUp(self):
+        """Pre-test actions."""
         self.onion_pub_key = nick_to_pub_key("Alice")
         self.origin        = ORIGIN_CONTACT_HEADER
         self.window_list   = WindowList(nicks=['Alice', LOCAL_ID])
@@ -113,6 +114,7 @@ class TestDecryptAssemblyPacket(TFCTestCase):
 class TestPacket(TFCTestCase):
 
     def setUp(self):
+        """Pre-test actions."""
         self.short_msg = "Lorem ipsum dolor sit amet, consectetur adipiscing elit"
         self.msg = ("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean condimentum consectetur purus quis"
                     " dapibus. Fusce venenatis lacus ut rhoncus faucibus. Cras sollicitudin commodo sapien, sed bibendu"
@@ -140,6 +142,7 @@ class TestPacket(TFCTestCase):
         self.short_f_data = (int_to_bytes(1) + int_to_bytes(2) + b'testfile.txt' + US_BYTE + encrypted)
 
     def tearDown(self):
+        """Post-test actions."""
         cleanup(self.unit_test_dir)
 
     def test_invalid_assembly_packet_header_raises_fr(self):
@@ -412,6 +415,7 @@ class TestPacket(TFCTestCase):
 class TestPacketList(unittest.TestCase):
 
     def setUp(self):
+        """Pre-test actions."""
         self.contact_list  = ContactList(nicks=['Alice', 'Bob'])
         self.settings      = Settings()
         self.onion_pub_key = nick_to_pub_key('Alice')

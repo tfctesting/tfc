@@ -33,6 +33,7 @@ from tests.mock_classes import create_contact, create_group, Settings, TxWindow
 class TestProcessAliases(unittest.TestCase):
 
     def setUp(self):
+        """Pre-test actions."""
         self.settings = Settings()
         self.window   = TxWindow(name='Alice',
                                  type=WIN_TYPE_CONTACT,
@@ -59,6 +60,7 @@ class TestProcessAliases(unittest.TestCase):
 class TestGetInput(unittest.TestCase):
 
     def setUp(self):
+        """Pre-test actions."""
         self.settings = Settings()
         self.window   = TxWindow(name='Alice',
                                  type=WIN_TYPE_CONTACT,

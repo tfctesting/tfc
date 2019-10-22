@@ -1568,12 +1568,12 @@ class RSCodec(object):
     """
 
     def __init__(self,
-                 nsym:       int  = 10,
-                 nsize:      int  = 255,
-                 fcr:        int  = 0,
-                 prim:       int  = 0x11d,
-                 generator:  int  = 2,
-                 c_exp:      int  = 8,
+                 nsym:       int = 10,
+                 nsize:      int = 255,
+                 fcr:        int = 0,
+                 prim:       int = 0x11d,
+                 generator:  int = 2,
+                 c_exp:      int = 8,
                  single_gen: bool = True
                  ) -> None:
         """\

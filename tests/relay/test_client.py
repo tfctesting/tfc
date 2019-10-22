@@ -107,11 +107,13 @@ class TestClient(unittest.TestCase):
         return TestClient.MockSession()
 
     def setUp(self):
+        """Pre-test actions."""
         self.o_session   = requests.session
         self.queues      = gen_queue_dict()
         requests.session = TestClient.mock_session
 
     def tearDown(self):
+        """Post-test actions."""
         requests.session = self.o_session
         tear_queues(self.queues)
 
@@ -243,11 +245,13 @@ class TestGetDataLoop(unittest.TestCase):
         return TestGetDataLoop.Session()
 
     def setUp(self):
+        """Pre-test actions."""
         self.o_session   = requests.session
         self.queues      = gen_queue_dict()
         requests.session = TestGetDataLoop.mock_session
 
     def tearDown(self):
+        """Post-test actions."""
         requests.session = self.o_session
         tear_queues(self.queues)
 

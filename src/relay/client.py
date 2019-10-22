@@ -284,13 +284,13 @@ def g_msg_manager(queues:    'QueueDict',
                 pub_keys       = split_byte_string(data, ONION_SERVICE_PUBLIC_KEY_LENGTH)
                 pub_key_length = ONION_SERVICE_PUBLIC_KEY_LENGTH
 
-                members  = [k                                    for k in pub_keys if len(k) == pub_key_length  ]
-                known    = [f"  * {pub_key_to_onion_address(m)}" for m in members  if m in     existing_contacts]
-                unknown  = [f"  * {pub_key_to_onion_address(m)}" for m in members  if m not in existing_contacts]
+                members = [k                                    for k in pub_keys if len(k) == pub_key_length  ]
+                known   = [f"  * {pub_key_to_onion_address(m)}" for m in members  if m in     existing_contacts]
+                unknown = [f"  * {pub_key_to_onion_address(m)}" for m in members  if m not in existing_contacts]
 
                 line_list = []
                 if known:
-                    line_list.extend(["Known contacts"]   + known)
+                    line_list.extend(["Known contacts"] + known)
                 if unknown:
                     line_list.extend(["Unknown contacts"] + unknown)
 
@@ -355,7 +355,8 @@ def c_req_manager(queues:    'QueueDict',
 
                 if show_requests:
                     ts_fmt = datetime.now().strftime('%b %d - %H:%M:%S.%f')[:-4]
-                    m_print([f"{ts_fmt} - New contact request from an unknown TFC account:", purp_onion_address], box=True)
+                    m_print([f"{ts_fmt} - New contact request from an unknown TFC account:", purp_onion_address],
+                            box=True)
                 contact_requests.append(onion_pub_key)
 
             if unit_test and queues[UNIT_TEST_QUEUE].qsize() != 0:

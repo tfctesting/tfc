@@ -83,9 +83,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         - The Argon2 library, Copyright © 2015, Hynek Schlawack
           (https://github.com/hynek/argon2_cffi)
 
-        - The asn1crypto library, Copyright © 2015-2018, Will Bond <will@wbond.net>
-          (https://github.com/wbond/asn1crypto)
-
         - The src.common.encoding Base58 implementation, Copyright © 2015, David Keijser
           (https://github.com/keis/base58)
 

@@ -37,6 +37,7 @@ from tests.utils        import tear_queues, TFCTestCase, VALID_ECDHE_PUB_KEY
 class TestMockWindow(unittest.TestCase):
 
     def setUp(self):
+        """Pre-test actions."""
         self.window = MockWindow(nick_to_pub_key("Alice"), contacts=[create_contact(n) for n in ['Alice', 'Bob']])
 
     def test_window_iterates_over_contacts(self):
@@ -47,6 +48,7 @@ class TestMockWindow(unittest.TestCase):
 class TestTxWindow(TFCTestCase):
 
     def setUp(self):
+        """Pre-test actions."""
         self.contact_list  = ContactList(['Alice', 'Bob'])
         self.group_list    = GroupList(groups=['test_group', 'test_group_2'])
         self.window        = TxWindow(self.contact_list, self.group_list)
@@ -59,6 +61,7 @@ class TestTxWindow(TFCTestCase):
         self.args          = self.settings, self.queues, self.onion_service, self.gateway
 
     def tearDown(self):
+        """Post-test actions."""
         tear_queues(self.queues)
 
     def test_window_iterates_over_contacts(self):
@@ -312,6 +315,7 @@ class TestTxWindow(TFCTestCase):
 class TestSelectWindow(TFCTestCase):
 
     def setUp(self):
+        """Pre-test actions."""
         self.contact_list  = ContactList(nicks=['Alice'])
         self.group_list    = GroupList()
         self.user_input    = UserInput()
@@ -323,6 +327,7 @@ class TestSelectWindow(TFCTestCase):
         self.args          = self.user_input, self.window, self.settings, self.queues, self.onion_service, self.gateway
 
     def tearDown(self):
+        """Post-test actions."""
         tear_queues(self.queues)
 
     def test_invalid_selection_raises_fr(self):

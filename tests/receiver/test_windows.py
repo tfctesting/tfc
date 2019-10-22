@@ -35,6 +35,7 @@ from tests.utils        import group_name_to_group_id, nick_to_pub_key, nick_to_
 class TestRxWindow(TFCTestCase):
 
     def setUp(self):
+        """Pre-test actions."""
         self.contact_list = ContactList(nicks=['Alice', 'Bob', 'Charlie', LOCAL_ID])
         self.group_list   = GroupList(groups=['test_group', 'test_group2'])
         self.settings     = Settings()
@@ -373,6 +374,7 @@ testfile2.txt    15.0KB     Charlie    7.00%
 class TestWindowList(TFCTestCase):
 
     def setUp(self):
+        """Pre-test actions."""
         self.settings     = Settings()
         self.contact_list = ContactList(nicks=['Alice', 'Bob', 'Charlie', LOCAL_ID])
         self.group_list   = GroupList(groups=['test_group', 'test_group2'])

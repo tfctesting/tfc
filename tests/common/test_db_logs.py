@@ -40,12 +40,15 @@ TIMESTAMP_BYTES  = bytes.fromhex('08ceae02')
 STATIC_TIMESTAMP = bytes_to_timestamp(TIMESTAMP_BYTES).strftime('%H:%M:%S.%f')[:-TIMESTAMP_LENGTH]
 SLEEP_DELAY      = 0.02
 
+
 class TestLogWriterLoop(unittest.TestCase):
 
     def setUp(self):
+        """Pre-test actions."""
         self.unit_test_dir = cd_unit_test()
 
     def tearDown(self):
+        """Post-test actions."""
         cleanup(self.unit_test_dir)
 
     def test_function_logs_normal_data(self):
@@ -194,12 +197,14 @@ class TestLogWriterLoop(unittest.TestCase):
 class TestWriteLogEntry(unittest.TestCase):
 
     def setUp(self):
+        """Pre-test actions."""
         self.unit_test_dir = cd_unit_test()
         self.master_key    = MasterKey()
         self.settings      = Settings()
         self.log_file      = f'{DIR_USER_DATA}{self.settings.software_operation}_logs'
 
     def tearDown(self):
+        """Post-test actions."""
         cleanup(self.unit_test_dir)
 
     def test_oversize_packet_raises_critical_error(self):
@@ -220,6 +225,7 @@ class TestWriteLogEntry(unittest.TestCase):
 class TestAccessHistoryAndPrintLogs(TFCTestCase):
 
     def setUp(self):
+        """Pre-test actions."""
         self.unit_test_dir = cd_unit_test()
         self.master_key    = MasterKey()
         self.settings      = Settings()
@@ -250,6 +256,7 @@ class TestAccessHistoryAndPrintLogs(TFCTestCase):
                     "s neque a facilisis. Mauris id tortor placerat, aliquam dolor ac, venenatis arcu.")
 
     def tearDown(self):
+        """Post-test actions."""
         cleanup(self.unit_test_dir)
 
     def test_missing_log_file_raises_fr(self):
@@ -509,6 +516,7 @@ Log file of message(s) to/from group test_group
 class TestReEncrypt(TFCTestCase):
 
     def setUp(self):
+        """Pre-test actions."""
         self.unit_test_dir = cd_unit_test()
         self.old_key       = MasterKey()
         self.new_key       = MasterKey(master_key=os.urandom(SYMMETRIC_KEY_LENGTH))
@@ -517,6 +525,7 @@ class TestReEncrypt(TFCTestCase):
         self.time          = STATIC_TIMESTAMP
 
     def tearDown(self):
+        """Post-test actions."""
         cleanup(self.unit_test_dir)
 
     def test_missing_log_database_raises_fr(self):
@@ -569,6 +578,7 @@ Log file of message(s) sent to contact Alice
 class TestRemoveLog(TFCTestCase):
 
     def setUp(self):
+        """Pre-test actions."""
         self.unit_test_dir = cd_unit_test()
         self.master_key    = MasterKey()
         self.settings      = Settings()
@@ -591,6 +601,7 @@ class TestRemoveLog(TFCTestCase):
                     "s neque a facilisis. Mauris id tortor placerat, aliquam dolor ac, venenatis arcu.")
 
     def tearDown(self):
+        """Post-test actions."""
         cleanup(self.unit_test_dir)
 
     def test_missing_log_file_raises_fr(self):

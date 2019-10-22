@@ -42,10 +42,12 @@ from tests.utils        import cd_unit_test, cleanup, gen_queue_dict, tear_queue
 class TestGatewayLoop(unittest.TestCase):
 
     def setUp(self):
+        """Pre-test actions."""
         self.unit_test_dir = cd_unit_test()
         self.queues        = gen_queue_dict()
 
     def tearDown(self):
+        """Post-test actions."""
         cleanup(self.unit_test_dir)
         tear_queues(self.queues)
 
@@ -63,10 +65,12 @@ class TestGatewayLoop(unittest.TestCase):
 class TestGatewaySerial(TFCTestCase):
 
     def setUp(self):
+        """Pre-test actions."""
         self.unit_test_dir = cd_unit_test()
         self.settings      = Settings(session_usb_serial_adapter=True)
 
     def tearDown(self):
+        """Post-test actions."""
         cleanup(self.unit_test_dir)
 
     @mock.patch('time.sleep',     return_value=None)
@@ -239,6 +243,7 @@ class TestGatewaySerial(TFCTestCase):
 class TestGatewaySettings(TFCTestCase):
 
     def setUp(self):
+        """Pre-test actions."""
         self.unit_test_dir      = cd_unit_test()
         self.default_serialized = """\
 {
@@ -249,6 +254,7 @@ class TestGatewaySettings(TFCTestCase):
 }"""
 
     def tearDown(self):
+        """Post-test actions."""
         cleanup(self.unit_test_dir)
 
     @mock.patch('os.listdir',     side_effect=[['ttyUSB0'], ['ttyS0'], ['ttyUSB0'], ['ttyS0']])

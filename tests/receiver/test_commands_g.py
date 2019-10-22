@@ -32,6 +32,7 @@ from tests.utils        import group_name_to_group_id, nick_to_pub_key, TFCTestC
 class TestGroupCreate(TFCTestCase):
 
     def setUp(self):
+        """Pre-test actions."""
         self.ts          = datetime.datetime.now()
         self.settings    = Settings()
         self.window_list = WindowList()
@@ -78,6 +79,7 @@ class TestGroupCreate(TFCTestCase):
 class TestGroupAdd(TFCTestCase):
 
     def setUp(self):
+        """Pre-test actions."""
         self.ts          = datetime.datetime.now()
         self.settings    = Settings()
         self.window_list = WindowList()
@@ -125,6 +127,7 @@ class TestGroupAdd(TFCTestCase):
 class TestGroupRemove(TFCTestCase):
 
     def setUp(self):
+        """Pre-test actions."""
         self.ts            = datetime.datetime.now()
         self.window_list   = WindowList()
         self.contact_list  = ContactList(nicks=[f"contact_{n}" for n in range(21)])
@@ -152,6 +155,7 @@ class TestGroupRemove(TFCTestCase):
 class TestGroupDelete(TFCTestCase):
 
     def setUp(self):
+        """Pre-test actions."""
         self.ts          = datetime.datetime.now()
         self.window_list = WindowList()
         self.group_list  = GroupList(groups=['test_group'])
@@ -179,6 +183,7 @@ class TestGroupDelete(TFCTestCase):
 class TestGroupRename(TFCTestCase):
 
     def setUp(self):
+        """Pre-test actions."""
         self.ts                  = datetime.datetime.now()
         self.group_list          = GroupList(groups=['test_group'])
         self.window_list         = WindowList()

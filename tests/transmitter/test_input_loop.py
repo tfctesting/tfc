@@ -51,6 +51,7 @@ class TestInputLoop(unittest.TestCase):
                   '/exit']                         # Enter exit command
 
     def setUp(self):
+        """Pre-test actions."""
         self.settings      = Settings(disable_gui_dialog=True)
         self.gateway       = Gateway()
         self.contact_list  = ContactList()
@@ -60,6 +61,7 @@ class TestInputLoop(unittest.TestCase):
         self.queues        = gen_queue_dict()
 
     def tearDown(self):
+        """Post-test actions."""
         tear_queues(self.queues)
 
     @mock.patch('builtins.input',                    side_effect=input_list)

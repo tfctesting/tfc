@@ -18,12 +18,11 @@
 
 # PIP dependency file names
 ARGON2=argon2_cffi-19.1.0-cp34-abi3-manylinux1_x86_64.whl
-ASN1CRYPTO=asn1crypto-1.1.0-py2.py3-none-any.whl
 CERTIFI=certifi-2019.9.11-py2.py3-none-any.whl
-CFFI=cffi-1.13.0-cp37-cp37m-manylinux1_x86_64.whl
+CFFI=cffi-1.13.1-cp37-cp37m-manylinux1_x86_64.whl
 CHARDET=chardet-3.0.4-py2.py3-none-any.whl
 CLICK=Click-7.0-py2.py3-none-any.whl
-CRYPTOGRAPHY=cryptography-2.7-cp34-abi3-manylinux1_x86_64.whl
+CRYPTOGRAPHY=cryptography-2.8-cp34-abi3-manylinux1_x86_64.whl
 FLASK=Flask-1.1.1-py2.py3-none-any.whl
 IDNA=idna-2.8-py2.py3-none-any.whl
 ITSDANGEROUS=itsdangerous-1.1.0-py2.py3-none-any.whl
@@ -38,7 +37,7 @@ SETUPTOOLS=setuptools-41.4.0-py2.py3-none-any.whl
 SIX=six-1.12.0-py2.py3-none-any.whl
 STEM=stem-1.7.1.tar.gz
 URLLIB3=urllib3-1.25.6-py2.py3-none-any.whl
-VIRTUALENV=virtualenv-16.7.6-py2.py3-none-any.whl
+VIRTUALENV=virtualenv-16.7.7-py2.py3-none-any.whl
 WERKZEUG=Werkzeug-0.16.0-py2.py3-none-any.whl
 
 
@@ -148,7 +147,6 @@ function process_tcb_dependencies {
     sudo $1 /opt/tfc/${SETUPTOOLS}
     sudo $1 /opt/tfc/${PYNACL}
     sudo $1 /opt/tfc/${PYSERIAL}
-    sudo $1 /opt/tfc/${ASN1CRYPTO}
     sudo $1 /opt/tfc/${CRYPTOGRAPHY}
 }
 
@@ -178,7 +176,6 @@ function process_tails_dependencies {
 
     # Cryptography
     t_sudo -E $1 /opt/tfc/${SIX}
-    t_sudo -E $1 /opt/tfc/${ASN1CRYPTO}
     t_sudo -E $1 /opt/tfc/${PYCPARSER}
     t_sudo -E $1 /opt/tfc/${CFFI}
     t_sudo -E $1 /opt/tfc/${CRYPTOGRAPHY}
@@ -212,7 +209,6 @@ function move_tails_dependencies {
 
     # Cryptography
     t_sudo mv $HOME/${SIX}          /opt/tfc/
-    t_sudo mv $HOME/${ASN1CRYPTO}   /opt/tfc/
     t_sudo mv $HOME/${PYCPARSER}    /opt/tfc/
     t_sudo mv $HOME/${CFFI}         /opt/tfc/
     t_sudo mv $HOME/${CRYPTOGRAPHY} /opt/tfc/
@@ -226,7 +222,7 @@ function verify_tails_dependencies {
     # Tails doesn't allow downloading over PIP to /opt/tfc, so we
     # first download to $HOME, move the files to /opt/tfc, and then
     # perform additional hash verification
-    compare_digest ccdd41d89e81cba9cb04e2086a8f17aa9800d07048a801cd62128a0a5ef1a2a3db0bf525b444653a23e2441775bad2a4fba34959fe7294eb9c456f2acaa34c37 '' ${VIRTUALENV}
+    compare_digest e80eb04615d1dcd2546bd5ceef5408bbb577fa0dd725bc69f20dd7840518af575f0b41e629e8164fdaea398628813720a6f70a42e7748336601391605b79f542 '' ${VIRTUALENV}
     compare_digest 8333ac2843fd136d5d0d63b527b37866f7d18afc3bb33c4938b63af077492aeb118eb32a89ac78547f14d59a2adb1e5d00728728275de62317da48dadf6cdff9 '' ${PYSERIAL}
     # compare_digest a275f59bba650cb5bb151cf53fb1dd820334f9abbeae1a25e64502adc854c7f54c51bc3d6c1656b595d142fc0695ffad53aab3c57bc285421c1f4f10c9c3db4c '' ${STEM}
     compare_digest 313b954102231d038d52ab58f41e3642579be29f827135b8dd92c06acb362effcb0a7fd5f35de9273372b92d9fe29f38381ae44f8b41aa90d2564d6dd07ecd12 '' ${PYSOCKS}
@@ -248,10 +244,9 @@ function verify_tails_dependencies {
 
     # Cryptography
     compare_digest 326574c7542110d2cd8071136a36a6cffc7637ba948b55e0abb7f30f3821843073223301ecbec1d48b8361b0d7ccb338725eeb0424696efedc3f6bd2a23331d3 '' ${SIX}
-    compare_digest c9de440256c1b5c4ce31dbc1f5309003ff29c9ed6e928fa0426ae48a3cf1125dc2c5de94edb3785e5963ea175dd758e2a0aee24f92b9b8616cc4010220d05f10 '' ${ASN1CRYPTO}
     compare_digest 7f830e1c9066ee2d297a55e2bf6db4bf6447b6d9da0145d11a88c3bb98505755fb7986eafa6e06ae0b7680838f5e5d6a6d188245ca5ad45c2a727587bac93ab5 '' ${PYCPARSER}
-    compare_digest db5da5710282d46a6d82f10c2bdd7e641b357c56745e820fbabd1c329d80b093bcd568621c28f8911abb2af227220c2f9f450e0977634ed17ffa646adb474040 '' ${CFFI}
-    compare_digest 1285c3f5181da41bace4f9fd5ce5fc4bfba71143b39a4f3d8bab642db65bec9556b1965b1c2990236fed9d6b156bf81e6c0642d1531eadf7b92379c25cc4aeac '' ${CRYPTOGRAPHY}
+    compare_digest fdefd3f63f56adff50723d6a88dc6db816d3d8a31b563599d2a3633ba796f6f70d5a9430510852b3d62b97357f8764f17eeab74b13df16c7cc34e1671a82373b '' ${CFFI}
+    compare_digest d8ddabe127ae8d7330d219e284de68b37fa450a27b4cf05334e9115388295b00148d9861c23b1a2e5ea9df0c33a2d27f3e4b25ce9abd3c334f1979920b19c902 '' ${CRYPTOGRAPHY}
 
     # PyNaCl
     compare_digest c4017c38b026a5c531b15839b8d61d1fae9907ba1960c2f97f4cd67fe0827729346d5186a6d6927ba84f64b4cbfdece12b287aa7750a039f4160831be871cea3 '' ${PYNACL}

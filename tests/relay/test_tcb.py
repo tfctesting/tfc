@@ -39,6 +39,7 @@ from tests.utils        import cd_unit_test, cleanup, gen_queue_dict, tear_queue
 class TestSRCIncoming(unittest.TestCase):
 
     def setUp(self):
+        """Pre-test actions."""
         self.settings      = Settings()
         self.unit_test_dir = cd_unit_test()
         self.gateway       = Gateway()
@@ -48,6 +49,7 @@ class TestSRCIncoming(unittest.TestCase):
         self.args          = self.queues, self.gateway
 
     def tearDown(self):
+        """Post-test actions."""
         tear_queues(self.queues)
         cleanup(self.unit_test_dir)
 

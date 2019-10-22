@@ -34,6 +34,7 @@ from tests.utils        import cd_unit_test, cleanup, nick_to_onion_address, nic
 class TestContact(unittest.TestCase):
 
     def setUp(self):
+        """Pre-test actions."""
         self.contact = Contact(nick_to_pub_key('Bob'),
                                'Bob',
                                FINGERPRINT_LENGTH * b'\x01',
@@ -62,6 +63,7 @@ class TestContact(unittest.TestCase):
 class TestContactList(TFCTestCase):
 
     def setUp(self):
+        """Pre-test actions."""
         self.unit_test_dir         = cd_unit_test()
         self.master_key            = MasterKey()
         self.settings              = Settings()
@@ -73,6 +75,7 @@ class TestContactList(TFCTestCase):
         self.real_contact_list.remove(LOCAL_ID)
 
     def tearDown(self):
+        """Post-test actions."""
         cleanup(self.unit_test_dir)
 
     def test_contact_list_iterates_over_contact_objects(self):
@@ -101,7 +104,8 @@ class TestContactList(TFCTestCase):
     def test_invalid_content_raises_critical_error(self):
         # Setup
         invalid_data = b'a'
-        pt_bytes     = b''.join([c.serialize_c() for c in self.contact_list.contacts + self.contact_list._dummy_contacts()])
+        pt_bytes     = b''.join([c.serialize_c() for c in self.contact_list.contacts
+                                                        + self.contact_list._dummy_contacts()])
         ct_bytes     = encrypt_and_sign(pt_bytes + invalid_data, self.master_key.master_key)
 
         ensure_dir(DIR_USER_DATA)

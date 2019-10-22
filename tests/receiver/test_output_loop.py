@@ -49,10 +49,12 @@ def rotate_key(key: bytes, harac: int) -> Tuple[bytes, int]:
 class TestOutputLoop(unittest.TestCase):
 
     def setUp(self):
+        """Pre-test actions."""
         self.o_sleep = time.sleep
         time.sleep   = lambda _: None
 
     def tearDown(self):
+        """Post-test actions."""
         time.sleep = self.o_sleep
 
     @mock.patch('tkinter.Tk',     return_value=MagicMock())

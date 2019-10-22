@@ -362,7 +362,7 @@ def queue_assembly_packets(assembly_packet_list: List[bytes],
                            settings:             'Settings',
                            queues:               'QueueDict',
                            window:               Optional[Union['TxWindow', 'MockWindow']] = None,
-                           log_as_ph:            bool                                      = False
+                           log_as_ph:            bool = False
                            ) -> None:
     """Queue assembly packets for sender_loop().
 

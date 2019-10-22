@@ -242,7 +242,7 @@ def assembly_packet_creator(
         file_name_bytes = b'test_file.txt'             if file_name   is None   else file_name
         delimiter       = US_BYTE                      if not omit_header_delim else b''
 
-        payload   = time_bytes + size_bytes + file_name_bytes + delimiter + ct_with_key
+        payload = time_bytes + size_bytes + file_name_bytes + delimiter + ct_with_key
 
     elif packet_type == COMMAND:
         payload = payload
@@ -283,9 +283,9 @@ def assembly_packet_creator(
             payload = bytes(FILE_PACKET_CTR_LENGTH) + payload
 
         elif packet_type == COMMAND:
-            command_hash  = blake2b(payload)
-            command_hash  = command_hash if not tamper_cmd_hash else command_hash[::-1]
-            payload      += command_hash
+            command_hash = blake2b(payload)
+            command_hash = command_hash if not tamper_cmd_hash else command_hash[::-1]
+            payload     += command_hash
 
         padded = payload if no_padding else byte_padding(payload)
         p_list = split_byte_string(padded, item_len=split_length)

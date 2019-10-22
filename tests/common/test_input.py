@@ -53,6 +53,7 @@ class TestBoxInput(unittest.TestCase):
 class TestGetB58Key(unittest.TestCase):
 
     def setUp(self):
+        """Pre-test actions."""
         self.settings = Settings()
 
     @mock.patch('time.sleep',               return_value=None)

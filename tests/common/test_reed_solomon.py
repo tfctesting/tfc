@@ -75,8 +75,8 @@ class TestReedSolomon(unittest.TestCase):
         kk        = 18
         tt        = nn - kk
         rs        = RSCodec(tt, fcr=120, prim=0x187)
-        hexencmsg = '00faa123555555c000000354064432' \
-                    'c02800fe97c434e1ff5365cf8fafe4'
+        hexencmsg = ('00faa123555555c000000354064432'
+                     'c02800fe97c434e1ff5365cf8fafe4')
         strf      = str
         encmsg    = bytearray.fromhex(strf(hexencmsg))
         decmsg    = encmsg[:kk]
@@ -108,8 +108,8 @@ class TestReedSolomon(unittest.TestCase):
         kk        = 34
         tt        = nn - kk
         rs        = RSCodec(tt, fcr=120, prim=0x187)
-        hexencmsg = '08faa123555555c000000354064432c0280e1b4d090cfc04' \
-                    '887400000003500000000e1985ff9c6b33066ca9f43d12e8'
+        hexencmsg = ('08faa123555555c000000354064432c0280e1b4d090cfc04'
+                     '887400000003500000000e1985ff9c6b33066ca9f43d12e8')
         strf      = str
         encmsg    = bytearray.fromhex(strf(hexencmsg))
         decmsg    = encmsg[:kk]

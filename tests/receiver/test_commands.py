@@ -38,13 +38,14 @@ from src.receiver.commands import process_command, remove_log, reset_screen, win
 
 from tests.mock_classes import ContactList, Gateway, group_name_to_group_id, GroupList, KeyList, MasterKey
 from tests.mock_classes import nick_to_pub_key, RxWindow, Settings, WindowList
-from tests.utils        import assembly_packet_creator, cd_unit_test, cleanup, ignored, nick_to_short_address, tear_queue
-from tests.utils        import TFCTestCase
+from tests.utils        import assembly_packet_creator, cd_unit_test, cleanup, ignored, nick_to_short_address
+from tests.utils        import tear_queue, TFCTestCase
 
 
 class TestProcessCommand(TFCTestCase):
 
     def setUp(self):
+        """Pre-test actions."""
         self.unit_test_dir = cd_unit_test()
         self.ts            = datetime.now()
         self.settings      = Settings()
@@ -62,6 +63,7 @@ class TestProcessCommand(TFCTestCase):
                      self.settings, self.master_key, self.gateway, self.exit_queue)
 
     def tearDown(self):
+        """Post-test actions."""
         cleanup(self.unit_test_dir)
         tear_queue(self.exit_queue)
 
@@ -81,6 +83,7 @@ class TestProcessCommand(TFCTestCase):
 class TestWinActivity(TFCTestCase):
 
     def setUp(self):
+        """Pre-test actions."""
         self.window_list         = WindowList()
         self.window_list.windows = [RxWindow(name='Alice', unread_messages=4),
                                     RxWindow(name='Bob',   unread_messages=15)]
@@ -99,6 +102,7 @@ class TestWinActivity(TFCTestCase):
 class TestWinSelect(unittest.TestCase):
 
     def setUp(self):
+        """Pre-test actions."""
         self.window_list         = WindowList()
         self.window_list.windows = [RxWindow(uid=nick_to_pub_key("Alice"), name='Alice'),
                                     RxWindow(uid=nick_to_pub_key("Bob"), name='Bob')]
@@ -117,6 +121,7 @@ class TestWinSelect(unittest.TestCase):
 class TestResetScreen(unittest.TestCase):
 
     def setUp(self):
+        """Pre-test actions."""
         self.cmd_data            = nick_to_pub_key("Alice")
         self.window_list         = WindowList()
         self.window_list.windows = [RxWindow(uid=nick_to_pub_key("Alice"), name='Alice'),
@@ -141,9 +146,11 @@ class TestResetScreen(unittest.TestCase):
 class TestExitTFC(unittest.TestCase):
 
     def setUp(self):
+        """Pre-test actions."""
         self.exit_queue = Queue()
 
     def tearDown(self):
+        """Post-test actions."""
         tear_queue(self.exit_queue)
 
     def test_function(self):
@@ -154,6 +161,7 @@ class TestExitTFC(unittest.TestCase):
 class TestLogCommand(TFCTestCase):
 
     def setUp(self):
+        """Pre-test actions."""
         self.unit_test_dir     = cd_unit_test()
         self.cmd_data          = int_to_bytes(1) + nick_to_pub_key("Bob")
         self.ts                = datetime.now()
@@ -173,6 +181,7 @@ class TestLogCommand(TFCTestCase):
         self.time  = datetime.fromtimestamp(time_float).strftime("%H:%M:%S.%f")[:-4]
 
     def tearDown(self):
+        """Post-test actions."""
         cleanup(self.unit_test_dir)
         with ignored(OSError):
             os.remove('Receiver - Plaintext log (None)')
@@ -204,6 +213,7 @@ Log file of 1 most recent message(s) to/from contact Bob
 class TestRemoveLog(TFCTestCase):
 
     def setUp(self):
+        """Pre-test actions."""
         self.unit_test_dir = cd_unit_test()
         self.win_name      = nick_to_pub_key("Alice")
         self.contact_list  = ContactList()
@@ -212,6 +222,7 @@ class TestRemoveLog(TFCTestCase):
         self.master_key    = MasterKey()
 
     def tearDown(self):
+        """Post-test actions."""
         cleanup(self.unit_test_dir)
 
     def test_remove_log_file(self):
@@ -222,6 +233,7 @@ class TestRemoveLog(TFCTestCase):
 class TestChMasterKey(TFCTestCase):
 
     def setUp(self):
+        """Pre-test actions."""
         self.unit_test_dir = cd_unit_test()
         self.ts            = datetime.now()
         self.master_key    = MasterKey()
@@ -234,6 +246,7 @@ class TestChMasterKey(TFCTestCase):
                               self.key_list, self.settings, self.master_key)
 
     def tearDown(self):
+        """Post-test actions."""
         cleanup(self.unit_test_dir)
 
     @mock.patch('src.common.db_masterkey.MIN_KEY_DERIVATION_TIME', 0.1)
@@ -262,6 +275,7 @@ class TestChMasterKey(TFCTestCase):
 class TestChNick(TFCTestCase):
 
     def setUp(self):
+        """Pre-test actions."""
         self.ts           = datetime.now()
         self.contact_list = ContactList(nicks=['Alice'])
         self.window_list  = WindowList(contact_list=self.contact_list)
@@ -291,6 +305,7 @@ class TestChNick(TFCTestCase):
 class TestChSetting(TFCTestCase):
 
     def setUp(self):
+        """Pre-test actions."""
         self.ts           = datetime.now()
         self.window_list  = WindowList()
         self.contact_list = ContactList()
@@ -340,6 +355,7 @@ class TestChSetting(TFCTestCase):
 class TestChContactSetting(TFCTestCase):
 
     def setUp(self):
+        """Pre-test actions."""
         self.ts           = datetime.fromtimestamp(1502750000)
         self.contact_list = ContactList(nicks=['Alice', 'Bob'])
         self.group_list   = GroupList(groups=['test_group', 'test_group2'])
@@ -426,6 +442,7 @@ class TestChContactSetting(TFCTestCase):
 class TestContactRemove(TFCTestCase):
 
     def setUp(self):
+        """Pre-test actions."""
         self.unit_test_dir = cd_unit_test()
         self.ts            = datetime.now()
         self.window_list   = WindowList()
@@ -435,6 +452,7 @@ class TestContactRemove(TFCTestCase):
         self.args          = self.cmd_data, self.ts, self.window_list
 
     def tearDown(self):
+        """Post-test actions."""
         cleanup(self.unit_test_dir)
 
     def test_no_contact_raises_fr(self):
@@ -467,9 +485,11 @@ class TestContactRemove(TFCTestCase):
 class TestWipe(unittest.TestCase):
 
     def setUp(self) -> None:
+        """Pre-test actions."""
         self.exit_queue = Queue()
 
     def tearDown(self) -> None:
+        """Post-test actions."""
         tear_queue(self.exit_queue)
 
     @mock.patch('os.system', return_value=None)

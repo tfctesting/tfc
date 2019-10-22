@@ -36,6 +36,7 @@ from tests.utils        import cd_unit_test, cleanup, tamper_file, TFCTestCase
 class TestGroup(unittest.TestCase):
 
     def setUp(self):
+        """Pre-test actions."""
         self.unit_test_dir = cd_unit_test()
         self.nicks         = ['Alice', 'Bob', 'Charlie']
         members            = list(map(create_contact, self.nicks))
@@ -50,6 +51,7 @@ class TestGroup(unittest.TestCase):
         ensure_dir(DIR_USER_DATA)
 
     def tearDown(self):
+        """Post-test actions."""
         cleanup(self.unit_test_dir)
 
     def test_group_iterates_over_contact_objects(self):
@@ -117,6 +119,7 @@ class TestGroup(unittest.TestCase):
 class TestGroupList(TFCTestCase):
 
     def setUp(self):
+        """Pre-test actions."""
         self.unit_test_dir = cd_unit_test()
         self.master_key    = MasterKey()
         self.settings      = Settings()
@@ -146,6 +149,7 @@ class TestGroupList(TFCTestCase):
                                        + self.settings.max_number_of_group_members * ONION_SERVICE_PUBLIC_KEY_LENGTH)
 
     def tearDown(self):
+        """Post-test actions."""
         cleanup(self.unit_test_dir)
 
     def test_group_list_iterates_over_group_objects(self):

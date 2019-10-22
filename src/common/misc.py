@@ -34,12 +34,13 @@ import zlib
 
 from contextlib      import contextmanager
 from typing          import Any, Callable, Dict, Iterator, List, Optional, Tuple, Type, Union
-from multiprocessing import Process, Queue
+from multiprocessing import Process
 
 from src.common.reed_solomon import RSCodec
 from src.common.statics      import *
 
 if typing.TYPE_CHECKING:
+    from multiprocessing        import Queue
     from src.common.db_contacts import ContactList
     from src.common.db_groups   import GroupList
     from src.common.db_settings import Settings

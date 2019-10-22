@@ -38,6 +38,7 @@ from tests.utils        import nick_to_onion_address, nick_to_pub_key, tear_queu
 class TestAddNewContact(TFCTestCase):
 
     def setUp(self):
+        """Pre-test actions."""
         self.contact_list  = ContactList()
         self.group_list    = GroupList()
         self.settings      = Settings(disable_gui_dialog=True)
@@ -46,6 +47,7 @@ class TestAddNewContact(TFCTestCase):
         self.args          = self.contact_list, self.group_list, self.settings, self.queues, self.onion_service
 
     def tearDown(self):
+        """Post-test actions."""
         with ignored(OSError):
             os.remove(f'v4dkh.psk - Give to hpcra')
         tear_queues(self.queues)
@@ -97,6 +99,7 @@ class TestAddNewContact(TFCTestCase):
 class TestRemoveContact(TFCTestCase):
 
     def setUp(self):
+        """Pre-test actions."""
         self.unit_test_dir = cd_unit_test()
         self.contact_list  = ContactList(nicks=['Alice'])
         self.group_list    = GroupList(groups=['test_group'])
@@ -107,6 +110,7 @@ class TestRemoveContact(TFCTestCase):
         self.args          = self.contact_list, self.group_list, self.settings, self.queues, self.master_key
 
     def tearDown(self):
+        """Post-test actions."""
         cleanup(self.unit_test_dir)
         tear_queues(self.queues)
 
@@ -216,6 +220,7 @@ class TestRemoveContact(TFCTestCase):
 class TestChangeNick(TFCTestCase):
 
     def setUp(self):
+        """Pre-test actions."""
         self.contact_list = ContactList(nicks=['Alice'])
         self.group_list   = GroupList()
         self.settings     = Settings()
@@ -223,6 +228,7 @@ class TestChangeNick(TFCTestCase):
         self.args         = self.contact_list, self.group_list, self.settings, self.queues
 
     def tearDown(self):
+        """Post-test actions."""
         tear_queues(self.queues)
 
     def test_missing_nick_raises_fr(self):
@@ -235,7 +241,8 @@ class TestChangeNick(TFCTestCase):
                           contact=create_contact('Bob'))
 
         # Test
-        self.assert_fr("Error: Nick must be printable.", change_nick, UserInput("nick Alice\x01"), window, *self.args)
+        self.assert_fr("Error: Nick must be printable.",
+                       change_nick, UserInput("nick Alice\x01"), window, *self.args)
 
     def test_no_contact_raises_fr(self):
         # Setup
@@ -244,7 +251,8 @@ class TestChangeNick(TFCTestCase):
         window.contact = None
 
         # Test
-        self.assert_fr("Error: Window does not have contact.", change_nick, UserInput("nick Alice\x01"), window, *self.args)
+        self.assert_fr("Error: Window does not have contact.",
+                       change_nick, UserInput("nick Alice\x01"), window, *self.args)
 
     def test_successful_nick_change(self):
         # Setup
@@ -274,6 +282,7 @@ class TestChangeNick(TFCTestCase):
 class TestContactSetting(TFCTestCase):
 
     def setUp(self):
+        """Pre-test actions."""
         self.contact_list = ContactList(nicks=['Alice', 'Bob'])
         self.group_list   = GroupList(groups=['test_group'])
         self.settings     = Settings()
@@ -282,6 +291,7 @@ class TestContactSetting(TFCTestCase):
         self.args         = self.contact_list, self.group_list, self.settings, self.queues
 
     def tearDown(self):
+        """Post-test actions."""
         tear_queues(self.queues)
 
     def test_invalid_command_raises_fr(self):

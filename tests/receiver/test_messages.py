@@ -42,6 +42,7 @@ from tests.utils        import nick_to_pub_key, TFCTestCase
 class TestProcessMessage(TFCTestCase):
 
     def setUp(self):
+        """Pre-test actions."""
         self.unit_test_dir = cd_unit_test()
 
         self.msg = ("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean condimentum consectetur purus quis"
@@ -76,6 +77,7 @@ class TestProcessMessage(TFCTestCase):
         ensure_dir(DIR_USER_DATA)
 
     def tearDown(self):
+        """Post-test actions."""
         cleanup(self.unit_test_dir)
 
     # Invalid packets

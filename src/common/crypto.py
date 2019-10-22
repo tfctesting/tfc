@@ -118,7 +118,11 @@ def blake2b(message:     bytes,                        # Message to hash
          https://github.com/python/cpython/blob/3.7/Lib/hashlib.py
     """
     try:
-        digest = hashlib.blake2b(message, digest_size=digest_size, key=key, salt=salt, person=person).digest()  # type: bytes
+        digest = hashlib.blake2b(message,
+                                 digest_size=digest_size,
+                                 key=key,
+                                 salt=salt,
+                                 person=person).digest()  # type: bytes
     except ValueError as e:
         raise CriticalError(str(e))
 

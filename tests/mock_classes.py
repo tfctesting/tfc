@@ -209,10 +209,12 @@ class MasterKey(OrigMasterKey):
             setattr(self, key, value)
 
     def load_master_key(self) -> bytes:
+        """Create mock master key bytes."""
         if getpass.getpass() == 'test_password':
             return self.master_key
         else:
             return SYMMETRIC_KEY_LENGTH * b'f'
+
 
 class OnionService(OrigOnionService):
     """Mock the object for unit testing."""

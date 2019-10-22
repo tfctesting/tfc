@@ -105,7 +105,7 @@ def process_group_command(user_input:   'UserInput',
     func_d = dict(create=group_create,
                   join  =group_create,
                   add   =group_add_member,
-                  rm    =group_rm_member) # type: FuncDict
+                  rm    =group_rm_member)  # type: FuncDict
 
     func = func_d[command_type]
 

@@ -27,7 +27,7 @@ import typing
 from datetime import datetime
 from typing   import Any, Dict, Iterable, Iterator, List, Optional, Tuple
 
-from src.common.encoding   import pub_key_to_short_address
+from src.common.encoding   import b58encode, pub_key_to_onion_address, pub_key_to_short_address
 from src.common.exceptions import FunctionReturn
 from src.common.misc       import get_terminal_width
 from src.common.output     import clear_screen, m_print, print_on_previous_line
@@ -96,7 +96,14 @@ class RxWindow(Iterable[MsgTuple]):
             self.window_contacts = self.group.members
 
         else:
-            raise FunctionReturn(f"Invalid window '{uid}'.")
+            if len(uid) == GROUP_ID_LENGTH:
+                hr_uid = b58encode(uid)
+            elif len(uid) == ONION_SERVICE_PUBLIC_KEY_LENGTH:
+                hr_uid = pub_key_to_onion_address(uid)
+            else:
+                hr_uid = "<unable to encode>"
+
+            raise FunctionReturn(f"Invalid window '{hr_uid}'.")
 
     def __iter__(self) -> Iterator[MsgTuple]:
         """Iterate over window's message log."""

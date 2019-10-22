@@ -34,6 +34,7 @@ from tests.utils        import cd_unit_test, cleanup, tamper_file, TFCTestCase
 class TestSettings(TFCTestCase):
 
     def setUp(self):
+        """Pre-test actions."""
         self.unit_test_dir        = cd_unit_test()
         self.file_name            = f"{DIR_USER_DATA}{TX}_settings"
         self.master_key           = MasterKey()
@@ -44,6 +45,7 @@ class TestSettings(TFCTestCase):
         self.args                 = self.contact_list, self.group_list
 
     def tearDown(self):
+        """Post-test actions."""
         cleanup(self.unit_test_dir)
 
     def test_invalid_type_raises_critical_error_on_store(self):

@@ -35,6 +35,7 @@ from src.common.statics  import *
 class TestBase58EncodeAndDecode(unittest.TestCase):
 
     def setUp(self):
+        """Pre-test actions."""
         self.key = SYMMETRIC_KEY_LENGTH * b'\x01'
 
     def test_encoding_and_decoding_of_random_local_keys(self):
@@ -74,7 +75,7 @@ class TestBase58EncodeAndDecode(unittest.TestCase):
         byte_key = bytes.fromhex("0C28FCA386C7A227600B2FE50B7CAE11"
                                  "EC86D3BF1FBE471BE89827E19D72AA1D")
 
-        b58_key  = "5HueCGU8rMjxEXxiPuD5BDku4MkFqeZyd4dZ1jvhTVqvbTLvyTJ"
+        b58_key = "5HueCGU8rMjxEXxiPuD5BDku4MkFqeZyd4dZ1jvhTVqvbTLvyTJ"
 
         self.assertEqual(b58encode(byte_key), b58_key)
         self.assertEqual(b58decode(b58_key), byte_key)

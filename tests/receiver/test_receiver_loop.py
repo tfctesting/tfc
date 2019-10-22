@@ -54,9 +54,9 @@ class TestReceiverLoop(unittest.TestCase):
         ts_bytes = int_to_bytes(int(ts.strftime('%Y%m%d%H%M%S%f')[:-4]))
 
         for key in queues:
-            packet   = key + ts_bytes + bytes(ONION_SERVICE_PUBLIC_KEY_LENGTH)
-            encoded  = rs.encode(packet)
-            broken_p = key + bytes.fromhex('df9005313af4136d') + bytes(ONION_SERVICE_PUBLIC_KEY_LENGTH)
+            packet    = key + ts_bytes + bytes(ONION_SERVICE_PUBLIC_KEY_LENGTH)
+            encoded   = rs.encode(packet)
+            broken_p  = key + bytes.fromhex('df9005313af4136d') + bytes(ONION_SERVICE_PUBLIC_KEY_LENGTH)
             broken_p += rs.encode(b'a')
 
             def queue_delayer():

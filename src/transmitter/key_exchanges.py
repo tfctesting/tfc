@@ -508,7 +508,6 @@ def create_pre_shared_key(onion_pub_key: bytes,           # Public key of contac
                 m_print("Incorrect confirmation code.", head=1)
                 print_on_previous_line(reps=4, delay=2)
 
-
         contact_list.add_contact(onion_pub_key, nick,
                                  bytes(FINGERPRINT_LENGTH), bytes(FINGERPRINT_LENGTH),
                                  KEX_STATUS_NO_RX_PSK,

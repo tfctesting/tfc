@@ -34,6 +34,7 @@ from tests.utils import cd_unit_test, cleanup
 
 KL = SYMMETRIC_KEY_LENGTH
 
+
 class TestMasterKey(unittest.TestCase):
     input_list = ['password', 'different_password',  # Invalid new password pair
                   'password', 'password',            # Valid   new password pair
@@ -41,11 +42,13 @@ class TestMasterKey(unittest.TestCase):
                   'password']                        # Valid   login password
 
     def setUp(self):
+        """Pre-test actions."""
         self.unit_test_dir = cd_unit_test()
         self.operation     = TX
         self.file_name     = f"{DIR_USER_DATA}{self.operation}_login_data"
 
     def tearDown(self):
+        """Post-test actions."""
         cleanup(self.unit_test_dir)
 
     def test_password_generation(self):

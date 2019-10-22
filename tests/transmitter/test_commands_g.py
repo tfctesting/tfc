@@ -36,6 +36,7 @@ from tests.utils        import cd_unit_test, cleanup, gen_queue_dict, nick_to_pu
 class TestProcessGroupCommand(TFCTestCase):
 
     def setUp(self):
+        """Pre-test actions."""
         self.contact_list = ContactList(nicks=['Alice'])
         self.group_list   = GroupList()
         self.settings     = Settings()
@@ -44,6 +45,7 @@ class TestProcessGroupCommand(TFCTestCase):
         self.args         = self.contact_list, self.group_list, self.settings, self.queues, self.settings
 
     def tearDown(self):
+        """Post-test actions."""
         tear_queues(self.queues)
 
     def test_raises_fr_when_traffic_masking_is_enabled(self):
@@ -80,6 +82,7 @@ class TestProcessGroupCommand(TFCTestCase):
 class TestGroupCreate(TFCTestCase):
 
     def setUp(self):
+        """Pre-test actions."""
         self.contact_list = ContactList(nicks=['Alice', 'Bob'])
         self.group_list   = GroupList()
         self.settings     = Settings()
@@ -89,15 +92,16 @@ class TestGroupCreate(TFCTestCase):
         self.args         = self.contact_list, self.group_list, self.settings, self.queues, self.settings
 
     def tearDown(self):
+        """Post-test actions."""
         tear_queues(self.queues)
 
     def configure_groups(self, no_contacts: int) -> None:
         """Configure group list."""
-        self.contact_list     = ContactList(nicks=[str(n) for n in range(no_contacts)])
-        self.group_list       = GroupList(groups=['test_group'])
-        self.group            = self.group_list.get_group('test_group')
-        self.group.members    = self.contact_list.contacts
-        self.account_list     = [nick_to_pub_key(str(n)) for n in range(no_contacts)]
+        self.contact_list  = ContactList(nicks=[str(n) for n in range(no_contacts)])
+        self.group_list    = GroupList(groups=['test_group'])
+        self.group         = self.group_list.get_group('test_group')
+        self.group.members = self.contact_list.contacts
+        self.account_list  = [nick_to_pub_key(str(n)) for n in range(no_contacts)]
 
     def test_invalid_group_name_raises_fr(self):
         # Setup
@@ -142,6 +146,7 @@ class TestGroupCreate(TFCTestCase):
 class TestGroupAddMember(TFCTestCase):
 
     def setUp(self):
+        """Pre-test actions."""
         self.user_input   = UserInput()
         self.contact_list = ContactList(nicks=['Alice', 'Bob'])
         self.group_list   = GroupList()
@@ -151,6 +156,7 @@ class TestGroupAddMember(TFCTestCase):
         self.args         = self.contact_list, self.group_list, self.settings, self.queues, self.settings
 
     def tearDown(self):
+        """Post-test actions."""
         tear_queues(self.queues)
 
     def configure_groups(self, no_contacts: int) -> None:
@@ -206,6 +212,7 @@ class TestGroupAddMember(TFCTestCase):
 class TestGroupRmMember(TFCTestCase):
 
     def setUp(self):
+        """Pre-test actions."""
         self.unit_test_dir = cd_unit_test()
         self.user_input    = UserInput()
         self.contact_list  = ContactList(nicks=['Alice', 'Bob'])
@@ -216,6 +223,7 @@ class TestGroupRmMember(TFCTestCase):
         self.args          = self.contact_list, self.group_list, self.settings, self.queues, self.settings
 
     def tearDown(self):
+        """Post-test actions."""
         cleanup(self.unit_test_dir)
         tear_queues(self.queues)
 
@@ -239,6 +247,7 @@ class TestGroupRmMember(TFCTestCase):
 class TestGroupRmGroup(TFCTestCase):
 
     def setUp(self):
+        """Pre-test actions."""
         self.unit_test_dir = cd_unit_test()
         self.user_input    = UserInput()
         self.contact_list  = ContactList(nicks=['Alice', 'Bob'])
@@ -249,6 +258,7 @@ class TestGroupRmGroup(TFCTestCase):
         self.args          = self.contact_list, self.group_list, self.settings, self.queues, self.settings
 
     def tearDown(self):
+        """Post-test actions."""
         cleanup(self.unit_test_dir)
         tear_queues(self.queues)
 
@@ -280,6 +290,7 @@ class TestGroupRmGroup(TFCTestCase):
 class TestGroupRename(TFCTestCase):
 
     def setUp(self):
+        """Pre-test actions."""
         self.queues       = gen_queue_dict()
         self.settings     = Settings()
         self.contact_list = ContactList()
@@ -288,6 +299,7 @@ class TestGroupRename(TFCTestCase):
         self.args         = self.window, self.contact_list, self.group_list, self.settings, self.queues
 
     def tearDown(self):
+        """Post-test actions."""
         tear_queues(self.queues)
 
     def test_contact_window_raises_fr(self):
