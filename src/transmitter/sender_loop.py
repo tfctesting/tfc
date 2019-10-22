@@ -35,7 +35,6 @@ if typing.TYPE_CHECKING:
     from src.common.db_keys     import KeyList
     from src.common.db_settings import Settings
     from src.common.gateway     import Gateway
-    from src.common.db_settings import Settings
     QueueDict      = Dict[bytes, Queue[Any]]
     Message_buffer = Dict[bytes, List[Tuple[bytes, bytes, bool, bool, bytes]]]
 
