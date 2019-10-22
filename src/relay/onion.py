@@ -45,7 +45,6 @@ from src.common.statics    import *
 
 if typing.TYPE_CHECKING:
     from multiprocessing import Queue
-    from subprocess      import Popen
 
 
 def get_available_port(min_port: int, max_port: int) -> int:
@@ -69,7 +68,7 @@ class Tor(object):
     """Tor class manages the starting and stopping of Tor client."""
 
     def __init__(self) -> None:
-        self.tor_process = None  # type: Optional[Popen]
+        self.tor_process = None  # type: Optional[Any]
         self.controller  = None  # type: Optional[Controller]
 
     @staticmethod
