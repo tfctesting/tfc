@@ -528,20 +528,10 @@ function install_relay {
 
 
 function install_virtualenv {
-    # Determine if the OS needs to have the virtualenv installed as sudo
-    # so that the user (who should be on sudoers list) can see virtualenv
-    # when the installer sets up virtual environment to /opt/tfc/.
-    distro=$(lsb_release -d | awk -F"\t" '{print $2}')
-
-    if [[ "$distro" =~ ^Debian* ]]; then
-        sudo torsocks python3.7 -m pip install -r /opt/tfc/requirements-venv.txt --require-hashes
-    elif [[ "$distro" =~ Eoan* ]]; then
-        sudo torsocks python3.7 -m pip install -r /opt/tfc/requirements-venv.txt --require-hashes
-    elif [[ "$distro" =~ PureOS* ]]; then
-        sudo torsocks python3.7 -m pip install -r /opt/tfc/requirements-venv.txt --require-hashes
-    else
-        torsocks python3.7 -m pip install -r /opt/tfc/requirements-venv.txt --require-hashes
-    fi
+    # Some distros want virtualenv installed as sudo and other do
+    # not. Install both to improve the chances of compatibility.
+    sudo torsocks python3.7 -m pip install -r /opt/tfc/requirements-venv.txt --require-hashes
+    torsocks python3.7 -m pip install -r /opt/tfc/requirements-venv.txt --require-hashes
 }
 
 
