@@ -123,7 +123,7 @@ def group_create(group_name:   str,
                  group_id:     Optional[bytes] = None
                  ) -> None:
     """Create a new group.
-    
+
     Validate the group name and determine what members can be added.
     """
     error_msg = validate_group_name(group_name, contact_list, group_list)

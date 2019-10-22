@@ -197,11 +197,11 @@ class ReedSolomonError(Exception):
 
 
 """
-For efficiency, gf_exp[] has size 2*GF_SIZE, so that a simple 
-multiplication of two numbers can be resolved without calling % 255. 
-For more info on how to generate this extended exponentiation table, 
-see paper: 
-    "Fast software implementation of finite field operations", 
+For efficiency, gf_exp[] has size 2*GF_SIZE, so that a simple
+multiplication of two numbers can be resolved without calling % 255.
+For more info on how to generate this extended exponentiation table,
+see paper:
+    "Fast software implementation of finite field operations",
     Cheng Huang and Lihao Xu
     Washington University in St. Louis, Tech. Rep (2003).
 """
