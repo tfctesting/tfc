@@ -72,7 +72,14 @@ class TestRxWindow(TFCTestCase):
         self.assertEqual(window.name, 'test_group')
 
     def test_invalid_uid_raises_fr(self):
-        self.assert_fr("Invalid window 'bad_uid'.", self.create_window, 'bad_uid')
+        self.assert_fr("Invalid window 'mfqwcylbmfqwcylbmfqwcylbmfqwcylbmfqwcylbmfqwcylbmfqwbfad'.",
+                       self.create_window, ONION_SERVICE_PUBLIC_KEY_LENGTH*b'a')
+
+        self.assert_fr("Invalid window '2dnAMoWNfTXAJ'.",
+                       self.create_window, GROUP_ID_LENGTH*b'a')
+
+        self.assert_fr("Invalid window '<unable to encode>'.",
+                       self.create_window, b'bad_uid')
 
     def test_window_iterates_over_message_tuples(self):
         # Setup

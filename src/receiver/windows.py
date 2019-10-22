@@ -96,10 +96,10 @@ class RxWindow(Iterable[MsgTuple]):
             self.window_contacts = self.group.members
 
         else:
-            if len(uid) == GROUP_ID_LENGTH:
-                hr_uid = b58encode(uid)
-            elif len(uid) == ONION_SERVICE_PUBLIC_KEY_LENGTH:
+            if len(uid) == ONION_SERVICE_PUBLIC_KEY_LENGTH:
                 hr_uid = pub_key_to_onion_address(uid)
+            elif len(uid) == GROUP_ID_LENGTH:
+                hr_uid = b58encode(uid)
             else:
                 hr_uid = "<unable to encode>"
 
