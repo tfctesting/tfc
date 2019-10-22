@@ -25,7 +25,7 @@ import unittest
 from unittest import mock
 
 from src.common.db_settings import Settings
-from src.common.statics     import *
+from src.common.statics     import CLEAR_ENTIRE_SCREEN, CURSOR_LEFT_UP_CORNER, DIR_USER_DATA, RX, SETTING_LENGTH, TX
 
 from tests.mock_classes import ContactList, create_group, GroupList, MasterKey
 from tests.utils        import cd_unit_test, cleanup, tamper_file, TFCTestCase

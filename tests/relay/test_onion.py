@@ -30,7 +30,8 @@ from unittest.mock import MagicMock
 import stem.control
 
 from src.common.misc    import validate_onion_addr
-from src.common.statics import *
+from src.common.statics import (EXIT, EXIT_QUEUE, ONION_CLOSE_QUEUE, ONION_KEY_QUEUE, ONION_SERVICE_PRIVATE_KEY_LENGTH,
+                                TOR_DATA_QUEUE, TOR_SOCKS_PORT)
 
 from src.relay.onion import get_available_port, onion_service, stem_compatible_ed25519_key_from_private_key, Tor
 

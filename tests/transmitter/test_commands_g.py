@@ -24,7 +24,8 @@ import unittest
 from unittest import mock
 
 from src.common.encoding import b58encode
-from src.common.statics  import *
+from src.common.statics  import (COMMAND_PACKET_QUEUE, GROUP_ID_LENGTH, RELAY_PACKET_QUEUE,
+                                 WIN_TYPE_CONTACT, WIN_TYPE_GROUP)
 
 from src.transmitter.commands_g import group_add_member, group_create, group_rm_group, group_rm_member
 from src.transmitter.commands_g import process_group_command, group_rename
@@ -51,7 +52,7 @@ class TestProcessGroupCommand(TFCTestCase):
     def test_raises_fr_when_traffic_masking_is_enabled(self):
         # Setup
         self.settings.traffic_masking = True
-        
+
         # Test
         self.assert_fr("Error: Command is disabled during traffic masking.",
                        process_group_command, UserInput(), *self.args)

@@ -27,7 +27,8 @@ from unittest import mock
 from src.common.crypto   import encrypt_and_sign
 from src.common.db_onion import OnionService
 from src.common.misc     import ensure_dir, validate_onion_addr
-from src.common.statics  import *
+from src.common.statics  import (DIR_USER_DATA, ONION_SERVICE_PRIVATE_KEY_LENGTH,
+                                 POLY1305_TAG_LENGTH, TX, XCHACHA20_NONCE_LENGTH)
 
 from tests.mock_classes import MasterKey
 from tests.utils        import cd_unit_test, cleanup, tamper_file

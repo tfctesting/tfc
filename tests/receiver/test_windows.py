@@ -24,7 +24,11 @@ import unittest
 from datetime import datetime
 from unittest import mock
 
-from src.common.statics import *
+from src.common.statics import (BOLD_ON, CLEAR_ENTIRE_LINE, CLEAR_ENTIRE_SCREEN, CURSOR_LEFT_UP_CORNER,
+                                CURSOR_UP_ONE_LINE, FILE, GROUP_ID_LENGTH, LOCAL_ID, NORMAL_TEXT,
+                                ONION_SERVICE_PUBLIC_KEY_LENGTH, ORIGIN_CONTACT_HEADER, ORIGIN_USER_HEADER,
+                                WIN_TYPE_COMMAND, WIN_TYPE_CONTACT, WIN_TYPE_FILE, WIN_TYPE_GROUP, WIN_UID_FILE,
+                                WIN_UID_LOCAL)
 
 from src.receiver.windows import RxWindow, WindowList
 

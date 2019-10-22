@@ -25,7 +25,9 @@ import unittest
 from unittest import mock
 
 from src.common.crypto  import blake2b
-from src.common.statics import *
+from src.common.statics import (COMMAND_PACKET_QUEUE, CONFIRM_CODE_LENGTH, FINGERPRINT_LENGTH, KDB_REMOVE_ENTRY_HEADER,
+                                KEY_MANAGEMENT_QUEUE, LOG_SETTING_QUEUE, RELAY_PACKET_QUEUE, TM_COMMAND_PACKET_QUEUE,
+                                WIN_TYPE_CONTACT, WIN_TYPE_GROUP)
 
 from src.transmitter.contact import add_new_contact, change_nick, contact_setting, remove_contact
 

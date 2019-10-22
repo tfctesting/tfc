@@ -27,7 +27,12 @@ import unittest
 from multiprocessing import Queue
 from unittest        import mock
 
-from src.common.statics import *
+from src.common.statics import (ASSEMBLY_PACKET_LENGTH, COMMAND, COMMAND_PACKET_QUEUE, C_A_HEADER, C_E_HEADER,
+                                C_L_HEADER, C_S_HEADER, FILE, F_A_HEADER, F_E_HEADER, F_L_HEADER, F_S_HEADER,
+                                GROUP_MSG_INVITE_HEADER, LOCAL_ID, MESSAGE, MESSAGE_PACKET_QUEUE, M_A_HEADER,
+                                M_E_HEADER, M_L_HEADER, M_S_HEADER, RELAY_PACKET_QUEUE, SYMMETRIC_KEY_LENGTH,
+                                TM_COMMAND_PACKET_QUEUE, TM_FILE_PACKET_QUEUE, TM_MESSAGE_PACKET_QUEUE,
+                                WIN_TYPE_CONTACT, WIN_TYPE_GROUP)
 
 from src.transmitter.packet import cancel_packet, queue_command, queue_file, queue_message, queue_assembly_packets
 from src.transmitter.packet import send_file, send_packet, split_to_assembly_packets

@@ -28,7 +28,13 @@ from unittest import mock
 
 from src.common.encoding     import int_to_bytes
 from src.common.reed_solomon import RSCodec
-from src.common.statics      import *
+from src.common.statics      import (COMMAND_DATAGRAM_HEADER, DST_COMMAND_QUEUE, DST_MESSAGE_QUEUE, EXIT,
+                                     FILE_DATAGRAM_HEADER, F_TO_FLASK_QUEUE, GATEWAY_QUEUE, GROUP_ID_LENGTH,
+                                     GROUP_MSG_EXIT_GROUP_HEADER, GROUP_MSG_INVITE_HEADER, GROUP_MSG_JOIN_HEADER,
+                                     GROUP_MSG_MEMBER_ADD_HEADER, GROUP_MSG_MEMBER_REM_HEADER,
+                                     LOCAL_KEY_DATAGRAM_HEADER, MESSAGE_DATAGRAM_HEADER, M_TO_FLASK_QUEUE,
+                                     PUBLIC_KEY_DATAGRAM_HEADER, SRC_TO_RELAY_QUEUE, TFC_PUBLIC_KEY_LENGTH,
+                                     UNENCRYPTED_DATAGRAM_HEADER, UNIT_TEST_QUEUE)
 
 from src.relay.tcb import dst_outgoing, src_incoming
 

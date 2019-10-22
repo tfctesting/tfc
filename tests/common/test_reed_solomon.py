@@ -16,7 +16,10 @@ import unittest
 
 from random import sample
 
-from src.common.reed_solomon import *
+from src.common.reed_solomon import (RSCodec, ReedSolomonError, find_prime_polys, gf_add, gf_div, gf_mul, gf_mult_nolut,
+                                     gf_mult_nolut_slow, gf_neg, gf_poly_mul, gf_poly_mul_simple, gf_poly_neg, gf_sub,
+                                     init_tables, itertools, rs_check, rs_correct_msg, rs_correct_msg_nofsynd,
+                                     rs_encode_msg, rs_generator_poly, rs_generator_poly_all, rs_simple_encode_msg)
 
 
 class TestReedSolomon(unittest.TestCase):

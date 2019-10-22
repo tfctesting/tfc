@@ -34,7 +34,12 @@ from src.common.exceptions import FunctionReturn
 from src.common.input      import yes
 from src.common.misc       import decompress, readable_size, separate_header, separate_headers, separate_trailer
 from src.common.output     import m_print
-from src.common.statics    import *
+from src.common.statics    import (ASSEMBLY_PACKET_HEADER_LENGTH, BLAKE2_DIGEST_LENGTH, COMMAND, C_A_HEADER, C_C_HEADER,
+                                   C_E_HEADER, C_L_HEADER, C_N_HEADER, C_S_HEADER, ENCODED_INTEGER_LENGTH, FILE,
+                                   F_A_HEADER, F_C_HEADER, F_E_HEADER, F_L_HEADER, F_S_HEADER, HARAC_CT_LENGTH,
+                                   HARAC_WARN_THRESHOLD, LOCAL_PUBKEY, MAX_MESSAGE_SIZE, MESSAGE, M_A_HEADER,
+                                   M_C_HEADER, M_E_HEADER, M_L_HEADER, M_S_HEADER, ORIGIN_CONTACT_HEADER,
+                                   ORIGIN_USER_HEADER, P_N_HEADER, RX, SYMMETRIC_KEY_LENGTH, TX, US_BYTE)
 
 from src.receiver.files import process_assembled_file
 

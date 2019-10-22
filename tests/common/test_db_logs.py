@@ -30,7 +30,12 @@ from unittest import mock
 from src.common.db_contacts import ContactList
 from src.common.db_logs     import access_logs, change_log_db_key, log_writer_loop, remove_logs, write_log_entry
 from src.common.encoding    import bytes_to_timestamp
-from src.common.statics     import *
+from src.common.statics     import (CLEAR_ENTIRE_SCREEN, CURSOR_LEFT_UP_CORNER, C_S_HEADER, DIR_USER_DATA, EXIT,
+                                    F_S_HEADER, GROUP_ID_LENGTH, LOGFILE_MASKING_QUEUE, LOG_ENTRY_LENGTH,
+                                    LOG_PACKET_QUEUE, LOG_SETTING_QUEUE, MESSAGE, M_A_HEADER, M_C_HEADER, M_S_HEADER,
+                                    ORIGIN_CONTACT_HEADER, PADDING_LENGTH, P_N_HEADER, RX, SYMMETRIC_KEY_LENGTH,
+                                    TIMESTAMP_LENGTH, TRAFFIC_MASKING_QUEUE, UNIT_TEST_QUEUE, WIN_TYPE_CONTACT,
+                                    WIN_TYPE_GROUP)
 
 from tests.mock_classes import create_contact, GroupList, MasterKey, RxWindow, Settings
 from tests.utils        import assembly_packet_creator, cd_unit_test, cleanup, group_name_to_group_id, nick_to_pub_key
@@ -59,10 +64,10 @@ class TestLogWriterLoop(unittest.TestCase):
 
         def queue_delayer():
             """Place messages to queue one at a time."""
-            for p in [(nick_to_pub_key('Alice'), M_S_HEADER + bytes(PADDING_LENGTH), False, False, master_key), 
-                      (None,                     C_S_HEADER + bytes(PADDING_LENGTH), True,  False, master_key), 
-                      (nick_to_pub_key('Alice'), P_N_HEADER + bytes(PADDING_LENGTH), True,  True,  master_key), 
-                      (nick_to_pub_key('Alice'), F_S_HEADER + bytes(PADDING_LENGTH), True,  True,  master_key), 
+            for p in [(nick_to_pub_key('Alice'), M_S_HEADER + bytes(PADDING_LENGTH), False, False, master_key),
+                      (None,                     C_S_HEADER + bytes(PADDING_LENGTH), True,  False, master_key),
+                      (nick_to_pub_key('Alice'), P_N_HEADER + bytes(PADDING_LENGTH), True,  True,  master_key),
+                      (nick_to_pub_key('Alice'), F_S_HEADER + bytes(PADDING_LENGTH), True,  True,  master_key),
                       (nick_to_pub_key('Alice'), M_S_HEADER + bytes(PADDING_LENGTH), True,  False, master_key)]:
                 queues[LOG_PACKET_QUEUE].put(p)
                 time.sleep(SLEEP_DELAY)
@@ -93,9 +98,9 @@ class TestLogWriterLoop(unittest.TestCase):
 
         def queue_delayer():
             """Place messages to queue one at a time."""
-            for p in [(nick_to_pub_key('Alice'), M_S_HEADER + bytes(PADDING_LENGTH), False, False, master_key), 
-                      (None,                     C_S_HEADER + bytes(PADDING_LENGTH), True,  False, master_key), 
-                      (nick_to_pub_key('Alice'), F_S_HEADER + bytes(PADDING_LENGTH), True,  True,  master_key), 
+            for p in [(nick_to_pub_key('Alice'), M_S_HEADER + bytes(PADDING_LENGTH), False, False, master_key),
+                      (None,                     C_S_HEADER + bytes(PADDING_LENGTH), True,  False, master_key),
+                      (nick_to_pub_key('Alice'), F_S_HEADER + bytes(PADDING_LENGTH), True,  True,  master_key),
                       (nick_to_pub_key('Alice'), M_S_HEADER + bytes(PADDING_LENGTH), True,  False, master_key)]:
                 queues[LOG_PACKET_QUEUE].put(p)
                 time.sleep(SLEEP_DELAY)

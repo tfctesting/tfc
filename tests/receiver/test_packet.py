@@ -28,7 +28,9 @@ from unittest import mock
 
 from src.common.crypto   import byte_padding, encrypt_and_sign
 from src.common.encoding import int_to_bytes
-from src.common.statics  import *
+from src.common.statics  import (COMMAND, COMPRESSION_LEVEL, DIR_RECV_FILES, FILE, F_C_HEADER, LOCAL_ID, MESSAGE,
+                                 M_A_HEADER, M_E_HEADER, ORIGIN_CONTACT_HEADER, ORIGIN_USER_HEADER, PADDING_LENGTH,
+                                 PRIVATE_MESSAGE_HEADER, P_N_HEADER, SYMMETRIC_KEY_LENGTH, US_BYTE)
 
 from src.transmitter.packet import split_to_assembly_packets
 

@@ -35,7 +35,8 @@ from src.common.misc    import get_tab_completer, get_terminal_height, get_termi
 from src.common.misc    import process_arguments, readable_size, round_up, separate_header, separate_headers
 from src.common.misc    import separate_trailer, split_string, split_byte_string, terminal_width_check
 from src.common.misc    import validate_group_name, validate_key_exchange, validate_onion_addr, validate_nick
-from src.common.statics import *
+from src.common.statics import (DIR_RECV_FILES, DIR_USER_DATA, DUMMY_GROUP, ECDHE, EXIT, EXIT_QUEUE, LOCAL_ID,
+                                PADDING_LENGTH, RX, TAILS, WIPE)
 
 from tests.mock_classes import ContactList, Gateway, GroupList, Settings
 from tests.utils        import cd_unit_test, cleanup, gen_queue_dict, ignored, nick_to_onion_address

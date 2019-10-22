@@ -28,7 +28,9 @@ from unittest import mock
 
 from src.common.encoding import bool_to_bytes
 from src.common.misc     import ensure_dir
-from src.common.statics  import *
+from src.common.statics  import (BLAKE2_DIGEST_LENGTH, DIR_USER_DATA, FILE, FILE_KEY_HEADER, GROUP_ID_LENGTH, LOCAL_ID,
+                                 LOCAL_PUBKEY, LOG_ENTRY_LENGTH, MESSAGE, MESSAGE_LENGTH, ORIGIN_CONTACT_HEADER,
+                                 ORIGIN_USER_HEADER, SYMMETRIC_KEY_LENGTH)
 
 from src.receiver.messages import process_message
 from src.receiver.packet   import PacketList
@@ -65,13 +67,13 @@ class TestProcessMessage(TFCTestCase):
         self.key_list     = KeyList(    nicks=['Alice', 'Bob', 'Charlie', LOCAL_ID])
         self.group_list   = GroupList( groups=['test_group'])
         self.packet_list  = PacketList(contact_list=self.contact_list, settings=self.settings)
-        self.window_list  = WindowList(contact_list=self.contact_list, settings=self.settings, 
+        self.window_list  = WindowList(contact_list=self.contact_list, settings=self.settings,
                                        group_list=self.group_list, packet_list=self.packet_list)
         self.group_id     = group_name_to_group_id('test_group')
         self.file_keys    = dict()
 
         self.group_list.get_group('test_group').log_messages = True
-        self.args = (self.window_list, self.packet_list, self.contact_list, self.key_list, 
+        self.args = (self.window_list, self.packet_list, self.contact_list, self.key_list,
                      self.group_list, self.settings, self.master_key, self.file_keys)
 
         ensure_dir(DIR_USER_DATA)

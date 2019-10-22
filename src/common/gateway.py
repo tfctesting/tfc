@@ -41,7 +41,10 @@ from src.common.misc         import calculate_race_condition_delay, ensure_dir, 
 from src.common.misc         import separate_trailer
 from src.common.output       import m_print, phase, print_on_previous_line
 from src.common.reed_solomon import ReedSolomonError, RSCodec
-from src.common.statics      import *
+from src.common.statics      import (BAUDS_PER_BYTE, DIR_USER_DATA, DONE, DST_DD_LISTEN_SOCKET, DST_LISTEN_SOCKET,
+                                     GATEWAY_QUEUE, LOCALHOST, LOCAL_TESTING_PACKET_DELAY, MAX_INT, NC,
+                                     PACKET_CHECKSUM_LENGTH, RECEIVER, RELAY, RP_LISTEN_SOCKET, RX,
+                                     SERIAL_RX_MIN_TIMEOUT, SETTINGS_INDENT, SRC_DD_LISTEN_SOCKET, TRANSMITTER, TX)
 
 if typing.TYPE_CHECKING:
     from multiprocessing import Queue

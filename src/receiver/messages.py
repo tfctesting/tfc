@@ -28,7 +28,11 @@ from src.common.db_logs    import write_log_entry
 from src.common.encoding   import bytes_to_bool
 from src.common.exceptions import FunctionReturn
 from src.common.misc       import separate_header, separate_headers
-from src.common.statics    import *
+from src.common.statics    import (ASSEMBLY_PACKET_HEADER_LENGTH, BLAKE2_DIGEST_LENGTH, FILE, FILE_KEY_HEADER,
+                                   GROUP_ID_LENGTH, GROUP_MESSAGE_HEADER, GROUP_MSG_ID_LENGTH, LOCAL_PUBKEY, MESSAGE,
+                                   MESSAGE_HEADER_LENGTH, ONION_SERVICE_PUBLIC_KEY_LENGTH, ORIGIN_CONTACT_HEADER,
+                                   ORIGIN_HEADER_LENGTH, ORIGIN_USER_HEADER, PLACEHOLDER_DATA, PRIVATE_MESSAGE_HEADER,
+                                   SYMMETRIC_KEY_LENGTH, WHISPER_FIELD_LENGTH)
 
 from src.receiver.packet import decrypt_assembly_packet
 

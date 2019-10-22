@@ -33,7 +33,7 @@ from src.common.crypto       import blake2b
 from src.common.gateway      import gateway_loop, Gateway, GatewaySettings
 from src.common.misc         import ensure_dir
 from src.common.reed_solomon import RSCodec
-from src.common.statics      import *
+from src.common.statics      import DIR_USER_DATA, GATEWAY_QUEUE, NC, PACKET_CHECKSUM_LENGTH, RX, TX
 
 from tests.mock_classes import Settings
 from tests.utils        import cd_unit_test, cleanup, gen_queue_dict, tear_queues, TFCTestCase

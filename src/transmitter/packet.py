@@ -33,7 +33,14 @@ from src.common.input      import yes
 from src.common.misc       import split_byte_string
 from src.common.output     import m_print, phase, print_on_previous_line
 from src.common.path       import ask_path_gui
-from src.common.statics    import *
+from src.common.statics    import (ASSEMBLY_PACKET_LENGTH, COMMAND, COMMAND_DATAGRAM_HEADER, COMMAND_PACKET_QUEUE,
+                                   COMPRESSION_LEVEL, C_A_HEADER, C_E_HEADER, C_L_HEADER, C_S_HEADER, DONE, FILE,
+                                   FILE_DATAGRAM_HEADER, FILE_KEY_HEADER, FILE_PACKET_CTR_LENGTH, F_A_HEADER,
+                                   F_C_HEADER, F_E_HEADER, F_L_HEADER, F_S_HEADER, GROUP_MESSAGE_HEADER,
+                                   GROUP_MSG_ID_LENGTH, LOCAL_PUBKEY, MESSAGE, MESSAGE_DATAGRAM_HEADER,
+                                   MESSAGE_PACKET_QUEUE, M_A_HEADER, M_C_HEADER, M_E_HEADER, M_L_HEADER, M_S_HEADER,
+                                   PADDING_LENGTH, PRIVATE_MESSAGE_HEADER, RELAY_PACKET_QUEUE, TM_COMMAND_PACKET_QUEUE,
+                                   TM_FILE_PACKET_QUEUE, TM_MESSAGE_PACKET_QUEUE, WIN_TYPE_GROUP)
 
 from src.transmitter.files      import File
 from src.transmitter.user_input import UserInput

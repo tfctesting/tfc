@@ -30,7 +30,11 @@ from src.common.exceptions import FunctionReturn
 from src.common.input      import yes
 from src.common.misc       import ignored, validate_group_name
 from src.common.output     import group_management_print, m_print
-from src.common.statics    import *
+from src.common.statics    import (ADDED_MEMBERS, ALREADY_MEMBER, GROUP_ADD, GROUP_CREATE, GROUP_DELETE,
+                                   GROUP_ID_LENGTH, GROUP_MSG_EXIT_GROUP_HEADER, GROUP_MSG_INVITE_HEADER,
+                                   GROUP_MSG_JOIN_HEADER, GROUP_MSG_MEMBER_ADD_HEADER, GROUP_MSG_MEMBER_REM_HEADER,
+                                   GROUP_REMOVE, GROUP_RENAME, LOG_REMOVE, NEW_GROUP, NOT_IN_GROUP, RELAY_PACKET_QUEUE,
+                                   REMOVED_MEMBERS, UNKNOWN_ACCOUNTS, US_BYTE, WIN_TYPE_CONTACT)
 
 from src.transmitter.packet     import queue_command, queue_to_nc
 from src.transmitter.user_input import UserInput

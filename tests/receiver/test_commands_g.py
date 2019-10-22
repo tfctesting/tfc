@@ -22,7 +22,8 @@ along with TFC. If not, see <https://www.gnu.org/licenses/>.
 import datetime
 import unittest
 
-from src.common.statics      import *
+from src.common.statics import US_BYTE
+
 from src.receiver.commands_g import group_add, group_create, group_delete, group_remove, group_rename
 
 from tests.mock_classes import Contact, ContactList, GroupList, RxWindow, Settings, WindowList
@@ -191,7 +192,7 @@ class TestGroupRename(TFCTestCase):
         self.window_list.windows = [self.window]
         self.contact_list        = ContactList(nicks=['alice'])
         self.args                = self.ts, self.window_list, self.contact_list, self.group_list
-        
+
     def test_missing_group_id_raises_fr(self):
         # Setup
         cmd_data = group_name_to_group_id('test_group2') + b'new_name'

@@ -26,7 +26,9 @@ from src.common.crypto   import blake2b, encrypt_and_sign
 from src.common.db_keys  import KeyList, KeySet
 from src.common.encoding import int_to_bytes
 from src.common.misc     import ensure_dir
-from src.common.statics  import *
+from src.common.statics  import (DIR_USER_DATA, INITIAL_HARAC, KDB_ADD_ENTRY_HEADER, KDB_CHANGE_MASTER_KEY_HEADER,
+                                 KDB_REMOVE_ENTRY_HEADER, KDB_UPDATE_SIZE_HEADER, KEYSET_LENGTH, LOCAL_ID, LOCAL_PUBKEY,
+                                 POLY1305_TAG_LENGTH, RX, SYMMETRIC_KEY_LENGTH, TX, XCHACHA20_NONCE_LENGTH)
 
 from tests.mock_classes import create_keyset, MasterKey, nick_to_pub_key, Settings
 from tests.utils        import cd_unit_test, cleanup, tamper_file

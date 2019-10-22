@@ -28,7 +28,8 @@ from unittest.mock import MagicMock
 
 from src.common.db_masterkey import MasterKey
 from src.common.misc         import ensure_dir
-from src.common.statics      import *
+from src.common.statics      import (DIR_USER_DATA, MASTERKEY_DB_SIZE, PASSWORD_MIN_BIT_STRENGTH,
+                                     SYMMETRIC_KEY_LENGTH, TX)
 
 from tests.utils import cd_unit_test, cleanup
 

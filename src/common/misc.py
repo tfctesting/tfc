@@ -37,7 +37,11 @@ from typing          import Any, Callable, Dict, Iterator, List, Optional, Tuple
 from multiprocessing import Process
 
 from src.common.reed_solomon import RSCodec
-from src.common.statics      import *
+from src.common.statics      import (BAUDS_PER_BYTE, COMMAND_LENGTH, CURSOR_UP_ONE_LINE, DIR_RECV_FILES, DIR_USER_DATA,
+                                     DUMMY_CONTACT, DUMMY_GROUP, DUMMY_MEMBER, ECDHE, EVENT, EXIT, EXIT_QUEUE, LOCAL_ID,
+                                     LOCAL_PUBKEY, ME, ONION_ADDRESS_CHECKSUM_ID, ONION_ADDRESS_CHECKSUM_LENGTH,
+                                     ONION_ADDRESS_LENGTH, ONION_SERVICE_PUBLIC_KEY_LENGTH, PACKET_LENGTH,
+                                     PADDING_LENGTH, POWEROFF, PSK, RX, TAILS, TX, WIPE)
 
 if typing.TYPE_CHECKING:
     from multiprocessing        import Queue

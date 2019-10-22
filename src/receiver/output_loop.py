@@ -28,7 +28,9 @@ from typing import Any, Dict, List, Tuple
 
 from src.common.exceptions import FunctionReturn
 from src.common.output     import clear_screen
-from src.common.statics    import *
+from src.common.statics    import (COMMAND_DATAGRAM_HEADER, EXIT_QUEUE, FILE_DATAGRAM_HEADER, LOCAL_KEY_DATAGRAM_HEADER,
+                                   MESSAGE_DATAGRAM_HEADER, ONION_SERVICE_PUBLIC_KEY_LENGTH, UNIT_TEST_QUEUE,
+                                   WIN_UID_FILE)
 
 from src.receiver.commands      import process_command
 from src.receiver.files         import new_file, process_file

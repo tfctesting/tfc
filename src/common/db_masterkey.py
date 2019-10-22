@@ -33,8 +33,11 @@ from src.common.exceptions import CriticalError, graceful_exit
 from src.common.input      import pwd_prompt
 from src.common.misc       import ensure_dir, separate_headers
 from src.common.output     import clear_screen, m_print, phase, print_on_previous_line
-from src.common.statics    import *
 from src.common.word_list  import eff_wordlist
+from src.common.statics    import (ARGON2_MIN_MEMORY_COST, ARGON2_MIN_PARALLELISM, ARGON2_MIN_TIME_COST,
+                                   ARGON2_SALT_LENGTH, BLAKE2_DIGEST_LENGTH, DIR_USER_DATA, DONE,
+                                   ENCODED_INTEGER_LENGTH, GENERATE, MASTERKEY_DB_SIZE, MAX_KEY_DERIVATION_TIME,
+                                   MIN_KEY_DERIVATION_TIME, PASSWORD_MIN_BIT_STRENGTH, RESET)
 
 
 class MasterKey(object):

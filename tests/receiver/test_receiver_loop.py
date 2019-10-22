@@ -28,7 +28,9 @@ from multiprocessing import Queue
 
 from src.common.encoding     import int_to_bytes
 from src.common.reed_solomon import RSCodec
-from src.common.statics      import *
+from src.common.statics      import (COMMAND_DATAGRAM_HEADER, FILE_DATAGRAM_HEADER, GATEWAY_QUEUE,
+                                     LOCAL_KEY_DATAGRAM_HEADER, MESSAGE_DATAGRAM_HEADER,
+                                     ONION_SERVICE_PUBLIC_KEY_LENGTH)
 
 from src.receiver.receiver_loop import receiver_loop
 

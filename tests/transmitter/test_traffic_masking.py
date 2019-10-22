@@ -22,7 +22,8 @@ along with TFC. If not, see <https://www.gnu.org/licenses/>.
 import time
 import unittest
 
-from src.common.statics import *
+from src.common.statics import (C_N_HEADER, PADDING_LENGTH, PLACEHOLDER_DATA, TM_NOISE_COMMAND_QUEUE,
+                                TM_NOISE_PACKET_QUEUE, TRAFFIC_MASKING)
 
 from src.transmitter.traffic_masking import HideRunTime, noise_loop
 

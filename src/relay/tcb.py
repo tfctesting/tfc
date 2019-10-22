@@ -29,7 +29,13 @@ from src.common.encoding   import int_to_bytes, b85encode
 from src.common.exceptions import FunctionReturn
 from src.common.misc       import ignored, separate_header, split_byte_string
 from src.common.output     import rp_print
-from src.common.statics    import *
+from src.common.statics    import (COMMAND_DATAGRAM_HEADER, DATAGRAM_HEADER_LENGTH, DST_COMMAND_QUEUE,
+                                   DST_MESSAGE_QUEUE, ENCODED_INTEGER_LENGTH, FILE_DATAGRAM_HEADER, F_TO_FLASK_QUEUE,
+                                   GATEWAY_QUEUE, GROUP_ID_LENGTH, GROUP_MSG_EXIT_GROUP_HEADER, GROUP_MSG_INVITE_HEADER,
+                                   GROUP_MSG_JOIN_HEADER, GROUP_MSG_MEMBER_ADD_HEADER, GROUP_MSG_MEMBER_REM_HEADER,
+                                   LOCAL_KEY_DATAGRAM_HEADER, MESSAGE_DATAGRAM_HEADER, M_TO_FLASK_QUEUE,
+                                   ONION_SERVICE_PUBLIC_KEY_LENGTH, ORIGIN_USER_HEADER, PUBLIC_KEY_DATAGRAM_HEADER,
+                                   SRC_TO_RELAY_QUEUE, UNENCRYPTED_DATAGRAM_HEADER, UNIT_TEST_QUEUE)
 
 if typing.TYPE_CHECKING:
     from datetime           import datetime

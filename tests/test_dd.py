@@ -28,8 +28,10 @@ from multiprocessing import Queue
 from unittest        import mock
 from unittest.mock   import MagicMock
 
-from src.common.statics import *
-from dd                 import animate, draw_frame, main, process_arguments, rx_loop, tx_loop
+from src.common.statics import (DATA_FLOW, DST_LISTEN_SOCKET, EXIT, EXIT_QUEUE, IDLE,
+                                NCDCLR, NCDCRL, RP_LISTEN_SOCKET, SCNCLR, SCNCRL)
+
+from dd import animate, draw_frame, main, process_arguments, rx_loop, tx_loop
 
 from tests.utils import tear_queue, TFCTestCase
 

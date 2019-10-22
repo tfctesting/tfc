@@ -31,7 +31,10 @@ from src.common.encoding   import b58encode, pub_key_to_onion_address, pub_key_t
 from src.common.exceptions import FunctionReturn
 from src.common.misc       import get_terminal_width
 from src.common.output     import clear_screen, m_print, print_on_previous_line
-from src.common.statics    import *
+from src.common.statics    import (BOLD_ON, EVENT, FILE, FILE_TRANSFER_INDENT, GROUP_ID_LENGTH, GROUP_MSG_ID_LENGTH, ME,
+                                   NORMAL_TEXT, ONION_SERVICE_PUBLIC_KEY_LENGTH, ORIGIN_CONTACT_HEADER,
+                                   ORIGIN_USER_HEADER, WIN_TYPE_COMMAND, WIN_TYPE_CONTACT, WIN_TYPE_FILE,
+                                   WIN_TYPE_GROUP, WIN_UID_FILE, WIN_UID_LOCAL)
 
 if typing.TYPE_CHECKING:
     from src.common.db_contacts import Contact, ContactList

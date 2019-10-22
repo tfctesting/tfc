@@ -26,7 +26,9 @@ import struct
 from datetime import datetime
 from typing   import List, Union
 
-from src.common.statics import *
+from src.common.statics import (B58_ALPHABET, B58_CHECKSUM_LENGTH, MAINNET_HEADER, ONION_ADDRESS_CHECKSUM_ID,
+                                ONION_ADDRESS_CHECKSUM_LENGTH, ONION_SERVICE_VERSION, ONION_SERVICE_VERSION_LENGTH,
+                                PADDING_LENGTH, TESTNET_HEADER, TRUNC_ADDRESS_LENGTH)
 
 
 def sha256d(message: bytes) -> bytes:

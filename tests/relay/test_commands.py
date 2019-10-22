@@ -28,7 +28,11 @@ from unittest import mock
 from unittest.mock import MagicMock
 
 from src.common.encoding import int_to_bytes
-from src.common.statics  import *
+from src.common.statics  import (CLEAR_ENTIRE_SCREEN, CONTACT_MGMT_QUEUE, CURSOR_LEFT_UP_CORNER, C_REQ_MGMT_QUEUE,
+                                 C_REQ_STATE_QUEUE, EXIT, GROUP_MGMT_QUEUE, LOCAL_TESTING_PACKET_DELAY,
+                                 ONION_CLOSE_QUEUE, ONION_KEY_QUEUE, ONION_SERVICE_PRIVATE_KEY_LENGTH,
+                                 RP_ADD_CONTACT_HEADER, RP_REMOVE_CONTACT_HEADER, SRC_TO_RELAY_QUEUE,
+                                 UNENCRYPTED_SCREEN_CLEAR, WIPE)
 
 from src.relay.commands import add_contact, add_onion_data, change_baudrate, change_ec_ratio, clear_windows, exit_tfc
 from src.relay.commands import manage_contact_req, process_command, race_condition_delay, relay_command, remove_contact

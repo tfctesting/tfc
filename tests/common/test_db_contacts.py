@@ -25,7 +25,10 @@ import unittest
 from src.common.crypto      import encrypt_and_sign
 from src.common.db_contacts import Contact, ContactList
 from src.common.misc        import ensure_dir
-from src.common.statics     import *
+from src.common.statics     import (CLEAR_ENTIRE_SCREEN, CONTACT_LENGTH, CURSOR_LEFT_UP_CORNER, DIR_USER_DATA, ECDHE,
+                                    FINGERPRINT_LENGTH, KEX_STATUS_HAS_RX_PSK, KEX_STATUS_LOCAL_KEY, KEX_STATUS_NONE,
+                                    KEX_STATUS_NO_RX_PSK, KEX_STATUS_PENDING, KEX_STATUS_UNVERIFIED,
+                                    KEX_STATUS_VERIFIED, LOCAL_ID, POLY1305_TAG_LENGTH, PSK, XCHACHA20_NONCE_LENGTH)
 
 from tests.mock_classes import create_contact, MasterKey, Settings
 from tests.utils        import cd_unit_test, cleanup, nick_to_onion_address, nick_to_pub_key, tamper_file, TFCTestCase

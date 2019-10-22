@@ -27,7 +27,8 @@ from src.common.db_contacts import Contact, ContactList
 from src.common.db_groups   import Group, GroupList
 from src.common.encoding    import b58encode
 from src.common.misc        import ensure_dir
-from src.common.statics     import *
+from src.common.statics     import (DIR_USER_DATA, GROUP_DB_HEADER_LENGTH, GROUP_ID_LENGTH, GROUP_STATIC_LENGTH,
+                                    ONION_SERVICE_PUBLIC_KEY_LENGTH, POLY1305_TAG_LENGTH, XCHACHA20_NONCE_LENGTH)
 
 from tests.mock_classes import create_contact, group_name_to_group_id, MasterKey, nick_to_pub_key, Settings
 from tests.utils        import cd_unit_test, cleanup, tamper_file, TFCTestCase

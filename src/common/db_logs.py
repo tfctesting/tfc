@@ -34,7 +34,12 @@ from src.common.encoding   import b58encode, bytes_to_bool, bytes_to_timestamp, 
 from src.common.exceptions import CriticalError, FunctionReturn
 from src.common.misc       import ensure_dir, get_terminal_width, ignored, separate_header, separate_headers
 from src.common.output     import clear_screen
-from src.common.statics    import *
+from src.common.statics    import (ASSEMBLY_PACKET_HEADER_LENGTH, DIR_USER_DATA, GROUP_ID_LENGTH, GROUP_MESSAGE_HEADER,
+                                   GROUP_MSG_ID_LENGTH, LOGFILE_MASKING_QUEUE, LOG_ENTRY_LENGTH, LOG_PACKET_QUEUE,
+                                   LOG_SETTING_QUEUE, MESSAGE, MESSAGE_HEADER_LENGTH, ONION_SERVICE_PUBLIC_KEY_LENGTH,
+                                   ORIGIN_HEADER_LENGTH, ORIGIN_USER_HEADER, PLACEHOLDER_DATA, PRIVATE_MESSAGE_HEADER,
+                                   P_N_HEADER, RX, TIMESTAMP_LENGTH, TRAFFIC_MASKING_QUEUE, TX, UNIT_TEST_QUEUE,
+                                   WHISPER_FIELD_LENGTH, WIN_TYPE_CONTACT, WIN_TYPE_GROUP)
 
 from src.receiver.packet  import PacketList
 from src.receiver.windows import RxWindow

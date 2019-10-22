@@ -32,7 +32,16 @@ from src.common.exceptions   import FunctionReturn
 from src.common.input        import ask_confirmation_code, get_b58_key, nc_bypass_msg, yes
 from src.common.output       import m_print, phase, print_fingerprint, print_key, print_on_previous_line
 from src.common.path         import ask_path_gui
-from src.common.statics      import *
+from src.common.statics      import (ARGON2_PSK_MEMORY_COST, ARGON2_PSK_PARALLELISM, ARGON2_PSK_TIME_COST,
+                                     B58_PUBLIC_KEY, CONFIRM_CODE_LENGTH, DONE, ECDHE, FINGERPRINT, FINGERPRINT_LENGTH,
+                                     HEADER_KEY, KDB_ADD_ENTRY_HEADER, KEX_STATUS_HAS_RX_PSK, KEX_STATUS_LOCAL_KEY,
+                                     KEX_STATUS_NO_RX_PSK, KEX_STATUS_PENDING, KEX_STATUS_UNVERIFIED,
+                                     KEX_STATUS_VERIFIED, KEY_EX_ECDHE, KEY_EX_PSK_RX, KEY_EX_PSK_TX,
+                                     KEY_MANAGEMENT_QUEUE, LOCAL_KEY_DATAGRAM_HEADER, LOCAL_KEY_RDY, LOCAL_NICK,
+                                     LOCAL_PUBKEY, MESSAGE_KEY, NC_BYPASS_START, NC_BYPASS_STOP,
+                                     PUBLIC_KEY_DATAGRAM_HEADER, RELAY_PACKET_QUEUE, RESET, SYMMETRIC_KEY_LENGTH,
+                                     TFC_PUBLIC_KEY_LENGTH, UNENCRYPTED_DATAGRAM_HEADER, UNENCRYPTED_ONION_SERVICE_DATA,
+                                     WIN_TYPE_GROUP)
 
 from src.transmitter.packet import queue_command, queue_to_nc
 

@@ -41,7 +41,8 @@ from stem.control import Controller
 from src.common.encoding   import pub_key_to_onion_address
 from src.common.exceptions import CriticalError
 from src.common.output     import m_print, rp_print
-from src.common.statics    import *
+from src.common.statics    import (EXIT_QUEUE, ONION_CLOSE_QUEUE, ONION_KEY_QUEUE, ONION_SERVICE_PRIVATE_KEY_LENGTH,
+                                   TOR_CONTROL_PORT, TOR_DATA_QUEUE, TOR_SOCKS_PORT)
 
 if typing.TYPE_CHECKING:
     from multiprocessing import Queue

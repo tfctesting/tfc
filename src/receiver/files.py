@@ -32,7 +32,8 @@ from src.common.encoding   import bytes_to_str
 from src.common.exceptions import FunctionReturn
 from src.common.misc       import decompress, ensure_dir, separate_headers, separate_trailer
 from src.common.output     import phase, print_on_previous_line
-from src.common.statics    import *
+from src.common.statics    import (DIR_RECV_FILES, DONE, ONION_SERVICE_PUBLIC_KEY_LENGTH, ORIGIN_HEADER_LENGTH,
+                                   PADDED_UTF32_STR_LENGTH, SYMMETRIC_KEY_LENGTH, US_BYTE)
 
 if typing.TYPE_CHECKING:
     from datetime               import datetime

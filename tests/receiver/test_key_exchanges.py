@@ -32,7 +32,9 @@ from unittest.mock import MagicMock
 from src.common.crypto     import argon2_kdf, encrypt_and_sign
 from src.common.encoding   import b58encode, str_to_bytes
 from src.common.exceptions import FunctionReturn
-from src.common.statics    import *
+from src.common.statics    import (ARGON2_SALT_LENGTH, BOLD_ON, CLEAR_ENTIRE_SCREEN, CONFIRM_CODE_LENGTH,
+                                   CURSOR_LEFT_UP_CORNER, FINGERPRINT_LENGTH, LOCAL_ID, NORMAL_TEXT, PSK_FILE_SIZE,
+                                   SYMMETRIC_KEY_LENGTH, WIN_TYPE_CONTACT, WIN_UID_LOCAL, XCHACHA20_NONCE_LENGTH)
 
 from src.receiver.key_exchanges import key_ex_ecdhe, key_ex_psk_rx, key_ex_psk_tx, local_key_rdy, process_local_key
 
@@ -60,7 +62,7 @@ class TestProcessLocalKey(TFCTestCase):
         self.hek           = os.urandom(SYMMETRIC_KEY_LENGTH)
         self.conf_code     = os.urandom(CONFIRM_CODE_LENGTH)
         self.packet        = encrypt_and_sign(self.key + self.hek + self.conf_code, key=self.kek)
-        self.args          = (self.window_list, self.contact_list, self.key_list, self.settings, 
+        self.args          = (self.window_list, self.contact_list, self.key_list, self.settings,
                               self.kdk_hashes, self.packet_hashes, self.l_queue)
 
     def tearDown(self):

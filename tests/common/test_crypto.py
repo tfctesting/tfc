@@ -40,7 +40,11 @@ from cryptography.hazmat.primitives.serialization   import Encoding, NoEncryptio
 
 from src.common.crypto  import argon2_kdf, auth_and_decrypt, blake2b, byte_padding, check_kernel_version, csprng
 from src.common.crypto  import encrypt_and_sign, rm_padding_bytes, X448
-from src.common.statics import *
+from src.common.statics import (ARGON2_MIN_MEMORY_COST, ARGON2_MIN_PARALLELISM, ARGON2_MIN_TIME_COST,
+                                ARGON2_SALT_LENGTH, BLAKE2_DIGEST_LENGTH, BLAKE2_DIGEST_LENGTH_MAX,
+                                BLAKE2_DIGEST_LENGTH_MIN, BLAKE2_KEY_LENGTH_MAX, BLAKE2_PERSON_LENGTH_MAX,
+                                BLAKE2_SALT_LENGTH_MAX, PADDING_LENGTH, SYMMETRIC_KEY_LENGTH, TFC_PRIVATE_KEY_LENGTH,
+                                TFC_PUBLIC_KEY_LENGTH, XCHACHA20_NONCE_LENGTH)
 
 from tests.utils import cd_unit_test, cleanup
 

@@ -25,7 +25,7 @@ from unittest      import mock
 from unittest.mock import MagicMock
 
 from src.common.crypto  import blake2b
-from src.common.statics import *
+from src.common.statics import CONFIRM_CODE_LENGTH
 
 from src.transmitter.input_loop import input_loop
 

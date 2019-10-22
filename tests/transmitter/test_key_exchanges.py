@@ -26,7 +26,11 @@ from unittest import mock
 
 from src.common.crypto   import blake2b
 from src.common.encoding import b58encode
-from src.common.statics  import *
+from src.common.statics  import (COMMAND_PACKET_QUEUE, CONFIRM_CODE_LENGTH, ECDHE, FINGERPRINT_LENGTH,
+                                 KDB_ADD_ENTRY_HEADER, KEX_STATUS_HAS_RX_PSK, KEX_STATUS_NO_RX_PSK, KEX_STATUS_PENDING,
+                                 KEX_STATUS_UNVERIFIED, KEX_STATUS_VERIFIED, KEY_MANAGEMENT_QUEUE, LOCAL_ID, LOCAL_NICK,
+                                 LOCAL_PUBKEY, RELAY_PACKET_QUEUE, SYMMETRIC_KEY_LENGTH, TFC_PUBLIC_KEY_LENGTH,
+                                 WIN_TYPE_CONTACT, WIN_TYPE_GROUP, XCHACHA20_NONCE_LENGTH)
 
 from src.transmitter.key_exchanges import create_pre_shared_key, export_onion_service_data, new_local_key
 from src.transmitter.key_exchanges import rxp_load_psk, start_key_exchange, verify_fingerprints
@@ -148,7 +152,7 @@ class TestKeyExchange(TFCTestCase):
     @mock.patch('shutil.get_terminal_size', return_value=[200, 200])
     @mock.patch('builtins.input',           return_value=b58encode((TFC_PUBLIC_KEY_LENGTH-1)*b'a', public_key=True))
     def test_invalid_public_key_length_raises_fr(self, *_):
-        self.assert_fr("Error: Invalid public key length", 
+        self.assert_fr("Error: Invalid public key length",
                        start_key_exchange, nick_to_pub_key("Alice"), 'Alice', *self.args)
 
     @mock.patch('builtins.input', side_effect=['',                              # Empty message should resend key
@@ -333,7 +337,7 @@ class TestReceiverLoadPSK(TFCTestCase):
         # Test
         self.assert_fr(f"Error: The current key was exchanged with {ECDHE}.",
                        rxp_load_psk, window, contact_list, *self.args)
-    
+
     @mock.patch('src.transmitter.key_exchanges.ARGON2_PSK_MEMORY_COST', 1000)
     @mock.patch('src.transmitter.key_exchanges.ARGON2_PSK_TIME_COST',   0.01)
     @mock.patch('time.sleep',     return_value=None)
