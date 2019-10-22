@@ -400,7 +400,9 @@ function install_developer {
 
     torsocks git clone https://github.com/tfctesting/tfc.git $HOME/tfc
 
+    sudo torsocks python3.7 -m pip install -r $HOME/tfc/requirements-venv.txt --require-hashes
     torsocks python3.7 -m pip install -r $HOME/tfc/requirements-venv.txt --require-hashes
+
     python3.7 -m virtualenv $HOME/tfc/venv_tfc --system-site-packages
 
     . $HOME/tfc/venv_tfc/bin/activate
