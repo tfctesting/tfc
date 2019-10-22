@@ -8,28 +8,36 @@ pytest-xdist
 
 # TFC dependencies (note: not authenticated with hashes)
 
+# pyserial
 pyserial
 
+# argon2_cffi
 argon2_cffi
 cffi
 pycparser
 six
 
+# pyca/pynacl
 PyNaCl
 setuptools
 
+# pyca/cryptography
 cryptography
 
+# Stem
 stem
 
+# PySocks
 pysocks
 
+# Requests
 requests
 certifi
 chardet
 idna
 urllib3
 
+# Flask
 flask
 click
 itsdangerous
