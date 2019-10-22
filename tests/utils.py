@@ -195,7 +195,7 @@ def assembly_packet_creator(
                             message_key:     bytes    = None,               # Allows choosing the message key to encrypt message with
                             header_key:      bytes    = None,               # Allows choosing the header key for hash ratchet encryption
                             tamper_harac:    bool     = False,              # When True, tampers with the MAC of encrypted harac
-                            tamper_message:  bool     = False,              # When True, tampers with the MAC of encrypted messagae
+                            tamper_message:  bool     = False,              # When True, tampers with the MAC of encrypted message
                             onion_pub_key:   bytes    = b'',                # Defines the contact public key to use with datagram creation
                             origin_header:   bytes    = b'',                # Allows editing the origin header
                             ) -> List[bytes]:
