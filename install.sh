@@ -22,7 +22,8 @@ CERTIFI=certifi-2019.9.11-py2.py3-none-any.whl
 CFFI=cffi-1.13.1-cp37-cp37m-manylinux1_x86_64.whl
 CHARDET=chardet-3.0.4-py2.py3-none-any.whl
 CLICK=Click-7.0-py2.py3-none-any.whl
-CRYPTOGRAPHY=cryptography-2.8-cp34-abi3-manylinux1_x86_64.whl
+CRYPTOGRAPHY=cryptography-2.8-cp34-abi3-manylinux1_x86_64.whl     # manylinux1
+# CRYPTOGRAPHY=cryptography-2.8-cp34-abi3-manylinux2010_x86_64.whl  # manylinux2010
 FLASK=Flask-1.1.1-py2.py3-none-any.whl
 IDNA=idna-2.8-py2.py3-none-any.whl
 ITSDANGEROUS=itsdangerous-1.1.0-py2.py3-none-any.whl
@@ -56,7 +57,7 @@ function compare_digest {
 function verify_tcb_requirements_files {
     # To minimize the time TCB installer configuration stays online, only
     # the requirements files are authenticated between downloads.
-    compare_digest fda79e90f90c0bcec5bed194d787d1370de9779ce3c9cbe82f17d09bcbf47e3ab25a97d67951d8b8a7e2cf1db1ad2dd2d883e7f46b909cf2f962c3a6f261df8b '' requirements.txt
+    compare_digest c29a8dffcc38d605dcbd485265c9d71215247316ffc50a7a12f1e3f30bd6509d1a75a58d17f0a721771e585653cbbf922fbdc2237fbf06e69c96c6b8c40c018f '' requirements.txt
     compare_digest 97558ed189976ccd54e3a25bcf639f1944aa43f4a4f42ff5ef2cf22349a7b649272e91746041b4e04b2f33adf1fab8818c339b1cc58f9353af3e5ac76cb1ec0b '' requirements-venv.txt
 }
 
@@ -68,7 +69,7 @@ function verify_files {
     compare_digest 7e519d20fef24e25e88ec4a9c03abadf513b084e05038f17c62ca7899c2f9174a953caa0bfbd3b61e455e243513cdab737c22a34d73ebab07b65d3ce99100f0a '' LICENSE-3RD-PARTY
     compare_digest 99815d0cfbca7d83409b7317947fe940fe93fd94b50e6099a566563ee6999e33830fd883ff61e5367a040d5fda3f2a43165ef0dc6155e14a573e07dc27eba70d '' relay.py
     compare_digest 2865708ab24c3ceeaf0a6ec382fb7c331fdee52af55a111c1afb862a336dd757d597f91b94267da009eb74bbc77d01bf78824474fa6f0aa820cd8c62ddb72138 '' requirements-dev.txt
-    compare_digest 1e77b356754c7050ad608b94609e8724899c2f7480aea3f6047f0e097a5dd01acc0089d6d85512c3cef0ba51878bf941a6962cc3ec17e1e5d68d1b129a05c799 '' requirements-relay.txt
+    compare_digest 08595613f740c99fecba5b0de29c45b929b2a729dfb321fea5df878d5075cbc24ff576b17cb2bedc5686d230cf27cab4ec6db15399cec2073b307b548b223b3f '' requirements-relay.txt
     compare_digest 052b4d2dddd1c55aedc121c44bd0a0fc362f556816729f80361b23fe36050c54f8566abd7aa21b028d33fea512de190be60afb5548744cbdb33cd1301ace380a '' requirements-relay-tails.txt
     compare_digest 4a44501e21d463ff8569a1665b75c2e4d8de741d445dc3e442479cbb7282646045129233bd7313df4b9c2e64ec86b7615a8196ae2b3350de933731926d39bbda '' requirements-setuptools.txt
     compare_digest 79f8272a2ab122a48c60630c965cd9d000dcafabf5ee9d69b1c33c58ec321feb17e4654dbbbf783cc8868ccdfe2777d60c6c3fc9ef16f8264d9fcf43724e83c2 '' tfc.png
@@ -246,7 +247,9 @@ function verify_tails_dependencies {
     compare_digest 326574c7542110d2cd8071136a36a6cffc7637ba948b55e0abb7f30f3821843073223301ecbec1d48b8361b0d7ccb338725eeb0424696efedc3f6bd2a23331d3 '' ${SIX}
     compare_digest 7f830e1c9066ee2d297a55e2bf6db4bf6447b6d9da0145d11a88c3bb98505755fb7986eafa6e06ae0b7680838f5e5d6a6d188245ca5ad45c2a727587bac93ab5 '' ${PYCPARSER}
     compare_digest fdefd3f63f56adff50723d6a88dc6db816d3d8a31b563599d2a3633ba796f6f70d5a9430510852b3d62b97357f8764f17eeab74b13df16c7cc34e1671a82373b '' ${CFFI}
-    compare_digest d8ddabe127ae8d7330d219e284de68b37fa450a27b4cf05334e9115388295b00148d9861c23b1a2e5ea9df0c33a2d27f3e4b25ce9abd3c334f1979920b19c902 '' ${CRYPTOGRAPHY}
+    compare_digest 184003c89fee74892de25c3e5ec366faea7a5f1fcca3c82b0d5e5f9f797286671a820ca54da5266d6f879ab342c97e25bce9db366c5fb1178690cd5978d4d622 '' ${CRYPTOGRAPHY}  # manylinux1
+    # compare_digest d8ddabe127ae8d7330d219e284de68b37fa450a27b4cf05334e9115388295b00148d9861c23b1a2e5ea9df0c33a2d27f3e4b25ce9abd3c334f1979920b19c902 '' ${CRYPTOGRAPHY}  # manylinux2010
+
 
     # PyNaCl
     compare_digest c4017c38b026a5c531b15839b8d61d1fae9907ba1960c2f97f4cd67fe0827729346d5186a6d6927ba84f64b4cbfdece12b287aa7750a039f4160831be871cea3 '' ${PYNACL}
