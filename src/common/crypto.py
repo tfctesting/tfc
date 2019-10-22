@@ -48,9 +48,7 @@ from cryptography.hazmat.primitives.serialization   import Encoding, PublicForma
 
 from src.common.exceptions import CriticalError
 from src.common.misc       import separate_header
-from src.common.statics    import ARGON2_SALT_LENGTH, BITS_PER_BYTE, BLAKE2_DIGEST_LENGTH, BLAKE2_DIGEST_LENGTH_MAX
-from src.common.statics    import BLAKE2_DIGEST_LENGTH_MIN, PADDING_LENGTH, SYMMETRIC_KEY_LENGTH, TFC_PUBLIC_KEY_LENGTH
-from src.common.statics    import X448_SHARED_SECRET_LENGTH, XCHACHA20_NONCE_LENGTH
+from src.common.statics    import *
 
 
 def blake2b(message:     bytes,                        # Message to hash
