@@ -1,5 +1,5 @@
 # Static type checking tool
-mypy
+mypy>=0.740
 
 # Unit test tools
 pytest>=5.2.1
