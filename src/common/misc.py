@@ -186,23 +186,39 @@ def monitor_processes(process_list:       List[Process],
             time.sleep(0.1)
 
             if not all([p.is_alive() for p in process_list]):
+                print("not all alive")
                 for p in process_list:
+                    print("terminated a process")
                     p.terminate()
+                print("exiting")
                 sys.exit(error_exit_code)
 
             if queues[EXIT_QUEUE].qsize() > 0:
                 command = queues[EXIT_QUEUE].get()
+                print("3 got")
+                print(command)
 
                 for p in process_list:
                     p.terminate()
 
+                print("Terminated procs")
+
                 if command == EXIT:
+                    print("was exit")
                     sys.exit(0)
 
+                print("was not exit")
+
                 if command == WIPE:
+                    print("was wipe")
                     with open('/etc/os-release') as f:
                         data = f.read()
+                    print("data in file was")
+                    print(data)
                     if TAILS not in data:
+                        print(TAILS)
+                        print("not in")
+                        print(data)
                         if software_operation == RX:
                             subprocess.Popen("find {} -type f -exec shred -n 3 -z -u {{}} \\;"
                                              .format(DIR_RECV_FILES), shell=True).wait()
@@ -210,12 +226,15 @@ def monitor_processes(process_list:       List[Process],
                         subprocess.Popen("find {} -name '{}*' -type f -exec shred -n 3 -z -u {{}} \\;"
                                          .format(DIR_USER_DATA, software_operation), shell=True).wait()
 
+                        print("removing dirs")
                         for d in [DIR_USER_DATA, DIR_RECV_FILES]:
                             with ignored(FileNotFoundError):
                                 shutil.rmtree(d)
 
+                    print("executing poweroff")
+                    print(POWEROFF)
                     os.system(POWEROFF)
-
+                    print("executed poweroff")
 
 def process_arguments() -> Tuple[str, bool, bool]:
     """Load program-specific settings from command line arguments.

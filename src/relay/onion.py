@@ -41,8 +41,8 @@ from stem.control import Controller
 from src.common.encoding   import pub_key_to_onion_address
 from src.common.exceptions import CriticalError
 from src.common.output     import m_print, rp_print
-from src.common.statics    import (EXIT_QUEUE, ONION_CLOSE_QUEUE, ONION_KEY_QUEUE, ONION_SERVICE_PRIVATE_KEY_LENGTH,
-                                   TOR_CONTROL_PORT, TOR_DATA_QUEUE, TOR_SOCKS_PORT)
+from src.common.statics    import (EXIT, EXIT_QUEUE, ONION_CLOSE_QUEUE, ONION_KEY_QUEUE,
+                                   ONION_SERVICE_PRIVATE_KEY_LENGTH, TOR_CONTROL_PORT, TOR_DATA_QUEUE, TOR_SOCKS_PORT)
 
 if typing.TYPE_CHECKING:
     from multiprocessing import Queue
@@ -235,10 +235,14 @@ def onion_service(queues: Dict[bytes, 'Queue[Any]']) -> None:
 
             if queues[ONION_CLOSE_QUEUE].qsize() > 0:
                 command = queues[ONION_CLOSE_QUEUE].get()
-                if not tor.platform_is_tails():
+                print(f"2 command is")
+                print(command)
+                if not tor.platform_is_tails() and command == EXIT:
                     tor.controller.remove_hidden_service(response.service_id)
                     tor.stop()
+                print("2 putting")
                 queues[EXIT_QUEUE].put(command)
+                print("2 putted")
                 break
 
         except (EOFError, KeyboardInterrupt):
