@@ -2,9 +2,9 @@
 mypy
 
 # Unit test tools
-pytest
-pytest-cov
-pytest-xdist
+pytest>=5.2.1
+pytest-cov>=2.8.1
+pytest-xdist>=1.30.0
 
 # TFC dependencies (note: not authenticated with hashes)
 
