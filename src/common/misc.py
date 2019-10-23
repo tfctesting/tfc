@@ -200,7 +200,9 @@ def monitor_processes(process_list:       List[Process],
                     sys.exit(0)
 
                 if command == WIPE:
-                    if TAILS not in subprocess.check_output('lsb_release -a', shell=True):
+                    with open('/etc/os-release') as f:
+                        data = f.read()
+                    if 'TAILS_PRODUCT_NAME="Tails"' not in data:
                         if software_operation == RX:
                             subprocess.Popen("find {} -type f -exec shred -n 3 -z -u {{}} \\;"
                                              .format(DIR_RECV_FILES), shell=True).wait()

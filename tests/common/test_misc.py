@@ -225,13 +225,13 @@ class TestMonitorProcesses(TFCTestCase):
             monitor_processes(process_list, RX, queues)
         self.assertFalse(os.path.isdir(DIR_USER_DATA))
         self.assertFalse(os.path.isdir(DIR_RECV_FILES))
-        mock_os_system.assert_called_with('poweroff')
+        mock_os_system.assert_called_with('systemctl poweroff')
 
         tear_queues(queues)
 
     @mock.patch('time.sleep', return_value=None)
     @mock.patch('os.system', return_value=None)
-    @mock.patch('subprocess.check_output', lambda *popenargs, timeout=None, **kwargs: TAILS)
+    @mock.patch('builtins.open', mock.mock_open(read_data='TAILS_PRODUCT_NAME="Tails"'))
     def test_wipe_tails(self, mock_os_system, *_):
         queues       = gen_queue_dict()
         process_list = [Process(target=self.mock_process)]
@@ -251,7 +251,7 @@ class TestMonitorProcesses(TFCTestCase):
         with self.assertRaises(SystemExit):
             monitor_processes(process_list, RX, queues)
 
-        mock_os_system.assert_called_with('poweroff')
+        mock_os_system.assert_called_with('systemctl poweroff')
 
         # Test that user data wasn't removed
         self.assertTrue(os.path.isdir(DIR_USER_DATA))

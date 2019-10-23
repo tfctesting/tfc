@@ -235,8 +235,9 @@ def onion_service(queues: Dict[bytes, 'Queue[Any]']) -> None:
 
             if queues[ONION_CLOSE_QUEUE].qsize() > 0:
                 command = queues[ONION_CLOSE_QUEUE].get()
-                tor.controller.remove_hidden_service(response.service_id)
-                tor.stop()
+                if not tor.platform_is_tails():
+                    tor.controller.remove_hidden_service(response.service_id)
+                    tor.stop()
                 queues[EXIT_QUEUE].put(command)
                 break
 

@@ -83,7 +83,7 @@ B58_LOCAL_KEY  = 'b58_local_key'
 
 
 """Base58 key input guides"""
-B58_PUBLIC_KEY_GUIDE = '   A       B       C       D       E       F       H       H       I       J       K       L   '
+B58_PUBLIC_KEY_GUIDE = '   A       B       C       D       E       F       G       H       I       J       K       L   '
 B58_LOCAL_KEY_GUIDE  = ' A   B   C   D   E   F   G   H   I   J   K   L   M   N   O   P   Q '
 
 
@@ -101,8 +101,9 @@ NOTIFY  = 'notify'
 """Command identifiers"""
 CLEAR    = 'clear'
 RESET    = 'reset'
-POWEROFF = 'poweroff'
+POWEROFF = 'systemctl poweroff'
 GENERATE = 'generate'
+
 
 """Contact setting management"""
 CONTACT_SETTING_HEADER_LENGTH = 2
