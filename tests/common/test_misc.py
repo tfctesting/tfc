@@ -231,7 +231,7 @@ class TestMonitorProcesses(TFCTestCase):
 
     @mock.patch('time.sleep', return_value=None)
     @mock.patch('os.system', return_value=None)
-    @mock.patch('builtins.open', mock.mock_open(read_data='TAILS_PRODUCT_NAME="Tails"'))
+    @mock.patch('builtins.open', mock.mock_open(read_data=TAILS))
     def test_wipe_tails(self, mock_os_system, *_):
         queues       = gen_queue_dict()
         process_list = [Process(target=self.mock_process)]
