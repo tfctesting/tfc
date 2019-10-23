@@ -142,9 +142,7 @@ def wipe(gateway: 'Gateway', queues: 'QueueDict') -> None:
     """
     os.system(RESET)
     race_condition_delay(gateway)
-    print("1 putting wipe")
     queues[ONION_CLOSE_QUEUE].put(WIPE)
-    print("1 putted")
 
 
 def change_ec_ratio(command: bytes, gateway: 'Gateway') -> None:

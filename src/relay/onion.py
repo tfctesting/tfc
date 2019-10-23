@@ -235,14 +235,11 @@ def onion_service(queues: Dict[bytes, 'Queue[Any]']) -> None:
 
             if queues[ONION_CLOSE_QUEUE].qsize() > 0:
                 command = queues[ONION_CLOSE_QUEUE].get()
-                print(f"2 command is")
-                print(command)
                 if not tor.platform_is_tails() and command == EXIT:
                     tor.controller.remove_hidden_service(response.service_id)
                     tor.stop()
-                print("2 putting")
                 queues[EXIT_QUEUE].put(command)
-                print("2 putted")
+                time.sleep(5)
                 break
 
         except (EOFError, KeyboardInterrupt):
