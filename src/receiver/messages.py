@@ -203,6 +203,6 @@ def process_file_key_message(assembled:     bytes,              # File decryptio
         raise FunctionReturn("Error: Received an invalid file key message.")
 
     file_keys[onion_pub_key + ct_hash] = file_key
-    nick = contact_list.get_contact_by_pub_key(onion_pub_key).nick
+    nick = contact_list.get_nick_by_pub_key(onion_pub_key)
 
     return nick

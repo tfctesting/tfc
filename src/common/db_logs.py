@@ -397,11 +397,9 @@ def remove_logs(contact_list: 'ContactList',
     os.rename(temp_name, file_name)
 
     try:
-        name = contact_list.get_contact_by_pub_key(selector).nick \
-            if contact else group_list.get_group_by_id(selector).name
+        name = contact_list.get_nick_by_pub_key(selector) if contact else group_list.get_group_by_id(selector).name
     except StopIteration:
-        name = pub_key_to_short_address(selector) \
-            if contact else b58encode(selector)
+        name = pub_key_to_short_address(selector)         if contact else b58encode(selector)
 
     action   = "Removed" if removed else "Found no"
     win_type = "contact" if contact else "group"

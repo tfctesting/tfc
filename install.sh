@@ -258,7 +258,7 @@ function verify_tails_dependencies {
 
 function install_tails_setuptools {
     # Download setuptools package for Tails and then authenticate and install it.
-    torsocks python3.7 -m pip download --no-cache-dir -r /opt/tfc/requirements-setuptools.txt  --require-hashes -d $HOME/
+    torsocks python3.7 -m pip download --no-cache-dir -r /opt/tfc/requirements-setuptools.txt --require-hashes --no-deps -d $HOME/
     t_sudo mv $HOME/${SETUPTOOLS} /opt/tfc/
     compare_digest a27b38d596931dfef81d705d05689b7748ce0e02d21af4a37204fc74b0913fa7241b8135535eb7749f09af361cad90c475af98493fef11c4ad974780ee01243d '' ${SETUPTOOLS}
     t_sudo python3.7 -m pip install /opt/tfc/${SETUPTOOLS}
@@ -306,8 +306,8 @@ function steps_before_network_kill {
     sudo torsocks git clone --depth 1 https://github.com/tfctesting/tfc.git /opt/tfc
 
     verify_tcb_requirements_files
-    sudo torsocks python3.7 -m pip download --no-cache-dir -r /opt/tfc/requirements-venv.txt --require-hashes -d /opt/tfc/
-    sudo torsocks python3.7 -m pip download --no-cache-dir -r /opt/tfc/requirements.txt      --require-hashes -d /opt/tfc/
+    sudo torsocks python3.7 -m pip download --no-cache-dir -r /opt/tfc/requirements-venv.txt --require-hashes --no-deps -d /opt/tfc/
+    sudo torsocks python3.7 -m pip download --no-cache-dir -r /opt/tfc/requirements.txt      --require-hashes --no-deps -d /opt/tfc/
 }
 
 
@@ -363,8 +363,8 @@ function install_local_test {
     sudo python3.7 -m virtualenv /opt/tfc/venv_tfc --system-site-packages
 
     . /opt/tfc/venv_tfc/bin/activate
-    sudo torsocks python3.7 -m pip install -r /opt/tfc/requirements.txt       --require-hashes
-    sudo torsocks python3.7 -m pip install -r /opt/tfc/requirements-relay.txt --require-hashes
+    sudo torsocks python3.7 -m pip install -r /opt/tfc/requirements.txt       --require-hashes --no-deps
+    sudo torsocks python3.7 -m pip install -r /opt/tfc/requirements-relay.txt --require-hashes --no-deps
     deactivate
 
     sudo mv /opt/tfc/tfc.png                                /usr/share/pixmaps/
@@ -400,7 +400,7 @@ function install_developer {
 
     torsocks git clone https://github.com/tfctesting/tfc.git $HOME/tfc
 
-    torsocks python3.7 -m pip install -r $HOME/tfc/requirements-venv.txt --require-hashes
+    torsocks python3.7 -m pip install -r $HOME/tfc/requirements-venv.txt --require-hashes --no-deps
 
     python3.7 -m virtualenv $HOME/tfc/venv_tfc --system-site-packages
 
@@ -436,7 +436,7 @@ function install_relay_ubuntu {
     sudo python3.7 -m virtualenv /opt/tfc/venv_relay --system-site-packages
 
     . /opt/tfc/venv_relay/bin/activate
-    sudo torsocks python3.7 -m pip install -r /opt/tfc/requirements-relay.txt --require-hashes
+    sudo torsocks python3.7 -m pip install -r /opt/tfc/requirements-relay.txt --require-hashes --no-deps
     deactivate
 
     sudo mv /opt/tfc/tfc.png                  /usr/share/pixmaps/
@@ -479,8 +479,8 @@ function install_relay_tails {
 
     install_tails_setuptools
 
-    torsocks python3.7 -m pip download --no-cache-dir -r /opt/tfc/requirements-venv.txt        --require-hashes -d $HOME/
-    torsocks python3.7 -m pip download --no-cache-dir -r /opt/tfc/requirements-relay-tails.txt --require-hashes -d $HOME/
+    torsocks python3.7 -m pip download --no-cache-dir -r /opt/tfc/requirements-venv.txt        --require-hashes --no-deps -d $HOME/
+    torsocks python3.7 -m pip download --no-cache-dir -r /opt/tfc/requirements-relay-tails.txt --require-hashes --no-deps -d $HOME/
 
     move_tails_dependencies
     verify_tails_dependencies
@@ -529,8 +529,8 @@ function install_relay {
 function install_virtualenv {
     # Some distros want virtualenv installed as sudo and other do
     # not. Install both to improve the chances of compatibility.
-    sudo torsocks python3.7 -m pip install -r /opt/tfc/requirements-venv.txt --require-hashes
-    torsocks python3.7 -m pip install -r /opt/tfc/requirements-venv.txt --require-hashes
+    sudo torsocks python3.7 -m pip install -r /opt/tfc/requirements-venv.txt --require-hashes --no-deps
+    torsocks python3.7 -m pip install -r /opt/tfc/requirements-venv.txt --require-hashes --no-deps
 }
 
 

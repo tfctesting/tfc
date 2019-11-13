@@ -400,6 +400,10 @@ class ContactList(Iterable[Contact], Sized):
         """
         return next(c for c in self.contacts if selector in [c.onion_address, c.nick])
 
+    def get_nick_by_pub_key(self, onion_pub_key: bytes) -> str:
+        """Return nick of contact that has a matching Onion Service public key."""
+        return next(c.nick for c in self.contacts if onion_pub_key == c.onion_pub_key)
+
     def get_list_of_contacts(self) -> List[Contact]:
         """Return list of Contact objects in `self.contacts` list."""
         return [c for c in self.contacts if c.onion_address != LOCAL_ID]
