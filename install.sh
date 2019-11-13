@@ -699,9 +699,9 @@ function arg_error {
     clear
     echo -e "\nUsage: bash install.sh [OPTION]\n"
     echo    "Mandatory arguments"
-    echo    "  tcb      Install Transmitter/Receiver Program (*buntu 19.04+)"
-    echo    "  relay    Install Relay Program                (*buntu 19.04+ / Tails (Debian Buster+))"
-    echo -e "  local    Install insecure local testing mode  (*buntu 19.04+)\n"
+    echo    "  tcb      Install Transmitter/Receiver Program (*buntu 19.10+ / Debian 10 / PureOS 9.0+ )"
+    echo    "  relay    Install Relay Program                (*buntu 19.10+ / Debian 10 / PureOS 9.0+ / Tails 4.0+)"
+    echo -e "  local    Install insecure local testing mode  (*buntu 19.10+ / Debian 10 / PureOS 9.0+ )\n"
     exit 1
 }
 
