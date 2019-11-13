@@ -27,6 +27,7 @@ from typing   import Generator, Iterable, List, Sized
 
 import nacl.signing
 
+from src.common.database     import TFCUnencryptedDatabase
 from src.common.db_contacts  import Contact
 from src.common.db_groups    import Group
 from src.common.db_keys      import KeySet
@@ -206,6 +207,7 @@ class MasterKey(OrigMasterKey):
         self.local_test = False
         self.master_key = bytes(SYMMETRIC_KEY_LENGTH)
         self.file_name  = f'{DIR_USER_DATA}{TX}_login_data'
+        self.database   = TFCUnencryptedDatabase(self.file_name)
 
         for key, value in kwargs.items():
             setattr(self, key, value)

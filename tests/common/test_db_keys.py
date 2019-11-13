@@ -22,6 +22,8 @@ along with TFC. If not, see <https://www.gnu.org/licenses/>.
 import os.path
 import unittest
 
+from unittest import mock
+
 from src.common.crypto   import blake2b, encrypt_and_sign
 from src.common.db_keys  import KeyList, KeySet
 from src.common.encoding import int_to_bytes
@@ -176,7 +178,8 @@ class TestKeyList(unittest.TestCase):
         # Test KeySet was removed
         self.assertFalse(self.keylist.has_keyset(nick_to_pub_key('Bob')))
 
-    def test_change_master_key(self):
+    @mock.patch('builtins.input', side_effect=['test_password'])
+    def test_change_master_key(self, _):
         key         = SYMMETRIC_KEY_LENGTH * b'\x01'
         master_key2 = MasterKey(master_key=key)
 

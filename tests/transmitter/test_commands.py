@@ -25,6 +25,7 @@ import unittest
 from unittest      import mock
 from unittest.mock import MagicMock
 
+from src.common.database import TFCDatabase
 from src.common.db_logs  import write_log_entry
 from src.common.encoding import bool_to_bytes
 from src.common.statics  import (BOLD_ON, CLEAR_ENTIRE_SCREEN, COMMAND_PACKET_QUEUE, CURSOR_LEFT_UP_CORNER,
@@ -277,7 +278,7 @@ class TestLogCommand(TFCTestCase):
     def test_keyboard_interrupt_raises_fr(self, *_):
         from src.common.db_masterkey import MasterKey
         self.master_key = MasterKey(operation=TX, local_test=True)
-        self.assert_fr("Log file export aborted.",
+        self.assert_fr("Authentication aborted.",
                        log_command, UserInput('export'), *self.args)
 
     @mock.patch('src.common.db_masterkey.MIN_KEY_DERIVATION_TIME', 0.1)
@@ -504,8 +505,10 @@ class TestChangeMasterKey(TFCTestCase):
         self.settings       = Settings()
         self.queues         = gen_queue_dict()
         self.master_key     = MasterKey()
+        self.file_name      = f'{DIR_USER_DATA}/unittest'
         self.onion_service  = OnionService(master_key=self.master_key,
-                                           file_name=f'{DIR_USER_DATA}/unittest')
+                                           file_name=self.file_name,
+                                           database=TFCDatabase(self.file_name, self.master_key))
         self.args           = (self.contact_list, self.group_list, self.settings,
                                self.queues, self.master_key, self.onion_service)
 
@@ -526,12 +529,13 @@ class TestChangeMasterKey(TFCTestCase):
         self.assert_fr("Error: No target-system ('tx' or 'rx') specified.",
                        change_master_key, UserInput("passwd "), *self.args)
 
-    def test_invalid_target_sys_raises_fr(self):
+    @mock.patch('getpass.getpass', return_value='test_password')
+    def test_invalid_target_sys_raises_fr(self, _):
         self.assert_fr("Error: Invalid target system 't'.",
                        change_master_key, UserInput("passwd t"), *self.args)
 
     @mock.patch('os.popen',        return_value=MagicMock(read=MagicMock(return_value='foo\nMemAvailable 200')))
-    @mock.patch('getpass.getpass', return_value='a')
+    @mock.patch('getpass.getpass', side_effect=['test_password', 'a', 'a'])
     @mock.patch('time.sleep',      return_value=None)
     @mock.patch('src.common.db_masterkey.MIN_KEY_DERIVATION_TIME', 0.01)
     def test_transmitter_command(self, *_):
@@ -551,7 +555,7 @@ class TestChangeMasterKey(TFCTestCase):
     @mock.patch('time.sleep',      return_value=None)
     @mock.patch('getpass.getpass', side_effect=KeyboardInterrupt)
     def test_keyboard_interrupt_raises_fr(self, *_):
-        self.assert_fr("Password change aborted.",
+        self.assert_fr("Authentication aborted.",
                        change_master_key, UserInput("passwd tx"), *self.args)
 
 
@@ -702,7 +706,7 @@ class TestChangeSetting(TFCTestCase):
     @mock.patch('time.sleep',      return_value=None)
     @mock.patch('getpass.getpass', side_effect=[KeyboardInterrupt])
     def test_changing_ask_password_for_log_access_asks_for_password(self, *_):
-        self.assert_fr("Setting change aborted.",
+        self.assert_fr("Authentication aborted.",
                        change_setting, UserInput("set ask_password_for_log_access False"), *self.args)
 
     @mock.patch('time.sleep',      return_value=None)

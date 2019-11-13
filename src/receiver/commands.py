@@ -198,30 +198,29 @@ def ch_master_key(ts:           'datetime',
                   master_key:   'MasterKey'
                   ) -> None:
     """Prompt the user for a new master password and derive a new master key from that."""
-    try:
-        old_master_key        = master_key.master_key[:]
-        master_key.master_key = master_key.new_master_key()
+    if not master_key.authenticate_action():
+        raise FunctionReturn("Error: Invalid password.", tail_clear=True, delay=1, head=2)
 
-        phase("Re-encrypting databases")
+    old_master_key        = master_key.master_key[:]
+    master_key.master_key = master_key.new_master_key()
 
-        ensure_dir(DIR_USER_DATA)
-        file_name = f'{DIR_USER_DATA}{settings.software_operation}_logs'
-        if os.path.isfile(file_name):
-            change_log_db_key(old_master_key, master_key.master_key, settings)
+    phase("Re-encrypting databases")
 
-        key_list.store_keys()
-        settings.store_settings()
-        contact_list.store_contacts()
-        group_list.store_groups()
+    ensure_dir(DIR_USER_DATA)
+    file_name = f'{DIR_USER_DATA}{settings.software_operation}_logs'
+    if os.path.isfile(file_name):
+        change_log_db_key(old_master_key, master_key.master_key, settings)
 
-        phase(DONE)
-        m_print("Master password successfully changed.", bold=True, tail_clear=True, delay=1, head=1)
+    key_list.store_keys()
+    settings.store_settings()
+    contact_list.store_contacts()
+    group_list.store_groups()
 
-        local_win = window_list.get_local_window()
-        local_win.add_new(ts, "Changed Receiver master password.")
+    phase(DONE)
+    m_print("Master password successfully changed.", bold=True, tail_clear=True, delay=1, head=1)
 
-    except (EOFError, KeyboardInterrupt):
-        raise FunctionReturn("Password change aborted.", tail_clear=True, delay=1, head=2)
+    local_win = window_list.get_local_window()
+    local_win.add_new(ts, "Changed Receiver master password.")
 
 
 def ch_nick(cmd_data:     bytes,

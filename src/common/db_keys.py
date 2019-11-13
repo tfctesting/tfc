@@ -24,7 +24,8 @@ import typing
 
 from typing import Any, Callable, List
 
-from src.common.crypto     import auth_and_decrypt, blake2b, csprng, encrypt_and_sign
+from src.common.crypto     import blake2b, csprng
+from src.common.database   import TFCDatabase
 from src.common.encoding   import int_to_bytes, onion_address_to_pub_key
 from src.common.encoding   import bytes_to_int
 from src.common.exceptions import CriticalError
@@ -183,6 +184,7 @@ class KeyList(object):
         self.dummy_keyset = self.generate_dummy_keyset()
         self.dummy_id     = self.dummy_keyset.onion_pub_key
         self.file_name    = f'{DIR_USER_DATA}{settings.software_operation}_keys'
+        self.database     = TFCDatabase(self.file_name, master_key)
 
         ensure_dir(DIR_USER_DATA)
         if os.path.isfile(self.file_name):
@@ -206,11 +208,7 @@ class KeyList(object):
         size of the final database is 9016 bytes.
         """
         pt_bytes = b''.join([k.serialize_k() for k in self.keysets + self._dummy_keysets()])
-        ct_bytes = encrypt_and_sign(pt_bytes, self.master_key.master_key)
-
-        ensure_dir(DIR_USER_DATA)
-        with open(self.file_name, 'wb+') as f:
-            f.write(ct_bytes)
+        self.database.store_database(pt_bytes)
 
     def _load_keys(self) -> None:
         """Load KeySets from the encrypted database.
@@ -223,10 +221,7 @@ class KeyList(object):
         populate the `self.keysets` list with KeySet objects, the data
         of which is sliced and decoded from the dummy-free blocks.
         """
-        with open(self.file_name, 'rb') as f:
-            ct_bytes = f.read()
-
-        pt_bytes  = auth_and_decrypt(ct_bytes, self.master_key.master_key, database=self.file_name)
+        pt_bytes  = self.database.load_database()
         blocks    = split_byte_string(pt_bytes, item_len=KEYSET_LENGTH)
         df_blocks = [b for b in blocks if not b.startswith(self.dummy_id)]
 
@@ -314,7 +309,8 @@ class KeyList(object):
 
     def change_master_key(self, master_key: 'MasterKey') -> None:
         """Change the master key and encrypt the database with the new key."""
-        self.master_key = master_key
+        self.master_key            = master_key
+        self.database.database_key = master_key.master_key
         self.store_keys()
 
     def update_database(self, settings: 'Settings') -> None:

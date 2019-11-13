@@ -73,7 +73,7 @@ class TestOutputLoop(unittest.TestCase):
         conf_code  = bytes(1)
         tx_pub_key = nick_to_pub_key('Bob')
         o_sleep    = self.o_sleep
-        test_delay = 0.1
+        test_delay = 0.15
 
         def queue_packet(mk, hk, tx_harac, packet, onion_pub_key=None):
             """Create encrypted datagram."""

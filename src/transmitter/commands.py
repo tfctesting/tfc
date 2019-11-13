@@ -284,10 +284,7 @@ def log_command(user_input:   'UserInput',
         raise FunctionReturn("Log file export aborted.", tail_clear=True, head=0, delay=1)
 
     if settings.ask_password_for_log_access:
-        try:
-            authenticated = master_key.load_master_key() == master_key.master_key
-        except (EOFError, KeyboardInterrupt):
-            raise FunctionReturn(f"Log file {action} aborted.", tail_clear=True, head=2, delay=1)
+        authenticated = master_key.authenticate_action()
     else:
         authenticated = True
 
@@ -430,22 +427,24 @@ def change_master_key(user_input:    'UserInput',
                       onion_service: 'OnionService'
                       ) -> None:
     """Change the master key on Transmitter/Receiver Program."""
+    if settings.traffic_masking:
+        raise FunctionReturn("Error: Command is disabled during traffic masking.", head_clear=True)
+
     try:
-        if settings.traffic_masking:
-            raise FunctionReturn("Error: Command is disabled during traffic masking.", head_clear=True)
+        device = user_input.plaintext.split()[1].lower()
+    except IndexError:
+        raise FunctionReturn(f"Error: No target-system ('{TX}' or '{RX}') specified.", head_clear=True)
 
-        try:
-            device = user_input.plaintext.split()[1].lower()
-        except IndexError:
-            raise FunctionReturn(f"Error: No target-system ('{TX}' or '{RX}') specified.", head_clear=True)
+    if device not in [TX, RX]:
+        raise FunctionReturn(f"Error: Invalid target system '{device}'.", head_clear=True)
 
-        if device not in [TX, RX]:
-            raise FunctionReturn(f"Error: Invalid target system '{device}'.", head_clear=True)
+    if device == RX:
+        queue_command(CH_MASTER_KEY, settings, queues)
+        return None
 
-        if device == RX:
-            queue_command(CH_MASTER_KEY, settings, queues)
-            return None
+    authenticated = master_key.authenticate_action()
 
+    if authenticated:
         old_master_key = master_key.master_key[:]
         new_master_key = master_key.master_key = master_key.new_master_key()
 
@@ -464,9 +463,6 @@ def change_master_key(user_input:    'UserInput',
 
         phase(DONE)
         m_print("Master key successfully changed.", bold=True, tail_clear=True, delay=1, head=1)
-
-    except (EOFError, KeyboardInterrupt):
-        raise FunctionReturn("Password change aborted.", tail_clear=True, delay=1, head=2)
 
 
 def remove_log(user_input:   'UserInput',
@@ -548,12 +544,7 @@ def change_setting(user_input:   'UserInput',
         raise FunctionReturn("Error: Serial interface setting can only be changed manually.", head_clear=True)
 
     if setting == 'ask_password_for_log_access':
-        try:
-            authenticated = master_key.load_master_key() == master_key.master_key
-        except (EOFError, KeyboardInterrupt):
-            raise FunctionReturn(f"Setting change aborted.", tail_clear=True, head=2, delay=1)
-
-        if not authenticated:
+        if not master_key.authenticate_action():
             raise FunctionReturn("Error: No permission to change setting.", head_clear=True)
 
     # Change the setting

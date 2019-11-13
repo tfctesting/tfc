@@ -28,8 +28,9 @@ import time
 from typing import List, Tuple
 
 from src.common.crypto     import argon2_kdf, blake2b, csprng
+from src.common.database   import TFCUnencryptedDatabase
 from src.common.encoding   import bytes_to_int, int_to_bytes
-from src.common.exceptions import CriticalError, graceful_exit
+from src.common.exceptions import CriticalError, FunctionReturn, graceful_exit
 from src.common.input      import pwd_prompt
 from src.common.misc       import ensure_dir, separate_headers
 from src.common.output     import clear_screen, m_print, phase, print_on_previous_line
@@ -49,6 +50,7 @@ class MasterKey(object):
     def __init__(self, operation: str, local_test: bool) -> None:
         """Create a new MasterKey object."""
         self.file_name  = f'{DIR_USER_DATA}{operation}_login_data'
+        self.database   = TFCUnencryptedDatabase(self.file_name)
         self.local_test = local_test
 
         ensure_dir(DIR_USER_DATA)
@@ -223,13 +225,13 @@ class MasterKey(object):
         memory_cost = middle if middle is not None else memory_cost
 
         # Store values to database
-        ensure_dir(DIR_USER_DATA)
-        with open(self.file_name, 'wb+') as f:
-            f.write(salt
-                    + blake2b(master_key)
-                    + int_to_bytes(time_cost)
-                    + int_to_bytes(memory_cost)
-                    + int_to_bytes(parallelism))
+        database_data = (salt
+                         + blake2b(master_key)
+                         + int_to_bytes(time_cost)
+                         + int_to_bytes(memory_cost)
+                         + int_to_bytes(parallelism))
+
+        self.database.store_unencrypted_database(database_data)
         phase(DONE)
 
         return master_key
@@ -243,15 +245,14 @@ class MasterKey(object):
         matches the hash in the login database, accept the derived
         master key.
         """
-        with open(self.file_name, 'rb') as f:
-            data = f.read()
+        database_data = self.database.load_database()
 
-        if len(data) != MASTERKEY_DB_SIZE:
+        if len(database_data) != MASTERKEY_DB_SIZE:
             raise CriticalError(f"Invalid {self.file_name} database size.")
 
         salt, key_hash, time_bytes, memory_bytes, parallelism_bytes \
-            = separate_headers(data, [ARGON2_SALT_LENGTH, BLAKE2_DIGEST_LENGTH,
-                                      ENCODED_INTEGER_LENGTH, ENCODED_INTEGER_LENGTH])
+            = separate_headers(database_data, [ARGON2_SALT_LENGTH, BLAKE2_DIGEST_LENGTH,
+                                               ENCODED_INTEGER_LENGTH, ENCODED_INTEGER_LENGTH])
 
         time_cost   = bytes_to_int(time_bytes)
         memory_cost = bytes_to_int(memory_bytes)
@@ -299,3 +300,12 @@ class MasterKey(object):
     def get_password(cls, purpose: str = "master password") -> str:
         """Prompt the user to enter a password."""
         return pwd_prompt(f"Enter {purpose}: ")
+
+    def authenticate_action(self) -> bool:
+        """Return True if user entered correct master password to authenticate an action."""
+        try:
+            authenticated = self.load_master_key() == self.master_key
+        except (EOFError, KeyboardInterrupt):
+            raise FunctionReturn(f"Authentication aborted.", tail_clear=True, head=2, delay=1)
+
+        return authenticated

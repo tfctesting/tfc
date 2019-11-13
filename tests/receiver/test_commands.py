@@ -257,7 +257,7 @@ class TestChMasterKey(TFCTestCase):
     @mock.patch('os.popen',                  return_value=MagicMock(
         read=MagicMock(return_value=MagicMock(splitlines=MagicMock(return_value=["MemAvailable 10240"])))))
     @mock.patch('multiprocessing.cpu_count', return_value=1)
-    @mock.patch('getpass.getpass',           return_value='a')
+    @mock.patch('getpass.getpass',           side_effect=['test_password', 'a', 'a'])
     @mock.patch('time.sleep',                return_value=None)
     def test_master_key_change(self, *_):
         # Setup
@@ -268,11 +268,22 @@ class TestChMasterKey(TFCTestCase):
         self.assertIsNone(ch_master_key(*self.args))
         self.assertNotEqual(self.master_key.master_key, bytes(SYMMETRIC_KEY_LENGTH))
 
+    @mock.patch('src.common.db_masterkey.MIN_KEY_DERIVATION_TIME', 0.1)
+    @mock.patch('src.common.db_masterkey.MIN_KEY_DERIVATION_TIME', 1.0)
+    @mock.patch('os.popen',                  return_value=MagicMock(
+        read=MagicMock(return_value=MagicMock(splitlines=MagicMock(return_value=["MemAvailable 10240"])))))
+    @mock.patch('multiprocessing.cpu_count', return_value=1)
+    @mock.patch('getpass.getpass',           return_value='a')
+    @mock.patch('time.sleep',                return_value=None)
+    def test_invalid_password_raises_function_return(self, *_):
+        self.assertEqual(self.master_key.master_key, bytes(SYMMETRIC_KEY_LENGTH))
+        self.assert_fr("Error: Invalid password.", ch_master_key, *self.args)
+
     @mock.patch('getpass.getpass', return_value='a')
     @mock.patch('time.sleep',      return_value=None)
     @mock.patch('os.getrandom',    side_effect=KeyboardInterrupt)
     def test_keyboard_interrupt_raises_fr(self, *_):
-        self.assert_fr("Password change aborted.", ch_master_key, *self.args)
+        self.assert_fr("Error: Invalid password.", ch_master_key, *self.args)
 
 
 class TestChNick(TFCTestCase):
