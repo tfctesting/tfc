@@ -17,9 +17,9 @@
 # along with TFC. If not, see <https://www.gnu.org/licenses/>.
 
 # PIP dependency file names
-ARGON2=argon2_cffi-19.1.0-cp34-abi3-manylinux1_x86_64.whl
+ARGON2=argon2_cffi-19.2.0-cp34-abi3-manylinux1_x86_64.whl
 CERTIFI=certifi-2019.9.11-py2.py3-none-any.whl
-CFFI=cffi-1.13.1-cp37-cp37m-manylinux1_x86_64.whl
+CFFI=cffi-1.13.2-cp37-cp37m-manylinux1_x86_64.whl
 CHARDET=chardet-3.0.4-py2.py3-none-any.whl
 CLICK=Click-7.0-py2.py3-none-any.whl
 CRYPTOGRAPHY=cryptography-2.8-cp34-abi3-manylinux1_x86_64.whl
@@ -33,10 +33,10 @@ PYNACL=PyNaCl-1.3.0-cp34-abi3-manylinux1_x86_64.whl
 PYSERIAL=pyserial-3.4-py2.py3-none-any.whl
 PYSOCKS=PySocks-1.7.1-py3-none-any.whl
 REQUESTS=requests-2.22.0-py2.py3-none-any.whl
-SETUPTOOLS=setuptools-41.4.0-py2.py3-none-any.whl
-SIX=six-1.12.0-py2.py3-none-any.whl
+SETUPTOOLS=setuptools-41.6.0-py2.py3-none-any.whl
+SIX=six-1.13.0-py2.py3-none-any.whl
 STEM=stem-1.7.1.tar.gz
-URLLIB3=urllib3-1.25.6-py2.py3-none-any.whl
+URLLIB3=urllib3-1.25.7-py2.py3-none-any.whl
 VIRTUALENV=virtualenv-16.7.7-py2.py3-none-any.whl
 WERKZEUG=Werkzeug-0.16.0-py2.py3-none-any.whl
 
@@ -56,7 +56,7 @@ function compare_digest {
 function verify_tcb_requirements_files {
     # To minimize the time TCB installer configuration stays online, only
     # the requirements files are authenticated between downloads.
-    compare_digest 99912fe2f7240a9b163292ff83c28b6ab41ee1c10bf96cc57f2c066537d3f153b46280e2c769b0f273c6bc36c74badb42d3c66c6fb3d16862dc96ff27319788d '' requirements.txt
+    compare_digest 3a3f8a79420ddb792f647c0bb2a82ac6bfec70f4497005a6ca77ba113cfda40bda502456156860b2a92b464eaf26b23e78bcf907d849ec40a08357955f31549d '' requirements.txt
     compare_digest 97558ed189976ccd54e3a25bcf639f1944aa43f4a4f42ff5ef2cf22349a7b649272e91746041b4e04b2f33adf1fab8818c339b1cc58f9353af3e5ac76cb1ec0b '' requirements-venv.txt
 }
 
@@ -68,9 +68,9 @@ function verify_files {
     compare_digest 7e519d20fef24e25e88ec4a9c03abadf513b084e05038f17c62ca7899c2f9174a953caa0bfbd3b61e455e243513cdab737c22a34d73ebab07b65d3ce99100f0a '' LICENSE-3RD-PARTY
     compare_digest 99815d0cfbca7d83409b7317947fe940fe93fd94b50e6099a566563ee6999e33830fd883ff61e5367a040d5fda3f2a43165ef0dc6155e14a573e07dc27eba70d '' relay.py
     compare_digest 28d06826a45ca4d64c2b4d06859ee7a0c7152198fe49b85681f7ce6b9c02b1a103fd7f3514b05b24e95e2ec5f48ce02529a2b4f2ea806b333e8141b1650d1257 '' requirements-dev.txt
-    compare_digest 8a57366899139b9906f0a75272c702575a6cd5c6ca2dd09f0dbd1be9efd5341178f9d3d64fec113af7d1fdccbb5cbdf384133aa3afa3672292e37405f60cf0a8 '' requirements-relay.txt
-    compare_digest 8ecd5957f3bfbe237549e8772720cba5b5899b51a475063edcbc416ad5f77f614da2c9069aeb31bca6d2bb74ce6f2877d29df178ec3ecf6d5dd05daaff51c6b2 '' requirements-relay-tails.txt
-    compare_digest 4a44501e21d463ff8569a1665b75c2e4d8de741d445dc3e442479cbb7282646045129233bd7313df4b9c2e64ec86b7615a8196ae2b3350de933731926d39bbda '' requirements-setuptools.txt
+    compare_digest 119fbe604a01ad0ef1d6e758ed6ee8dc46be4d746207b0cda1d4c17ba12621d32e6f479229856c6008a77f796bbd778dbecc27bb38dca817d88c257a9d3b27b8 '' requirements-relay.txt
+    compare_digest 1696663138ca74e4c85caeeea82e34168ddbb1dd1a626a12064c43515859590e17c982dd0f1de2d807039794884bf053c147060760c84751143214e2af3611de '' requirements-relay-tails.txt
+    compare_digest 550a82b9c07376e9eaf1117f77362f89c401169a848010110c2f8f2d99d50376f4cc5308d8b7e1928e68f15834aca7d5c9a9a7e7b8db956e5e55755ab7ea0a25 '' requirements-setuptools.txt
     compare_digest 79f8272a2ab122a48c60630c965cd9d000dcafabf5ee9d69b1c33c58ec321feb17e4654dbbbf783cc8868ccdfe2777d60c6c3fc9ef16f8264d9fcf43724e83c2 '' tfc.png
     compare_digest e4dadae63adcd72108fcfa04401f42a1bae956008303d09f22e849b207ebca699306f2bd4034ee96a5531028719f5e41689205ec8ef12cd1726a86376d3aec3e '' tfc.py
     compare_digest 7ae1c2a393d96761843bea90edd569244bfb4e0f9943e68a4549ee46d93180d26d4101c2471c1a37785ccdfaef45eedecf15057c0a9cc6c056460c5f9a69d37b '' tfc.yml
@@ -229,7 +229,7 @@ function verify_tails_dependencies {
     compare_digest 313b954102231d038d52ab58f41e3642579be29f827135b8dd92c06acb362effcb0a7fd5f35de9273372b92d9fe29f38381ae44f8b41aa90d2564d6dd07ecd12 '' ${PYSOCKS}
 
     # Requests
-    compare_digest 719cfa3841d0fe7c7f0a1901b8029df6685825da7f510ba61f095df64f115fae8bfa4118fa7536231ed8187cdf3385cb2d52e53c1b35b8f4aa42f7117cc4d447 '' ${URLLIB3}
+    compare_digest f6a78508cb87050e176005a088118f8ad87b17cf541457d949e5712c356f8c4de7e7516ba066e5c4bb9ced5c7e7590ba7e07d4ae7fc7190487bf27f1bb9d0668 '' ${URLLIB3}
     compare_digest fb07dbec1de86efbad82a4f73d98123c59b083c1f1277445204bef75de99ca200377ad2f1db8924ae79b31b3dd984891c87d0a6344ec4d07a0ddbbbc655821a3 '' ${IDNA}
     compare_digest bfae58c8ea19c87cc9c9bf3d0b6146bfdb3630346bd954fe8e9f7da1f09da1fc0d6943ff04802798a665ea3b610ee2d65658ce84fe5a89f9e93625ea396a17f4 '' ${CHARDET}
     compare_digest 06e8e1546d375e528a1486e1dee4fda3e585a03ef23ede85d1dad006e0eda837ebade1edde62fdc987a7f310bda69159e94ec36b79a066e0e13bbe8bf7019cfc '' ${CERTIFI}
@@ -244,9 +244,9 @@ function verify_tails_dependencies {
     compare_digest bd49cb364307569480196289fa61fbb5493e46199620333f67617367278e1f56b20fc0d40fd540bef15642a8065e488c24e97f50535e8ec143875095157d8069 '' ${FLASK}
 
     # Cryptography
-    compare_digest 326574c7542110d2cd8071136a36a6cffc7637ba948b55e0abb7f30f3821843073223301ecbec1d48b8361b0d7ccb338725eeb0424696efedc3f6bd2a23331d3 '' ${SIX}
+    compare_digest 387d94f37a74e2d86ac0a41f482638dd9aec9e94215ffc50f314eb2f8e0cfc2f15afc3e508ea37a4fbcca7e4bcfc65efa1e5cab5f8094ccedc18bee2b0f2e3a8 '' ${SIX}
     compare_digest 7f830e1c9066ee2d297a55e2bf6db4bf6447b6d9da0145d11a88c3bb98505755fb7986eafa6e06ae0b7680838f5e5d6a6d188245ca5ad45c2a727587bac93ab5 '' ${PYCPARSER}
-    compare_digest fdefd3f63f56adff50723d6a88dc6db816d3d8a31b563599d2a3633ba796f6f70d5a9430510852b3d62b97357f8764f17eeab74b13df16c7cc34e1671a82373b '' ${CFFI}
+    compare_digest b8753a0435cc7a2176f8748badc074ec6ffab6698d6be42b1770c85871f85aa7cf60152a8be053c3031b234a286c5cef07267cb812accb704783d74a2675ed3b '' ${CFFI}
     compare_digest 184003c89fee74892de25c3e5ec366faea7a5f1fcca3c82b0d5e5f9f797286671a820ca54da5266d6f879ab342c97e25bce9db366c5fb1178690cd5978d4d622 '' ${CRYPTOGRAPHY}  # manylinux1
     # compare_digest d8ddabe127ae8d7330d219e284de68b37fa450a27b4cf05334e9115388295b00148d9861c23b1a2e5ea9df0c33a2d27f3e4b25ce9abd3c334f1979920b19c902 '' ${CRYPTOGRAPHY}  # manylinux2010
 
@@ -259,7 +259,7 @@ function install_tails_setuptools {
     # Download setuptools package for Tails and then authenticate and install it.
     torsocks python3.7 -m pip download --no-cache-dir -r /opt/tfc/requirements-setuptools.txt --require-hashes --no-deps -d $HOME/
     t_sudo mv $HOME/${SETUPTOOLS} /opt/tfc/
-    compare_digest a27b38d596931dfef81d705d05689b7748ce0e02d21af4a37204fc74b0913fa7241b8135535eb7749f09af361cad90c475af98493fef11c4ad974780ee01243d '' ${SETUPTOOLS}
+    compare_digest 2e90929aa61c847e1d414d427b08403679ba5f512a56d58b92ee64d47e8a2c5da18e47126e5f59faca335b3a4b5ec9857aa323d866252546a6df42c3e3ef3884 '' ${SETUPTOOLS}
     t_sudo python3.7 -m pip install /opt/tfc/${SETUPTOOLS}
     t_sudo -E rm /opt/tfc/${SETUPTOOLS}
 }
