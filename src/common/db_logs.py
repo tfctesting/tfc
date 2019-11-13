@@ -179,8 +179,11 @@ def write_log_entry(assembly_packet: bytes,                      # Assembly pack
 
     ensure_dir(DIR_USER_DATA)
     file_name = f'{DIR_USER_DATA}{settings.software_operation}_logs'
+
     with open(file_name, 'ab+') as f:
         f.write(ct_bytes)
+        f.flush()
+        os.fsync(f.fileno())
 
 
 def check_log_file_exists(file_name: str) -> None:
@@ -392,9 +395,10 @@ def remove_logs(contact_list: 'ContactList',
     with open(temp_name, 'wb+') as f:
         if ct_to_keep:
             f.write(b''.join(ct_to_keep))
+        f.flush()
+        os.fsync(f.fileno())
 
-    os.remove(file_name)
-    os.rename(temp_name, file_name)
+    os.replace(temp_name, file_name)
 
     try:
         name = contact_list.get_nick_by_pub_key(selector) if contact else group_list.get_group_by_id(selector).name

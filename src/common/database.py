@@ -48,19 +48,17 @@ class TFCDatabase(object):
     @staticmethod
     def write_to_file(file_name: str, data: bytes) -> None:
         """Write data to file."""
-        f = open(file_name, 'wb+')
-        f.write(data)
+        with open(file_name, 'wb+') as f:
+            f.write(data)
 
-        # Write data from program buffer to operating system buffer.
-        f.flush()
+            # Write data from program buffer to operating system buffer.
+            f.flush()
 
-        # Run the fsync syscall to ensure operating system buffer is
-        # synchronized with storage device, i.e. write the data on disk.
-        # https://docs.python.org/3/library/os.html#os.fsync
-        # http://man7.org/linux/man-pages/man2/fdatasync.2.html
-        os.fsync(f.fileno())
-
-        f.close()
+            # Run the fsync syscall to ensure operating system buffer is
+            # synchronized with storage device, i.e. write the data on disk.
+            # https://docs.python.org/3/library/os.html#os.fsync
+            # http://man7.org/linux/man-pages/man2/fdatasync.2.html
+            os.fsync(f.fileno())
 
     def verify_file(self, database_name: str) -> bool:
         """Verify integrity of file content."""
@@ -133,19 +131,10 @@ class TFCUnencryptedDatabase(object):
     @staticmethod
     def write_to_file(file_name: str, data: bytes) -> None:
         """Write data to file."""
-        f = open(file_name, 'wb+')
-        f.write(data)
-
-        # Write data from program buffer to operating system buffer.
-        f.flush()
-
-        # Run the fsync syscall to ensure operating system buffer is
-        # synchronized with storage device, i.e. write the data on disk.
-        # https://docs.python.org/3/library/os.html#os.fsync
-        # http://man7.org/linux/man-pages/man2/fdatasync.2.html
-        os.fsync(f.fileno())
-
-        f.close()
+        with open(file_name, 'wb+') as f:
+            f.write(data)
+            f.flush()
+            os.fsync(f.fileno())
 
     @staticmethod
     def verify_file(database_name: str) -> bool:

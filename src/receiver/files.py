@@ -61,6 +61,8 @@ def store_unique(file_data: bytes,  # File data to store
 
     with open(file_dir + file_name, 'wb+') as f:
         f.write(file_data)
+        f.flush()
+        os.fsync(f.fileno())
 
     return file_name
 
