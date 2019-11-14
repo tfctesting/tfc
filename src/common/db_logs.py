@@ -30,6 +30,7 @@ from datetime import datetime
 from typing   import Any, Dict, List, Tuple, Union
 
 from src.common.crypto     import auth_and_decrypt, encrypt_and_sign
+from src.common.database   import TFCLogDatabase
 from src.common.encoding   import b58encode, bytes_to_bool, bytes_to_timestamp, pub_key_to_short_address
 from src.common.exceptions import CriticalError, FunctionReturn
 from src.common.misc       import ensure_dir, get_terminal_width, ignored, separate_header, separate_headers
@@ -76,6 +77,9 @@ def log_writer_loop(queues:    Dict[bytes, 'Queue[Any]'],  # Dictionary of queue
     logging_state   = False
     logfile_masking = settings.log_file_masking
     traffic_masking = settings.traffic_masking
+
+    file_name        = f'{DIR_USER_DATA}{settings.software_operation}_logs'
+    tfc_log_database = TFCLogDatabase(file_name)
 
     while True:
         with ignored(EOFError, KeyboardInterrupt):
@@ -136,17 +140,17 @@ def log_writer_loop(queues:    Dict[bytes, 'Queue[Any]'],  # Dictionary of queue
 
                 assembly_packet = PLACEHOLDER_DATA
 
-            write_log_entry(assembly_packet, onion_pub_key, settings, master_key)
+            write_log_entry(assembly_packet, onion_pub_key, master_key, tfc_log_database)
 
             if unit_test and queues[UNIT_TEST_QUEUE].qsize() != 0:
                 break
 
 
-def write_log_entry(assembly_packet: bytes,                      # Assembly packet to log
-                    onion_pub_key:   bytes,                      # Onion Service public key of the associated contact
-                    settings:        'Settings',                 # Settings object
-                    master_key:      'MasterKey',                # Master key object
-                    origin:          bytes = ORIGIN_USER_HEADER  # The direction of logged packet
+def write_log_entry(assembly_packet:  bytes,                       # Assembly packet to log
+                    onion_pub_key:    bytes,                       # Onion Service public key of the associated contact
+                    master_key:       'MasterKey',                 # Master key object
+                    tfc_log_database: TFCLogDatabase,              # TFC log database object
+                    origin:           bytes = ORIGIN_USER_HEADER,  # The direction of logged packet
                     ) -> None:
     """Add an assembly packet to the encrypted log database.
 
@@ -178,13 +182,7 @@ def write_log_entry(assembly_packet: bytes,                      # Assembly pack
         raise CriticalError("Invalid log entry ciphertext length.")
 
     ensure_dir(DIR_USER_DATA)
-    file_name = f'{DIR_USER_DATA}{settings.software_operation}_logs'
-
-    with open(file_name, 'ab+') as f:
-        f.write(ct_bytes)
-        f.flush()
-        os.fsync(f.fileno())
-
+    tfc_log_database.insert_encrypted_log_entry(ct_bytes)
 
 def check_log_file_exists(file_name: str) -> None:
     """Check that the log file exists."""
@@ -214,9 +212,9 @@ def access_logs(window:       Union['TxWindow', 'RxWindow'],
     group_msg_id = b''
 
     check_log_file_exists(file_name)
-    log_file = open(file_name, 'rb')
+    tfc_log_database = TFCLogDatabase(file_name)
 
-    for ct in iter(lambda: log_file.read(LOG_ENTRY_LENGTH), b''):
+    for _, ct in tfc_log_database:
         plaintext = auth_and_decrypt(ct, master_key.master_key, database=file_name)
 
         onion_pub_key, timestamp, origin, assembly_packet = separate_headers(plaintext,
@@ -256,7 +254,7 @@ def access_logs(window:       Union['TxWindow', 'RxWindow'],
             message_log.append(
                 (bytes_to_timestamp(timestamp), message.decode(), onion_pub_key, packet.origin, whisper, False))
 
-    log_file.close()
+    tfc_log_database.close_database()
 
     print_logs(message_log[-msg_to_load:], export, msg_to_load, window, contact_list, group_list, settings)
 
@@ -312,18 +310,18 @@ def change_log_db_key(previous_key: bytes,
     if os.path.isfile(temp_name):
         os.remove(temp_name)
 
-    f_old = open(file_name, 'rb')
-    f_new = open(temp_name, 'ab+')
+    tfc_log_database_old = TFCLogDatabase(file_name)
+    tfc_log_database_new = TFCLogDatabase(temp_name)
 
-    for ct in iter(lambda: f_old.read(LOG_ENTRY_LENGTH), b''):
-        pt = auth_and_decrypt(ct,        key=previous_key, database=file_name)
-        f_new.write(encrypt_and_sign(pt, key=new_key))
+    for _, ct_old in tfc_log_database_old:
+        p_text = auth_and_decrypt(ct_old, key=previous_key, database=file_name)
+        ct_new = encrypt_and_sign(p_text, key=new_key)
+        tfc_log_database_new.insert_encrypted_log_entry(encrypted_log_entry=ct_new)
 
-    f_old.close()
-    f_new.close()
+    tfc_log_database_old.close_database()
+    tfc_log_database_new.close_database()
 
-    os.remove(file_name)
-    os.rename(temp_name, file_name)
+    os.replace(temp_name, file_name)
 
 
 def remove_logs(contact_list: 'ContactList',
@@ -349,9 +347,9 @@ def remove_logs(contact_list: 'ContactList',
     contact     = len(selector) == ONION_SERVICE_PUBLIC_KEY_LENGTH
 
     check_log_file_exists(file_name)
-    log_file = open(file_name, 'rb')
+    tfc_log_database = TFCLogDatabase(file_name)
 
-    for ct in iter(lambda: log_file.read(LOG_ENTRY_LENGTH), b''):
+    for _, ct in tfc_log_database:
         plaintext = auth_and_decrypt(ct, master_key.master_key, database=file_name)
 
         onion_pub_key, _, origin, assembly_packet = separate_headers(plaintext, [ONION_SERVICE_PUBLIC_KEY_LENGTH,
@@ -387,16 +385,16 @@ def remove_logs(contact_list: 'ContactList',
                     ct_to_keep.extend(packet.log_ct_list)
                     packet.clear_assembly_packets()
 
-    log_file.close()
+    tfc_log_database.close_database()
 
     if os.path.isfile(temp_name):
         os.remove(temp_name)
 
-    with open(temp_name, 'wb+') as f:
-        if ct_to_keep:
-            f.write(b''.join(ct_to_keep))
-        f.flush()
-        os.fsync(f.fileno())
+    tfc_log_database_temp = TFCLogDatabase(temp_name)
+
+    for ct in ct_to_keep:
+        tfc_log_database_temp.insert_encrypted_log_entry(ct)
+    tfc_log_database_temp.close_database()
 
     os.replace(temp_name, file_name)
 

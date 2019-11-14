@@ -28,12 +28,13 @@ from multiprocessing import Queue
 from unittest        import mock
 from unittest.mock   import MagicMock
 
+from src.common.database import TFCLogDatabase
 from src.common.db_logs  import write_log_entry
 from src.common.encoding import int_to_bytes
 from src.common.statics  import (CH_FILE_RECV, CH_LOGGING, CH_NOTIFY, CLEAR_ENTIRE_LINE, COMMAND, CURSOR_UP_ONE_LINE,
-                                 C_L_HEADER, DISABLE, ENABLE, F_S_HEADER, LOCAL_ID, LOCAL_PUBKEY, LOG_REMOVE, MESSAGE,
-                                 ORIGIN_CONTACT_HEADER, PADDING_LENGTH, RESET, RX, SYMMETRIC_KEY_LENGTH, US_BYTE,
-                                 WIN_TYPE_CONTACT, WIN_TYPE_GROUP, WIN_UID_FILE, WIPE)
+                                 C_L_HEADER, DIR_USER_DATA, DISABLE, ENABLE, F_S_HEADER, LOCAL_ID, LOCAL_PUBKEY,
+                                 LOG_REMOVE, MESSAGE, ORIGIN_CONTACT_HEADER, PADDING_LENGTH, RESET, RX,
+                                 SYMMETRIC_KEY_LENGTH, US_BYTE, WIN_TYPE_CONTACT, WIN_TYPE_GROUP, WIN_UID_FILE, WIPE)
 
 from src.receiver.packet   import PacketList
 from src.receiver.commands import ch_contact_s, ch_master_key, ch_nick, ch_setting, contact_rem, exit_tfc, log_command
@@ -179,6 +180,8 @@ class TestLogCommand(TFCTestCase):
         self.master_key        = MasterKey(operation=RX, local_test=True)
         self.args              = (self.ts, self.window_list, self.contact_list,
                                   self.group_list, self.settings, self.master_key)
+        self.log_file          = f'{DIR_USER_DATA}{self.settings.software_operation}_logs'
+        self.tfc_log_database  = TFCLogDatabase(self.log_file)
 
         time_float = struct.unpack('<L', bytes.fromhex('08ceae02'))[0]
         self.time  = datetime.fromtimestamp(time_float).strftime("%H:%M:%S.%f")[:-4]
@@ -190,13 +193,18 @@ class TestLogCommand(TFCTestCase):
             os.remove('Receiver - Plaintext log (None)')
 
     def test_print(self):
+        # Setup
+        os.remove(self.log_file)
+
+        # Test
         self.assert_fr(f"No log database available.", log_command, self.cmd_data, *self.args)
 
     @mock.patch('struct.pack', return_value=bytes.fromhex('08ceae02'))
     def test_export(self, _):
         # Setup
         for p in assembly_packet_creator(MESSAGE, 'A short message'):
-            write_log_entry(p, nick_to_pub_key("Bob"), self.settings, self.master_key, origin=ORIGIN_CONTACT_HEADER)
+            write_log_entry(p, nick_to_pub_key("Bob"), self.master_key,
+                            self.tfc_log_database, origin=ORIGIN_CONTACT_HEADER)
 
         # Test
         self.assertIsNone(log_command(self.cmd_data, *self.args))
@@ -237,16 +245,18 @@ class TestChMasterKey(TFCTestCase):
 
     def setUp(self):
         """Pre-test actions."""
-        self.unit_test_dir = cd_unit_test()
-        self.ts            = datetime.now()
-        self.master_key    = MasterKey()
-        self.settings      = Settings()
-        self.contact_list  = ContactList(nicks=[LOCAL_ID])
-        self.window_list   = WindowList(nicks=[LOCAL_ID])
-        self.group_list    = GroupList()
-        self.key_list      = KeyList()
-        self.args          = (self.ts, self.window_list, self.contact_list, self.group_list,
-                              self.key_list, self.settings, self.master_key)
+        self.unit_test_dir    = cd_unit_test()
+        self.ts               = datetime.now()
+        self.master_key       = MasterKey()
+        self.settings         = Settings()
+        self.contact_list     = ContactList(nicks=[LOCAL_ID])
+        self.window_list      = WindowList(nicks=[LOCAL_ID])
+        self.group_list       = GroupList()
+        self.key_list         = KeyList()
+        self.args             = (self.ts, self.window_list, self.contact_list, self.group_list,
+                                 self.key_list, self.settings, self.master_key)
+        self.log_file         = f'{DIR_USER_DATA}{self.settings.software_operation}_logs'
+        self.tfc_log_database = TFCLogDatabase(self.log_file)
 
     def tearDown(self):
         """Post-test actions."""
@@ -261,7 +271,7 @@ class TestChMasterKey(TFCTestCase):
     @mock.patch('time.sleep',                return_value=None)
     def test_master_key_change(self, *_):
         # Setup
-        write_log_entry(F_S_HEADER + bytes(PADDING_LENGTH), nick_to_pub_key("Alice"), self.settings, self.master_key)
+        write_log_entry(F_S_HEADER + bytes(PADDING_LENGTH), nick_to_pub_key("Alice"), self.master_key, self.tfc_log_database)
 
         # Test
         self.assertEqual(self.master_key.master_key, bytes(SYMMETRIC_KEY_LENGTH))

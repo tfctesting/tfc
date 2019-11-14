@@ -19,6 +19,7 @@ You should have received a copy of the GNU General Public License
 along with TFC. If not, see <https://www.gnu.org/licenses/>.
 """
 
+import sqlite3
 import os
 import unittest
 
@@ -26,8 +27,8 @@ from unittest      import mock
 from unittest.mock import MagicMock
 
 from src.common.crypto   import auth_and_decrypt, blake2b, encrypt_and_sign
-from src.common.database import TFCDatabase, TFCUnencryptedDatabase
-from src.common.statics  import DB_WRITE_RETRY_LIMIT, MASTERKEY_DB_SIZE
+from src.common.database import TFCDatabase, TFCLogDatabase, TFCUnencryptedDatabase
+from src.common.statics  import DB_WRITE_RETRY_LIMIT, DIR_USER_DATA, MASTERKEY_DB_SIZE, LOG_ENTRY_LENGTH
 
 from tests.mock_classes import MasterKey
 from tests.utils        import cd_unit_test, cleanup, tamper_file
@@ -272,3 +273,48 @@ class TestTFCUnencryptedDatabase(unittest.TestCase):
         data_purp = self.database.load_database()
         self.assertEqual(data_purp, data_temp)
         self.assertFalse(os.path.isfile(self.database.database_temp))
+
+
+class TestTFCLogDatabase(unittest.TestCase):
+
+    def setUp(self) -> None:
+        """Pre-test actions."""
+        self.unit_test_dir    = cd_unit_test()
+        self.file_name        = f'{DIR_USER_DATA}ut_logs'
+        self.tfc_log_database = TFCLogDatabase(self.file_name)
+
+    def tearDown(self) -> None:
+        """Post-test actions."""
+        cleanup(self.unit_test_dir)
+
+    def test_table_creation(self):
+        self.assertIsInstance(self.tfc_log_database, TFCLogDatabase)
+        self.assertTrue(os.path.isfile(self.file_name))
+
+    def test_writing_to_log_database(self):
+        data = os.urandom(LOG_ENTRY_LENGTH)
+        self.assertIsNone(self.tfc_log_database.insert_encrypted_log_entry(data))
+
+    def test_iterating_over_log_database(self):
+        data = [os.urandom(LOG_ENTRY_LENGTH), os.urandom(LOG_ENTRY_LENGTH)]
+        for entry in data:
+            self.assertIsNone(self.tfc_log_database.insert_encrypted_log_entry(entry))
+
+        for primary_key_value, stored_entry in self.tfc_log_database:
+            index = primary_key_value -1
+            self.assertEqual(stored_entry, data[index])
+
+    def test_database_closing(self):
+        self.tfc_log_database.close_database()
+
+        # Test insertion would fail at this point
+        with self.assertRaises(sqlite3.ProgrammingError):
+            self.tfc_log_database.c.execute(f"""INSERT INTO log_entries (log_entry) VALUES (?)""", (os.urandom(LOG_ENTRY_LENGTH),))
+
+        # Test that TFC reopens closed database on write
+        data = os.urandom(LOG_ENTRY_LENGTH)
+        self.assertIsNone(self.tfc_log_database.insert_encrypted_log_entry(data))
+
+
+if __name__ == '__main__':
+    unittest.main(exit=False)

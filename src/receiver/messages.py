@@ -38,6 +38,7 @@ from src.receiver.packet import decrypt_assembly_packet
 
 if typing.TYPE_CHECKING:
     from datetime                import datetime
+    from src.common.database     import TFCLogDatabase
     from src.common.db_contacts  import ContactList
     from src.common.db_groups    import GroupList
     from src.common.db_keys      import KeyList
@@ -56,7 +57,8 @@ def process_message(ts:                 'datetime',
                     group_list:         'GroupList',
                     settings:           'Settings',
                     master_key:         'MasterKey',
-                    file_keys:          Dict[bytes, bytes]
+                    file_keys:          Dict[bytes, bytes],
+                    tfc_log_database:   'TFCLogDatabase'
                     ) -> None:
     """Process received private / group message."""
     local_window = window_list.get_local_window()
@@ -87,7 +89,7 @@ def process_message(ts:                 'datetime',
         if logging and settings.log_file_masking and (packet.log_masking_ctr or completed):
             no_masking_packets = len(packet.assembly_pt_list) if completed else packet.log_masking_ctr
             for _ in range(no_masking_packets):
-                write_log_entry(PLACEHOLDER_DATA, onion_pub_key, settings, master_key, origin)
+                write_log_entry(PLACEHOLDER_DATA, onion_pub_key, master_key, tfc_log_database, origin)
         packet.log_masking_ctr = 0
 
     try:
@@ -133,7 +135,7 @@ def process_message(ts:                 'datetime',
 
             if logging:
                 for p in packet.assembly_pt_list:
-                    write_log_entry(p, onion_pub_key, settings, master_key, origin)
+                    write_log_entry(p, onion_pub_key, master_key, tfc_log_database, origin)
 
     except (FunctionReturn, UnicodeError):
         log_masking_packets(completed=True)

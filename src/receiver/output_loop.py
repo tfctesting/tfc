@@ -26,11 +26,12 @@ import typing
 
 from typing import Any, Dict, List, Tuple
 
+from src.common.database   import TFCLogDatabase
 from src.common.exceptions import FunctionReturn
 from src.common.output     import clear_screen
-from src.common.statics    import (COMMAND_DATAGRAM_HEADER, EXIT_QUEUE, FILE_DATAGRAM_HEADER, LOCAL_KEY_DATAGRAM_HEADER,
-                                   MESSAGE_DATAGRAM_HEADER, ONION_SERVICE_PUBLIC_KEY_LENGTH, UNIT_TEST_QUEUE,
-                                   WIN_UID_FILE)
+from src.common.statics    import (COMMAND_DATAGRAM_HEADER, EXIT_QUEUE, DIR_USER_DATA, FILE_DATAGRAM_HEADER,
+                                   LOCAL_KEY_DATAGRAM_HEADER, MESSAGE_DATAGRAM_HEADER, ONION_SERVICE_PUBLIC_KEY_LENGTH,
+                                   UNIT_TEST_QUEUE, WIN_UID_FILE)
 
 from src.receiver.commands      import process_command
 from src.receiver.files         import new_file, process_file
@@ -77,6 +78,7 @@ def output_loop(queues:       Dict[bytes, 'Queue[Any]'],
 
     packet_list = PacketList(settings, contact_list)
     window_list = WindowList(settings, contact_list, group_list, packet_list)
+    tfc_log_database = TFCLogDatabase(f'{DIR_USER_DATA}{settings.software_operation}_logs')
 
     clear_screen()
     while True:
@@ -109,7 +111,7 @@ def output_loop(queues:       Dict[bytes, 'Queue[Any]'],
                         and packet_buffer[onion_pub_key]):
                     ts, packet = packet_buffer[onion_pub_key].pop(0)
                     process_message(ts, packet, window_list, packet_list, contact_list, key_list,
-                                    group_list, settings, master_key, file_keys)
+                                    group_list, settings, master_key, file_keys, tfc_log_database)
                     continue
 
             # New messages
@@ -119,7 +121,7 @@ def output_loop(queues:       Dict[bytes, 'Queue[Any]'],
 
                 if contact_list.has_pub_key(onion_pub_key) and key_list.has_rx_mk(onion_pub_key):
                     process_message(ts, packet, window_list, packet_list, contact_list, key_list,
-                                    group_list, settings, master_key, file_keys)
+                                    group_list, settings, master_key, file_keys, tfc_log_database)
                 else:
                     packet_buffer.setdefault(onion_pub_key, []).append((ts, packet))
                 continue

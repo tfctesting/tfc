@@ -20,7 +20,10 @@ along with TFC. If not, see <https://www.gnu.org/licenses/>.
 """
 
 import os
+import sqlite3
 import typing
+
+from typing import Iterator, Tuple
 
 import nacl.exceptions
 
@@ -199,3 +202,37 @@ class TFCUnencryptedDatabase(object):
             raise CriticalError(f"Invalid data in login database {self.database_name}")
 
         return database_data
+
+
+class TFCLogDatabase(object):
+
+    def __init__(self, file_name: str) -> None:
+        """Create a new TFCLogDatabase object."""
+        ensure_dir(DIR_USER_DATA)
+        self.file_name = file_name
+        self.conn      = sqlite3.connect(self.file_name)
+        self.c         = self.conn.cursor()
+        self.create_table()
+
+    def __iter__(self) -> Iterator[Tuple[int, bytes]]:
+        """Iterate over encrypted log entries."""
+        yield from self.c.execute("SELECT * FROM log_entries")
+
+    def create_table(self) -> None:
+        """Create new log database."""
+        self.c.execute("""CREATE TABLE IF NOT EXISTS log_entries (id INTEGER PRIMARY KEY, log_entry BLOB NOT NULL)""")
+
+    def insert_encrypted_log_entry(self, encrypted_log_entry: bytes) -> None:
+        """Insert previously encrypted log entry into the sqlite3 database."""
+        params = (encrypted_log_entry,)
+        try:
+            self.c.execute(f"""INSERT INTO log_entries (log_entry) VALUES (?)""", params)
+        except sqlite3.Error:
+            # Re-connect to database
+            self.conn = sqlite3.connect(self.file_name)
+            self.c = self.conn.cursor()
+            self.insert_encrypted_log_entry(encrypted_log_entry)
+        self.conn.commit()
+
+    def close_database(self) -> None:
+        self.c.close()
