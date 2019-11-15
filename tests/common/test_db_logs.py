@@ -27,15 +27,16 @@ import unittest
 
 from unittest import mock
 
-from src.common.database    import TFCLogDatabase 
+from src.common.database    import MessageLog
 from src.common.db_contacts import ContactList
-from src.common.db_logs     import access_logs, change_log_db_key, log_writer_loop, remove_logs, write_log_entry
+from src.common.db_logs     import (access_logs, change_log_db_key, log_writer_loop, remove_logs, replace_log_db,
+                                    write_log_entry)
 from src.common.encoding    import bytes_to_timestamp
 from src.common.statics     import (CLEAR_ENTIRE_SCREEN, CURSOR_LEFT_UP_CORNER, C_S_HEADER, DIR_USER_DATA, EXIT,
                                     F_S_HEADER, GROUP_ID_LENGTH, LOGFILE_MASKING_QUEUE, LOG_ENTRY_LENGTH,
                                     LOG_PACKET_QUEUE, LOG_SETTING_QUEUE, MESSAGE, M_A_HEADER, M_C_HEADER, M_S_HEADER,
                                     ORIGIN_CONTACT_HEADER, PADDING_LENGTH, P_N_HEADER, RX, SYMMETRIC_KEY_LENGTH,
-                                    TIMESTAMP_LENGTH, TRAFFIC_MASKING_QUEUE, UNIT_TEST_QUEUE, WIN_TYPE_CONTACT,
+                                    TIMESTAMP_LENGTH, TRAFFIC_MASKING_QUEUE, TX, UNIT_TEST_QUEUE, WIN_TYPE_CONTACT,
                                     WIN_TYPE_GROUP)
 
 from tests.mock_classes import create_contact, GroupList, MasterKey, RxWindow, Settings
@@ -52,6 +53,8 @@ class TestLogWriterLoop(unittest.TestCase):
     def setUp(self):
         """Pre-test actions."""
         self.unit_test_dir = cd_unit_test()
+        self.master_key    = MasterKey()
+        self.message_log   = MessageLog(f'{DIR_USER_DATA}{TX}_logs', self.master_key.master_key)
 
     def tearDown(self):
         """Post-test actions."""
@@ -82,7 +85,7 @@ class TestLogWriterLoop(unittest.TestCase):
 
         # Test
         threading.Thread(target=queue_delayer).start()
-        log_writer_loop(queues, settings, unit_test=True)
+        log_writer_loop(queues, settings, self.message_log, unit_test=True)
 
         # Teardown
         tear_queues(queues)
@@ -114,7 +117,7 @@ class TestLogWriterLoop(unittest.TestCase):
 
         # Test
         threading.Thread(target=queue_delayer).start()
-        log_writer_loop(queues, settings, unit_test=True)
+        log_writer_loop(queues, settings, self.message_log, unit_test=True)
         self.assertEqual(os.path.getsize(f'{DIR_USER_DATA}{settings.software_operation}_logs'), 8192)
 
         # Teardown
@@ -153,7 +156,7 @@ class TestLogWriterLoop(unittest.TestCase):
 
         # Test
         threading.Thread(target=queue_delayer).start()
-        log_writer_loop(queues, settings, unit_test=True)
+        log_writer_loop(queues, settings, self.message_log, unit_test=True)
         self.assertEqual(os.path.getsize(f'{DIR_USER_DATA}{settings.software_operation}_logs'), 8192)
 
         # Teardown
@@ -192,7 +195,7 @@ class TestLogWriterLoop(unittest.TestCase):
         # Test
         threading.Thread(target=queue_delayer).start()
 
-        log_writer_loop(queues, settings, unit_test=True)
+        log_writer_loop(queues, settings, self.message_log, unit_test=True)
         self.assertEqual(os.path.getsize(f'{DIR_USER_DATA}{settings.software_operation}_logs'), 8192)
 
         # Teardown
@@ -207,7 +210,7 @@ class TestWriteLogEntry(unittest.TestCase):
         self.master_key       = MasterKey()
         self.settings         = Settings()
         self.log_file         = f'{DIR_USER_DATA}{self.settings.software_operation}_logs'
-        self.tfc_log_database = TFCLogDatabase(self.log_file)
+        self.tfc_log_database = MessageLog(self.log_file, self.master_key.master_key)
 
     def tearDown(self):
         """Post-test actions."""
@@ -219,13 +222,12 @@ class TestWriteLogEntry(unittest.TestCase):
 
         # Test
         with self.assertRaises(SystemExit):
-            write_log_entry(assembly_p, nick_to_pub_key('Alice'), self.master_key, self.tfc_log_database)
+            write_log_entry(assembly_p, nick_to_pub_key('Alice'), self.tfc_log_database)
 
     def test_log_entry_is_concatenated(self):
         for i in range(5):
             assembly_p = F_S_HEADER + bytes(PADDING_LENGTH)
-            self.assertIsNone(write_log_entry(assembly_p, nick_to_pub_key('Alice'),
-                                              self.master_key, self.tfc_log_database))
+            self.assertIsNone(write_log_entry(assembly_p, nick_to_pub_key('Alice'), self.tfc_log_database))
             self.assertTrue(os.path.getsize(self.log_file), (i+1)*LOG_ENTRY_LENGTH)
 
 
@@ -237,7 +239,7 @@ class TestAccessHistoryAndPrintLogs(TFCTestCase):
         self.master_key       = MasterKey()
         self.settings         = Settings()
         self.log_file         = f'{DIR_USER_DATA}{self.settings.software_operation}_logs'
-        self.tfc_log_database = TFCLogDatabase(self.log_file)
+        self.tfc_log_database = MessageLog(self.log_file, self.master_key.master_key)
         self.window           = RxWindow(type=WIN_TYPE_CONTACT,
                                          uid=nick_to_pub_key('Alice'),
                                          name='Alice',
@@ -287,16 +289,15 @@ class TestAccessHistoryAndPrintLogs(TFCTestCase):
         # Setup
         # Add a message from user (Bob) to different contact (Charlie). access_logs should not display this message.
         for p in assembly_packet_creator(MESSAGE, 'Hi Charlie'):
-            write_log_entry(p, nick_to_pub_key('Charlie'), self.master_key, self.tfc_log_database)
+            write_log_entry(p, nick_to_pub_key('Charlie'), self.tfc_log_database)
 
         # Add a message from contact Alice to user (Bob).
         for p in assembly_packet_creator(MESSAGE, 'Hi Bob'):
-            write_log_entry(p, nick_to_pub_key('Alice'), self.master_key,
-                            self.tfc_log_database, origin=ORIGIN_CONTACT_HEADER)
+            write_log_entry(p, nick_to_pub_key('Alice'), self.tfc_log_database, origin=ORIGIN_CONTACT_HEADER)
 
         # Add a message from user (Bob) to Alice.
         for p in assembly_packet_creator(MESSAGE, 'Hi Alice'):
-            write_log_entry(p, nick_to_pub_key('Alice'), self.master_key, self.tfc_log_database)
+            write_log_entry(p, nick_to_pub_key('Alice'), self.tfc_log_database)
 
         # Test
         self.assert_prints((CLEAR_ENTIRE_SCREEN + CURSOR_LEFT_UP_CORNER + f"""\
@@ -314,16 +315,15 @@ Log file of message(s) sent to contact Alice
         # Test title displayed by the Receiver program.
         self.settings.software_operation = RX
         self.log_file         = f'{DIR_USER_DATA}{self.settings.software_operation}_logs'
-        self.tfc_log_database = TFCLogDatabase(self.log_file)
+        self.tfc_log_database = MessageLog(self.log_file, self.master_key.master_key)
 
         # Add a message from contact Alice to user (Bob).
         for p in assembly_packet_creator(MESSAGE, 'Hi Bob'):
-            write_log_entry(p, nick_to_pub_key('Alice'), self.master_key,
-                            self.tfc_log_database, origin=ORIGIN_CONTACT_HEADER)
+            write_log_entry(p, nick_to_pub_key('Alice'), self.tfc_log_database, origin=ORIGIN_CONTACT_HEADER)
 
         # Add a message from user (Bob) to Alice.
         for p in assembly_packet_creator(MESSAGE, 'Hi Alice'):
-            write_log_entry(p, nick_to_pub_key('Alice'), self.master_key, self.tfc_log_database)
+            write_log_entry(p, nick_to_pub_key('Alice'), self.tfc_log_database)
 
         # Test
         self.assertIsNone(access_logs(*self.args, export=True))
@@ -345,24 +345,22 @@ Log file of message(s) to/from contact Alice
         packets = assembly_packet_creator(MESSAGE, self.msg)
         packets = packets[2:] + [M_C_HEADER + bytes(PADDING_LENGTH)]
         for p in packets:
-            write_log_entry(p, nick_to_pub_key('Alice'), self.master_key, self.tfc_log_database)
+            write_log_entry(p, nick_to_pub_key('Alice'), self.tfc_log_database)
 
         # Add an orphaned 'append' assembly packet the function should skip.
-        write_log_entry(M_A_HEADER + bytes(PADDING_LENGTH), nick_to_pub_key('Alice'),
-                        self.master_key, self.tfc_log_database)
+        write_log_entry(M_A_HEADER + bytes(PADDING_LENGTH), nick_to_pub_key('Alice'), self.tfc_log_database)
 
         # Add a group message for a different group the function should skip.
         for p in assembly_packet_creator(MESSAGE, 'This is a short message', group_id=GROUP_ID_LENGTH * b'1'):
-            write_log_entry(p, nick_to_pub_key('Alice'), self.master_key, self.tfc_log_database)
+            write_log_entry(p, nick_to_pub_key('Alice'), self.tfc_log_database)
 
         # Add a message from contact Alice to user (Bob).
         for p in assembly_packet_creator(MESSAGE, self.msg):
-            write_log_entry(p, nick_to_pub_key('Alice'), self.master_key,
-                            self.tfc_log_database, origin=ORIGIN_CONTACT_HEADER)
+            write_log_entry(p, nick_to_pub_key('Alice'), self.tfc_log_database, origin=ORIGIN_CONTACT_HEADER)
 
         # Add a message from user (Bob) to Alice.
         for p in assembly_packet_creator(MESSAGE, self.msg):
-            write_log_entry(p, nick_to_pub_key('Alice'), self.master_key, self.tfc_log_database)
+            write_log_entry(p, nick_to_pub_key('Alice'), self.tfc_log_database)
 
         # Test
         self.assert_prints((CLEAR_ENTIRE_SCREEN + CURSOR_LEFT_UP_CORNER + f"""\
@@ -418,12 +416,10 @@ Log file of message(s) sent to contact Alice
 
         # Add messages to Alice and Charlie. Add duplicate of outgoing message that should be skipped by access_logs.
         for p in assembly_packet_creator(MESSAGE, 'This is a short message', group_id=self.window.uid):
-            write_log_entry(p, nick_to_pub_key('Alice'),   self.master_key, self.tfc_log_database)
-            write_log_entry(p, nick_to_pub_key('Alice'),   self.master_key, self.tfc_log_database,
-                            origin=ORIGIN_CONTACT_HEADER)
-            write_log_entry(p, nick_to_pub_key('Charlie'), self.master_key, self.tfc_log_database)
-            write_log_entry(p, nick_to_pub_key('Charlie'), self.master_key, self.tfc_log_database,
-                            origin=ORIGIN_CONTACT_HEADER)
+            write_log_entry(p, nick_to_pub_key('Alice'),   self.tfc_log_database)
+            write_log_entry(p, nick_to_pub_key('Alice'),   self.tfc_log_database, origin=ORIGIN_CONTACT_HEADER)
+            write_log_entry(p, nick_to_pub_key('Charlie'), self.tfc_log_database)
+            write_log_entry(p, nick_to_pub_key('Charlie'), self.tfc_log_database, origin=ORIGIN_CONTACT_HEADER)
 
         # Test
         self.assert_prints((CLEAR_ENTIRE_SCREEN + CURSOR_LEFT_UP_CORNER + f"""\
@@ -442,7 +438,7 @@ Log file of message(s) sent to group test_group
         # Test title displayed by the Receiver program.
         self.settings.software_operation = RX
         self.log_file                    = f'{DIR_USER_DATA}{self.settings.software_operation}_logs'
-        self.tfc_log_database            = TFCLogDatabase(self.log_file)
+        self.tfc_log_database            = MessageLog(self.log_file, self.master_key.master_key)
 
         self.window = RxWindow(type=WIN_TYPE_GROUP,
                                uid=group_name_to_group_id('test_group'),
@@ -455,26 +451,26 @@ Log file of message(s) sent to group test_group
         packets = assembly_packet_creator(MESSAGE, self.msg, group_id=group_name_to_group_id('test_group'))
         packets = packets[2:] + [M_C_HEADER + bytes(PADDING_LENGTH)]
         for p in packets:
-            write_log_entry(p, nick_to_pub_key('Alice'), self.master_key, self.tfc_log_database)
+            write_log_entry(p, nick_to_pub_key('Alice'), self.tfc_log_database)
 
         # Add an orphaned 'append' assembly packet. access_logs should skip this.
-        write_log_entry(M_A_HEADER + bytes(PADDING_LENGTH), nick_to_pub_key('Alice'), self.master_key, self.tfc_log_database)
+        write_log_entry(M_A_HEADER + bytes(PADDING_LENGTH), nick_to_pub_key('Alice'), self.tfc_log_database)
 
         # Add a private message. access_logs should skip this.
         for p in assembly_packet_creator(MESSAGE, 'This is a short private message'):
-            write_log_entry(p, nick_to_pub_key('Alice'), self.master_key, self.tfc_log_database)
+            write_log_entry(p, nick_to_pub_key('Alice'), self.tfc_log_database)
 
         # Add a group message for a different group. access_logs should skip this.
         for p in assembly_packet_creator(MESSAGE, 'This is a short group message', group_id=GROUP_ID_LENGTH * b'1'):
-            write_log_entry(p, nick_to_pub_key('Alice'), self.master_key, self.tfc_log_database)
+            write_log_entry(p, nick_to_pub_key('Alice'), self.tfc_log_database)
 
         # Add messages to Alice and Charlie in group.
         # Add duplicate of outgoing message that should be skipped by access_logs.
         for p in assembly_packet_creator(MESSAGE, self.msg, group_id=group_name_to_group_id('test_group')):
-            write_log_entry(p, nick_to_pub_key('Alice'),   self.master_key, self.tfc_log_database)
-            write_log_entry(p, nick_to_pub_key('Alice'),   self.master_key, self.tfc_log_database, origin=ORIGIN_CONTACT_HEADER)
-            write_log_entry(p, nick_to_pub_key('Charlie'), self.master_key, self.tfc_log_database)
-            write_log_entry(p, nick_to_pub_key('Charlie'), self.master_key, self.tfc_log_database, origin=ORIGIN_CONTACT_HEADER)
+            write_log_entry(p, nick_to_pub_key('Alice'),   self.tfc_log_database)
+            write_log_entry(p, nick_to_pub_key('Alice'),   self.tfc_log_database, origin=ORIGIN_CONTACT_HEADER)
+            write_log_entry(p, nick_to_pub_key('Charlie'), self.tfc_log_database)
+            write_log_entry(p, nick_to_pub_key('Charlie'), self.tfc_log_database, origin=ORIGIN_CONTACT_HEADER)
 
         # Test
         self.assert_prints((CLEAR_ENTIRE_SCREEN + CURSOR_LEFT_UP_CORNER + f"""\
@@ -540,14 +536,14 @@ class TestReEncrypt(TFCTestCase):
 
     def setUp(self):
         """Pre-test actions."""
-        self.unit_test_dir    = cd_unit_test()
-        self.old_key          = MasterKey()
-        self.new_key          = MasterKey(master_key=os.urandom(SYMMETRIC_KEY_LENGTH))
-        self.settings         = Settings()
-        self.tmp_file_name    = f"{DIR_USER_DATA}{self.settings.software_operation}_logs_temp"
-        self.time             = STATIC_TIMESTAMP
-        self.log_file         = f'{DIR_USER_DATA}{self.settings.software_operation}_logs'
-        self.tfc_log_database = TFCLogDatabase(self.log_file)
+        self.unit_test_dir  = cd_unit_test()
+        self.old_master_key = MasterKey()
+        self.new_master_key = MasterKey(master_key=os.urandom(SYMMETRIC_KEY_LENGTH))
+        self.settings       = Settings()
+        self.tmp_file_name  = f"{DIR_USER_DATA}{self.settings.software_operation}_logs_temp"
+        self.time           = STATIC_TIMESTAMP
+        self.log_file       = f'{DIR_USER_DATA}{self.settings.software_operation}_logs'
+        self.message_log    = MessageLog(self.log_file, self.old_master_key.master_key)
 
     def tearDown(self):
         """Post-test actions."""
@@ -559,7 +555,7 @@ class TestReEncrypt(TFCTestCase):
 
         # Test
         self.assert_fr(f"No log database available.",
-                       change_log_db_key, self.old_key.master_key, self.new_key.master_key, self.settings)
+                       change_log_db_key, self.old_master_key.master_key, self.new_master_key.master_key, self.settings)
 
     @mock.patch('struct.pack', return_value=TIMESTAMP_BYTES)
     def test_database_encryption_with_another_key(self, _):
@@ -568,22 +564,22 @@ class TestReEncrypt(TFCTestCase):
                                          uid=nick_to_pub_key('Alice'),
                                          name='Alice',
                                          type_print='contact')
-        contact_list          = ContactList(self.old_key, self.settings)
+        contact_list          = ContactList(self.old_master_key, self.settings)
         contact_list.contacts = [create_contact('Alice')]
         group_list            = GroupList()
 
         # Create temp file that must be removed.
+        temp_file_data = os.urandom(LOG_ENTRY_LENGTH)
         with open(self.tmp_file_name, 'wb+') as f:
-            f.write(os.urandom(LOG_ENTRY_LENGTH))
+            f.write(temp_file_data)
 
         # Add a message from contact Alice to user (Bob).
         for p in assembly_packet_creator(MESSAGE, 'This is a short message'):
-            write_log_entry(p, nick_to_pub_key('Alice'), self.old_key,
-                            self.tfc_log_database, origin=ORIGIN_CONTACT_HEADER)
+            write_log_entry(p, nick_to_pub_key('Alice'), self.message_log, origin=ORIGIN_CONTACT_HEADER)
 
         # Add a message from user (Bob) to Alice.
         for p in assembly_packet_creator(MESSAGE, 'This is a short message'):
-            write_log_entry(p, nick_to_pub_key('Alice'), self.old_key, self.tfc_log_database)
+            write_log_entry(p, nick_to_pub_key('Alice'), self.message_log)
 
         # Check logfile content.
         message = (CLEAR_ENTIRE_SCREEN + CURSOR_LEFT_UP_CORNER + f"""\
@@ -594,12 +590,16 @@ Log file of message(s) sent to contact Alice
 <End of log file>
 
 """)
-        self.assert_prints(message, access_logs, window, contact_list, group_list, self.settings, self.old_key)
+        self.assertIsNone(
+            change_log_db_key(self.old_master_key.master_key, self.new_master_key.master_key, self.settings))
 
-        self.assertIsNone(change_log_db_key(self.old_key.master_key, self.new_key.master_key, self.settings))
+        with open(self.tmp_file_name, 'rb') as f:
+            purp_temp_data = f.read()
+        self.assertNotEqual(purp_temp_data, temp_file_data)
 
         # Test that decryption with new key is identical.
-        self.assert_prints(message, access_logs, window, contact_list, group_list, self.settings, self.new_key)
+        replace_log_db(self.settings)
+        self.assert_prints(message, access_logs, window, contact_list, group_list, self.settings, self.new_master_key)
 
         # Test that temp file is removed.
         self.assertFalse(os.path.isfile(self.tmp_file_name))
@@ -617,7 +617,7 @@ class TestRemoveLog(TFCTestCase):
         self.group_list       = GroupList(groups=['test_group'])
         self.file_name        = f'{DIR_USER_DATA}{self.settings.software_operation}_logs'
         self.tmp_file_name    = self.file_name + "_temp"
-        self.tfc_log_database = TFCLogDatabase(self.file_name)
+        self.tfc_log_database = MessageLog(self.file_name, self.master_key.master_key)
         self.args             = self.contact_list, self.group_list, self.settings, self.master_key
 
         self.msg = ("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean condimentum consectetur purus quis"
@@ -648,39 +648,38 @@ class TestRemoveLog(TFCTestCase):
 
         # Add long message from user (Bob) to Alice and Charlie. These should be removed.
         for p in assembly_packet_creator(MESSAGE, self.msg, group_id=group_name_to_group_id('test_group')):
-            write_log_entry(p, nick_to_pub_key('Alice'),   self.master_key, self.tfc_log_database)
-            write_log_entry(p, nick_to_pub_key('Charlie'), self.master_key, self.tfc_log_database)
+            write_log_entry(p, nick_to_pub_key('Alice'),   self.tfc_log_database)
+            write_log_entry(p, nick_to_pub_key('Charlie'), self.tfc_log_database)
 
         # Add short message from user (Bob) to Alice and Charlie. These should be removed.
         for p in assembly_packet_creator(MESSAGE, short_msg, group_id=group_name_to_group_id('test_group')):
-            write_log_entry(p, nick_to_pub_key('Alice'),   self.master_key, self.tfc_log_database)
-            write_log_entry(p, nick_to_pub_key('Charlie'), self.master_key, self.tfc_log_database)
+            write_log_entry(p, nick_to_pub_key('Alice'),   self.tfc_log_database)
+            write_log_entry(p, nick_to_pub_key('Charlie'), self.tfc_log_database)
 
         # Add short message from user (Bob) to David. This should be kept.
         for p in assembly_packet_creator(MESSAGE, short_msg):
-            write_log_entry(p, nick_to_pub_key('David'), self.master_key, self.tfc_log_database)
+            write_log_entry(p, nick_to_pub_key('David'), self.tfc_log_database)
 
         # Add long message from user (Bob) to David. These should be kept.
         for p in assembly_packet_creator(MESSAGE, self.msg):
-            write_log_entry(p, nick_to_pub_key('David'), self.master_key, self.tfc_log_database)
+            write_log_entry(p, nick_to_pub_key('David'), self.tfc_log_database)
 
         # Add short message from user (Bob) to David in a group. This should be kept as group is different.
         for p in assembly_packet_creator(MESSAGE, short_msg, group_id=group_name_to_group_id('different_group')):
-            write_log_entry(p, nick_to_pub_key('David'), self.master_key, self.tfc_log_database)
+            write_log_entry(p, nick_to_pub_key('David'), self.tfc_log_database)
 
         # Add an orphaned 'append' assembly packet. This should be removed as it's corrupted.
-        write_log_entry(M_A_HEADER + bytes(PADDING_LENGTH), nick_to_pub_key('Alice'),
-                        self.master_key, self.tfc_log_database)
+        write_log_entry(M_A_HEADER + bytes(PADDING_LENGTH), nick_to_pub_key('Alice'), self.tfc_log_database)
 
         # Add long message to group member David, canceled half-way. This should be removed as unviewable.
         packets = assembly_packet_creator(MESSAGE, self.msg, group_id=group_name_to_group_id('test_group'))
         packets = packets[2:] + [M_C_HEADER + bytes(PADDING_LENGTH)]
         for p in packets:
-            write_log_entry(p, nick_to_pub_key('David'), self.master_key, self.tfc_log_database)
+            write_log_entry(p, nick_to_pub_key('David'), self.tfc_log_database)
 
         # Add long message to group member David, remove_logs should keep these as group is different.
         for p in assembly_packet_creator(MESSAGE, self.msg, group_id=group_name_to_group_id('different_group')):
-            write_log_entry(p, nick_to_pub_key('David'), self.master_key, self.tfc_log_database)
+            write_log_entry(p, nick_to_pub_key('David'), self.tfc_log_database)
 
         # Test
         self.assertEqual(os.path.getsize(self.file_name), 16384)
@@ -705,13 +704,13 @@ class TestRemoveLog(TFCTestCase):
 
         # Add a long message sent to both Alice and Bob.
         for p in assembly_packet_creator(MESSAGE, self.msg):
-            write_log_entry(p, nick_to_pub_key('Alice'),   self.master_key, self.tfc_log_database)
-            write_log_entry(p, nick_to_pub_key('Charlie'), self.master_key, self.tfc_log_database)
+            write_log_entry(p, nick_to_pub_key('Alice'),   self.tfc_log_database)
+            write_log_entry(p, nick_to_pub_key('Charlie'), self.tfc_log_database)
 
         # Add a short message sent to both Alice and Bob.
         for p in assembly_packet_creator(MESSAGE, short_msg):
-            write_log_entry(p, nick_to_pub_key('Alice'),   self.master_key, self.tfc_log_database)
-            write_log_entry(p, nick_to_pub_key('Charlie'), self.master_key, self.tfc_log_database)
+            write_log_entry(p, nick_to_pub_key('Alice'),   self.tfc_log_database)
+            write_log_entry(p, nick_to_pub_key('Charlie'), self.tfc_log_database)
 
         # Test
         self.assertEqual(os.path.getsize(self.file_name), 8192)

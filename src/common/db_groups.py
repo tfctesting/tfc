@@ -233,7 +233,7 @@ class GroupList(Iterable[Group], Sized):
         """Return the number of Group objects in `self.groups`."""
         return len(self.groups)
 
-    def store_groups(self) -> None:
+    def store_groups(self, replace: bool = True) -> None:
         """Write the list of groups to an encrypted database.
 
         This function will first generate a header that stores
@@ -255,7 +255,7 @@ class GroupList(Iterable[Group], Sized):
         """
         pt_bytes  = self._generate_group_db_header()
         pt_bytes += b''.join([g.serialize_g() for g in (self.groups + self._dummy_groups())])
-        self.database.store_database(pt_bytes)
+        self.database.store_database(pt_bytes, replace)
 
     def _load_groups(self) -> None:
         """Load groups from the encrypted database.

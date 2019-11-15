@@ -117,7 +117,7 @@ class ContactList(OrigContactList, Iterable, Sized):
     def __iter__(self) -> Generator:
         yield from self.contacts
 
-    def store_contacts(self):
+    def store_contacts(self, replace: bool = True):
         """Mock method."""
         pass
 
@@ -164,7 +164,7 @@ class GroupList(OrigGroupList, Iterable, Sized):
         """Mock method."""
         return len(self.groups)
 
-    def store_groups(self):
+    def store_groups(self, replace: bool = True):
         """Mock method."""
         self.store_groups_called = True
 
@@ -190,7 +190,7 @@ class KeyList(OrigKeyList):
         for key, value in kwargs.items():
             setattr(self, key, value)
 
-    def store_keys(self):
+    def store_keys(self, replace: bool = True):
         """Mock method."""
         self.store_keys_called = True
 
@@ -280,7 +280,7 @@ class Settings(OrigSettings):
         for key, value in kwargs.items():
             setattr(self, key, value)
 
-    def store_settings(self):
+    def store_settings(self, replace: bool = True):
         """Mock method."""
         pass
 

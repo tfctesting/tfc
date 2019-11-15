@@ -23,7 +23,7 @@ import os
 import sqlite3
 import typing
 
-from typing import Iterator, Tuple
+from typing import Iterator
 
 import nacl.exceptions
 
@@ -86,7 +86,10 @@ class TFCDatabase(object):
 
             self.write_to_file(self.database_temp, ct_bytes)
 
-    def store_database(self, pt_bytes: bytes) -> None:
+    def store_database(self,
+                       pt_bytes: bytes,
+                       replace:  bool = True
+                       ) -> None:
         """Encrypt and store data into database."""
         ct_bytes = encrypt_and_sign(pt_bytes, self.database_key)
         ensure_dir(DIR_USER_DATA)
@@ -94,6 +97,11 @@ class TFCDatabase(object):
 
         # Replace original file with temp file. (`os.replace` is atomic as per POSIX
         # requirements): https://docs.python.org/3/library/os.html#os.replace
+        if replace:
+            os.replace(self.database_temp, self.database_name)
+
+    def replace_database(self) -> None:
+        """Replace database with temporary database."""
         os.replace(self.database_temp, self.database_name)
 
     def load_database(self) -> bytes:
@@ -175,6 +183,11 @@ class TFCUnencryptedDatabase(object):
         # requirements): https://docs.python.org/3/library/os.html#os.replace
         os.replace(self.database_temp, self.database_name)
 
+    def replace_database(self) -> None:
+        """Replace database with temporary database."""
+        if os.path.isfile(self.database_temp):
+            os.replace(self.database_temp, self.database_name)
+
     def load_database(self) -> bytes:
         """Load data from database.
 
@@ -204,34 +217,71 @@ class TFCUnencryptedDatabase(object):
         return database_data
 
 
-class TFCLogDatabase(object):
+class MessageLog(object):
 
-    def __init__(self, file_name: str) -> None:
-        """Create a new TFCLogDatabase object."""
+    def __init__(self, database_name: str, database_key: bytes) -> None:
+        """Create a new MessageLog object."""
         ensure_dir(DIR_USER_DATA)
-        self.file_name = file_name
-        self.conn      = sqlite3.connect(self.file_name)
-        self.c         = self.conn.cursor()
+        self.database_name = database_name
+        self.database_temp = self.database_name + '_temp'
+        self.database_key  = database_key
+
+        if os.path.isfile(self.database_name):
+            self.load_database()
+
+        self.conn = sqlite3.connect(self.database_name)
+        self.c    = self.conn.cursor()
         self.create_table()
 
-    def __iter__(self) -> Iterator[Tuple[int, bytes]]:
+    def __iter__(self) -> Iterator[bytes]:
         """Iterate over encrypted log entries."""
-        yield from self.c.execute("SELECT * FROM log_entries")
+        for log_entry in self.c.execute("SELECT log_entry FROM log_entries"):
+            plaintext = auth_and_decrypt(log_entry[0], self.database_key, database=self.database_name)
+            yield plaintext
+
+    def verify_file(self, database_name: str) -> bool:
+        """Verify integrity of database file content."""
+        conn = sqlite3.connect(database_name)
+        c    = conn.cursor()
+
+        try:
+            log_entries = c.execute("SELECT log_entry FROM log_entries")
+        except sqlite3.DatabaseError:
+            return False
+
+        for log_entry in log_entries:
+            try:
+                _ = auth_and_decrypt(log_entry[0], self.database_key)
+            except nacl.exceptions.CryptoError:
+                return False
+        else:
+            return True
+
+    def load_database(self) -> None:
+        """"Load database from file."""
+        if os.path.isfile(self.database_temp):
+            if self.verify_file(self.database_temp):
+                os.replace(self.database_temp, self.database_name)
+            else:
+                # If temp file failed integrity check, the file is most likely corrupt,
+                # so we delete it and continue using the old file to ensure atomicity.
+                os.remove(self.database_temp)
 
     def create_table(self) -> None:
         """Create new log database."""
         self.c.execute("""CREATE TABLE IF NOT EXISTS log_entries (id INTEGER PRIMARY KEY, log_entry BLOB NOT NULL)""")
 
-    def insert_encrypted_log_entry(self, encrypted_log_entry: bytes) -> None:
-        """Insert previously encrypted log entry into the sqlite3 database."""
-        params = (encrypted_log_entry,)
+    def insert_log_entry(self, pt_log_entry: bytes) -> None:
+        """Encrypt and insert log entry into the sqlite3 log database."""
+        ct_log_entry = encrypt_and_sign(pt_log_entry, self.database_key)
+        params       = (ct_log_entry,)
         try:
             self.c.execute(f"""INSERT INTO log_entries (log_entry) VALUES (?)""", params)
         except sqlite3.Error:
             # Re-connect to database
-            self.conn = sqlite3.connect(self.file_name)
+            self.conn = sqlite3.connect(self.database_name)
             self.c = self.conn.cursor()
-            self.insert_encrypted_log_entry(encrypted_log_entry)
+            self.insert_log_entry(pt_log_entry)
         self.conn.commit()
 
     def close_database(self) -> None:

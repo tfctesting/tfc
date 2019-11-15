@@ -20,21 +20,24 @@ along with TFC. If not, see <https://www.gnu.org/licenses/>.
 """
 
 import os
+import time
 import unittest
 
-from unittest      import mock
-from unittest.mock import MagicMock
+from multiprocessing import Process
+from unittest        import mock
+from unittest.mock   import MagicMock
 
-from src.common.database import TFCDatabase, TFCLogDatabase
+from src.common.database import TFCDatabase, MessageLog
 from src.common.db_logs  import write_log_entry
 from src.common.encoding import bool_to_bytes
 from src.common.statics  import (BOLD_ON, CLEAR_ENTIRE_SCREEN, COMMAND_PACKET_QUEUE, CURSOR_LEFT_UP_CORNER,
-                                 DIR_USER_DATA, KEX_STATUS_NO_RX_PSK, KEX_STATUS_UNVERIFIED, KEX_STATUS_VERIFIED,
-                                 KEY_MANAGEMENT_QUEUE, LOGFILE_MASKING_QUEUE, MESSAGE, MESSAGE_PACKET_QUEUE, M_S_HEADER,
-                                 NORMAL_TEXT, PADDING_LENGTH, PRIVATE_MESSAGE_HEADER, RELAY_PACKET_QUEUE, RESET,
-                                 SENDER_MODE_QUEUE, TM_COMMAND_PACKET_QUEUE, TRAFFIC_MASKING_QUEUE, TX,
-                                 UNENCRYPTED_DATAGRAM_HEADER, UNENCRYPTED_WIPE_COMMAND, VERSION, WIN_TYPE_CONTACT,
-                                 WIN_TYPE_GROUP)
+                                 DIR_USER_DATA, KEY_MGMT_ACK_QUEUE, KEX_STATUS_NO_RX_PSK, KEX_STATUS_UNVERIFIED,
+                                 KEX_STATUS_VERIFIED, KEY_MANAGEMENT_QUEUE, LOGFILE_MASKING_QUEUE, MESSAGE,
+                                 MESSAGE_PACKET_QUEUE, M_S_HEADER, NORMAL_TEXT, PADDING_LENGTH, PRIVATE_MESSAGE_HEADER,
+                                 RELAY_PACKET_QUEUE, RESET, SENDER_MODE_QUEUE, TM_COMMAND_PACKET_QUEUE,
+                                 TRAFFIC_MASKING_QUEUE, TX, UNENCRYPTED_DATAGRAM_HEADER, UNENCRYPTED_WIPE_COMMAND,
+                                 VERSION, WIN_TYPE_CONTACT, WIN_TYPE_GROUP, KDB_HALT_ACK_HEADER,
+                                 KDB_M_KEY_CHANGE_HALT_HEADER)
 
 from src.transmitter.commands import change_master_key, change_setting, clear_screens, exit_tfc, log_command
 from src.transmitter.commands import print_about, print_help, print_recipients, print_settings, process_command
@@ -223,7 +226,7 @@ class TestLogCommand(TFCTestCase):
         self.args             = (self.window, self.contact_list, self.group_list,
                                  self.settings, self.queues, self.master_key)
         self.log_file         = f'{DIR_USER_DATA}{self.settings.software_operation}_logs'
-        self.tfc_log_database = TFCLogDatabase(self.log_file)
+        self.tfc_log_database = MessageLog(self.log_file, self.master_key.master_key)
 
     def tearDown(self):
         """Post-test actions."""
@@ -308,7 +311,10 @@ class TestLogCommand(TFCTestCase):
         self.window.uid  = nick_to_pub_key('Alice')
         whisper_header   = bool_to_bytes(False)
         packet           = split_to_assembly_packets(whisper_header + PRIVATE_MESSAGE_HEADER + b'test', MESSAGE)[0]
-        write_log_entry(packet, nick_to_pub_key('Alice'), self.master_key, self.tfc_log_database)
+
+        self.tfc_log_database.database_key = self.master_key.master_key
+
+        write_log_entry(packet, nick_to_pub_key('Alice'), self.tfc_log_database)
 
         # Test
         for command in ['export', 'export 1']:
@@ -518,7 +524,7 @@ class TestChangeMasterKey(TFCTestCase):
         self.master_key       = MasterKey()
         self.file_name        = f'{DIR_USER_DATA}/unittest'
         self.log_file         = f'{DIR_USER_DATA}{self.settings.software_operation}_logs'
-        self.tfc_log_database = TFCLogDatabase(self.log_file)
+        self.tfc_log_database = MessageLog(self.log_file, self.master_key.master_key)
         self.onion_service    = OnionService(master_key=self.master_key,
                                              file_name=self.file_name,
                                              database=TFCDatabase(self.file_name, self.master_key))
@@ -547,19 +553,138 @@ class TestChangeMasterKey(TFCTestCase):
         self.assert_fr("Error: Invalid target system 't'.",
                        change_master_key, UserInput("passwd t"), *self.args)
 
+    @mock.patch('src.common.db_keys.KeyList', return_value=MagicMock())
+    @mock.patch('os.popen',        return_value=MagicMock(read=MagicMock(return_value='foo\nMemAvailable 200')))
+    @mock.patch('getpass.getpass', side_effect=['test_password', 'a', 'a'])
+    @mock.patch('time.sleep',      return_value=None)
+    @mock.patch('src.common.db_masterkey.MIN_KEY_DERIVATION_TIME', 0.01)
+    def test_invalid_response_from_key_db_raises_fr(self, *_):
+        # Setup
+        def mock_sender_loop():
+            """Mock sender loop key management functionality."""
+            while self.queues[KEY_MANAGEMENT_QUEUE].empty():
+                time.sleep(0.1)
+            if self.queues[KEY_MANAGEMENT_QUEUE].get()[0] == KDB_M_KEY_CHANGE_HALT_HEADER:
+                self.queues[KEY_MGMT_ACK_QUEUE].put('WRONG_HEADER')
+
+        p = Process(target=mock_sender_loop, args=())
+        p.start()
+
+        # Test
+        self.assert_fr("Error: Key database returned wrong signal.", change_master_key, UserInput("passwd tx"), *self.args)
+
+        # Teardown
+        p.terminate()
+
+    @mock.patch('src.common.db_keys.KeyList', return_value=MagicMock())
+    @mock.patch('os.popen',        return_value=MagicMock(read=MagicMock(return_value='foo\nMemAvailable 200')))
+    @mock.patch('getpass.getpass', side_effect=['test_password', 'a', 'a'])
+    @mock.patch('time.sleep',      return_value=None)
+    @mock.patch('src.common.db_masterkey.MIN_KEY_DERIVATION_TIME', 0.01)
+    def test_transmitter_command_raises_system_exit_if_key_database_returns_invalid_master_key(self, *_):
+        # Setup
+        def mock_sender_loop():
+            """Mock sender loop key management functionality."""
+            while self.queues[KEY_MANAGEMENT_QUEUE].empty():
+                time.sleep(0.1)
+            if self.queues[KEY_MANAGEMENT_QUEUE].get()[0] == KDB_M_KEY_CHANGE_HALT_HEADER:
+                self.queues[KEY_MGMT_ACK_QUEUE].put(KDB_HALT_ACK_HEADER)
+
+            while self.queues[KEY_MANAGEMENT_QUEUE].empty():
+                time.sleep(0.1)
+            _ = self.queues[KEY_MANAGEMENT_QUEUE].get()
+            self.queues[KEY_MGMT_ACK_QUEUE].put(b'invalid_master_key')
+
+        p = Process(target=mock_sender_loop, args=())
+        p.start()
+
+        self.contact_list.file_name  = f'{DIR_USER_DATA}{TX}_contacts'
+        self.group_list.file_name    = f'{DIR_USER_DATA}{TX}_groups'
+        self.settings.file_name      = f'{DIR_USER_DATA}{TX}_settings'
+        self.onion_service.file_name = f'{DIR_USER_DATA}{TX}_onion_db'
+
+        self.contact_list.database  = TFCDatabase(self.contact_list.file_name,  self.contact_list.master_key)
+        self.group_list.database    = TFCDatabase(self.group_list.file_name,    self.group_list.master_key)
+        self.settings.database      = TFCDatabase(self.settings.file_name,      self.settings.master_key)
+        self.onion_service.database = TFCDatabase(self.onion_service.file_name, self.onion_service.master_key)
+
+        orig_cl_rd = self.contact_list.database.replace_database
+        orig_gl_rd = self.group_list.database.replace_database
+        orig_st_rd = self.settings.database.replace_database
+        orig_os_rd = self.onion_service.database.replace_database
+
+        self.contact_list.database.replace_database  = lambda: None
+        self.group_list.database.replace_database    = lambda: None
+        self.settings.database.replace_database      = lambda: None
+        self.onion_service.database.replace_database = lambda: None
+
+        write_log_entry(M_S_HEADER + PADDING_LENGTH * b'a', nick_to_pub_key('Alice'), self.tfc_log_database)
+
+        # Test
+        with self.assertRaises(SystemExit):
+            self.assertIsNone(change_master_key(UserInput("passwd tx"), *self.args))
+
+        # Teardown
+        p.terminate()
+
+        self.contact_list.database.replace_database  = orig_cl_rd
+        self.group_list.database.replace_database    = orig_gl_rd
+        self.settings.database.replace_database      = orig_st_rd
+        self.onion_service.database.replace_database = orig_os_rd
+
+    @mock.patch('src.common.db_keys.KeyList', return_value=MagicMock())
     @mock.patch('os.popen',        return_value=MagicMock(read=MagicMock(return_value='foo\nMemAvailable 200')))
     @mock.patch('getpass.getpass', side_effect=['test_password', 'a', 'a'])
     @mock.patch('time.sleep',      return_value=None)
     @mock.patch('src.common.db_masterkey.MIN_KEY_DERIVATION_TIME', 0.01)
     def test_transmitter_command(self, *_):
         # Setup
-        write_log_entry(M_S_HEADER + PADDING_LENGTH * b'a', nick_to_pub_key('Alice'),
-                        self.master_key, self.tfc_log_database)
+        def mock_sender_loop():
+            """Mock sender loop key management functionality."""
+            while self.queues[KEY_MANAGEMENT_QUEUE].empty():
+                time.sleep(0.1)
+            if self.queues[KEY_MANAGEMENT_QUEUE].get()[0] == KDB_M_KEY_CHANGE_HALT_HEADER:
+                self.queues[KEY_MGMT_ACK_QUEUE].put(KDB_HALT_ACK_HEADER)
+
+            while self.queues[KEY_MANAGEMENT_QUEUE].empty():
+                time.sleep(0.1)
+            master_key = self.queues[KEY_MANAGEMENT_QUEUE].get()
+            self.queues[KEY_MGMT_ACK_QUEUE].put(master_key)
+
+        p = Process(target=mock_sender_loop, args=())
+        p.start()
+
+        self.contact_list.file_name  = f'{DIR_USER_DATA}{TX}_contacts'
+        self.group_list.file_name    = f'{DIR_USER_DATA}{TX}_groups'
+        self.settings.file_name      = f'{DIR_USER_DATA}{TX}_settings'
+        self.onion_service.file_name = f'{DIR_USER_DATA}{TX}_onion_db'
+
+        self.contact_list.database  = TFCDatabase(self.contact_list.file_name,  self.contact_list.master_key)
+        self.group_list.database    = TFCDatabase(self.group_list.file_name,    self.group_list.master_key)
+        self.settings.database      = TFCDatabase(self.settings.file_name,      self.settings.master_key)
+        self.onion_service.database = TFCDatabase(self.onion_service.file_name, self.onion_service.master_key)
+
+        orig_cl_rd = self.contact_list.database.replace_database
+        orig_gl_rd = self.group_list.database.replace_database
+        orig_st_rd = self.settings.database.replace_database
+        orig_os_rd = self.onion_service.database.replace_database
+
+        self.contact_list.database.replace_database  = lambda: None
+        self.group_list.database.replace_database    = lambda: None
+        self.settings.database.replace_database      = lambda: None
+        self.onion_service.database.replace_database = lambda: None
+
+        write_log_entry(M_S_HEADER + PADDING_LENGTH * b'a', nick_to_pub_key('Alice'), self.tfc_log_database)
 
         # Test
         self.assertIsNone(change_master_key(UserInput("passwd tx"), *self.args))
-        self.assertEqual(self.queues[COMMAND_PACKET_QUEUE].qsize(), 0)
-        self.assertEqual(self.queues[KEY_MANAGEMENT_QUEUE].qsize(), 1)
+        p.terminate()
+
+        # Teardown
+        self.contact_list.database.replace_database  = orig_cl_rd
+        self.group_list.database.replace_database    = orig_gl_rd
+        self.settings.database.replace_database      = orig_st_rd
+        self.onion_service.database.replace_database = orig_os_rd
 
     def test_receiver_command(self):
         self.assertIsNone(change_master_key(UserInput("passwd rx"), *self.args))
@@ -569,8 +694,7 @@ class TestChangeMasterKey(TFCTestCase):
     @mock.patch('time.sleep',      return_value=None)
     @mock.patch('getpass.getpass', side_effect=KeyboardInterrupt)
     def test_keyboard_interrupt_raises_fr(self, *_):
-        self.assert_fr("Authentication aborted.",
-                       change_master_key, UserInput("passwd tx"), *self.args)
+        self.assert_fr("Authentication aborted.", change_master_key, UserInput("passwd tx"), *self.args)
 
 
 class TestRemoveLog(TFCTestCase):
@@ -586,7 +710,7 @@ class TestRemoveLog(TFCTestCase):
         self.file_name        = f'{DIR_USER_DATA}{self.settings.software_operation}_logs'
         self.args             = self.contact_list, self.group_list, self.settings, self.queues, self.master_key
         self.log_file         = f'{DIR_USER_DATA}{self.settings.software_operation}_logs'
-        self.tfc_log_database = TFCLogDatabase(self.log_file)
+        self.tfc_log_database = MessageLog(self.log_file, self.master_key.master_key)
 
     def tearDown(self):
         """Post-test actions."""
@@ -601,8 +725,7 @@ class TestRemoveLog(TFCTestCase):
     @mock.patch('builtins.input', return_value='No')
     def test_no_aborts_removal(self, *_):
         # Setup
-        write_log_entry(M_S_HEADER + PADDING_LENGTH * b'a', nick_to_pub_key('Alice'),
-                        self.master_key, self.tfc_log_database)
+        write_log_entry(M_S_HEADER + PADDING_LENGTH * b'a', nick_to_pub_key('Alice'), self.tfc_log_database)
         self.assertEqual(os.path.getsize(self.file_name), 8192)
 
         # Test
@@ -623,8 +746,7 @@ class TestRemoveLog(TFCTestCase):
     @mock.patch('builtins.input', return_value='Yes')
     def test_log_remove_with_nick(self, _):
         # Setup
-        write_log_entry(M_S_HEADER + PADDING_LENGTH * b'a', nick_to_pub_key("Alice"),
-                        self.master_key, self.tfc_log_database)
+        write_log_entry(M_S_HEADER + PADDING_LENGTH * b'a', nick_to_pub_key("Alice"), self.tfc_log_database)
 
 
         # Test
@@ -636,8 +758,7 @@ class TestRemoveLog(TFCTestCase):
     @mock.patch('builtins.input',           return_value='Yes')
     def test_log_remove_with_onion_address(self, *_):
         # Setup
-        write_log_entry(M_S_HEADER + PADDING_LENGTH * b'a', nick_to_pub_key("Alice"),
-                        self.master_key, self.tfc_log_database)
+        write_log_entry(M_S_HEADER + PADDING_LENGTH * b'a', nick_to_pub_key("Alice"), self.tfc_log_database)
 
         # Test
         self.assert_fr("Removed log entries for contact 'Alice'.",
@@ -648,8 +769,7 @@ class TestRemoveLog(TFCTestCase):
     @mock.patch('builtins.input',           return_value='Yes')
     def test_log_remove_with_unknown_onion_address(self, *_):
         # Setup
-        write_log_entry(M_S_HEADER + PADDING_LENGTH * b'a', nick_to_pub_key("Alice"),
-                        self.master_key, self.tfc_log_database)
+        write_log_entry(M_S_HEADER + PADDING_LENGTH * b'a', nick_to_pub_key("Alice"), self.tfc_log_database)
 
         # Test
         self.assert_fr("Found no log entries for contact 'w5sm3'.",
@@ -661,8 +781,7 @@ class TestRemoveLog(TFCTestCase):
         # Setup
         for p in assembly_packet_creator(MESSAGE, 'This is a short group message',
                                          group_id=group_name_to_group_id('test_group')):
-            write_log_entry(p, nick_to_pub_key('Alice'),
-                            self.master_key, self.tfc_log_database)
+            write_log_entry(p, nick_to_pub_key('Alice'), self.tfc_log_database)
 
         # Test
         self.assert_fr("Removed log entries for group 'test_group'.",
@@ -672,12 +791,10 @@ class TestRemoveLog(TFCTestCase):
     @mock.patch('builtins.input', return_value='Yes')
     def test_unknown_selector_raises_fr(self, _):
         # Setup
-        write_log_entry(M_S_HEADER + PADDING_LENGTH * b'a', nick_to_pub_key("Alice"),
-                        self.master_key, self.tfc_log_database)
+        write_log_entry(M_S_HEADER + PADDING_LENGTH * b'a', nick_to_pub_key("Alice"), self.tfc_log_database)
 
         # Test
-        self.assert_fr("Error: Unknown selector.",
-                       remove_log, UserInput(f'/rmlogs unknown'), *self.args)
+        self.assert_fr("Error: Unknown selector.", remove_log, UserInput(f'/rmlogs unknown'), *self.args)
 
 
 class TestChangeSetting(TFCTestCase):

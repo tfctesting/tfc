@@ -28,7 +28,7 @@ from multiprocessing import Queue
 from unittest        import mock
 from unittest.mock   import MagicMock
 
-from src.common.database import TFCLogDatabase
+from src.common.database import MessageLog, TFCDatabase
 from src.common.db_logs  import write_log_entry
 from src.common.encoding import int_to_bytes
 from src.common.statics  import (CH_FILE_RECV, CH_LOGGING, CH_NOTIFY, CLEAR_ENTIRE_LINE, COMMAND, CURSOR_UP_ONE_LINE,
@@ -181,7 +181,7 @@ class TestLogCommand(TFCTestCase):
         self.args              = (self.ts, self.window_list, self.contact_list,
                                   self.group_list, self.settings, self.master_key)
         self.log_file          = f'{DIR_USER_DATA}{self.settings.software_operation}_logs'
-        self.tfc_log_database  = TFCLogDatabase(self.log_file)
+        self.tfc_log_database  = MessageLog(self.log_file, self.master_key.master_key)
 
         time_float = struct.unpack('<L', bytes.fromhex('08ceae02'))[0]
         self.time  = datetime.fromtimestamp(time_float).strftime("%H:%M:%S.%f")[:-4]
@@ -203,8 +203,7 @@ class TestLogCommand(TFCTestCase):
     def test_export(self, _):
         # Setup
         for p in assembly_packet_creator(MESSAGE, 'A short message'):
-            write_log_entry(p, nick_to_pub_key("Bob"), self.master_key,
-                            self.tfc_log_database, origin=ORIGIN_CONTACT_HEADER)
+            write_log_entry(p, nick_to_pub_key("Bob"), self.tfc_log_database, origin=ORIGIN_CONTACT_HEADER)
 
         # Test
         self.assertIsNone(log_command(self.cmd_data, *self.args))
@@ -256,7 +255,7 @@ class TestChMasterKey(TFCTestCase):
         self.args             = (self.ts, self.window_list, self.contact_list, self.group_list,
                                  self.key_list, self.settings, self.master_key)
         self.log_file         = f'{DIR_USER_DATA}{self.settings.software_operation}_logs'
-        self.tfc_log_database = TFCLogDatabase(self.log_file)
+        self.tfc_log_database = MessageLog(self.log_file, self.master_key.master_key)
 
     def tearDown(self):
         """Post-test actions."""
@@ -271,12 +270,38 @@ class TestChMasterKey(TFCTestCase):
     @mock.patch('time.sleep',                return_value=None)
     def test_master_key_change(self, *_):
         # Setup
-        write_log_entry(F_S_HEADER + bytes(PADDING_LENGTH), nick_to_pub_key("Alice"), self.master_key, self.tfc_log_database)
+        write_log_entry(F_S_HEADER + bytes(PADDING_LENGTH), nick_to_pub_key("Alice"), self.tfc_log_database)
+
+        self.contact_list.file_name  = f'{DIR_USER_DATA}{RX}_contacts'
+        self.group_list.file_name    = f'{DIR_USER_DATA}{RX}_groups'
+        self.key_list.file_name      = f'{DIR_USER_DATA}{RX}_keys'
+        self.settings.file_name      = f'{DIR_USER_DATA}{RX}_settings'
+
+        self.contact_list.database = TFCDatabase(self.contact_list.file_name, self.contact_list.master_key)
+        self.group_list.database   = TFCDatabase(self.group_list.file_name,   self.group_list.master_key)
+        self.key_list.database     = TFCDatabase(self.key_list.file_name,     self.group_list.master_key)
+        self.settings.database     = TFCDatabase(self.settings.file_name,     self.settings.master_key)
+
+        orig_cl_rd = self.contact_list.database.replace_database
+        orig_gl_rd = self.group_list.database.replace_database
+        orig_kl_rd = self.key_list.database.replace_database
+        orig_st_rd = self.settings.database.replace_database
+
+        self.contact_list.database.replace_database = lambda: None
+        self.group_list.database.replace_database   = lambda: None
+        self.key_list.database.replace_database     = lambda: None
+        self.settings.database.replace_database     = lambda: None
 
         # Test
         self.assertEqual(self.master_key.master_key, bytes(SYMMETRIC_KEY_LENGTH))
         self.assertIsNone(ch_master_key(*self.args))
         self.assertNotEqual(self.master_key.master_key, bytes(SYMMETRIC_KEY_LENGTH))
+
+        # Teardown
+        self.contact_list.database.replace_database = orig_cl_rd
+        self.group_list.database.replace_database   = orig_gl_rd
+        self.key_list.database.replace_database     = orig_kl_rd
+        self.settings.database.replace_database     = orig_st_rd
 
     @mock.patch('src.common.db_masterkey.MIN_KEY_DERIVATION_TIME', 0.1)
     @mock.patch('src.common.db_masterkey.MIN_KEY_DERIVATION_TIME', 1.0)

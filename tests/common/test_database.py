@@ -27,10 +27,11 @@ from unittest      import mock
 from unittest.mock import MagicMock
 
 from src.common.crypto   import auth_and_decrypt, blake2b, encrypt_and_sign
-from src.common.database import TFCDatabase, TFCLogDatabase, TFCUnencryptedDatabase
-from src.common.statics  import DB_WRITE_RETRY_LIMIT, DIR_USER_DATA, MASTERKEY_DB_SIZE, LOG_ENTRY_LENGTH
+from src.common.database import TFCDatabase, MessageLog, TFCUnencryptedDatabase
+from src.common.statics  import (DB_WRITE_RETRY_LIMIT, DIR_USER_DATA, MASTERKEY_DB_SIZE, LOG_ENTRY_LENGTH,
+                                 SYMMETRIC_KEY_LENGTH)
 
-from tests.mock_classes import MasterKey
+from tests.mock_classes import MasterKey, Settings
 from tests.utils        import cd_unit_test, cleanup, tamper_file
 
 
@@ -120,6 +121,23 @@ class TestTFCDatabase(unittest.TestCase):
             purp_data = f.read()
         purp_pt = auth_and_decrypt(purp_data, self.master_key.master_key)
         self.assertEqual(purp_pt, pt_new)
+
+    def test_replace_database(self):
+        # Setup
+        self.assertFalse(os.path.isfile(self.database.database_name))
+        self.assertFalse(os.path.isfile(self.database.database_temp))
+
+        with open(self.database.database_temp, 'wb') as f:
+            f.write(b'temp_file')
+
+        self.assertFalse(os.path.isfile(self.database.database_name))
+        self.assertTrue(os.path.isfile(self.database.database_temp))
+
+        # Test
+        self.assertIsNone(self.database.replace_database())
+
+        self.assertFalse(os.path.isfile(self.database.database_temp))
+        self.assertTrue(os.path.isfile(self.database.database_name))
 
     def test_load_database_ignores_invalid_temp_database(self):
         # Setup
@@ -240,6 +258,35 @@ class TestTFCUnencryptedDatabase(unittest.TestCase):
 
         self.assertEqual(purp_data, data_new + blake2b(data_new))
 
+    def test_replace_database(self):
+        # Setup
+        self.assertFalse(os.path.isfile(self.database.database_name))
+        self.assertFalse(os.path.isfile(self.database.database_temp))
+
+        with open(self.database.database_temp, 'wb') as f:
+            f.write(b'temp_file')
+
+        self.assertFalse(os.path.isfile(self.database.database_name))
+        self.assertTrue(os.path.isfile(self.database.database_temp))
+
+        # Test
+        self.assertIsNone(self.database.replace_database())
+
+        self.assertFalse(os.path.isfile(self.database.database_temp))
+        self.assertTrue(os.path.isfile(self.database.database_name))
+
+    def test_loading_invalid_database_data_raises_critical_error(self):
+        data_old    = os.urandom(MASTERKEY_DB_SIZE)
+        checksummed = data_old + blake2b(data_old)
+
+        with open(self.database_name, 'wb') as f:
+            f.write(checksummed)
+
+        tamper_file(self.database_name, tamper_size=1)
+
+        with self.assertRaises(SystemExit):
+            self.database.load_database()
+
     def test_load_database_ignores_invalid_temp_database(self):
         # Setup
         data_old    = os.urandom(MASTERKEY_DB_SIZE)
@@ -281,39 +328,105 @@ class TestTFCLogDatabase(unittest.TestCase):
         """Pre-test actions."""
         self.unit_test_dir    = cd_unit_test()
         self.file_name        = f'{DIR_USER_DATA}ut_logs'
-        self.tfc_log_database = TFCLogDatabase(self.file_name)
+        self.temp_name        = self.file_name + '_temp'
+        self.settings         = Settings()
+        self.database_key     = os.urandom(SYMMETRIC_KEY_LENGTH)
+        self.tfc_log_database = MessageLog(self.file_name, self.database_key)
 
     def tearDown(self) -> None:
         """Post-test actions."""
         cleanup(self.unit_test_dir)
 
+    def test_empty_log_database_is_verified(self):
+        self.assertTrue(self.tfc_log_database.verify_file(self.file_name))
+
+    def test_database_with_one_entry_is_verified(self):
+        # Setup
+        test_entry = b'test_log_entry'
+        self.tfc_log_database.insert_log_entry(test_entry)
+
+        # Test
+        self.assertTrue(self.tfc_log_database.verify_file(self.file_name))
+
+    def test_invalid_entry_returns_false(self):
+        # Setup
+        params = (os.urandom(LOG_ENTRY_LENGTH),)
+        self.tfc_log_database.c.execute(f"""INSERT INTO log_entries (log_entry) VALUES (?)""", params)
+        self.tfc_log_database.conn.commit()
+
+        # Test
+        self.assertFalse(self.tfc_log_database.verify_file(self.file_name))
+
     def test_table_creation(self):
-        self.assertIsInstance(self.tfc_log_database, TFCLogDatabase)
+        self.assertIsInstance(self.tfc_log_database, MessageLog)
         self.assertTrue(os.path.isfile(self.file_name))
 
     def test_writing_to_log_database(self):
         data = os.urandom(LOG_ENTRY_LENGTH)
-        self.assertIsNone(self.tfc_log_database.insert_encrypted_log_entry(data))
+        self.assertIsNone(self.tfc_log_database.insert_log_entry(data))
 
     def test_iterating_over_log_database(self):
         data = [os.urandom(LOG_ENTRY_LENGTH), os.urandom(LOG_ENTRY_LENGTH)]
         for entry in data:
-            self.assertIsNone(self.tfc_log_database.insert_encrypted_log_entry(entry))
+            self.assertIsNone(self.tfc_log_database.insert_log_entry(entry))
 
-        for primary_key_value, stored_entry in self.tfc_log_database:
-            index = primary_key_value -1
+        for index, stored_entry in enumerate(self.tfc_log_database):
             self.assertEqual(stored_entry, data[index])
+
+    def test_invalid_temp_database_is_not_loaded(self):
+        log_file = MessageLog(self.file_name, database_key=self.database_key)
+        tmp_file = MessageLog(self.temp_name, database_key=self.database_key)
+
+        log_file.insert_log_entry(b'a')
+        log_file.insert_log_entry(b'b')
+        log_file.insert_log_entry(b'c')
+        log_file.insert_log_entry(b'd')
+        log_file.insert_log_entry(b'e')
+
+        tmp_file.insert_log_entry(b'a')
+        tmp_file.insert_log_entry(b'b')
+        tmp_file.c.execute(f"""INSERT INTO log_entries (log_entry) VALUES (?)""", (b'c',))
+        tmp_file.conn.commit()
+        tmp_file.insert_log_entry(b'd')
+        tmp_file.insert_log_entry(b'e')
+
+        self.assertTrue(os.path.isfile(self.temp_name))
+        log_file = MessageLog(self.file_name, database_key=self.database_key)
+        self.assertEqual(list(log_file), [b'a', b'b', b'c', b'd', b'e'])
+        self.assertFalse(os.path.isfile(self.temp_name))
+
+    def test_valid_temp_database_is_loaded(self):
+        log_file = MessageLog(self.file_name, database_key=self.database_key)
+        tmp_file = MessageLog(self.temp_name, database_key=self.database_key)
+
+        log_file.insert_log_entry(b'a')
+        log_file.insert_log_entry(b'b')
+        log_file.insert_log_entry(b'c')
+        log_file.insert_log_entry(b'd')
+        log_file.insert_log_entry(b'e')
+
+        tmp_file.insert_log_entry(b'f')
+        tmp_file.insert_log_entry(b'g')
+        tmp_file.insert_log_entry(b'h')
+        tmp_file.insert_log_entry(b'i')
+        tmp_file.insert_log_entry(b'j')
+
+        self.assertTrue(os.path.isfile(self.temp_name))
+        log_file = MessageLog(self.file_name, database_key=self.database_key)
+        self.assertEqual(list(log_file), [b'f', b'g', b'h', b'i', b'j'])
+        self.assertFalse(os.path.isfile(self.temp_name))
 
     def test_database_closing(self):
         self.tfc_log_database.close_database()
 
         # Test insertion would fail at this point
         with self.assertRaises(sqlite3.ProgrammingError):
-            self.tfc_log_database.c.execute(f"""INSERT INTO log_entries (log_entry) VALUES (?)""", (os.urandom(LOG_ENTRY_LENGTH),))
+            self.tfc_log_database.c.execute(f"""INSERT INTO log_entries (log_entry) VALUES (?)""",
+                                            (os.urandom(LOG_ENTRY_LENGTH),))
 
         # Test that TFC reopens closed database on write
         data = os.urandom(LOG_ENTRY_LENGTH)
-        self.assertIsNone(self.tfc_log_database.insert_encrypted_log_entry(data))
+        self.assertIsNone(self.tfc_log_database.insert_log_entry(data))
 
 
 if __name__ == '__main__':

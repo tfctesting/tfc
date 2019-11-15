@@ -435,6 +435,7 @@ LOG_SETTING_QUEUE       = b'log_setting'
 TRAFFIC_MASKING_QUEUE   = b'traffic_masking'
 LOGFILE_MASKING_QUEUE   = b'logfile_masking'
 KEY_MANAGEMENT_QUEUE    = b'key_management'
+KEY_MGMT_ACK_QUEUE      = b'key_mgmt_ack'
 SENDER_MODE_QUEUE       = b'sender_mode'
 WINDOW_SELECT_QUEUE     = b'window_select'
 
@@ -459,7 +460,8 @@ TOR_DATA_QUEUE     = b'tor_data'
 """Queue signals"""
 KDB_ADD_ENTRY_HEADER         = 'ADD'
 KDB_REMOVE_ENTRY_HEADER      = 'REM'
-KDB_CHANGE_MASTER_KEY_HEADER = 'KEY'
+KDB_M_KEY_CHANGE_HALT_HEADER = 'HALT'
+KDB_HALT_ACK_HEADER          = 'HALT_ACK'
 KDB_UPDATE_SIZE_HEADER       = 'STO'
 RP_ADD_CONTACT_HEADER        = 'RAC'
 RP_REMOVE_CONTACT_HEADER     = 'RRC'
@@ -604,12 +606,10 @@ PSK_FILE_SIZE = (XCHACHA20_NONCE_LENGTH
                  + 2 * SYMMETRIC_KEY_LENGTH
                  + POLY1305_TAG_LENGTH)
 
-LOG_ENTRY_LENGTH = (XCHACHA20_NONCE_LENGTH
-                    + ONION_SERVICE_PUBLIC_KEY_LENGTH
+LOG_ENTRY_LENGTH = (ONION_SERVICE_PUBLIC_KEY_LENGTH
                     + TIMESTAMP_LENGTH
                     + ORIGIN_HEADER_LENGTH
-                    + ASSEMBLY_PACKET_LENGTH
-                    + POLY1305_TAG_LENGTH)
+                    + ASSEMBLY_PACKET_LENGTH)
 
 MASTERKEY_DB_SIZE = (ARGON2_SALT_LENGTH
                      + BLAKE2_DIGEST_LENGTH

@@ -25,7 +25,7 @@ import unittest
 from datetime import datetime
 from unittest import mock
 
-from src.common.database import TFCLogDatabase
+from src.common.database import MessageLog
 from src.common.encoding import bool_to_bytes
 from src.common.misc     import ensure_dir
 from src.common.statics  import (BLAKE2_DIGEST_LENGTH, DIR_USER_DATA, FILE, FILE_KEY_HEADER, GROUP_ID_LENGTH, LOCAL_ID,
@@ -73,11 +73,11 @@ class TestProcessMessage(TFCTestCase):
         self.file_keys    = dict()
 
         self.log_file         = f'{DIR_USER_DATA}{self.settings.software_operation}_logs'
-        self.tfc_log_database = TFCLogDatabase(self.log_file)
+        self.tfc_log_database = MessageLog(self.log_file, self.master_key.master_key)
 
         self.group_list.get_group('test_group').log_messages = True
         self.args = (self.window_list, self.packet_list, self.contact_list, self.key_list,
-                     self.group_list, self.settings, self.master_key, self.file_keys, self.tfc_log_database)
+                     self.group_list, self.settings, self.file_keys, self.tfc_log_database)
 
         ensure_dir(DIR_USER_DATA)
 

@@ -25,7 +25,7 @@ import os.path
 import random
 import time
 
-from typing import List, Tuple
+from typing import List, Optional, Tuple
 
 from src.common.crypto     import argon2_kdf, blake2b, csprng
 from src.common.database   import TFCUnencryptedDatabase
@@ -49,9 +49,10 @@ class MasterKey(object):
 
     def __init__(self, operation: str, local_test: bool) -> None:
         """Create a new MasterKey object."""
-        self.file_name  = f'{DIR_USER_DATA}{operation}_login_data'
-        self.database   = TFCUnencryptedDatabase(self.file_name)
-        self.local_test = local_test
+        self.file_name     = f'{DIR_USER_DATA}{operation}_login_data'
+        self.database      = TFCUnencryptedDatabase(self.file_name)
+        self.local_test    = local_test
+        self.database_data = None  # type: Optional[bytes]
 
         ensure_dir(DIR_USER_DATA)
         try:
@@ -102,7 +103,7 @@ class MasterKey(object):
 
         return int(pwd_bit_strength), password
 
-    def new_master_key(self) -> bytes:
+    def new_master_key(self, replace: bool = True) -> bytes:
         """Create a new master key from password and salt.
 
         The generated master key depends on a 256-bit salt and the
@@ -231,10 +232,23 @@ class MasterKey(object):
                          + int_to_bytes(memory_cost)
                          + int_to_bytes(parallelism))
 
-        self.database.store_unencrypted_database(database_data)
+        if replace:
+            self.database.store_unencrypted_database(database_data)
+        else:
+            # When replacing the master key, the new master key needs to be generated before
+            # databases are encrypted. However, storing the new master key shouldn't be done
+            # before all new databases have been successfully written. We therefore just cache
+            # the database data.
+            self.database_data = database_data
         phase(DONE)
 
         return master_key
+
+    def replace_database_data(self) -> None:
+        """Store cached database data into temporary database."""
+        if self.database_data is not None:
+            self.database.store_unencrypted_database(self.database_data)
+        self.database_data = None
 
     def load_master_key(self) -> bytes:
         """Derive the master key from password and salt.

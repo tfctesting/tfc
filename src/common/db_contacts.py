@@ -235,7 +235,7 @@ class ContactList(Iterable[Contact], Sized):
         """
         return len(self.get_list_of_contacts())
 
-    def store_contacts(self) -> None:
+    def store_contacts(self, replace: bool = True) -> None:
         """Write the list of contacts to an encrypted database.
 
         This function will first create a list of contacts and dummy
@@ -252,7 +252,7 @@ class ContactList(Iterable[Contact], Sized):
         bytes.
         """
         pt_bytes = b''.join([c.serialize_c() for c in self.contacts + self._dummy_contacts()])
-        self.database.store_database(pt_bytes)
+        self.database.store_database(pt_bytes, replace)
 
     def _load_contacts(self) -> None:
         """Load contacts from the encrypted database.

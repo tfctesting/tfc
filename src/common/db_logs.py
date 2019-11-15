@@ -29,8 +29,7 @@ import typing
 from datetime import datetime
 from typing   import Any, Dict, List, Tuple, Union
 
-from src.common.crypto     import auth_and_decrypt, encrypt_and_sign
-from src.common.database   import TFCLogDatabase
+from src.common.database   import MessageLog
 from src.common.encoding   import b58encode, bytes_to_bool, bytes_to_timestamp, pub_key_to_short_address
 from src.common.exceptions import CriticalError, FunctionReturn
 from src.common.misc       import ensure_dir, get_terminal_width, ignored, separate_header, separate_headers
@@ -56,9 +55,10 @@ if typing.TYPE_CHECKING:
 MsgTuple = Tuple[datetime, str, bytes, bytes, bool, bool]
 
 
-def log_writer_loop(queues:    Dict[bytes, 'Queue[Any]'],  # Dictionary of queues
-                    settings:  'Settings',                 # Settings object
-                    unit_test: bool = False                # True, exits loop when UNIT_TEST_QUEUE is no longer empty.
+def log_writer_loop(queues:      Dict[bytes, 'Queue[Any]'],  # Dictionary of queues
+                    settings:    'Settings',                 # Settings object
+                    message_log: 'MessageLog',               # MessageLog object
+                    unit_test:   bool = False                # True, exits loop when UNIT_TEST_QUEUE is no longer empty.
                     ) -> None:
     """Write assembly packets to log database.
 
@@ -78,9 +78,6 @@ def log_writer_loop(queues:    Dict[bytes, 'Queue[Any]'],  # Dictionary of queue
     logfile_masking = settings.log_file_masking
     traffic_masking = settings.traffic_masking
 
-    file_name        = f'{DIR_USER_DATA}{settings.software_operation}_logs'
-    tfc_log_database = TFCLogDatabase(file_name)
-
     while True:
         with ignored(EOFError, KeyboardInterrupt):
 
@@ -93,6 +90,9 @@ def log_writer_loop(queues:    Dict[bytes, 'Queue[Any]'],  # Dictionary of queue
                 logfile_masking = logfile_masking_queue.get()
 
             onion_pub_key, assembly_packet, log_messages, log_as_ph, master_key = log_packet_queue.get()
+
+            # Update log database key
+            message_log.database_key = master_key.master_key
 
             # Detect and ignore commands.
             if onion_pub_key is None:
@@ -140,17 +140,16 @@ def log_writer_loop(queues:    Dict[bytes, 'Queue[Any]'],  # Dictionary of queue
 
                 assembly_packet = PLACEHOLDER_DATA
 
-            write_log_entry(assembly_packet, onion_pub_key, master_key, tfc_log_database)
+            write_log_entry(assembly_packet, onion_pub_key, message_log)
 
             if unit_test and queues[UNIT_TEST_QUEUE].qsize() != 0:
                 break
 
 
-def write_log_entry(assembly_packet:  bytes,                       # Assembly packet to log
-                    onion_pub_key:    bytes,                       # Onion Service public key of the associated contact
-                    master_key:       'MasterKey',                 # Master key object
-                    tfc_log_database: TFCLogDatabase,              # TFC log database object
-                    origin:           bytes = ORIGIN_USER_HEADER,  # The direction of logged packet
+def write_log_entry(assembly_packet: bytes,                       # Assembly packet to log
+                    onion_pub_key:   bytes,                       # Onion Service public key of the associated contact
+                    message_log:     MessageLog,                  # MessageLog object
+                    origin:          bytes = ORIGIN_USER_HEADER,  # The direction of logged packet
                     ) -> None:
     """Add an assembly packet to the encrypted log database.
 
@@ -174,15 +173,14 @@ def write_log_entry(assembly_packet:  bytes,                       # Assembly pa
     writes placeholder data to the log database.
     """
     timestamp = struct.pack('<L', int(time.time()))
+    log_entry = onion_pub_key + timestamp + origin + assembly_packet
 
-    pt_bytes = onion_pub_key + timestamp + origin + assembly_packet
-    ct_bytes = encrypt_and_sign(pt_bytes, key=master_key.master_key)
-
-    if len(ct_bytes) != LOG_ENTRY_LENGTH:
-        raise CriticalError("Invalid log entry ciphertext length.")
+    if len(log_entry) != LOG_ENTRY_LENGTH:
+        raise CriticalError("Invalid log entry length.")
 
     ensure_dir(DIR_USER_DATA)
-    tfc_log_database.insert_encrypted_log_entry(ct_bytes)
+    message_log.insert_log_entry(log_entry)
+
 
 def check_log_file_exists(file_name: str) -> None:
     """Check that the log file exists."""
@@ -208,19 +206,16 @@ def access_logs(window:       Union['TxWindow', 'RxWindow'],
     """
     file_name    = f'{DIR_USER_DATA}{settings.software_operation}_logs'
     packet_list  = PacketList(settings, contact_list)
-    message_log  = []  # type: List[MsgTuple]
+    message_list = []  # type: List[MsgTuple]
     group_msg_id = b''
 
     check_log_file_exists(file_name)
-    tfc_log_database = TFCLogDatabase(file_name)
+    message_log = MessageLog(file_name, master_key.master_key)
 
-    for _, ct in tfc_log_database:
-        plaintext = auth_and_decrypt(ct, master_key.master_key, database=file_name)
+    for log_entry in message_log:
+        onion_pub_key, timestamp, origin, assembly_packet \
+            = separate_headers(log_entry, [ONION_SERVICE_PUBLIC_KEY_LENGTH, TIMESTAMP_LENGTH, ORIGIN_HEADER_LENGTH])
 
-        onion_pub_key, timestamp, origin, assembly_packet = separate_headers(plaintext,
-                                                                             [ONION_SERVICE_PUBLIC_KEY_LENGTH,
-                                                                              TIMESTAMP_LENGTH,
-                                                                              ORIGIN_HEADER_LENGTH])
         if window.type == WIN_TYPE_CONTACT and onion_pub_key != window.uid:
             continue
 
@@ -237,7 +232,7 @@ def access_logs(window:       Union['TxWindow', 'RxWindow'],
         whisper = bytes_to_bool(whisper_byte)
 
         if header == PRIVATE_MESSAGE_HEADER and window.type == WIN_TYPE_CONTACT:
-            message_log.append(
+            message_list.append(
                 (bytes_to_timestamp(timestamp), message.decode(), onion_pub_key, packet.origin, whisper, False))
 
         elif header == GROUP_MESSAGE_HEADER and window.type == WIN_TYPE_GROUP:
@@ -251,12 +246,12 @@ def access_logs(window:       Union['TxWindow', 'RxWindow'],
                     continue
                 group_msg_id = purp_msg_id
 
-            message_log.append(
+            message_list.append(
                 (bytes_to_timestamp(timestamp), message.decode(), onion_pub_key, packet.origin, whisper, False))
 
-    tfc_log_database.close_database()
+    message_log.close_database()
 
-    print_logs(message_log[-msg_to_load:], export, msg_to_load, window, contact_list, group_list, settings)
+    print_logs(message_list[-msg_to_load:], export, msg_to_load, window, contact_list, group_list, settings)
 
 
 def print_logs(message_list: List[MsgTuple],
@@ -295,9 +290,9 @@ def print_logs(message_list: List[MsgTuple],
         f_name.close()
 
 
-def change_log_db_key(previous_key: bytes,
-                      new_key:      bytes,
-                      settings:     'Settings'
+def change_log_db_key(old_key:  bytes,
+                      new_key:  bytes,
+                      settings: 'Settings'
                       ) -> None:
     """Re-encrypt log database with a new master key."""
     ensure_dir(DIR_USER_DATA)
@@ -310,18 +305,24 @@ def change_log_db_key(previous_key: bytes,
     if os.path.isfile(temp_name):
         os.remove(temp_name)
 
-    tfc_log_database_old = TFCLogDatabase(file_name)
-    tfc_log_database_new = TFCLogDatabase(temp_name)
+    message_log_old = MessageLog(file_name, old_key)
+    message_log_tmp = MessageLog(temp_name, new_key)
 
-    for _, ct_old in tfc_log_database_old:
-        p_text = auth_and_decrypt(ct_old, key=previous_key, database=file_name)
-        ct_new = encrypt_and_sign(p_text, key=new_key)
-        tfc_log_database_new.insert_encrypted_log_entry(encrypted_log_entry=ct_new)
+    for log_entry in message_log_old:
+        message_log_tmp.insert_log_entry(log_entry)
 
-    tfc_log_database_old.close_database()
-    tfc_log_database_new.close_database()
+    message_log_old.close_database()
+    message_log_tmp.close_database()
 
-    os.replace(temp_name, file_name)
+
+def replace_log_db(settings: 'Settings') -> None:
+    """Replace log database with temp file."""
+    ensure_dir(DIR_USER_DATA)
+    file_name = f'{DIR_USER_DATA}{settings.software_operation}_logs'
+    temp_name = f'{file_name}_temp'
+
+    if os.path.isfile(temp_name):
+        os.replace(temp_name, file_name)
 
 
 def remove_logs(contact_list: 'ContactList',
@@ -339,32 +340,31 @@ def remove_logs(contact_list: 'ContactList',
     ID, only messages for group determined by that group ID are removed.
     """
     ensure_dir(DIR_USER_DATA)
-    file_name   = f'{DIR_USER_DATA}{settings.software_operation}_logs'
-    temp_name   = f'{file_name}_temp'
-    packet_list = PacketList(settings, contact_list)
-    ct_to_keep  = []  # type: List[bytes]
-    removed     = False
-    contact     = len(selector) == ONION_SERVICE_PUBLIC_KEY_LENGTH
+    file_name       = f'{DIR_USER_DATA}{settings.software_operation}_logs'
+    temp_name       = f'{file_name}_temp'
+    packet_list     = PacketList(settings, contact_list)
+    entries_to_keep = []  # type: List[bytes]
+    removed         = False
+    contact         = len(selector) == ONION_SERVICE_PUBLIC_KEY_LENGTH
 
     check_log_file_exists(file_name)
-    tfc_log_database = TFCLogDatabase(file_name)
+    message_log = MessageLog(file_name, master_key.master_key)
 
-    for _, ct in tfc_log_database:
-        plaintext = auth_and_decrypt(ct, master_key.master_key, database=file_name)
+    for log_entry in message_log:
 
-        onion_pub_key, _, origin, assembly_packet = separate_headers(plaintext, [ONION_SERVICE_PUBLIC_KEY_LENGTH,
+        onion_pub_key, _, origin, assembly_packet = separate_headers(log_entry, [ONION_SERVICE_PUBLIC_KEY_LENGTH,
                                                                                  TIMESTAMP_LENGTH,
                                                                                  ORIGIN_HEADER_LENGTH])
         if contact:
             if onion_pub_key == selector:
                 removed = True
             else:
-                ct_to_keep.append(ct)
+                entries_to_keep.append(log_entry)
 
         else:  # Group
             packet = packet_list.get_packet(onion_pub_key, origin, MESSAGE, log_access=True)
             try:
-                packet.add_packet(assembly_packet, ct)
+                packet.add_packet(assembly_packet, log_entry)
             except FunctionReturn:
                 continue
             if not packet.is_complete:
@@ -374,7 +374,7 @@ def remove_logs(contact_list: 'ContactList',
                                                                                      MESSAGE_HEADER_LENGTH])
 
             if header == PRIVATE_MESSAGE_HEADER:
-                ct_to_keep.extend(packet.log_ct_list)
+                entries_to_keep.extend(packet.log_ct_list)
                 packet.clear_assembly_packets()
 
             elif header == GROUP_MESSAGE_HEADER:
@@ -382,19 +382,16 @@ def remove_logs(contact_list: 'ContactList',
                 if group_id == selector:
                     removed = True
                 else:
-                    ct_to_keep.extend(packet.log_ct_list)
+                    entries_to_keep.extend(packet.log_ct_list)
                     packet.clear_assembly_packets()
 
-    tfc_log_database.close_database()
+    message_log.close_database()
 
-    if os.path.isfile(temp_name):
-        os.remove(temp_name)
+    message_log_temp = MessageLog(temp_name, master_key.master_key)
 
-    tfc_log_database_temp = TFCLogDatabase(temp_name)
-
-    for ct in ct_to_keep:
-        tfc_log_database_temp.insert_encrypted_log_entry(ct)
-    tfc_log_database_temp.close_database()
+    for log_entry in entries_to_keep:
+        message_log_temp.insert_log_entry(log_entry)
+    message_log_temp.close_database()
 
     os.replace(temp_name, file_name)
 

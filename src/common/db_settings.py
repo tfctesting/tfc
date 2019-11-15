@@ -104,7 +104,7 @@ class Settings(object):
         else:
             self.store_settings()
 
-    def store_settings(self) -> None:
+    def store_settings(self, replace: bool = True) -> None:
         """Store settings to an encrypted database.
 
         The plaintext in the encrypted database is a constant
@@ -124,7 +124,7 @@ class Settings(object):
                 raise CriticalError("Invalid attribute type in settings.")
 
         pt_bytes = b''.join(bytes_lst)
-        self.database.store_database(pt_bytes)
+        self.database.store_database(pt_bytes, replace)
 
     def load_settings(self) -> None:
         """Load settings from the encrypted database."""

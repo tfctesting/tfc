@@ -81,9 +81,9 @@ class OnionService(object):
         phase(DONE)
         return onion_private_key
 
-    def store_onion_service_private_key(self) -> None:
+    def store_onion_service_private_key(self, replace: bool = True) -> None:
         """Store Onion Service private key to an encrypted database."""
-        self.database.store_database(self.onion_private_key)
+        self.database.store_database(self.onion_private_key, replace)
 
     def load_onion_service_private_key(self) -> bytes:
         """Load the Onion Service private key from the encrypted database."""
