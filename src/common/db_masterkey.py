@@ -245,7 +245,7 @@ class MasterKey(object):
         return master_key
 
     def replace_database_data(self) -> None:
-        """Store cached database data into temporary database."""
+        """Store cached database data into database."""
         if self.database_data is not None:
             self.database.store_unencrypted_database(self.database_data)
         self.database_data = None

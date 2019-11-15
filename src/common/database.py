@@ -221,11 +221,11 @@ class MessageLog(object):
 
     def __init__(self, database_name: str, database_key: bytes) -> None:
         """Create a new MessageLog object."""
-        ensure_dir(DIR_USER_DATA)
         self.database_name = database_name
         self.database_temp = self.database_name + '_temp'
         self.database_key  = database_key
 
+        ensure_dir(DIR_USER_DATA)
         if os.path.isfile(self.database_name):
             self.load_database()
 
