@@ -725,8 +725,8 @@ class TestRemoveLog(TFCTestCase):
     @mock.patch('builtins.input', return_value='No')
     def test_no_aborts_removal(self, *_):
         # Setup
-        write_log_entry(M_S_HEADER + PADDING_LENGTH * b'a', nick_to_pub_key('Alice'), self.tfc_log_database)
-        self.assertEqual(os.path.getsize(self.file_name), 8192)
+        self.assertIsNone(write_log_entry(M_S_HEADER + PADDING_LENGTH * b'a', nick_to_pub_key('Alice'),
+                                          self.tfc_log_database))
 
         # Test
         self.assert_fr("Log file removal aborted.",

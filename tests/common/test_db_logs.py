@@ -117,8 +117,7 @@ class TestLogWriterLoop(unittest.TestCase):
 
         # Test
         threading.Thread(target=queue_delayer).start()
-        log_writer_loop(queues, settings, self.message_log, unit_test=True)
-        self.assertEqual(os.path.getsize(f'{DIR_USER_DATA}{settings.software_operation}_logs'), 8192)
+        self.assertIsNone(log_writer_loop(queues, settings, self.message_log, unit_test=True))
 
         # Teardown
         tear_queues(queues)
@@ -156,8 +155,7 @@ class TestLogWriterLoop(unittest.TestCase):
 
         # Test
         threading.Thread(target=queue_delayer).start()
-        log_writer_loop(queues, settings, self.message_log, unit_test=True)
-        self.assertEqual(os.path.getsize(f'{DIR_USER_DATA}{settings.software_operation}_logs'), 8192)
+        self.assertIsNone(log_writer_loop(queues, settings, self.message_log, unit_test=True))
 
         # Teardown
         tear_queues(queues)
@@ -195,8 +193,7 @@ class TestLogWriterLoop(unittest.TestCase):
         # Test
         threading.Thread(target=queue_delayer).start()
 
-        log_writer_loop(queues, settings, self.message_log, unit_test=True)
-        self.assertEqual(os.path.getsize(f'{DIR_USER_DATA}{settings.software_operation}_logs'), 8192)
+        self.assertIsNone(log_writer_loop(queues, settings, self.message_log, unit_test=True))
 
         # Teardown
         tear_queues(queues)
@@ -228,7 +225,6 @@ class TestWriteLogEntry(unittest.TestCase):
         for i in range(5):
             assembly_p = F_S_HEADER + bytes(PADDING_LENGTH)
             self.assertIsNone(write_log_entry(assembly_p, nick_to_pub_key('Alice'), self.tfc_log_database))
-            self.assertTrue(os.path.getsize(self.log_file), (i+1)*LOG_ENTRY_LENGTH)
 
 
 class TestAccessHistoryAndPrintLogs(TFCTestCase):
@@ -681,18 +677,13 @@ class TestRemoveLog(TFCTestCase):
         for p in assembly_packet_creator(MESSAGE, self.msg, group_id=group_name_to_group_id('different_group')):
             write_log_entry(p, nick_to_pub_key('David'), self.tfc_log_database)
 
-        # Test
-        self.assertEqual(os.path.getsize(self.file_name), 16384)
-
         # Test log entries were found.
         self.assert_fr("Removed log entries for group 'test_group'.",
                        remove_logs, *self.args, selector=group_name_to_group_id('test_group'))
-        self.assertEqual(os.path.getsize(self.file_name), 8192)
 
         # Test log entries were not found when removing group again.
         self.assert_fr("Found no log entries for group 'test_group'.",
                        remove_logs, *self.args, selector=group_name_to_group_id('test_group'))
-        self.assertEqual(os.path.getsize(self.file_name), 8192)
 
     def test_removal_of_contact_logs(self):
         # Setup
@@ -713,17 +704,11 @@ class TestRemoveLog(TFCTestCase):
             write_log_entry(p, nick_to_pub_key('Charlie'), self.tfc_log_database)
 
         # Test
-        self.assertEqual(os.path.getsize(self.file_name), 8192)
-
         self.assert_fr(f"Removed log entries for contact '{nick_to_short_address('Alice')}'.",
                        remove_logs, *self.args, selector=nick_to_pub_key('Alice'))
 
-        self.assertEqual(os.path.getsize(self.file_name), 8192)
-
         self.assert_fr(f"Removed log entries for contact '{nick_to_short_address('Charlie')}'.",
                        remove_logs, *self.args, selector=nick_to_pub_key('Charlie'))
-
-        self.assertEqual(os.path.getsize(self.file_name), 8192)
 
         self.assert_fr(f"Found no log entries for contact '{nick_to_short_address('Alice')}'.",
                        remove_logs, *self.args, selector=nick_to_pub_key('Alice'))
