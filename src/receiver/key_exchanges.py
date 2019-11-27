@@ -27,7 +27,8 @@ import subprocess
 import tkinter
 import typing
 
-from typing import List, Tuple
+from datetime import datetime
+from typing   import List, Tuple
 
 import nacl.exceptions
 
@@ -46,15 +47,92 @@ from src.common.statics      import (ARGON2_PSK_MEMORY_COST, ARGON2_PSK_PARALLEL
                                      SYMMETRIC_KEY_LENGTH, WIN_TYPE_CONTACT, WIN_TYPE_GROUP)
 
 if typing.TYPE_CHECKING:
-    from datetime               import datetime
     from multiprocessing        import Queue
     from src.common.db_contacts import ContactList
     from src.common.db_keys     import KeyList
     from src.common.db_settings import Settings
     from src.receiver.windows   import WindowList
+    local_key_queue = Queue[Tuple[datetime, bytes]]
 
 
 # Local key
+
+def protect_kdk(kdk: bytes) -> None:
+    """Prevent leak of KDK via terminal history / clipboard."""
+    readline.clear_history()
+    os.system(RESET)
+    root = tkinter.Tk()
+    root.withdraw()
+
+    try:
+        if root.clipboard_get() == b58encode(kdk):  # type: ignore
+            root.clipboard_clear()  # type: ignore
+    except tkinter.TclError:
+        pass
+
+    root.destroy()
+
+
+def process_local_key_buffer(kdk:     bytes,
+                             l_queue: 'local_key_queue',
+                             ) -> Tuple[datetime, bytes]:
+    """Check if the kdk was for a packet further ahead in the queue."""
+    buffer = []  # type: List[Tuple[datetime, bytes]]
+    while l_queue.qsize() > 0:
+        tup = l_queue.get()  # type: Tuple[datetime, bytes]
+        if tup not in buffer:
+            buffer.append(tup)
+
+    for i, tup in enumerate(buffer):
+        try:
+            plaintext = auth_and_decrypt(tup[1], kdk)
+
+            # If we reach this point, decryption was successful.
+            for unexamined in buffer[i + 1:]:
+                l_queue.put(unexamined)
+            buffer = []
+            ts     = tup[0]
+
+            return ts, plaintext
+
+        except nacl.exceptions.CryptoError:
+            continue
+    else:
+        # Finished the buffer without finding local key CT
+        # for the kdk. Maybe the kdk is from another session.
+        raise FunctionReturn("Error: Incorrect key decryption key.", delay=1)
+
+
+def decrypt_local_key(ts:            'datetime',
+                      packet:        bytes,
+                      kdk_hashes:    List[bytes],
+                      packet_hashes: List[bytes],
+                      settings:      'Settings',
+                      l_queue:       'local_key_queue'
+                      ) -> Tuple['datetime', bytes]:
+    """Decrypt local key packet."""
+    while True:
+        kdk      = get_b58_key(B58_LOCAL_KEY, settings)
+        kdk_hash = blake2b(kdk)
+
+        # Check if the key was an old one.
+        if kdk_hash in kdk_hashes:
+            m_print("Error: Entered an old local key decryption key.", delay=1)
+            continue
+
+        try:
+            plaintext = auth_and_decrypt(packet, kdk)
+        except nacl.exceptions.CryptoError:
+            ts, plaintext = process_local_key_buffer(kdk, l_queue)
+
+        protect_kdk(kdk)
+
+        # Cache hashes needed to recognize reissued local key packets and key decryption keys.
+        kdk_hashes.append(kdk_hash)
+        packet_hashes.append(blake2b(packet))
+
+        return ts, plaintext
+
 
 def process_local_key(ts:            'datetime',
                       packet:        bytes,
@@ -67,60 +145,15 @@ def process_local_key(ts:            'datetime',
                       l_queue:        'Queue[Tuple[datetime, bytes]]'
                       ) -> None:
     """Decrypt local key packet and add local contact/keyset."""
-    bootstrap = not key_list.has_local_keyset()
-    plaintext = None
+    first_local_key = not key_list.has_local_keyset()
 
     try:
-        packet_hash = blake2b(packet)
-
-        # Check if the packet is an old one
-        if packet_hash in packet_hashes:
+        if blake2b(packet) in packet_hashes:
             raise FunctionReturn("Error: Received old local key packet.", output=False)
 
-        while True:
-            m_print("Local key setup", bold=True, head_clear=True, head=1, tail=1)
-            kdk      = get_b58_key(B58_LOCAL_KEY, settings)
-            kdk_hash = blake2b(kdk)
+        m_print("Local key setup", bold=True, head_clear=True, head=1, tail=1)
 
-            try:
-                plaintext = auth_and_decrypt(packet, kdk)
-                break
-            except nacl.exceptions.CryptoError:
-                # Check if key was an old one
-                if kdk_hash in kdk_hashes:
-                    m_print("Error: Entered an old local key decryption key.", delay=1)
-                    continue
-
-                # Check if the kdk was for a packet further ahead in the queue
-                buffer = []  # type: List[Tuple[datetime, bytes]]
-                while l_queue.qsize() > 0:
-                    tup = l_queue.get()  # type: Tuple[datetime, bytes]
-                    if tup not in buffer:
-                        buffer.append(tup)
-
-                for i, tup in enumerate(buffer):
-                    try:
-                        plaintext = auth_and_decrypt(tup[1], kdk)
-
-                        # If we reach this point, decryption was successful.
-                        for unexamined in buffer[i+1:]:
-                            l_queue.put(unexamined)
-                        buffer = []
-                        ts     = tup[0]
-                        break
-
-                    except nacl.exceptions.CryptoError:
-                        continue
-                else:
-                    # Finished the buffer without finding local key CT
-                    # for the kdk. Maybe the kdk is from another session.
-                    raise FunctionReturn("Error: Incorrect key decryption key.", delay=1)
-
-            break
-
-        # This catches PyCharm's weird claim that plaintext might be referenced before assignment
-        if plaintext is None:  # pragma: no cover
-            raise FunctionReturn("Error: Could not decrypt local key.")
+        ts, plaintext = decrypt_local_key(ts, packet, kdk_hashes, packet_hashes, settings, l_queue)
 
         # Add local contact to contact list database
         contact_list.add_contact(LOCAL_PUBKEY,
@@ -139,35 +172,19 @@ def process_local_key(ts:            'datetime',
                             tx_hk=tx_hk,
                             rx_hk=csprng())
 
-        # Cache hashes needed to recognize reissued local key packets and key decryption keys.
-        packet_hashes.append(packet_hash)
-        kdk_hashes.append(kdk_hash)
-
-        # Prevent leak of KDK via terminal history / clipboard
-        readline.clear_history()
-        os.system(RESET)
-        root = tkinter.Tk()
-        root.withdraw()
-        try:
-            if root.clipboard_get() == b58encode(kdk):  # type: ignore
-                root.clipboard_clear()                  # type: ignore
-        except tkinter.TclError:
-            pass
-        root.destroy()
-
         m_print(["Local key successfully installed.",
-                f"Confirmation code (to Transmitter): {c_code.hex()}"], box=True, head=1)
+                 f"Confirmation code (to Transmitter): {c_code.hex()}"], box=True, head=1)
 
         local_win = window_list.get_local_window()
         local_win.add_new(ts, "Added new local key.")
 
-        if bootstrap:
+        if first_local_key:
             window_list.active_win = local_win
 
     except (EOFError, KeyboardInterrupt):
         m_print("Local key setup aborted.", bold=True, tail_clear=True, delay=1, head=2)
 
-        if window_list.active_win is not None and not bootstrap:
+        if window_list.active_win is not None and not first_local_key:
             window_list.active_win.redraw()
 
         raise FunctionReturn("Local key setup aborted.", output=False)
