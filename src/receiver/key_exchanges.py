@@ -288,6 +288,25 @@ def key_ex_psk_tx(packet:       bytes,
     m_print([message, f"Confirmation code (to Transmitter): {c_code.hex()}"], box=True)
 
 
+def decrypt_rx_psk(ct_tag: bytes, salt: bytes) -> bytes:
+    """Get PSK password from user and decrypt Rx-PSK."""
+    while True:
+        try:
+            password = MasterKey.get_password("PSK password")
+            phase("Deriving the key decryption key", head=2)
+            kdk = argon2_kdf(password, salt, ARGON2_PSK_TIME_COST, ARGON2_PSK_MEMORY_COST, ARGON2_PSK_PARALLELISM)
+            psk = auth_and_decrypt(ct_tag, kdk)
+            phase(DONE)
+            return psk
+
+        except nacl.exceptions.CryptoError:
+            print_on_previous_line()
+            m_print("Invalid password. Try again.", head=1)
+            print_on_previous_line(reps=5, delay=1)
+        except (EOFError, KeyboardInterrupt):
+            raise FunctionReturn("PSK import aborted.", head=2, delay=1, tail_clear=True)
+
+
 def key_ex_psk_rx(packet:       bytes,
                   ts:           'datetime',
                   window_list:  'WindowList',
@@ -316,22 +335,7 @@ def key_ex_psk_rx(packet:       bytes,
 
     salt, ct_tag = separate_header(psk_data, ARGON2_SALT_LENGTH)
 
-    while True:
-        try:
-            password = MasterKey.get_password("PSK password")
-            phase("Deriving the key decryption key", head=2)
-            kdk = argon2_kdf(password, salt, ARGON2_PSK_TIME_COST, ARGON2_PSK_MEMORY_COST, ARGON2_PSK_PARALLELISM)
-            psk = auth_and_decrypt(ct_tag, kdk)
-            phase(DONE)
-            break
-
-        except nacl.exceptions.CryptoError:
-            print_on_previous_line()
-            m_print("Invalid password. Try again.", head=1)
-            print_on_previous_line(reps=5, delay=1)
-        except (EOFError, KeyboardInterrupt):
-            raise FunctionReturn("PSK import aborted.", head=2, delay=1, tail_clear=True)
-
+    psk          = decrypt_rx_psk(ct_tag, salt)
     rx_mk, rx_hk = separate_header(psk, SYMMETRIC_KEY_LENGTH)
 
     if any(k == bytes(SYMMETRIC_KEY_LENGTH) for k in [rx_mk, rx_hk]):
