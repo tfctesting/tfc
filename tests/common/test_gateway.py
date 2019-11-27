@@ -112,6 +112,30 @@ class TestGatewaySerial(TFCTestCase):
         with self.assertRaises(SystemExit):
             gateway.read()
 
+    @mock.patch('time.sleep',     return_value=None)
+    @mock.patch('os.listdir',     side_effect=[['ttyUSB0'], ['ttyUSB0'], ['ttyUSB0']])
+    @mock.patch('multiprocessing.connection.Listener', MagicMock())
+    @mock.patch('builtins.input', side_effect=['Yes'])
+    def test_serial_uninitialized_socket_interface_for_read_raises_critical_error(self, *_):
+        # Setup
+        gateway           = Gateway(operation=RX, local_test=True, dd_sockets=False)
+        gateway.rx_socket = None
+
+        # Test
+        with self.assertRaises(SystemExit):
+            gateway.read()
+
+    @mock.patch('time.monotonic', side_effect=[1, 2, 3])
+    @mock.patch('time.sleep',     return_value=None)
+    @mock.patch('multiprocessing.connection.Listener',
+                return_value=MagicMock(accept=MagicMock(return_value=MagicMock(recv=MagicMock(return_value=b'12')))))
+    @mock.patch('os.listdir',     side_effect=[['ttyUSB0'], ['ttyUSB0'], ['ttyUSB0']])
+    @mock.patch('builtins.input', side_effect=['Yes'])
+    def test_read_socket(self, *_):
+        gateway = Gateway(operation=RX, local_test=True, dd_sockets=False)
+        data    = gateway.read()
+        self.assertEqual(data, b'12')
+
     @mock.patch('time.monotonic', side_effect=[1, 2, 3])
     @mock.patch('time.sleep',     return_value=None)
     @mock.patch('serial.Serial',  return_value=MagicMock(

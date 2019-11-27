@@ -165,47 +165,59 @@ class Gateway(object):
                 self.establish_serial()
                 self.write(orig_packet)
 
-    def read(self) -> bytes:
-        """Read data via socket/serial interface.
+    def read_socket(self) -> bytes:
+        """Read packet from socket interface."""
+        if self.rx_socket is None:
+            raise CriticalError("Socket interface has not been initialized.")
+
+        while True:
+            try:
+                packet = self.rx_socket.recv()  # type: bytes
+                return packet
+            except KeyboardInterrupt:
+                pass
+            except EOFError:
+                raise CriticalError("Relay IPC client disconnected.", exit_code=0)
+
+    def read_serial(self) -> bytes:
+        """Read packet from serial interface.
 
         Read 0..N bytes from serial interface, where N is the buffer
         size of the serial interface. Once `read_buffer` has data, and
         the interface hasn't returned data long enough for the timer to
         exceed the timeout value, return received data.
         """
-        if self.settings.local_testing_mode and self.rx_socket is not None:
-            while True:
-                try:
-                    packet = self.rx_socket.recv()  # type: bytes
-                    return packet
-                except KeyboardInterrupt:
-                    pass
-                except EOFError:
-                    raise CriticalError("Relay IPC client disconnected.", exit_code=0)
-        else:
-            if self.rx_serial is None:
-                raise CriticalError("Serial interface has not been initialized.")
-            while True:
-                try:
-                    start_time  = 0.0
-                    read_buffer = bytearray()
-                    while True:
-                        read = self.rx_serial.read_all()
-                        if read:
-                            start_time = time.monotonic()
-                            read_buffer.extend(read)
-                        else:
-                            if read_buffer:
-                                delta = time.monotonic() - start_time
-                                if delta > self.settings.rx_receive_timeout:
-                                    return bytes(read_buffer)
-                            else:
-                                time.sleep(0.0001)
+        if self.rx_serial is None:
+            raise CriticalError("Serial interface has not been initialized.")
 
-                except (EOFError, KeyboardInterrupt):
-                    pass
-                except (OSError, SerialException):
-                    self.establish_serial()
+        while True:
+            try:
+                start_time = 0.0
+                read_buffer = bytearray()
+                while True:
+                    read = self.rx_serial.read_all()
+                    if read:
+                        start_time = time.monotonic()
+                        read_buffer.extend(read)
+                    else:
+                        if read_buffer:
+                            delta = time.monotonic() - start_time
+                            if delta > self.settings.rx_receive_timeout:
+                                return bytes(read_buffer)
+                        else:
+                            time.sleep(0.0001)
+
+            except (EOFError, KeyboardInterrupt):
+                pass
+            except (OSError, SerialException):
+                self.establish_serial()
+
+    def read(self) -> bytes:
+        """Read data via socket/serial interface."""
+        if self.settings.local_testing_mode:
+            return self.read_socket()
+        else:
+            return self.read_serial()
 
     def add_error_correction(self, packet: bytes) -> bytes:
         """Add error correction to packet that will be output.
