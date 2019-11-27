@@ -42,6 +42,7 @@ if typing.TYPE_CHECKING:
     from src.common.db_settings  import Settings
     QueueDict = Dict[bytes, Queue[Any]]
 
+
 class KeySet(object):
     """\
     KeySet object contains frequently changing keys and hash ratchet

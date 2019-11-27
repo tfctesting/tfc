@@ -485,8 +485,9 @@ def create_pre_shared_key(onion_pub_key: bytes,           # Public key of contac
             trunc_addr = pub_key_to_short_address(onion_pub_key)
             store_d    = ask_path_gui(f"Select removable media for {nick}", settings)
             f_name     = f"{store_d}/{onion_service.user_short_address}.psk - Give to {trunc_addr}"
+
             try:
-                with open (f_name, 'wb+') as f:
+                with open(f_name, 'wb+') as f:
                     f.write(salt + ct_tag)
                     f.flush()
                     os.fsync(f.fileno())

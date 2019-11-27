@@ -255,29 +255,39 @@ def contact_setting(user_input:   'UserInput',
 
     if win_uid:
         if window.type == WIN_TYPE_CONTACT and window.contact is not None:
-            if cmd_key == LOGGING: window.contact.log_messages   = b_value
-            if cmd_key == STORE:   window.contact.file_reception = b_value
-            if cmd_key == NOTIFY:  window.contact.notifications  = b_value
+            if cmd_key == LOGGING:
+                window.contact.log_messages   = b_value
+            if cmd_key == STORE:
+                window.contact.file_reception = b_value
+            if cmd_key == NOTIFY:
+                window.contact.notifications  = b_value
             contact_list.store_contacts()
 
         if window.type == WIN_TYPE_GROUP and window.group is not None:
-            if cmd_key == LOGGING: window.group.log_messages = b_value
+            if cmd_key == LOGGING:
+                window.group.log_messages = b_value
             if cmd_key == STORE:
                 for c in window:
                     c.file_reception = b_value
-            if cmd_key == NOTIFY: window.group.notifications = b_value
+            if cmd_key == NOTIFY:
+                window.group.notifications = b_value
             group_list.store_groups()
 
     else:
         for contact in contact_list:
-            if cmd_key == LOGGING: contact.log_messages   = b_value
-            if cmd_key == STORE:   contact.file_reception = b_value
-            if cmd_key == NOTIFY:  contact.notifications  = b_value
+            if cmd_key == LOGGING:
+                contact.log_messages   = b_value
+            if cmd_key == STORE:
+                contact.file_reception = b_value
+            if cmd_key == NOTIFY:
+                contact.notifications  = b_value
         contact_list.store_contacts()
 
         for group in group_list:
-            if cmd_key == LOGGING: group.log_messages  = b_value
-            if cmd_key == NOTIFY:  group.notifications = b_value
+            if cmd_key == LOGGING:
+                group.log_messages  = b_value
+            if cmd_key == NOTIFY:
+                group.notifications = b_value
         group_list.store_groups()
 
     command = cmd_header + cmd_value
