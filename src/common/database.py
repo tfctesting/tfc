@@ -30,7 +30,7 @@ import nacl.exceptions
 from src.common.crypto     import auth_and_decrypt, blake2b, encrypt_and_sign
 from src.common.exceptions import CriticalError
 from src.common.misc       import ensure_dir, separate_trailer
-from src.common.statics    import BLAKE2_DIGEST_LENGTH, DB_WRITE_RETRY_LIMIT, DIR_USER_DATA
+from src.common.statics    import BLAKE2_DIGEST_LENGTH, DB_WRITE_RETRY_LIMIT, DIR_USER_DATA, TEMP_POSTFIX
 
 if typing.TYPE_CHECKING:
     from src.common.db_masterkey import MasterKey
@@ -45,7 +45,7 @@ class TFCDatabase(object):
     def __init__(self, database_name: str, master_key: 'MasterKey') -> None:
         """Initialize TFC database."""
         self.database_name = database_name
-        self.database_temp = database_name + '_temp'
+        self.database_temp = database_name + TEMP_POSTFIX
         self.database_key  = master_key.master_key
 
     @staticmethod
@@ -98,7 +98,7 @@ class TFCDatabase(object):
         # Replace original file with temp file. (`os.replace` is atomic as per POSIX
         # requirements): https://docs.python.org/3/library/os.html#os.replace
         if replace:
-            os.replace(self.database_temp, self.database_name)
+            self.replace_database()
 
     def replace_database(self) -> None:
         """Replace database with temporary database."""
@@ -137,7 +137,7 @@ class TFCUnencryptedDatabase(object):
     def __init__(self, database_name: str) -> None:
         """Initialize unencrypted TFC database."""
         self.database_name = database_name
-        self.database_temp = database_name + '_temp'
+        self.database_temp = database_name + TEMP_POSTFIX
 
     @staticmethod
     def write_to_file(file_name: str, data: bytes) -> None:
@@ -151,9 +151,9 @@ class TFCUnencryptedDatabase(object):
     def verify_file(database_name: str) -> bool:
         """Verify integrity of file content."""
         with open(database_name, 'rb') as f:
-            purp_data = f.read()
+            file_data = f.read()
 
-        purp_data, digest = separate_trailer(purp_data, BLAKE2_DIGEST_LENGTH)
+        purp_data, digest = separate_trailer(file_data, BLAKE2_DIGEST_LENGTH)
 
         return blake2b(purp_data) == digest
 
@@ -222,7 +222,7 @@ class MessageLog(object):
     def __init__(self, database_name: str, database_key: bytes) -> None:
         """Create a new MessageLog object."""
         self.database_name = database_name
-        self.database_temp = self.database_name + '_temp'
+        self.database_temp = self.database_name + TEMP_POSTFIX
         self.database_key  = database_key
 
         ensure_dir(DIR_USER_DATA)
@@ -268,21 +268,21 @@ class MessageLog(object):
                 os.remove(self.database_temp)
 
     def create_table(self) -> None:
-        """Create new log database."""
+        """Create new table for logged messages."""
         self.c.execute("""CREATE TABLE IF NOT EXISTS log_entries (id INTEGER PRIMARY KEY, log_entry BLOB NOT NULL)""")
 
     def insert_log_entry(self, pt_log_entry: bytes) -> None:
         """Encrypt and insert log entry into the sqlite3 log database."""
         ct_log_entry = encrypt_and_sign(pt_log_entry, self.database_key)
-        params       = (ct_log_entry,)
+
         try:
-            self.c.execute(f"""INSERT INTO log_entries (log_entry) VALUES (?)""", params)
+            self.c.execute(f"""INSERT INTO log_entries (log_entry) VALUES (?)""", (ct_log_entry,))
+            self.conn.commit()
         except sqlite3.Error:
             # Re-connect to database
             self.conn = sqlite3.connect(self.database_name)
-            self.c = self.conn.cursor()
+            self.c    = self.conn.cursor()
             self.insert_log_entry(pt_log_entry)
-        self.conn.commit()
 
     def close_database(self) -> None:
         self.c.close()

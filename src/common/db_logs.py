@@ -38,8 +38,8 @@ from src.common.statics    import (ASSEMBLY_PACKET_HEADER_LENGTH, DIR_USER_DATA,
                                    GROUP_MSG_ID_LENGTH, LOGFILE_MASKING_QUEUE, LOG_ENTRY_LENGTH, LOG_PACKET_QUEUE,
                                    LOG_SETTING_QUEUE, MESSAGE, MESSAGE_HEADER_LENGTH, ONION_SERVICE_PUBLIC_KEY_LENGTH,
                                    ORIGIN_HEADER_LENGTH, ORIGIN_USER_HEADER, PLACEHOLDER_DATA, PRIVATE_MESSAGE_HEADER,
-                                   P_N_HEADER, RX, TIMESTAMP_LENGTH, TRAFFIC_MASKING_QUEUE, TX, UNIT_TEST_QUEUE,
-                                   WHISPER_FIELD_LENGTH, WIN_TYPE_CONTACT, WIN_TYPE_GROUP)
+                                   P_N_HEADER, RX, TEMP_POSTFIX, TIMESTAMP_LENGTH, TRAFFIC_MASKING_QUEUE, TX,
+                                   UNIT_TEST_QUEUE, WHISPER_FIELD_LENGTH, WIN_TYPE_CONTACT, WIN_TYPE_GROUP)
 
 from src.receiver.packet  import PacketList
 from src.receiver.windows import RxWindow
@@ -297,7 +297,7 @@ def change_log_db_key(old_key:  bytes,
     """Re-encrypt log database with a new master key."""
     ensure_dir(DIR_USER_DATA)
     file_name = f'{DIR_USER_DATA}{settings.software_operation}_logs'
-    temp_name = f'{file_name}_temp'
+    temp_name = file_name + TEMP_POSTFIX
 
     if not os.path.isfile(file_name):
         raise FunctionReturn("No log database available.")
@@ -319,7 +319,7 @@ def replace_log_db(settings: 'Settings') -> None:
     """Replace log database with temp file."""
     ensure_dir(DIR_USER_DATA)
     file_name = f'{DIR_USER_DATA}{settings.software_operation}_logs'
-    temp_name = f'{file_name}_temp'
+    temp_name = file_name + TEMP_POSTFIX
 
     if os.path.isfile(temp_name):
         os.replace(temp_name, file_name)
@@ -341,7 +341,7 @@ def remove_logs(contact_list: 'ContactList',
     """
     ensure_dir(DIR_USER_DATA)
     file_name       = f'{DIR_USER_DATA}{settings.software_operation}_logs'
-    temp_name       = f'{file_name}_temp'
+    temp_name       = file_name + TEMP_POSTFIX
     packet_list     = PacketList(settings, contact_list)
     entries_to_keep = []  # type: List[bytes]
     removed         = False
