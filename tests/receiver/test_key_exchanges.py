@@ -86,7 +86,7 @@ class TestProcessLocalKey(TFCTestCase):
     @mock.patch('os.system',      return_value=None)
     def test_successful_local_key_processing_with_existing_local_key(self, *_):
         self.assert_fr("Error: Incorrect key decryption key.", process_local_key, self.ts, self.packet, *self.args)
-        self.assertIsNone(process_local_key(self.ts, self.packet, *self.args))
+        self.assert_fr("Added new local key.",                 process_local_key, self.ts, self.packet, *self.args)
 
     @mock.patch('tkinter.Tk',     return_value=MagicMock())
     @mock.patch('time.sleep',     return_value=None)
@@ -97,7 +97,7 @@ class TestProcessLocalKey(TFCTestCase):
         self.key_list.keysets = []
 
         # Test
-        self.assertIsNone(process_local_key(self.ts, self.packet, *self.args))
+        self.assert_fr("Added new local key.", process_local_key, self.ts, self.packet, *self.args)
         self.assertEqual(self.window_list.active_win.uid, WIN_UID_LOCAL)
 
     @mock.patch('tkinter.Tk',     return_value=MagicMock())
@@ -123,9 +123,9 @@ class TestProcessLocalKey(TFCTestCase):
         new_packet            = encrypt_and_sign(new_key + new_hek + new_conf_code, key=self.new_kek)
 
         # Test
-        self.assertIsNone(process_local_key(self.ts, self.packet, *self.args))
+        self.assert_fr("Added new local key.",                  process_local_key, self.ts, self.packet, *self.args)
         self.assert_fr("Error: Received old local key packet.", process_local_key, self.ts, self.packet, *self.args)
-        self.assertIsNone(process_local_key(self.ts, new_packet, *self.args))
+        self.assert_fr("Added new local key.",                  process_local_key, self.ts, new_packet,  *self.args)
 
     @mock.patch('tkinter.Tk',     side_effect=[MagicMock(clipboard_get  =MagicMock(return_value=b58encode(new_kek)),
                                                          clipboard_clear=MagicMock(side_effect=[tkinter.TclError]))])
@@ -147,7 +147,7 @@ class TestProcessLocalKey(TFCTestCase):
 
         # Test
         self.assertEqual(self.l_queue.qsize(), 3)
-        self.assertIsNone(process_local_key(self.ts, self.packet, *self.args))
+        self.assert_fr("Added new local key.", process_local_key, self.ts, self.packet, *self.args)
         self.assertEqual(self.l_queue.qsize(), 1)
 
 

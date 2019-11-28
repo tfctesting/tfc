@@ -55,6 +55,7 @@ class FunctionReturn(Exception):
                  delay:      float                = 0,      # The delay before continuing
                  head:       int                  = 1,      # The number of new-lines to print before the message
                  tail:       int                  = 1,      # The number of new-lines to print after message
+                 ts:         Optional['datetime'] = None    # Datetime object
                  ) -> None:
         """Print return message and return to exception handler function."""
         self.message = message
@@ -69,7 +70,8 @@ class FunctionReturn(Exception):
                         head=head,
                         tail=tail)
         else:
-            window.add_new(datetime.now(), self.message, output=output)
+            ts = datetime.now() if ts is None else ts
+            window.add_new(ts, self.message, output=output)
 
 
 def graceful_exit(message:   str  = '',    # Exit message to print

@@ -370,6 +370,11 @@ class WindowList(Iterable[RxWindow]):
 
         return next(w for w in self.windows if w.uid == uid)
 
+    def refresh_file_window_check(self) -> None:
+        """Check if file window needs to be refreshed."""
+        if self.active_win is not None and self.active_win.uid == WIN_UID_FILE:
+            self.active_win.redraw_file_win()
+
     def get_local_window(self) -> 'RxWindow':
         """Return command window."""
         return self.get_window(WIN_UID_LOCAL)

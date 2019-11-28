@@ -176,10 +176,11 @@ def process_local_key(ts:            'datetime',
                  f"Confirmation code (to Transmitter): {c_code.hex()}"], box=True, head=1)
 
         local_win = window_list.get_local_window()
-        local_win.add_new(ts, "Added new local key.")
 
         if first_local_key:
             window_list.active_win = local_win
+
+        raise FunctionReturn("Added new local key.", window=local_win, ts=ts)
 
     except (EOFError, KeyboardInterrupt):
         m_print("Local key setup aborted.", bold=True, tail_clear=True, delay=1, head=2)

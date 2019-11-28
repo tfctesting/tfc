@@ -118,6 +118,8 @@ def process_command(ts:           'datetime',
     parameters = from_dict[1:]
     func(*parameters)
 
+    raise FunctionReturn("Command completed.", output=False)
+
 
 def win_activity(window_list: 'WindowList') -> None:
     """Show number of unread messages in each window."""
