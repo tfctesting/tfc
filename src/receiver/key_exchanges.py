@@ -175,12 +175,12 @@ def process_local_key(ts:            'datetime',
         m_print(["Local key successfully installed.",
                  f"Confirmation code (to Transmitter): {c_code.hex()}"], box=True, head=1)
 
-        local_win = window_list.get_local_window()
+        cmd_win = window_list.get_command_window()
 
         if first_local_key:
-            window_list.active_win = local_win
+            window_list.active_win = cmd_win
 
-        raise FunctionReturn("Added new local key.", window=local_win, ts=ts)
+        raise FunctionReturn("Added new local key.", window=cmd_win, ts=ts)
 
     except (EOFError, KeyboardInterrupt):
         m_print("Local key setup aborted.", bold=True, tail_clear=True, delay=1, head=2)
@@ -196,8 +196,8 @@ def local_key_rdy(ts:           'datetime',
                   contact_list: 'ContactList') -> None:
     """Clear local key bootstrap process from the screen."""
     message   = "Successfully completed the local key setup."
-    local_win = window_list.get_local_window()
-    local_win.add_new(ts, message)
+    cmd_win = window_list.get_command_window()
+    cmd_win.add_new(ts, message)
 
     m_print(message, bold=True, tail_clear=True, delay=1)
 
@@ -238,8 +238,8 @@ def key_ex_ecdhe(packet:       bytes,
     key_list.add_keyset(onion_pub_key, tx_mk, rx_mk, tx_hk, rx_hk)
 
     message   = f"Successfully added {nick}."
-    local_win = window_list.get_local_window()
-    local_win.add_new(ts, message)
+    cmd_win = window_list.get_command_window()
+    cmd_win.add_new(ts, message)
 
     c_code = blake2b(onion_pub_key, digest_size=CONFIRM_CODE_LENGTH)
     m_print([message, f"Confirmation code (to Transmitter): {c_code.hex()}"], box=True)
@@ -283,8 +283,8 @@ def key_ex_psk_tx(packet:       bytes,
 
     c_code    = blake2b(onion_pub_key, digest_size=CONFIRM_CODE_LENGTH)
     message   = f"Added Tx-side PSK for {nick} ({pub_key_to_short_address(onion_pub_key)})."
-    local_win = window_list.get_local_window()
-    local_win.add_new(ts, message)
+    cmd_win = window_list.get_command_window()
+    cmd_win.add_new(ts, message)
 
     m_print([message, f"Confirmation code (to Transmitter): {c_code.hex()}"], box=True)
 
@@ -358,8 +358,8 @@ def key_ex_psk_rx(packet:       bytes,
                 manual_proceed=True, box=True)
 
     message   = f"Added Rx-side PSK for {contact.nick} ({short_addr})."
-    local_win = window_list.get_local_window()
-    local_win.add_new(ts, message)
+    cmd_win = window_list.get_command_window()
+    cmd_win.add_new(ts, message)
 
     m_print([message, '', "Warning!",
              "Physically destroy the keyfile transmission media ",

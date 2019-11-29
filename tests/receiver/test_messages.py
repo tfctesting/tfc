@@ -32,7 +32,7 @@ from src.common.statics  import (BLAKE2_DIGEST_LENGTH, DIR_USER_DATA, FILE, FILE
                                  LOCAL_PUBKEY, MESSAGE, MESSAGE_LENGTH, ORIGIN_CONTACT_HEADER, ORIGIN_USER_HEADER,
                                  SYMMETRIC_KEY_LENGTH)
 
-from src.receiver.messages import process_message
+from src.receiver.messages import process_message_packet
 from src.receiver.packet   import PacketList
 from src.receiver.windows  import WindowList
 
@@ -94,7 +94,7 @@ class TestProcessMessage(TFCTestCase):
 
         # Test
         self.assert_fr("Error: Received packet had an invalid origin-header.",
-                       process_message, self.ts, packet, *self.args)
+                       process_message_packet, self.ts, packet, *self.args)
 
     @mock.patch('time.sleep', return_value=None)
     def test_masqueraded_command_raises_fr(self, _):
@@ -104,7 +104,7 @@ class TestProcessMessage(TFCTestCase):
 
             # Test
             self.assert_fr("Warning! Received packet masqueraded as a command.",
-                           process_message, self.ts, packet, *self.args)
+                           process_message_packet, self.ts, packet, *self.args)
 
     # Private messages
     @mock.patch('time.sleep', return_value=None)
@@ -115,7 +115,7 @@ class TestProcessMessage(TFCTestCase):
 
         # Test
         for p in assembly_ct_list:
-            self.assertIsNone(process_message(self.ts, p, *self.args))
+            self.assertIsNone(process_message_packet(self.ts, p, *self.args))
 
     @mock.patch('time.sleep', return_value=None)
     def test_private_msg_from_user(self, _):
@@ -125,7 +125,7 @@ class TestProcessMessage(TFCTestCase):
 
         # Test
         for p in assembly_ct_list:
-            self.assertIsNone(process_message(self.ts, p, *self.args))
+            self.assertIsNone(process_message_packet(self.ts, p, *self.args))
 
     # Whispered messages
     @mock.patch('time.sleep', return_value=None)
@@ -137,11 +137,11 @@ class TestProcessMessage(TFCTestCase):
 
         # Test
         for p in assembly_ct_list[:-1]:
-            self.assertIsNone(process_message(self.ts, p, *self.args))
+            self.assertIsNone(process_message_packet(self.ts, p, *self.args))
 
         for p in assembly_ct_list[-1:]:
             self.assert_fr("Whisper message complete.",
-                           process_message, self.ts, p, *self.args)
+                           process_message_packet, self.ts, p, *self.args)
 
     @mock.patch('time.sleep', return_value=None)
     def test_whisper_msg_from_user(self, _):
@@ -151,10 +151,11 @@ class TestProcessMessage(TFCTestCase):
                                                    whisper_header=bool_to_bytes(True))
         # Test
         for p in assembly_ct_list[:-1]:
-            self.assertIsNone(process_message(self.ts, p, *self.args))
+            self.assertIsNone(process_message_packet(self.ts, p, *self.args))
 
         for p in assembly_ct_list[-1:]:
-            self.assert_fr("Whisper message complete.", process_message, self.ts, p, *self.args)
+            self.assert_fr("Whisper message complete.",
+                           process_message_packet, self.ts, p, *self.args)
 
     @mock.patch('time.sleep', return_value=None)
     def test_empty_whisper_msg_from_user(self, _):
@@ -164,10 +165,11 @@ class TestProcessMessage(TFCTestCase):
                                                    whisper_header=bool_to_bytes(True))
         # Test
         for p in assembly_ct_list[:-1]:
-            self.assertIsNone(process_message(self.ts, p, *self.args))
+            self.assertIsNone(process_message_packet(self.ts, p, *self.args))
 
         for p in assembly_ct_list[-1:]:
-            self.assert_fr("Whisper message complete.", process_message, self.ts, p, *self.args)
+            self.assert_fr("Whisper message complete.",
+                           process_message_packet, self.ts, p, *self.args)
 
     # File key messages
     @mock.patch('time.sleep', return_value=None)
@@ -177,7 +179,8 @@ class TestProcessMessage(TFCTestCase):
                                                    message_header=FILE_KEY_HEADER)
 
         for p in assembly_ct_list[-1:]:
-            self.assert_fr("File key message from the user.", process_message, self.ts, p, *self.args)
+            self.assert_fr("File key message from the user.",
+                           process_message_packet, self.ts, p, *self.args)
 
     @mock.patch('time.sleep', return_value=None)
     def test_invalid_file_key_data_raises_fr(self, _):
@@ -186,7 +189,8 @@ class TestProcessMessage(TFCTestCase):
                                                    message_header=FILE_KEY_HEADER)
 
         for p in assembly_ct_list[-1:]:
-            self.assert_fr("Error: Received an invalid file key message.", process_message, self.ts, p, *self.args)
+            self.assert_fr("Error: Received an invalid file key message.",
+                           process_message_packet, self.ts, p, *self.args)
 
     @mock.patch('time.sleep', return_value=None)
     def test_too_large_file_key_data_raises_fr(self, _):
@@ -198,7 +202,8 @@ class TestProcessMessage(TFCTestCase):
                                                    message_header=FILE_KEY_HEADER)
 
         for p in assembly_ct_list[-1:]:
-            self.assert_fr("Error: Received an invalid file key message.", process_message, self.ts, p, *self.args)
+            self.assert_fr("Error: Received an invalid file key message.",
+                           process_message_packet, self.ts, p, *self.args)
 
     @mock.patch('time.sleep', return_value=None)
     def test_valid_file_key_message(self, _):
@@ -208,7 +213,8 @@ class TestProcessMessage(TFCTestCase):
                                                    encrypt_packet=True, onion_pub_key=nick_to_pub_key('Alice'),
                                                    message_header=FILE_KEY_HEADER)
         for p in assembly_ct_list[-1:]:
-            self.assert_fr("Received file decryption key from Alice", process_message, self.ts, p, *self.args)
+            self.assert_fr("Received file decryption key from Alice",
+                           process_message_packet, self.ts, p, *self.args)
 
     # Group messages
     @mock.patch('time.sleep', return_value=None)
@@ -220,7 +226,7 @@ class TestProcessMessage(TFCTestCase):
 
         # Test
         self.assert_fr("Error: Message from contact had an invalid header.",
-                       process_message, self.ts, assembly_ct_list[0], *self.args)
+                       process_message_packet, self.ts, assembly_ct_list[0], *self.args)
 
     @mock.patch('time.sleep', return_value=None)
     def test_invalid_window_raises_fr(self, _):
@@ -233,7 +239,7 @@ class TestProcessMessage(TFCTestCase):
 
         # Test
         self.assert_fr("Error: Received message to an unknown group.",
-                       process_message, self.ts, assembly_ct_list[0], *self.args)
+                       process_message_packet, self.ts, assembly_ct_list[0], *self.args)
 
     @mock.patch('time.sleep', return_value=None)
     def test_invalid_message_raises_fr(self, _):
@@ -244,7 +250,7 @@ class TestProcessMessage(TFCTestCase):
 
         # Test
         self.assert_fr("Error: Received an invalid group message.",
-                       process_message, self.ts, assembly_ct_list[0], *self.args)
+                       process_message_packet, self.ts, assembly_ct_list[0], *self.args)
 
     @mock.patch('time.sleep', return_value=None)
     def test_invalid_whisper_header_raises_fr(self, _):
@@ -255,7 +261,7 @@ class TestProcessMessage(TFCTestCase):
 
         # Test
         self.assert_fr("Error: Message from contact had an invalid whisper header.",
-                       process_message, self.ts, assembly_ct_list[0], *self.args)
+                       process_message_packet, self.ts, assembly_ct_list[0], *self.args)
 
     @mock.patch('time.sleep', return_value=None)
     def test_contact_not_in_group_raises_fr(self, _):
@@ -267,7 +273,7 @@ class TestProcessMessage(TFCTestCase):
 
         # Test
         self.assert_fr("Error: Account is not a member of the group.",
-                       process_message, self.ts, assembly_ct_list[0], *self.args)
+                       process_message_packet, self.ts, assembly_ct_list[0], *self.args)
 
     @mock.patch('time.sleep', return_value=None)
     def test_normal_group_msg_from_contact(self, _):
@@ -277,7 +283,7 @@ class TestProcessMessage(TFCTestCase):
                                                    onion_pub_key=nick_to_pub_key('Alice'))
 
         for p in assembly_ct_list:
-            self.assertIsNone(process_message(self.ts, p, *self.args))
+            self.assertIsNone(process_message_packet(self.ts, p, *self.args))
 
     @mock.patch('time.sleep', return_value=None)
     def test_normal_group_msg_from_user(self, _):
@@ -287,7 +293,7 @@ class TestProcessMessage(TFCTestCase):
                                                    onion_pub_key=nick_to_pub_key('Alice'))
 
         for p in assembly_ct_list:
-            self.assertIsNone(process_message(self.ts, p, *self.args))
+            self.assertIsNone(process_message_packet(self.ts, p, *self.args))
 
     # Files
     @mock.patch('time.sleep', return_value=None)
@@ -298,11 +304,11 @@ class TestProcessMessage(TFCTestCase):
 
         # Test
         for p in assembly_ct_list[:-1]:
-            self.assertIsNone(process_message(self.ts, p, *self.args))
+            self.assertIsNone(process_message_packet(self.ts, p, *self.args))
 
         for p in assembly_ct_list[-1:]:
             self.assert_fr("File storage complete.",
-                           process_message, self.ts, p, *self.args)
+                           process_message_packet, self.ts, p, *self.args)
 
     @mock.patch('time.sleep', return_value=None)
     def test_file_when_reception_is_disabled(self, _):
@@ -314,7 +320,7 @@ class TestProcessMessage(TFCTestCase):
 
         # Test
         self.assert_fr("Alert! File transmission from Alice but reception is disabled.",
-                       process_message, self.ts, assembly_ct_list[0], *self.args)
+                       process_message_packet, self.ts, assembly_ct_list[0], *self.args)
 
 
 if __name__ == '__main__':

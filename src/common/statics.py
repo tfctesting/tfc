@@ -52,8 +52,8 @@ WIN_TYPE_GROUP   = 'group'
 
 
 """Window UIDs"""
-WIN_UID_LOCAL = b'win_uid_local'
-WIN_UID_FILE  = b'win_uid_file'
+WIN_UID_COMMAND = b'win_uid_command'
+WIN_UID_FILE    = b'win_uid_file'
 
 
 """Packet types"""

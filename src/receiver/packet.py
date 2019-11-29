@@ -104,7 +104,7 @@ def decrypt_assembly_packet(packet:        bytes,          # Assembly packet cip
     let alone processed.
     """
     ct_harac, ct_assemby_packet = separate_header(packet, header_length=HARAC_CT_LENGTH)
-    local_window                = window_list.get_local_window()
+    cmd_win                     = window_list.get_command_window()
     command                     = onion_pub_key == LOCAL_PUBKEY
 
     p_type    = "command" if command                                      else "packet"
@@ -126,7 +126,7 @@ def decrypt_assembly_packet(packet:        bytes,          # Assembly packet cip
         harac_bytes = auth_and_decrypt(ct_harac, header_key)
     except nacl.exceptions.CryptoError:
         raise FunctionReturn(f"Warning! Received {p_type} {direction} {nick} had an invalid hash ratchet MAC.",
-                             window=local_window)
+                             window=cmd_win)
 
     # Catch up with hash ratchet offset
     purp_harac   = bytes_to_int(harac_bytes)
@@ -134,9 +134,9 @@ def decrypt_assembly_packet(packet:        bytes,          # Assembly packet cip
     offset       = purp_harac - stored_harac
     if offset < 0:
         raise FunctionReturn(f"Warning! Received {p_type} {direction} {nick} had an expired hash ratchet counter.",
-                             window=local_window)
+                             window=cmd_win)
 
-    process_offset(offset, origin, direction, nick, local_window)
+    process_offset(offset, origin, direction, nick, cmd_win)
     for harac in range(stored_harac, stored_harac + offset):
         message_key = blake2b(message_key + int_to_bytes(harac), digest_size=SYMMETRIC_KEY_LENGTH)
 
@@ -145,7 +145,7 @@ def decrypt_assembly_packet(packet:        bytes,          # Assembly packet cip
         assembly_packet = auth_and_decrypt(ct_assemby_packet, message_key)
     except nacl.exceptions.CryptoError:
         raise FunctionReturn(f"Warning! Received {p_type} {direction} {nick} had an invalid MAC.",
-                             window=local_window)
+                             window=cmd_win)
 
     # Update message key and harac
     new_key = blake2b(message_key + int_to_bytes(stored_harac + offset), digest_size=SYMMETRIC_KEY_LENGTH)

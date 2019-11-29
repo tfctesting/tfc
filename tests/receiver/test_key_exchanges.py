@@ -34,7 +34,7 @@ from src.common.encoding   import b58encode, str_to_bytes
 from src.common.exceptions import FunctionReturn
 from src.common.statics    import (ARGON2_SALT_LENGTH, BOLD_ON, CLEAR_ENTIRE_SCREEN, CONFIRM_CODE_LENGTH,
                                    CURSOR_LEFT_UP_CORNER, FINGERPRINT_LENGTH, LOCAL_ID, NORMAL_TEXT, PSK_FILE_SIZE,
-                                   SYMMETRIC_KEY_LENGTH, WIN_TYPE_CONTACT, WIN_UID_LOCAL, XCHACHA20_NONCE_LENGTH)
+                                   SYMMETRIC_KEY_LENGTH, WIN_TYPE_CONTACT, WIN_UID_COMMAND, XCHACHA20_NONCE_LENGTH)
 
 from src.receiver.key_exchanges import key_ex_ecdhe, key_ex_psk_rx, key_ex_psk_tx, local_key_rdy, process_local_key
 
@@ -98,7 +98,7 @@ class TestProcessLocalKey(TFCTestCase):
 
         # Test
         self.assert_fr("Added new local key.", process_local_key, self.ts, self.packet, *self.args)
-        self.assertEqual(self.window_list.active_win.uid, WIN_UID_LOCAL)
+        self.assertEqual(self.window_list.active_win.uid, WIN_UID_COMMAND)
 
     @mock.patch('tkinter.Tk',     return_value=MagicMock())
     @mock.patch('time.sleep',     return_value=None)

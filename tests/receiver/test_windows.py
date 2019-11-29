@@ -27,8 +27,8 @@ from unittest import mock
 from src.common.statics import (BOLD_ON, CLEAR_ENTIRE_LINE, CLEAR_ENTIRE_SCREEN, CURSOR_LEFT_UP_CORNER,
                                 CURSOR_UP_ONE_LINE, FILE, GROUP_ID_LENGTH, LOCAL_ID, NORMAL_TEXT,
                                 ONION_SERVICE_PUBLIC_KEY_LENGTH, ORIGIN_CONTACT_HEADER, ORIGIN_USER_HEADER,
-                                WIN_TYPE_COMMAND, WIN_TYPE_CONTACT, WIN_TYPE_FILE, WIN_TYPE_GROUP, WIN_UID_FILE,
-                                WIN_UID_LOCAL)
+                                WIN_TYPE_COMMAND, WIN_TYPE_CONTACT, WIN_TYPE_FILE, WIN_TYPE_GROUP, WIN_UID_COMMAND,
+                                WIN_UID_FILE)
 
 from src.receiver.windows import RxWindow, WindowList
 
@@ -55,7 +55,7 @@ class TestRxWindow(TFCTestCase):
         return RxWindow(uid, self.contact_list, self.group_list, self.settings, self.packet_list)
 
     def test_command_window_creation(self):
-        window = self.create_window(WIN_UID_LOCAL)
+        window = self.create_window(WIN_UID_COMMAND)
         self.assertEqual(window.type, WIN_TYPE_COMMAND)
         self.assertEqual(window.name, WIN_TYPE_COMMAND)
 
@@ -165,11 +165,11 @@ class TestRxWindow(TFCTestCase):
 
     def test_get_command_handle(self):
         # Setup
-        window           = self.create_window(WIN_UID_LOCAL)
+        window           = self.create_window(WIN_UID_COMMAND)
         window.is_active = True
 
         # Test
-        self.assertEqual(window.get_handle(self.ts, WIN_UID_LOCAL, ORIGIN_USER_HEADER), f"{self.time} -!- ")
+        self.assertEqual(window.get_handle(self.ts, WIN_UID_COMMAND, ORIGIN_USER_HEADER), f"{self.time} -!- ")
 
     def test_get_contact_handle(self):
         # Setup
@@ -413,7 +413,7 @@ class TestWindowList(TFCTestCase):
         self.contact_list.contacts = [create_contact(LOCAL_ID)]
 
         # Test
-        self.assertEqual(self.window_list.active_win.uid, WIN_UID_LOCAL)
+        self.assertEqual(self.window_list.active_win.uid, WIN_UID_COMMAND)
 
     def test_window_list_iterates_over_windows(self):
         for w in self.window_list:
@@ -498,21 +498,21 @@ testfile.txt    100.0KB    Bob       50.00%
         self.assertFalse(tg_win.is_active)
         self.assertTrue(self.window_list.get_window(WIN_UID_FILE).is_active)
 
-    def test_get_local_window(self):
+    def test_get_command_window(self):
         # Setup
         self.window_list.windows = [self.create_window(uid) for uid in [group_name_to_group_id('test_group'),
                                                                         group_name_to_group_id('test_group2'),
                                                                         WIN_UID_FILE,
-                                                                        WIN_UID_LOCAL]]
+                                                                        WIN_UID_COMMAND]]
 
         # Test
-        self.assertEqual(self.window_list.get_local_window().uid, WIN_UID_LOCAL)
+        self.assertEqual(self.window_list.get_command_window().uid, WIN_UID_COMMAND)
 
     def test_get_non_existing_window(self):
         # Setup
         self.window_list.windows = [self.create_window(uid) for uid in [group_name_to_group_id('test_group'),
                                                                         WIN_UID_FILE,
-                                                                        WIN_UID_LOCAL]]
+                                                                        WIN_UID_COMMAND]]
 
         # Test existing window
         self.assertTrue(self.window_list.has_window(group_name_to_group_id('test_group')))

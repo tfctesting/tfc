@@ -35,7 +35,7 @@ from src.common.statics    import (COMMAND_DATAGRAM_HEADER, EXIT_QUEUE, FILE_DAT
 from src.receiver.commands      import process_command
 from src.receiver.files         import new_file, process_file
 from src.receiver.key_exchanges import process_local_key
-from src.receiver.messages      import process_message
+from src.receiver.messages      import process_message_packet
 from src.receiver.packet        import PacketList
 from src.receiver.windows       import WindowList
 
@@ -172,8 +172,8 @@ def process_cached_messages(window_list:   'WindowList',
                 and key_list.has_rx_mk(onion_pub_key)
                 and packet_buffer[onion_pub_key]):
             ts, packet = packet_buffer[onion_pub_key].pop(0)
-            process_message(ts, packet, window_list, packet_list, contact_list,
-                            key_list, group_list, settings, file_keys, message_log)
+            process_message_packet(ts, packet, window_list, packet_list, contact_list,
+                                   key_list, group_list, settings, file_keys, message_log)
             raise FunctionReturn("Cached message processing complete.", output=False)
 
 
@@ -196,8 +196,8 @@ def process_message_queue(queues:        'queue_dict',
         onion_pub_key = packet[:ONION_SERVICE_PUBLIC_KEY_LENGTH]
 
         if contact_list.has_pub_key(onion_pub_key) and key_list.has_rx_mk(onion_pub_key):
-            process_message(ts, packet, window_list, packet_list, contact_list, key_list,
-                            group_list, settings, file_keys, message_log)
+            process_message_packet(ts, packet, window_list, packet_list, contact_list, key_list,
+                                   group_list, settings, file_keys, message_log)
         else:
             packet_buffer.setdefault(onion_pub_key, []).append((ts, packet))
 

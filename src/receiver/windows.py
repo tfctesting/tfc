@@ -34,7 +34,7 @@ from src.common.output     import clear_screen, m_print, print_on_previous_line
 from src.common.statics    import (BOLD_ON, EVENT, FILE, FILE_TRANSFER_INDENT, GROUP_ID_LENGTH, GROUP_MSG_ID_LENGTH, ME,
                                    NORMAL_TEXT, ONION_SERVICE_PUBLIC_KEY_LENGTH, ORIGIN_CONTACT_HEADER,
                                    ORIGIN_USER_HEADER, WIN_TYPE_COMMAND, WIN_TYPE_CONTACT, WIN_TYPE_FILE,
-                                   WIN_TYPE_GROUP, WIN_UID_FILE, WIN_UID_LOCAL)
+                                   WIN_TYPE_GROUP, WIN_UID_FILE, WIN_UID_COMMAND)
 
 if typing.TYPE_CHECKING:
     from src.common.db_contacts import Contact, ContactList
@@ -77,7 +77,7 @@ class RxWindow(Iterable[MsgTuple]):
         self.previous_msg_ts = datetime.now()
         self.unread_messages = 0
 
-        if self.uid == WIN_UID_LOCAL:
+        if self.uid == WIN_UID_COMMAND:
             self.type            = WIN_TYPE_COMMAND  # type: str
             self.name            = self.type         # type: str
             self.window_contacts = []
@@ -168,7 +168,7 @@ class RxWindow(Iterable[MsgTuple]):
         """Returns indented handle complete with headers and trailers."""
         time_stamp_str = time_stamp.strftime('%H:%M:%S.%f')[:-4]
 
-        if onion_pub_key == WIN_UID_LOCAL or event_msg:
+        if onion_pub_key == WIN_UID_COMMAND or event_msg:
             handle = EVENT
             ending = ' '
         else:
@@ -200,7 +200,7 @@ class RxWindow(Iterable[MsgTuple]):
         handle = self.get_handle(ts, onion_pub_key, origin, whisper, event_msg)
 
         # Check if message content needs to be changed to privacy-preserving notification
-        if not self.is_active and not self.settings.new_message_notify_preview and self.uid != WIN_UID_LOCAL:
+        if not self.is_active and not self.settings.new_message_notify_preview and self.uid != WIN_UID_COMMAND:
             trailer = 's' if self.unread_messages > 0 else ''
             message = BOLD_ON + f"{self.unread_messages + 1} unread message{trailer}" + NORMAL_TEXT
 
@@ -222,7 +222,7 @@ class RxWindow(Iterable[MsgTuple]):
             print(wrapped, file=f_name)
 
         else:
-            if onion_pub_key != WIN_UID_LOCAL:
+            if onion_pub_key != WIN_UID_COMMAND:
                 self.unread_messages += 1
 
             if (self.type == WIN_TYPE_CONTACT and self.contact is not None and self.contact.notifications) \
@@ -241,7 +241,7 @@ class RxWindow(Iterable[MsgTuple]):
     def add_new(self,
                 timestamp:     'datetime',                  # The timestamp of the received message
                 message:       str,                         # The content of the message
-                onion_pub_key: bytes = WIN_UID_LOCAL,       # The Onion Service public key of associated contact
+                onion_pub_key: bytes = WIN_UID_COMMAND,     # The Onion Service public key of associated contact
                 origin:        bytes = ORIGIN_USER_HEADER,  # The direction of the message
                 output:        bool  = False,               # When True, displays message while adding it to message_log
                 whisper:       bool  = False,               # When True, displays message as whisper message
@@ -330,12 +330,12 @@ class WindowList(Iterable[RxWindow]):
 
         self.active_win = None  # type: Optional[RxWindow]
         self.windows    = [RxWindow(uid, self.contact_list, self.group_list, self.settings, self.packet_list)
-                           for uid in ([WIN_UID_LOCAL, WIN_UID_FILE]
+                           for uid in ([WIN_UID_COMMAND, WIN_UID_FILE]
                                        + self.contact_list.get_list_of_pub_keys()
                                        + self.group_list.get_list_of_group_ids())]
 
         if self.contact_list.has_local_contact():
-            self.set_active_rx_window(WIN_UID_LOCAL)
+            self.set_active_rx_window(WIN_UID_COMMAND)
 
     def __iter__(self) -> Iterator[RxWindow]:
         """Iterate over window list."""
@@ -375,9 +375,9 @@ class WindowList(Iterable[RxWindow]):
         if self.active_win is not None and self.active_win.uid == WIN_UID_FILE:
             self.active_win.redraw_file_win()
 
-    def get_local_window(self) -> 'RxWindow':
+    def get_command_window(self) -> 'RxWindow':
         """Return command window."""
-        return self.get_window(WIN_UID_LOCAL)
+        return self.get_window(WIN_UID_COMMAND)
 
     def set_active_rx_window(self, uid: bytes) -> None:
         """Select new active window."""

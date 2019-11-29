@@ -44,7 +44,7 @@ from src.common.misc         import calculate_race_condition_delay
 from src.common.reed_solomon import RSCodec
 from src.common.statics      import (DIR_USER_DATA, FINGERPRINT_LENGTH, INITIAL_HARAC, KEX_STATUS_VERIFIED, LOCAL_ID,
                                      LOCAL_NICK, LOCAL_PUBKEY, ONION_SERVICE_PRIVATE_KEY_LENGTH, SYMMETRIC_KEY_LENGTH,
-                                     TX, WIN_TYPE_GROUP, WIN_UID_LOCAL)
+                                     TX, WIN_UID_COMMAND, WIN_TYPE_GROUP)
 
 from src.transmitter.windows import TxWindow as OrigTxWindow
 
@@ -485,9 +485,9 @@ class WindowList(object):
         """Mock method."""
         return [w.uid for w in self.windows]
 
-    def get_local_window(self):
+    def get_command_window(self):
         """Mock method."""
-        return self.get_window(WIN_UID_LOCAL)
+        return self.get_window(WIN_UID_COMMAND)
 
     def remove_window(self, uid: str) -> None:
         """Mock method."""

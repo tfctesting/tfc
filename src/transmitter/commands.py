@@ -46,7 +46,7 @@ from src.common.statics    import (CH_MASTER_KEY, CH_SETTING, CLEAR, CLEAR_SCREE
                                    UNENCRYPTED_EC_RATIO, UNENCRYPTED_EXIT_COMMAND, UNENCRYPTED_MANAGE_CONTACT_REQ,
                                    UNENCRYPTED_SCREEN_CLEAR, UNENCRYPTED_SCREEN_RESET, UNENCRYPTED_WIPE_COMMAND,
                                    US_BYTE, VERSION, WIN_ACTIVITY, WIN_SELECT, WIN_TYPE_GROUP, WIN_UID_FILE,
-                                   WIN_UID_LOCAL, WIPE_USR_DATA)
+                                   WIN_UID_COMMAND, WIPE_USR_DATA)
 
 from src.transmitter.commands_g    import process_group_command
 from src.transmitter.contact       import add_new_contact, change_nick, contact_setting, remove_contact
@@ -191,7 +191,7 @@ def rxp_show_sys_win(user_input: 'UserInput',
     masking enabled.
     """
     cmd     = user_input.plaintext.split()[0]
-    win_uid = dict(cmd=WIN_UID_LOCAL, fw=WIN_UID_FILE)[cmd]
+    win_uid = dict(cmd=WIN_UID_COMMAND, fw=WIN_UID_FILE)[cmd]
 
     command = WIN_SELECT + win_uid
     queue_command(command, settings, queues)

@@ -35,8 +35,8 @@ from src.common.statics    import (CH_FILE_RECV, CH_LOGGING, CH_MASTER_KEY, CH_N
                                    GROUP_ADD, GROUP_CREATE, GROUP_DELETE, GROUP_REMOVE, GROUP_RENAME, KEY_EX_ECDHE,
                                    KEY_EX_PSK_RX, KEY_EX_PSK_TX, LOCAL_KEY_RDY, LOCAL_PUBKEY, LOG_DISPLAY, LOG_EXPORT,
                                    LOG_REMOVE, ONION_SERVICE_PUBLIC_KEY_LENGTH, ORIGIN_USER_HEADER, RESET, RESET_SCREEN,
-                                   US_BYTE, WIN_ACTIVITY, WIN_SELECT, WIN_TYPE_CONTACT, WIN_TYPE_GROUP, WIN_UID_FILE,
-                                   WIN_UID_LOCAL, WIPE, WIPE_USR_DATA)
+                                   US_BYTE, WIN_ACTIVITY, WIN_SELECT, WIN_TYPE_CONTACT, WIN_TYPE_GROUP, WIN_UID_COMMAND,
+                                   WIN_UID_FILE, WIPE, WIPE_USR_DATA)
 
 from src.receiver.commands_g    import group_add, group_create, group_delete, group_remove, group_rename
 from src.receiver.key_exchanges import key_ex_ecdhe, key_ex_psk_rx, key_ex_psk_tx, local_key_rdy
@@ -123,7 +123,7 @@ def process_command(ts:           'datetime',
 
 def win_activity(window_list: 'WindowList') -> None:
     """Show number of unread messages in each window."""
-    unread_wins = [w for w in window_list if (w.uid != WIN_UID_LOCAL and w.unread_messages > 0)]
+    unread_wins = [w for w in window_list if (w.uid != WIN_UID_COMMAND and w.unread_messages > 0)]
     print_list  = ["Window activity"] if unread_wins else ["No window activity"]
     print_list += [f"{w.name}: {w.unread_messages}" for w in unread_wins]
 
@@ -177,8 +177,8 @@ def log_command(cmd_data:     bytes,
     access_logs(window, contact_list, group_list, settings, master_key, msg_to_load=no_messages, export=export)
 
     if export:
-        local_win = window_list.get_local_window()
-        local_win.add_new(ts, f"Exported log file of {window.type} '{window.name}'.", output=True)
+        cmd_win = window_list.get_command_window()
+        cmd_win.add_new(ts, f"Exported log file of {window.type} '{window.name}'.", output=True)
 
 
 def remove_log(cmd_data:     bytes,
@@ -240,8 +240,8 @@ def ch_master_key(ts:           'datetime',
     phase(DONE)
     m_print("Master password successfully changed.", bold=True, tail_clear=True, delay=1, head=1)
 
-    local_win = window_list.get_local_window()
-    local_win.add_new(ts, "Changed Receiver master password.")
+    cmd_win = window_list.get_command_window()
+    cmd_win.add_new(ts, "Changed Receiver master password.")
 
 
 def ch_nick(cmd_data:     bytes,
@@ -269,7 +269,7 @@ def ch_nick(cmd_data:     bytes,
     if window.type == WIN_TYPE_CONTACT:
         window.redraw()
 
-    cmd_win = window_list.get_local_window()
+    cmd_win = window_list.get_command_window()
     cmd_win.add_new(ts, f"Changed {short_addr} nick to '{nick}'.", output=True)
 
 
@@ -295,8 +295,8 @@ def ch_setting(cmd_data:     bytes,
     else:
         raise FunctionReturn(f"Error: Invalid setting '{setting}'.")
 
-    local_win = window_list.get_local_window()
-    local_win.add_new(ts, f"Changed setting '{setting}' to '{value}'.", output=True)
+    cmd_win = window_list.get_command_window()
+    cmd_win.add_new(ts, f"Changed setting '{setting}' to '{value}'.", output=True)
 
     if setting == 'max_number_of_contacts':
         contact_list.store_contacts()
@@ -376,8 +376,8 @@ def ch_contact_s(cmd_data:     bytes,
             group_list.store_groups()
 
     message   = f"{desc} {status} {action} for {specifier}{w_type}{w_name}"
-    local_win = window_list.get_local_window()
-    local_win.add_new(ts, message, output=True)
+    cmd_win = window_list.get_command_window()
+    cmd_win.add_new(ts, message, output=True)
 
 
 def contact_rem(onion_pub_key: bytes,
@@ -407,8 +407,8 @@ def contact_rem(onion_pub_key: bytes,
     message = f"Removed {nick} ({short_addr}) from contacts{' and groups' if in_group else ''}."
     m_print(message, bold=True, head=1, tail=1)
 
-    local_win = window_list.get_local_window()
-    local_win.add_new(ts, message)
+    cmd_win = window_list.get_command_window()
+    cmd_win.add_new(ts, message)
 
     remove_logs(contact_list, group_list, settings, master_key, onion_pub_key)
 

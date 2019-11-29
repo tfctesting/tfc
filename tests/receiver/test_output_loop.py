@@ -36,7 +36,7 @@ from src.common.statics  import (CH_FILE_RECV, COMMAND, COMMAND_DATAGRAM_HEADER,
                                  ENABLE, EXIT, FILE_DATAGRAM_HEADER, FILE_KEY_HEADER, INITIAL_HARAC, KEY_EX_ECDHE,
                                  LOCAL_KEY_DATAGRAM_HEADER, MESSAGE, MESSAGE_DATAGRAM_HEADER, ORIGIN_CONTACT_HEADER,
                                  PRIVATE_MESSAGE_HEADER, SYMMETRIC_KEY_LENGTH, UNIT_TEST_QUEUE, US_BYTE, WIN_SELECT,
-                                 WIN_UID_FILE, WIN_UID_LOCAL)
+                                 WIN_UID_COMMAND, WIN_UID_FILE)
 
 from src.transmitter.packet import split_to_assembly_packets
 
@@ -117,7 +117,7 @@ class TestOutputLoop(unittest.TestCase):
             o_sleep(test_delay)
 
             # Select local window
-            command = WIN_SELECT + WIN_UID_LOCAL
+            command = WIN_SELECT + WIN_UID_COMMAND
             queue_packet(local_key, tx_hk, local_harac, command)
             local_key, local_harac = rotate_key(local_key, local_harac)
             o_sleep(test_delay)

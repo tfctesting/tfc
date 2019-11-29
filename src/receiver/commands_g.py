@@ -27,7 +27,7 @@ from src.common.misc       import separate_header, split_byte_string, validate_g
 from src.common.output     import group_management_print, m_print
 from src.common.statics    import (ADDED_MEMBERS, ALREADY_MEMBER, GROUP_ID_LENGTH, NEW_GROUP, NOT_IN_GROUP,
                                    ONION_SERVICE_PUBLIC_KEY_LENGTH, REMOVED_MEMBERS, UNKNOWN_ACCOUNTS, US_BYTE,
-                                   WIN_UID_LOCAL)
+                                   WIN_UID_COMMAND)
 
 if typing.TYPE_CHECKING:
     from datetime               import datetime
@@ -78,8 +78,8 @@ def group_create(cmd_data:     bytes,
     group_management_print(NEW_GROUP,        accepted, contact_list, group_name)
     group_management_print(UNKNOWN_ACCOUNTS, rejected, contact_list, group_name)
 
-    local_win = window_list.get_window(WIN_UID_LOCAL)
-    local_win.add_new(ts, f"Created new group {group_name}.")
+    cmd_win = window_list.get_window(WIN_UID_COMMAND)
+    cmd_win.add_new(ts, f"Created new group {group_name}.")
 
 
 def group_add(cmd_data:     bytes,
@@ -123,8 +123,8 @@ def group_add(cmd_data:     bytes,
     group_management_print(ALREADY_MEMBER,   already_in_g, contact_list, group_name)
     group_management_print(UNKNOWN_ACCOUNTS, rejected,     contact_list, group_name)
 
-    local_win = window_list.get_window(WIN_UID_LOCAL)
-    local_win.add_new(ts, f"Added members to group {group_name}.")
+    cmd_win = window_list.get_window(WIN_UID_COMMAND)
+    cmd_win.add_new(ts, f"Added members to group {group_name}.")
 
 
 def group_remove(cmd_data:     bytes,
@@ -161,8 +161,8 @@ def group_remove(cmd_data:     bytes,
     group_management_print(NOT_IN_GROUP,     not_in_group, contact_list, group_name)
     group_management_print(UNKNOWN_ACCOUNTS, rejected,     contact_list, group_name)
 
-    local_win = window_list.get_window(WIN_UID_LOCAL)
-    local_win.add_new(ts, f"Removed members from group {group_name}.")
+    cmd_win = window_list.get_window(WIN_UID_COMMAND)
+    cmd_win.add_new(ts, f"Removed members from group {group_name}.")
 
 
 def group_delete(group_id:    bytes,
@@ -181,8 +181,8 @@ def group_delete(group_id:    bytes,
     message = f"Removed group '{name}'."
     m_print(message, bold=True, head=1, tail=1)
 
-    local_win = window_list.get_window(WIN_UID_LOCAL)
-    local_win.add_new(ts, message)
+    cmd_win = window_list.get_window(WIN_UID_COMMAND)
+    cmd_win.add_new(ts, message)
 
 
 def group_rename(cmd_data:     bytes,
@@ -216,5 +216,5 @@ def group_rename(cmd_data:     bytes,
     window.name = new_name
 
     message   = f"Renamed group '{old_name}' to '{new_name}'."
-    local_win = window_list.get_window(WIN_UID_LOCAL)
-    local_win.add_new(ts, message, output=True)
+    cmd_win = window_list.get_window(WIN_UID_COMMAND)
+    cmd_win.add_new(ts, message, output=True)
