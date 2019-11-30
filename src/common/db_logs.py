@@ -408,20 +408,7 @@ def remove_logs(contact_list: 'ContactList',
             if not packet.is_complete:
                 continue
 
-            _, header, message = separate_headers(packet.assemble_message_packet(), [WHISPER_FIELD_LENGTH,
-                                                                                     MESSAGE_HEADER_LENGTH])
-
-            if header == PRIVATE_MESSAGE_HEADER:
-                entries_to_keep.extend(packet.log_ct_list)
-                packet.clear_assembly_packets()
-
-            elif header == GROUP_MESSAGE_HEADER:
-                group_id, _ = separate_header(message, GROUP_ID_LENGTH)
-                if group_id == selector:
-                    removed = True
-                else:
-                    entries_to_keep.extend(packet.log_ct_list)
-                    packet.clear_assembly_packets()
+            removed = check_packet_fate(entries_to_keep, packet, removed, selector)
 
     message_log.close_database()
 
@@ -442,3 +429,26 @@ def remove_logs(contact_list: 'ContactList',
     win_type = "contact" if contact else "group"
 
     raise FunctionReturn(f"{action} log entries for {win_type} '{name}'.")
+
+
+def check_packet_fate(entries_to_keep: List[bytes],
+                      packet:          'Packet',
+                      removed:         bool,
+                      selector:        bytes
+                      ) -> bool:
+    """Check whether the packet should be kept."""
+    _, header, message = separate_headers(packet.assemble_message_packet(), [WHISPER_FIELD_LENGTH,
+                                                                             MESSAGE_HEADER_LENGTH])
+    if header == PRIVATE_MESSAGE_HEADER:
+        entries_to_keep.extend(packet.log_ct_list)
+        packet.clear_assembly_packets()
+
+    elif header == GROUP_MESSAGE_HEADER:
+        group_id, _ = separate_header(message, GROUP_ID_LENGTH)
+        if group_id == selector:
+            removed = True
+        else:
+            entries_to_keep.extend(packet.log_ct_list)
+            packet.clear_assembly_packets()
+
+    return removed
