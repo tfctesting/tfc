@@ -25,7 +25,7 @@ import typing
 import sys
 
 from datetime import datetime
-from typing   import List, Optional, Union
+from typing   import List, Optional, Tuple, Union
 
 from src.common.encoding import b10encode, b58encode, pub_key_to_onion_address
 from src.common.misc     import get_terminal_width, split_string
@@ -38,6 +38,7 @@ if typing.TYPE_CHECKING:
     from src.common.db_contacts import ContactList
     from src.common.db_settings import Settings
     from src.common.gateway     import GatewaySettings as GWSettings
+    msg_list_type = Union[str, List[str]]
 
 
 def clear_screen(delay: float = 0.0) -> None:
@@ -69,17 +70,17 @@ def group_management_print(key:          str,            # Group management mess
         m_print(justified, box=True)
 
 
-def m_print(msg_list:       Union[str, List[str]],  # List of lines to print
-            manual_proceed: bool  = False,          # Wait for user input before continuing
-            bold:           bool  = False,          # When True, prints the message in bold style
-            center:         bool  = True,           # When False, does not center message
-            box:            bool  = False,          # When True, prints a box around the message
-            head_clear:     bool  = False,          # When True, clears screen before printing message
-            tail_clear:     bool  = False,          # When True, clears screen after printing message (requires delay)
-            delay:          float = 0,              # Delay before continuing
-            max_width:      int   = 0,              # Maximum width of message
-            head:           int   = 0,              # Number of new lines to print before the message
-            tail:           int   = 0,              # Number of new lines to print after the message
+def m_print(msg_list:       'msg_list_type',  # List of lines to print
+            manual_proceed: bool  = False,    # Wait for user input before continuing
+            bold:           bool  = False,    # When True, prints the message in bold style
+            center:         bool  = True,     # When False, does not center message
+            box:            bool  = False,    # When True, prints a box around the message
+            head_clear:     bool  = False,    # When True, clears screen before printing message
+            tail_clear:     bool  = False,    # When True, clears screen after printing message (requires delay)
+            delay:          float = 0,        # Delay before continuing
+            max_width:      int   = 0,        # Maximum width of message
+            head:           int   = 0,        # Number of new lines to print before the message
+            tail:           int   = 0,        # Number of new lines to print after the message
             ) -> None:
     """Print message to screen.
 
@@ -89,25 +90,8 @@ def m_print(msg_list:       Union[str, List[str]],  # List of lines to print
     if isinstance(msg_list, str):
         msg_list = [msg_list]
 
-    terminal_width = get_terminal_width()
-    len_widest_msg = max(len(m) for m in msg_list)
-    spc_around_msg = 4 if box else 2
-    max_msg_width  = terminal_width - spc_around_msg
-
-    if max_width:
-        max_msg_width = min(max_width, max_msg_width)
-
-    # Split any message too wide on separate lines
-    if len_widest_msg > max_msg_width:
-        new_msg_list = []
-        for msg in msg_list:
-            if len(msg) > max_msg_width:
-                new_msg_list.extend(textwrap.fill(msg, max_msg_width).split('\n'))
-            else:
-                new_msg_list.append(msg)
-
-        msg_list       = new_msg_list
-        len_widest_msg = max(len(m) for m in msg_list)
+    terminal_width           = get_terminal_width()
+    len_widest_msg, msg_list = split_too_wide_messages(box, max_width, msg_list, terminal_width)
 
     if box or center:
         # Insert whitespace around every line to make them equally long
@@ -140,6 +124,33 @@ def m_print(msg_list:       Union[str, List[str]],  # List of lines to print
     if manual_proceed:
         input('')
         print_on_previous_line()
+
+
+def split_too_wide_messages(box:            bool,
+                            max_width:      int,
+                            msg_list:       'msg_list_type',
+                            terminal_width: int
+                            ) -> Tuple[int, 'msg_list_type']:
+    """Split too wide messages to multiple lines."""
+    len_widest_msg = max(len(m) for m in msg_list)
+    spc_around_msg = 4 if box else 2
+    max_msg_width  = terminal_width - spc_around_msg
+
+    if max_width:
+        max_msg_width = min(max_width, max_msg_width)
+
+    if len_widest_msg > max_msg_width:
+        new_msg_list = []
+        for msg in msg_list:
+            if len(msg) > max_msg_width:
+                new_msg_list.extend(textwrap.fill(msg, max_msg_width).split('\n'))
+            else:
+                new_msg_list.append(msg)
+
+        msg_list       = new_msg_list
+        len_widest_msg = max(len(m) for m in msg_list)
+
+    return len_widest_msg, msg_list
 
 
 def phase(string: str,            # Description of the phase
