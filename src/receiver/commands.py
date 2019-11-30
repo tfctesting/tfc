@@ -22,7 +22,7 @@ along with TFC. If not, see <https://www.gnu.org/licenses/>.
 import os
 import typing
 
-from typing import Any, Dict, Union
+from typing import Any, Dict, Tuple, Union
 
 from src.common.db_logs    import access_logs, change_log_db_key, remove_logs, replace_log_db
 from src.common.encoding   import bytes_to_int, pub_key_to_short_address
@@ -322,62 +322,89 @@ def ch_contact_s(cmd_data:     bytes,
                        DISABLE: ('disabled', False)}[setting.lower()]
 
     if setting.isupper():
-        # Change settings for all contacts (and groups)
-        enabled   = [getattr(c, attr) for c in contact_list.get_list_of_contacts()]
-        enabled  += [getattr(g, attr) for g in group_list] if not file_cmd else []
-        status    = "was already" if ((all(enabled) and b_value) or (not any(enabled) and not b_value)) else "has been"
-        specifier = "every "
-        w_type    = "contact"
-        w_name    = "." if file_cmd else " and group."
+        specifier, status, w_name, w_type = change_setting_for_all_contacts(
+            attr, file_cmd, b_value, contact_list, group_list)
+    else:
+        status, specifier, w_type, w_name = change_setting_for_one_contact(
+            attr, file_cmd, b_value, win_uid, window_list, contact_list, group_list)
 
-        # Set values
-        for c in contact_list.get_list_of_contacts():
+    message = f"{desc} {status} {action} for {specifier}{w_type}{w_name}"
+    cmd_win = window_list.get_command_window()
+    cmd_win.add_new(ts, message, output=True)
+
+
+def change_setting_for_one_contact(attr:         str,
+                                   file_cmd:     bool,
+                                   b_value:      bool,
+                                   win_uid:      bytes,
+                                   window_list:  'WindowList',
+                                   contact_list: 'ContactList',
+                                   group_list:   'GroupList'
+                                   ) -> Tuple[str, str, str, str]:
+    """Change setting for contacts in specified window."""
+    if not window_list.has_window(win_uid):
+        raise FunctionReturn(f"Error: Found no window for '{pub_key_to_short_address(win_uid)}'.")
+
+    window         = window_list.get_window(win_uid)
+    group_window   = window.type == WIN_TYPE_GROUP
+    contact_window = window.type == WIN_TYPE_CONTACT
+
+    if contact_window:
+        target = contact_list.get_contact_by_pub_key(win_uid)  # type: Union[Contact, Group]
+    else:
+        target = group_list.get_group_by_id(win_uid)
+
+    if file_cmd:
+        enabled = [getattr(m, attr) for m in window.window_contacts]
+        changed = not all(enabled) if b_value else any(enabled)
+    else:
+        changed = getattr(target, attr) != b_value
+
+    status    = "has been" if changed else "was already"
+    specifier = "members in " if (file_cmd and group_window) else ''
+    w_type    = window.type
+    w_name    = f" {window.name}."
+
+    # Set values
+    if contact_window or (group_window and file_cmd):
+        for c in window.window_contacts:
             setattr(c, attr, b_value)
         contact_list.store_contacts()
 
-        if not file_cmd:
-            for g in group_list:
-                setattr(g, attr, b_value)
-            group_list.store_groups()
+    elif group_window:
+        setattr(group_list.get_group_by_id(win_uid), attr, b_value)
+        group_list.store_groups()
 
-    else:
-        # Change setting for contacts in specified window
-        if not window_list.has_window(win_uid):
-            raise FunctionReturn(f"Error: Found no window for '{pub_key_to_short_address(win_uid)}'.")
+    return status, specifier, w_type, w_name
 
-        window         = window_list.get_window(win_uid)
-        group_window   = window.type == WIN_TYPE_GROUP
-        contact_window = window.type == WIN_TYPE_CONTACT
 
-        if contact_window:
-            target = contact_list.get_contact_by_pub_key(win_uid)  # type: Union[Contact, Group]
-        else:
-            target = group_list.get_group_by_id(win_uid)
+def change_setting_for_all_contacts(attr:         str,
+                                    file_cmd:     bool,
+                                    b_value:      bool,
+                                    contact_list: 'ContactList',
+                                    group_list:   'GroupList'
+                                    ) -> Tuple[str, str, str, str]:
+    """Change settings for all contacts (and groups)."""
+    enabled  = [getattr(c, attr) for c in contact_list.get_list_of_contacts()]
+    enabled += [getattr(g, attr) for g in group_list] if not file_cmd else []
 
-        if file_cmd:
-            enabled = [getattr(m, attr) for m in window.window_contacts]
-            changed = not all(enabled) if b_value else any(enabled)
-        else:
-            changed = getattr(target, attr) != b_value
+    status    = "was already" if ((all(enabled) and b_value) or (not any(enabled) and not b_value)) else "has been"
+    specifier = "every "
+    w_type    = "contact"
+    w_name    = "." if file_cmd else " and group."
 
-        status    = "has been"    if changed                     else "was already"
-        specifier = "members in " if (file_cmd and group_window) else ''
-        w_type    = window.type
-        w_name    = f" {window.name}."
+    # Set values
+    for c in contact_list.get_list_of_contacts():
+        setattr(c, attr, b_value)
 
-        # Set values
-        if contact_window or (group_window and file_cmd):
-            for c in window.window_contacts:
-                setattr(c, attr, b_value)
-            contact_list.store_contacts()
+    contact_list.store_contacts()
 
-        elif group_window:
-            setattr(group_list.get_group_by_id(win_uid), attr, b_value)
-            group_list.store_groups()
+    if not file_cmd:
+        for g in group_list:
+            setattr(g, attr, b_value)
+        group_list.store_groups()
 
-    message   = f"{desc} {status} {action} for {specifier}{w_type}{w_name}"
-    cmd_win = window_list.get_command_window()
-    cmd_win.add_new(ts, message, output=True)
+    return status, specifier, w_type, w_name
 
 
 def contact_rem(onion_pub_key: bytes,
