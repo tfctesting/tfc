@@ -472,7 +472,7 @@ def gf_sub(x: int, y: int) -> int:
     """Do substraction in binary Galois Field.
 
     In binary Galois Field, subtraction is just
-    the same as addition (since we mod 2)
+    the same as addition (since we mod 2).
     """
     return x ^ y
 
@@ -514,7 +514,7 @@ def gf_pow(x: int, power: int) -> int:
 
 
 def cl_mult(x_: int, y_: int) -> int:
-    """Bitwise carry-less multiplication on integers"""
+    """Bitwise carry-less multiplication on integers."""
     z = 0
     i = 0
     while (y_ >> i) > 0:
@@ -538,7 +538,7 @@ def bit_length(n: int) -> int:
 def cl_div(dividend: int, divisor: int) -> int:
     """\
     Bitwise carry-less long division on
-    integers and returns the remainder
+    integers and returns the remainder.
     """
     # Compute the position of the most
     # significant bit for each integers
