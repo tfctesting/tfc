@@ -84,10 +84,8 @@ def log_writer_loop(queues:      Dict[bytes, 'Queue[Any]'],  # Dictionary of que
             while log_packet_queue.qsize() == 0:
                 time.sleep(0.01)
 
-            if traffic_masking_queue.qsize() != 0:
-                traffic_masking = traffic_masking_queue.get()
-            if logfile_masking_queue.qsize() != 0:
-                logfile_masking = logfile_masking_queue.get()
+            traffic_masking, logfile_masking = check_log_setting_queues(traffic_masking, traffic_masking_queue,
+                                                                        logfile_masking, logfile_masking_queue)
 
             onion_pub_key, assembly_packet, log_messages, log_as_ph, master_key = log_packet_queue.get()
 
@@ -98,18 +96,7 @@ def log_writer_loop(queues:      Dict[bytes, 'Queue[Any]'],  # Dictionary of que
             if onion_pub_key is None:
                 continue
 
-            # `logging_state` retains the logging setting for noise packets
-            # that do not know the log setting of the window. To prevent
-            # logging of noise packets in situation where logging has
-            # been disabled, but no new message assembly packet carrying
-            # the logging setting is received, the LOG_SETTING_QUEUE
-            # is checked for up-to-date logging setting for every
-            # received noise packet.
-            if assembly_packet[:ASSEMBLY_PACKET_HEADER_LENGTH] == P_N_HEADER:
-                if log_setting_queue.qsize() != 0:
-                    logging_state = log_setting_queue.get()
-            else:
-                logging_state = log_messages
+            logging_state = update_logging_state(assembly_packet, logging_state, log_messages, log_setting_queue)
 
             # Detect if we are going to log the packet at all.
             if not logging_state:
@@ -144,6 +131,43 @@ def log_writer_loop(queues:      Dict[bytes, 'Queue[Any]'],  # Dictionary of que
 
             if unit_test and queues[UNIT_TEST_QUEUE].qsize() != 0:
                 break
+
+
+def check_log_setting_queues(traffic_masking:       bool,
+                             traffic_masking_queue: 'Queue[Any]',
+                             logfile_masking:       bool,
+                             logfile_masking_queue: 'Queue[Any]'
+                             ) -> Tuple[bool, bool]:
+    """Check for updates to logging settings."""
+    if traffic_masking_queue.qsize() != 0:
+        traffic_masking = traffic_masking_queue.get()
+
+    if logfile_masking_queue.qsize() != 0:
+        logfile_masking = logfile_masking_queue.get()
+
+    return traffic_masking, logfile_masking
+
+
+def update_logging_state(assembly_packet:   bytes,
+                         logging_state:     bool,
+                         log_messages:      bool,
+                         log_setting_queue: 'Queue[Any]',
+                         ) -> bool:
+    """Update logging state.
+
+    `logging_state` retains the logging setting for noise packets that
+    do not know the log setting of the window. To prevent logging of
+    noise packets in situation where logging has been disabled, but no
+    new message assembly packet carrying the logging setting is received,
+    the LOG_SETTING_QUEUE is checked for up-to-date logging setting for
+    every received noise packet.
+    """
+    if assembly_packet[:ASSEMBLY_PACKET_HEADER_LENGTH] == P_N_HEADER:
+        if log_setting_queue.qsize() != 0:
+            logging_state = log_setting_queue.get()
+    else:
+        logging_state = log_messages
+    return logging_state
 
 
 def write_log_entry(assembly_packet: bytes,                       # Assembly packet to log
