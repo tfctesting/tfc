@@ -41,7 +41,7 @@ from src.common.statics    import (ASSEMBLY_PACKET_HEADER_LENGTH, DIR_USER_DATA,
                                    P_N_HEADER, RX, TEMP_POSTFIX, TIMESTAMP_LENGTH, TRAFFIC_MASKING_QUEUE, TX,
                                    UNIT_TEST_QUEUE, WHISPER_FIELD_LENGTH, WIN_TYPE_CONTACT, WIN_TYPE_GROUP)
 
-from src.receiver.packet  import PacketList
+from src.receiver.packet  import Packet, PacketList
 from src.receiver.windows import RxWindow
 
 if typing.TYPE_CHECKING:
@@ -244,6 +244,7 @@ def access_logs(window:       Union['TxWindow', 'RxWindow'],
             continue
 
         packet = packet_list.get_packet(onion_pub_key, origin, MESSAGE, log_access=True)
+
         try:
             packet.add_packet(assembly_packet)
         except FunctionReturn:
@@ -251,31 +252,44 @@ def access_logs(window:       Union['TxWindow', 'RxWindow'],
         if not packet.is_complete:
             continue
 
-        whisper_byte, header, message = separate_headers(packet.assemble_message_packet(), [WHISPER_FIELD_LENGTH,
-                                                                                            MESSAGE_HEADER_LENGTH])
-        whisper = bytes_to_bool(whisper_byte)
-
-        if header == PRIVATE_MESSAGE_HEADER and window.type == WIN_TYPE_CONTACT:
-            message_list.append(
-                (bytes_to_timestamp(timestamp), message.decode(), onion_pub_key, packet.origin, whisper, False))
-
-        elif header == GROUP_MESSAGE_HEADER and window.type == WIN_TYPE_GROUP:
-            purp_group_id, message = separate_header(message, GROUP_ID_LENGTH)
-            if window.group is not None and purp_group_id != window.group.group_id:
-                continue
-
-            purp_msg_id, message = separate_header(message, GROUP_MSG_ID_LENGTH)
-            if packet.origin == ORIGIN_USER_HEADER:
-                if purp_msg_id == group_msg_id:
-                    continue
-                group_msg_id = purp_msg_id
-
-            message_list.append(
-                (bytes_to_timestamp(timestamp), message.decode(), onion_pub_key, packet.origin, whisper, False))
+        group_msg_id = add_complete_message_to_message_list(timestamp, onion_pub_key, group_msg_id,
+                                                            packet, message_list, window)
 
     message_log.close_database()
 
     print_logs(message_list[-msg_to_load:], export, msg_to_load, window, contact_list, group_list, settings)
+
+
+def add_complete_message_to_message_list(timestamp:     bytes,
+                                         onion_pub_key: bytes,
+                                         group_msg_id:  bytes,
+                                         packet:        'Packet',
+                                         message_list:  List[MsgTuple],
+                                         window:        Union['TxWindow', 'RxWindow']
+                                         ) -> bytes:
+    """Add complete log file message to `message_list`."""
+    whisper_byte, header, message = separate_headers(packet.assemble_message_packet(), [WHISPER_FIELD_LENGTH,
+                                                                                        MESSAGE_HEADER_LENGTH])
+    whisper = bytes_to_bool(whisper_byte)
+
+    if header == PRIVATE_MESSAGE_HEADER and window.type == WIN_TYPE_CONTACT:
+        message_list.append(
+            (bytes_to_timestamp(timestamp), message.decode(), onion_pub_key, packet.origin, whisper, False))
+
+    elif header == GROUP_MESSAGE_HEADER and window.type == WIN_TYPE_GROUP:
+        purp_group_id, message = separate_header(message, GROUP_ID_LENGTH)
+        if window.group is not None and purp_group_id != window.group.group_id:
+            return group_msg_id
+
+        purp_msg_id, message = separate_header(message, GROUP_MSG_ID_LENGTH)
+        if packet.origin == ORIGIN_USER_HEADER:
+            if purp_msg_id == group_msg_id:
+                return group_msg_id
+            group_msg_id = purp_msg_id
+
+        message_list.append((bytes_to_timestamp(timestamp), message.decode(), onion_pub_key, packet.origin, whisper, False))
+
+    return group_msg_id
 
 
 def print_logs(message_list: List[MsgTuple],
