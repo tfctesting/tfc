@@ -31,7 +31,7 @@ import time
 import typing
 
 from datetime import datetime
-from typing   import Dict, Optional, Tuple, Union
+from typing   import Any, Dict, Optional, Tuple, Union
 
 from serial.serialutil import SerialException
 
@@ -476,6 +476,14 @@ class GatewaySettings(object):
                 return None
 
         # Check for missing setting
+        self.check_missing_settings(json_dict)
+
+        # Store after loading to add missing, to replace invalid settings,
+        # and to remove settings that do not belong in the JSON file.
+        self.store_settings()
+
+    def check_missing_settings(self, json_dict: Any) -> None:
+        """Check for missing JSON fields and invalid values."""
         for key in self.key_list:
             if key not in json_dict:
                 m_print([f"Error: Missing setting '{key}' in '{self.file_name}'.",
@@ -506,10 +514,6 @@ class GatewaySettings(object):
                     continue
 
             setattr(self, key, json_dict[key])
-
-        # Store after loading to add missing, to replace invalid settings,
-        # and to remove settings that do not belong in the JSON file.
-        self.store_settings()
 
     def change_setting(self, key: str, value_str: str) -> None:
         """Parse, update and store new setting value."""
