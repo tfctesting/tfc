@@ -440,6 +440,30 @@ class TestX448(unittest.TestCase):
         self.assertEqual(shared_secret1, blake2b(TestX448.shared_secret))
         self.assertEqual(shared_secret2, blake2b(TestX448.shared_secret))
 
+    def test_non_unique_keys_raise_critical_error(self):
+        # Setup
+        shared_key    = os.urandom(SYMMETRIC_KEY_LENGTH)
+        tx_public_key = os.urandom(TFC_PUBLIC_KEY_LENGTH)
+
+        # Test
+        with self.assertRaises(SystemExit):
+            X448.derive_keys(shared_key, tx_public_key, tx_public_key)
+
+    def test_x448_key_derivation(self):
+        # Setup
+        shared_key    = os.urandom(SYMMETRIC_KEY_LENGTH)
+        tx_public_key = os.urandom(TFC_PUBLIC_KEY_LENGTH)
+        rx_public_key = os.urandom(TFC_PUBLIC_KEY_LENGTH)
+
+        # Test
+        key_set = X448.derive_keys(shared_key, tx_public_key, rx_public_key)
+
+        # Test that correct number of keys were returned
+        self.assertEqual(len(key_set), 6)
+
+        # Test that each key is unique
+        self.assertEqual(len(set(key_set)), 6)
+
 
 class TestXChaCha20Poly1305(unittest.TestCase):
     """\

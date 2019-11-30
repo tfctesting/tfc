@@ -42,6 +42,8 @@ import nacl.exceptions
 import nacl.secret
 import nacl.utils
 
+from typing import Tuple
+
 from cryptography.hazmat.primitives                 import padding
 from cryptography.hazmat.primitives.asymmetric.x448 import X448PrivateKey, X448PublicKey
 from cryptography.hazmat.primitives.serialization   import Encoding, PublicFormat
@@ -49,8 +51,9 @@ from cryptography.hazmat.primitives.serialization   import Encoding, PublicForma
 from src.common.exceptions import CriticalError
 from src.common.misc       import separate_header
 from src.common.statics    import (ARGON2_SALT_LENGTH, BITS_PER_BYTE, BLAKE2_DIGEST_LENGTH, BLAKE2_DIGEST_LENGTH_MAX,
-                                   BLAKE2_DIGEST_LENGTH_MIN, PADDING_LENGTH, SYMMETRIC_KEY_LENGTH,
-                                   TFC_PUBLIC_KEY_LENGTH, X448_SHARED_SECRET_LENGTH, XCHACHA20_NONCE_LENGTH)
+                                   BLAKE2_DIGEST_LENGTH_MIN, FINGERPRINT, FINGERPRINT_LENGTH, MESSAGE_KEY, HEADER_KEY,
+                                   PADDING_LENGTH, SYMMETRIC_KEY_LENGTH, TFC_PUBLIC_KEY_LENGTH,
+                                   X448_SHARED_SECRET_LENGTH, XCHACHA20_NONCE_LENGTH)
 
 
 def blake2b(message:     bytes,                        # Message to hash
@@ -414,6 +417,43 @@ class X448(object):
             raise CriticalError(f"Generated an invalid size shared secret ({len(shared_secret)} bytes).")
 
         return blake2b(shared_secret, digest_size=SYMMETRIC_KEY_LENGTH)
+
+    @staticmethod
+    def derive_keys(dh_shared_key:          bytes,
+                    tfc_public_key_user:    bytes,
+                    tfc_public_key_contact: bytes
+                    ) -> Tuple[bytes, bytes, bytes, bytes, bytes, bytes]:
+        """Create domain separated message and header keys and fingerprints from shared key.
+
+        Domain separate unidirectional keys from shared key by using public
+        keys as message and the context variable as personalization string.
+
+        Domain separate fingerprints of public keys by using the shared
+        secret as key and the context variable as personalization string.
+        This way entities who might monitor fingerprint verification
+        channel are unable to correlate spoken values with public keys
+        that they might see on RAM or screen of Networked Computer:
+        Public keys can not be derived from the fingerprints due to
+        preimage resistance of BLAKE2b, and fingerprints can not be
+        derived from public key without the X448 shared key. Using the
+        context variable ensures fingerprints are distinct from derived
+        message and header keys.
+        """
+        tx_mk = blake2b(tfc_public_key_contact, dh_shared_key, person=MESSAGE_KEY, digest_size=SYMMETRIC_KEY_LENGTH)
+        rx_mk = blake2b(tfc_public_key_user,    dh_shared_key, person=MESSAGE_KEY, digest_size=SYMMETRIC_KEY_LENGTH)
+
+        tx_hk = blake2b(tfc_public_key_contact, dh_shared_key, person=HEADER_KEY,  digest_size=SYMMETRIC_KEY_LENGTH)
+        rx_hk = blake2b(tfc_public_key_user,    dh_shared_key, person=HEADER_KEY,  digest_size=SYMMETRIC_KEY_LENGTH)
+
+        tx_fp = blake2b(tfc_public_key_user,    dh_shared_key, person=FINGERPRINT, digest_size=FINGERPRINT_LENGTH)
+        rx_fp = blake2b(tfc_public_key_contact, dh_shared_key, person=FINGERPRINT, digest_size=FINGERPRINT_LENGTH)
+
+        key_tuple = tx_mk, rx_mk, tx_hk, rx_hk, tx_fp, rx_fp
+
+        if len(key_tuple) != len(set(key_tuple)):
+            raise CriticalError("Derived keys were not unique.")
+
+        return key_tuple
 
 
 def encrypt_and_sign(plaintext: bytes,       # Plaintext to encrypt
