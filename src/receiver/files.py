@@ -103,7 +103,8 @@ def decrypt_and_store_file(ts:            'datetime',
                            onion_pub_key: bytes,
                            nick:          str,
                            window_list:   'WindowList',
-                           settings:      'Settings'):
+                           settings:      'Settings'
+                           ) -> None:
     """Decrypt and store file."""
     try:
         file_pt = auth_and_decrypt(file_ct, file_key)

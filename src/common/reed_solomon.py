@@ -513,6 +513,54 @@ def gf_pow(x: int, power: int) -> int:
     return ret_val
 
 
+def cl_mult(x_: int, y_: int) -> int:
+    """Bitwise carry-less multiplication on integers"""
+    z = 0
+    i = 0
+    while (y_ >> i) > 0:
+        if y_ & (1 << i):
+            z ^= x_ << i
+        i += 1
+    return z
+
+
+def bit_length(n: int) -> int:
+    """\
+    Compute the position of the most significant bit
+    (1) of an integer. Equivalent to int.bit_length()
+    """
+    bits = 0
+    while n >> bits:
+        bits += 1
+    return bits
+
+
+def cl_div(dividend: int, divisor: int) -> int:
+    """\
+    Bitwise carry-less long division on
+    integers and returns the remainder
+    """
+    # Compute the position of the most
+    # significant bit for each integers
+    dl1 = bit_length(dividend)
+    dl2 = bit_length(divisor)
+
+    # If the dividend is smaller than the divisor, just exit
+    if dl1 < dl2:  # pragma: no cover
+        return dividend
+
+    # Else, align the most significant 1 of the divisor to the
+    # most significant 1 of the dividend (by shifting the divisor)
+    for i in range(dl1 - dl2, -1, -1):
+        # Check that the dividend is divisible (useless for the
+        #  first iteration but important for the next ones)
+        if dividend & (1 << i + dl2 - 1):
+            # If divisible, then shift the divisor to align the most
+            # significant bits and XOR (carry-less substraction)
+            dividend ^= divisor << i
+    return dividend
+
+
 def gf_mult_nolut_slow(x: int, y: int, prim: int = 0) -> int:
     """\
     Multiplication in Galois Fields without using a precomputed look-up
@@ -520,55 +568,6 @@ def gf_mult_nolut_slow(x: int, y: int, prim: int = 0) -> int:
     multiplication + modular reduction using an irreducible prime
     polynomial.
     """
-
-    # Define bitwise carry-less operations as inner functions
-    def cl_mult(x_: int, y_: int) -> int:
-        """Bitwise carry-less multiplication on integers"""
-        z = 0
-        i = 0
-        while (y_ >> i) > 0:
-            if y_ & (1 << i):
-                z ^= x_ << i
-            i += 1
-        return z
-
-    def bit_length(n: int) -> int:
-        """\
-        Compute the position of the most significant bit
-        (1) of an integer. Equivalent to int.bit_length()
-        """
-        bits = 0
-        while n >> bits:
-            bits += 1
-        return bits
-
-    def cl_div(dividend: int, divisor: int) -> int:
-        """\
-        Bitwise carry-less long division on
-        integers and returns the remainder
-        """
-        # Compute the position of the most
-        # significant bit for each integers
-        dl1 = bit_length(dividend)
-        dl2 = bit_length(divisor)
-
-        # If the dividend is smaller than the divisor, just exit
-        if dl1 < dl2:  # pragma: no cover
-            return dividend
-
-        # Else, align the most significant 1 of the divisor to the
-        # most significant 1 of the dividend (by shifting the divisor)
-        for i in range(dl1 - dl2, -1, -1):
-            # Check that the dividend is divisible (useless for the
-            #  first iteration but important for the next ones)
-            if dividend & (1 << i + dl2 - 1):
-                # If divisible, then shift the divisor to align the most
-                # significant bits and XOR (carry-less substraction)
-                dividend ^= divisor << i
-        return dividend
-
-    # --- Main GF multiplication routine ---
-
     # Multiply the gf numbers
     result = cl_mult(x, y)
 
