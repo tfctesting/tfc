@@ -227,7 +227,7 @@ class MessageLog(object):
 
         ensure_dir(DIR_USER_DATA)
         if os.path.isfile(self.database_name):
-            self.load_database()
+            self.check_for_temp_database()
 
         self.conn = sqlite3.connect(self.database_name)
         self.c    = self.conn.cursor()
@@ -249,16 +249,16 @@ class MessageLog(object):
         except sqlite3.DatabaseError:
             return False
 
-        for log_entry in log_entries:
+        for ct_log_entry in log_entries:
             try:
-                _ = auth_and_decrypt(log_entry[0], self.database_key)
+                auth_and_decrypt(ct_log_entry[0], self.database_key)
             except nacl.exceptions.CryptoError:
                 return False
         else:
             return True
 
-    def load_database(self) -> None:
-        """"Load database from file."""
+    def check_for_temp_database(self) -> None:
+        """"Check if temporary log database exists."""
         if os.path.isfile(self.database_temp):
             if self.verify_file(self.database_temp):
                 os.replace(self.database_temp, self.database_name)
@@ -272,7 +272,7 @@ class MessageLog(object):
         self.c.execute("""CREATE TABLE IF NOT EXISTS log_entries (id INTEGER PRIMARY KEY, log_entry BLOB NOT NULL)""")
 
     def insert_log_entry(self, pt_log_entry: bytes) -> None:
-        """Encrypt and insert log entry into the sqlite3 log database."""
+        """Encrypt log entry and insert the ciphertext into the sqlite3 database."""
         ct_log_entry = encrypt_and_sign(pt_log_entry, self.database_key)
 
         try:
@@ -285,4 +285,5 @@ class MessageLog(object):
             self.insert_log_entry(pt_log_entry)
 
     def close_database(self) -> None:
+        """Close the database cursor."""
         self.c.close()
