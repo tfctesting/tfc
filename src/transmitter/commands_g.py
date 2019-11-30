@@ -22,7 +22,7 @@ along with TFC. If not, see <https://www.gnu.org/licenses/>.
 import os
 import typing
 
-from typing import Callable, Dict, List, Optional
+from typing import Callable, Dict, List, Optional, Tuple
 
 from src.common.db_logs    import remove_logs
 from src.common.encoding   import b58decode, int_to_bytes
@@ -71,36 +71,7 @@ def process_group_command(user_input:   'UserInput',
 
     input_parameters = user_input.plaintext.split()  # type: List[str]
 
-    try:
-        command_type = input_parameters[1]
-    except IndexError:
-        raise FunctionReturn("Error: Invalid group command.", head_clear=True)
-
-    if command_type not in ['create', 'join', 'add', 'rm']:
-        raise FunctionReturn("Error: Invalid group command.")
-
-    group_id = None  # type: Optional[bytes]
-    if command_type == 'join':
-        try:
-            group_id_s = input_parameters[2]
-        except IndexError:
-            raise FunctionReturn("Error: No group ID specified.", head_clear=True)
-        try:
-            group_id = b58decode(group_id_s)
-        except ValueError:
-            raise FunctionReturn("Error: Invalid group ID.", head_clear=True)
-
-        if group_id in group_list.get_list_of_group_ids():
-            raise FunctionReturn("Error: Group with matching ID already exists.", head_clear=True)
-
-    try:
-        name_index = 3 if command_type == 'join' else 2
-        group_name = input_parameters[name_index]
-    except IndexError:
-        raise FunctionReturn("Error: No group name specified.", head_clear=True)
-
-    member_index = 4 if command_type == 'join' else 3
-    purp_members = input_parameters[member_index:]
+    command_type, group_id, group_name, purp_members = parse_group_command_parameters(input_parameters, group_list)
 
     # Swap specified strings to public keys
     selectors = contact_list.contact_selectors()
@@ -115,6 +86,58 @@ def process_group_command(user_input:   'UserInput',
 
     func(group_name, pub_keys, contact_list, group_list, settings, queues, master_key, group_id)
     print('')
+
+
+def parse_group_command_parameters(input_parameters: List[str],
+                                   group_list:       'GroupList'
+                                   ) -> Tuple[str,
+                                              Optional[bytes],
+                                              str,
+                                              List[str]]:
+    """Parse parameters for group command issued by the user."""
+    try:
+        command_type = input_parameters[1]
+    except IndexError:
+        raise FunctionReturn("Error: Invalid group command.", head_clear=True)
+
+    if command_type not in ['create', 'join', 'add', 'rm']:
+        raise FunctionReturn("Error: Invalid group command.")
+
+    group_id = validate_group_id(input_parameters, command_type, group_list)
+
+    try:
+        name_index = 3 if command_type == 'join' else 2
+        group_name = input_parameters[name_index]
+    except IndexError:
+        raise FunctionReturn("Error: No group name specified.", head_clear=True)
+
+    member_index = 4 if command_type == 'join' else 3
+    purp_members = input_parameters[member_index:]
+
+    return command_type, group_id, group_name, purp_members
+
+
+def validate_group_id(input_parameters: List[str],
+                      command_type:     str,
+                      group_list:       'GroupList'
+                      ) -> Optional[bytes]:
+    """Validate group ID for group command."""
+    group_id = None  # type: Optional[bytes]
+
+    if command_type == 'join':
+        try:
+            group_id_s = input_parameters[2]
+        except IndexError:
+            raise FunctionReturn("Error: No group ID specified.", head_clear=True)
+        try:
+            group_id = b58decode(group_id_s)
+        except ValueError:
+            raise FunctionReturn("Error: Invalid group ID.", head_clear=True)
+
+        if group_id in group_list.get_list_of_group_ids():
+            raise FunctionReturn("Error: Group with matching ID already exists.", head_clear=True)
+
+    return group_id
 
 
 def group_create(group_name:   str,
