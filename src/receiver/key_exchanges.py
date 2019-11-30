@@ -180,7 +180,7 @@ def process_local_key(ts:            'datetime',
         if first_local_key:
             window_list.active_win = cmd_win
 
-        raise FunctionReturn("Added new local key.", window=cmd_win, ts=ts)
+        raise FunctionReturn("Added new local key.", window=cmd_win, ts=ts, output=False)
 
     except (EOFError, KeyboardInterrupt):
         m_print("Local key setup aborted.", bold=True, tail_clear=True, delay=1, head=2)
