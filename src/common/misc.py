@@ -203,18 +203,23 @@ def monitor_processes(process_list:       List[Process],
                     with open('/etc/os-release') as f:
                         data = f.read()
                     if TAILS not in data:
-                        if software_operation == RX:
-                            subprocess.Popen("find {} -type f -exec shred -n 3 -z -u {{}} \\;"
-                                             .format(DIR_RECV_FILES), shell=True).wait()
-
-                        subprocess.Popen("find {} -name '{}*' -type f -exec shred -n 3 -z -u {{}} \\;"
-                                         .format(DIR_USER_DATA, software_operation), shell=True).wait()
-
-                        for d in [DIR_USER_DATA, DIR_RECV_FILES]:
-                            with ignored(FileNotFoundError):
-                                shutil.rmtree(d)
+                        shred_databases(software_operation)
 
                     os.system(POWEROFF)
+
+
+def shred_databases(software_operation: str) -> None:
+    """Shred TFC databases and remove directories."""
+    if software_operation == RX:
+        subprocess.Popen("find {} -type f -exec shred -n 3 -z -u {{}} \\;"
+                         .format(DIR_RECV_FILES), shell=True).wait()
+
+    subprocess.Popen("find {} -name '{}*' -type f -exec shred -n 3 -z -u {{}} \\;"
+                     .format(DIR_USER_DATA, software_operation), shell=True).wait()
+
+    for d in [DIR_USER_DATA, DIR_RECV_FILES]:
+        with ignored(FileNotFoundError):
+            shutil.rmtree(d)
 
 
 def process_arguments() -> Tuple[str, bool, bool]:
