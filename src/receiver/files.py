@@ -76,7 +76,7 @@ def process_assembled_file(ts:            'datetime',    # Timestamp last receiv
                            ) -> None:
     """Process received file assembly packets."""
     try:
-        file_name_b, file_data = payload.split(US_BYTE, 1)
+        file_name_b, file_data = payload.split(US_BYTE, 1)  # type: bytes, bytes
     except ValueError:
         raise FunctionReturn("Error: Received file had an invalid structure.")
 
@@ -93,6 +93,18 @@ def process_assembled_file(ts:            'datetime',    # Timestamp last receiv
     if len(file_key) != SYMMETRIC_KEY_LENGTH:
         raise FunctionReturn("Error: Received file had an invalid key.")
 
+    decrypt_and_store_file(ts, file_ct, file_key, file_name, onion_pub_key, nick, window_list, settings)
+
+
+def decrypt_and_store_file(ts:            'datetime',
+                           file_ct:       bytes,
+                           file_key:      bytes,
+                           file_name:     str,
+                           onion_pub_key: bytes,
+                           nick:          str,
+                           window_list:   'WindowList',
+                           settings:      'Settings'):
+    """Decrypt and store file."""
     try:
         file_pt = auth_and_decrypt(file_ct, file_key)
     except nacl.exceptions.CryptoError:
@@ -105,12 +117,13 @@ def process_assembled_file(ts:            'datetime',    # Timestamp last receiv
 
     file_dir   = f'{DIR_RECV_FILES}{nick}/'
     final_name = store_unique(file_dc, file_dir, file_name)
+    message    = f"Stored file from {nick} as '{final_name}'."
 
-    message = f"Stored file from {nick} as '{final_name}'."
     if settings.traffic_masking and window_list.active_win is not None:
         window = window_list.active_win
     else:
         window = window_list.get_window(onion_pub_key)
+
     window.add_new(ts, message, onion_pub_key, output=True, event_msg=True)
 
 
