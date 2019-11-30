@@ -436,14 +436,23 @@ def validate_nick(nick: str,                                      # Nick to vali
         error_msg = "Error: Nick cannot have the format of an account."
 
     if nick in contact_list.get_list_of_nicks():
-        error_msg = "Error: Nick already in use."
-
-        # Allow existing nick if it matches the account being replaced.
-        if contact_list.has_pub_key(onion_pub_key):
-            if nick == contact_list.get_nick_by_pub_key(onion_pub_key):
-                error_msg = ''
+        error_msg = same_contact_check(onion_pub_key, nick, contact_list)
 
     if nick in group_list.get_list_of_group_names():
         error_msg = "Error: Nick cannot be a group name."
+
+    return error_msg
+
+
+def same_contact_check(onion_pub_key: bytes,
+                       nick:          str,
+                       contact_list: 'ContactList'
+                       ) -> str:
+    """Check if nick matches the account being replaced."""
+    error_msg = "Error: Nick already in use."
+
+    if contact_list.has_pub_key(onion_pub_key):
+        if nick == contact_list.get_nick_by_pub_key(onion_pub_key):
+            error_msg = ''
 
     return error_msg
