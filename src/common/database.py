@@ -254,8 +254,8 @@ class MessageLog(object):
                 auth_and_decrypt(ct_log_entry[0], self.database_key)
             except nacl.exceptions.CryptoError:
                 return False
-        else:
-            return True
+
+        return True
 
     def check_for_temp_database(self) -> None:
         """"Check if temporary log database exists."""
