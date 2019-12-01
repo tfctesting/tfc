@@ -4,6 +4,7 @@
 
 [![Build Status](https://travis-ci.org/tfctesting/tfc.svg?branch=master)](https://travis-ci.org/tfctesting/tfc) 
 [![Coverage Status](https://coveralls.io/repos/github/tfctesting/tfc/badge.svg?branch=master)](https://coveralls.io/github/tfctesting/tfc?branch=master)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/4a3de2a3691f44029d9c779a01b912e1)](https://www.codacy.com/manual/tfctesting/tfc?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=tfctesting/tfc&amp;utm_campaign=Badge_Grade)
 
 # Do not use this repository.
 
