@@ -404,14 +404,14 @@ function install_developer {
     python3.7 -m virtualenv "${HOME}/tfc/venv_tfc" --system-site-packages
 
     . "${HOME}/tfc/venv_tfc/bin/activate"
-    torsocks python3.7 -m pip install -r $HOME/tfc/requirements-dev.txt
+    torsocks python3.7 -m pip install -r "${HOME}/tfc/requirements-dev.txt"
     deactivate
 
     sudo cp "${HOME}/tfc/tfc.png                   /usr/share/pixmaps/"
     sudo cp "${HOME}/tfc/launchers/TFC-Dev.desktop /usr/share/applications/"
     sudo sed -i "s|\$HOME|${HOME}|g"              "/usr/share/applications/TFC-Dev.desktop"
     modify_terminator_font_size "" "${HOME}/tfc/launchers/terminator-config-dev"
-    chmod a+rwx -R $HOME/tfc/
+    chmod a+rwx -R "${HOME}/tfc/"
 
     # Remove unnecessary files
     sudo rm -f "/opt/install.sh"
@@ -467,8 +467,8 @@ function install_relay_tails {
     t_sudo apt update
     t_sudo apt install git libssl-dev python3-pip -y || true  # Ignore error in case packets can not be persistently installed
 
-    torsocks git clone --depth 1 https://github.com/tfctesting/tfc.git $HOME/tfc
-    t_sudo mv $HOME/tfc/ /opt/tfc/
+    torsocks git clone --depth 1 https://github.com/tfctesting/tfc.git "${HOME}/tfc"
+    t_sudo mv "${HOME}/tfc/ /opt/tfc/"
     t_sudo chown -R root /opt/tfc/
 
     verify_tcb_requirements_files
@@ -478,8 +478,8 @@ function install_relay_tails {
 
     install_tails_setuptools
 
-    torsocks python3.7 -m pip download --no-cache-dir -r /opt/tfc/requirements-venv.txt        --require-hashes --no-deps -d $HOME/
-    torsocks python3.7 -m pip download --no-cache-dir -r /opt/tfc/requirements-relay-tails.txt --require-hashes --no-deps -d $HOME/
+    torsocks python3.7 -m pip download --no-cache-dir -r "/opt/tfc/requirements-venv.txt"        --require-hashes --no-deps -d $HOME/
+    torsocks python3.7 -m pip download --no-cache-dir -r "/opt/tfc/requirements-relay-tails.txt" --require-hashes --no-deps -d $HOME/
 
     move_tails_dependencies
     verify_tails_dependencies
@@ -511,7 +511,7 @@ function install_relay_tails {
 
 function t_sudo {
     # Execute command as root on Tails.
-    echo ${sudo_pwd} | sudo -S $@
+    echo "${sudo_pwd}" | sudo -S $@
 }
 
 
@@ -562,10 +562,10 @@ function check_tails_tor_version {
 function kill_network {
     # Kill network interfaces to protect the TCB from remote compromise.
     for interface in /sys/class/net/*; do
-        name=`basename ${interface}`
+        name=$("basename ${interface}")
         if [[ $name != "lo" ]]; then
             echo "Disabling network interface ${name}"
-            sudo ifconfig ${name} down
+            sudo ifconfig "${name}" down
         fi
     done
 
@@ -592,23 +592,23 @@ function add_serial_permissions {
     sleep 3  # Wait for USB serial interfaces to register
 
     # Add user to the dialout group to allow serial access after reboot
-    sudo adduser ${USER} dialout
+    sudo adduser "${USER}" dialout
 
     # Add temporary permissions for serial interfaces until reboot
     arr=($(ls /sys/class/tty | grep USB)) || true
     for i in "${arr[@]}"; do
-        sudo chmod 666 /dev/${i}
+        sudo chmod 666 "/dev/${i}"
     done
 
     if [[ -e /dev/ttyS0 ]]; then
-        sudo chmod 666 /dev/ttyS0
+        sudo chmod 666 "/dev/ttyS0"
     fi
 }
 
 
 function c_echo {
     # Justify printed text to the center of the terminal.
-    printf "%*s\n" $(( ( $(echo $1 | wc -c ) + 80 ) / 2 )) "$1"
+    printf "%*s\n" "$(( ( $(echo $1 | wc -c ) + 80 ) / 2 ))" "$1"
 }
 
 
@@ -627,11 +627,11 @@ function check_rm_existing_installation {
 function create_user_data_dir {
     # Backup TFC user data directory if it exists and has files in it.
     if [[ -d "$HOME/tfc" ]]; then
-        if ! [[ -z "$(ls -A $HOME/tfc/)" ]]; then
-            mv $HOME/tfc $HOME/tfc_userdata_backup_at_$(date +%Y-%m-%d_%H-%M-%S)
+        if ! [[ -z "$(ls -A "${HOME}/tfc/")" ]]; then
+            mv "${HOME}/tfc" "${HOME}/tfc_userdata_backup_at_$(date +%Y-%m-%d_%H-%M-%S)"
         fi
     fi
-    mkdir -p $HOME/tfc 2>/dev/null
+    mkdir -p "${HOME}/tfc" 2>/dev/null
 }
 
 
@@ -642,12 +642,12 @@ function modify_terminator_font_size {
     # wide screens. The lowest resolution (width) supported is 1366px.
     width=$(get_screen_width)
 
-    if (( $width < 1600 )); then
-        $1 sed -i -e 's/font                = Monospace 11/font                = Monospace 8/g'     $2  # Normal config
-        $1 sed -i -e 's/font                = Monospace 10.5/font                = Monospace 7/g'   $2  # Data diode config
-    elif (( $width < 1920 )); then
-        $1 sed -i -e 's/font                = Monospace 11/font                = Monospace 9/g'     $2  # Normal config
-        $1 sed -i -e 's/font                = Monospace 10.5/font                = Monospace 8.5/g' $2  # Data diode config
+    if (( width < 1600 )); then
+        $1 sed -i -e 's/font                = Monospace 11/font                = Monospace 8/g'     "${2}"  # Normal config
+        $1 sed -i -e 's/font                = Monospace 10.5/font                = Monospace 7/g'   "${2}"  # Data diode config
+    elif (( width < 1920 )); then
+        $1 sed -i -e 's/font                = Monospace 11/font                = Monospace 9/g'     "${2}"  # Normal config
+        $1 sed -i -e 's/font                = Monospace 10.5/font                = Monospace 8.5/g' "${2}"  # Data diode config
     fi
 }
 
@@ -678,7 +678,7 @@ function dpkg_check {
     i=0
     tput sc
     while sudo fuser /var/lib/dpkg/lock >/dev/null 2>&1 ; do
-        case $(($i % 4)) in
+        case $((i % 4)) in
             0 ) j="." ;;
             1 ) j="o" ;;
             2 ) j="O" ;;
