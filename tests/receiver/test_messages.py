@@ -64,8 +64,8 @@ class TestProcessMessage(TFCTestCase):
         self.file_name  = f'{DIR_USER_DATA}{self.settings.software_operation}_logs'
 
         self.contact_list = ContactList(nicks=['Alice', 'Bob', 'Charlie', LOCAL_ID])
-        self.key_list     = KeyList(    nicks=['Alice', 'Bob', 'Charlie', LOCAL_ID])
-        self.group_list   = GroupList( groups=['test_group'])
+        self.key_list     = KeyList(nicks=['Alice', 'Bob', 'Charlie', LOCAL_ID])
+        self.group_list   = GroupList(groups=['test_group'])
         self.packet_list  = PacketList(contact_list=self.contact_list, settings=self.settings)
         self.window_list  = WindowList(contact_list=self.contact_list, settings=self.settings,
                                        group_list=self.group_list, packet_list=self.packet_list)

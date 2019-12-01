@@ -267,7 +267,7 @@ def log_command(user_input:   'UserInput',
     access to the system can the export logs from the database.
     """
     cmd                    = user_input.plaintext.split()[0]
-    export, header, action = dict(export =(True,  LOG_EXPORT,  'export'),
+    export, header, action = dict(export=(True,   LOG_EXPORT,  'export'),
                                   history=(False, LOG_DISPLAY, 'view'  ))[cmd]
 
     try:
@@ -353,8 +353,8 @@ def print_help(settings: 'Settings') -> None:
 
     # ------------------------------------------------------------------------------------------------------------------
 
-    y_tm =     settings.traffic_masking
-    n_tm = not settings.traffic_masking
+    y_tm = settings.traffic_masking
+    n_tm = not y_tm
 
     common_commands = [("/about",                    "Show links to project resources",                     True),
                        ("/add",                      "Add new contact",                                     n_tm),
@@ -595,8 +595,8 @@ def change_setting(user_input:   'UserInput',
         raise FunctionReturn("Error: No value for setting specified.", head_clear=True)
 
     relay_settings = dict(serial_error_correction=UNENCRYPTED_EC_RATIO,
-                          serial_baudrate        =UNENCRYPTED_BAUDRATE,
-                          allow_contact_requests =UNENCRYPTED_MANAGE_CONTACT_REQ)  # type: Dict[str, bytes]
+                          serial_baudrate=UNENCRYPTED_BAUDRATE,
+                          allow_contact_requests=UNENCRYPTED_MANAGE_CONTACT_REQ)  # type: Dict[str, bytes]
 
     check_setting_change_conditions(setting, settings, relay_settings, master_key)
 

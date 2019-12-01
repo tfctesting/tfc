@@ -57,10 +57,10 @@ from tests.utils import nick_to_pub_key, group_name_to_group_id
 def create_contact(nick,
                    tx_fingerprint=FINGERPRINT_LENGTH * b'\x01',
                    rx_fingerprint=FINGERPRINT_LENGTH * b'\x02',
-                   kex_status    =KEX_STATUS_VERIFIED,
-                   log_messages  =True,
+                   kex_status=KEX_STATUS_VERIFIED,
+                   log_messages=True,
                    file_reception=True,
-                   notifications =True):
+                   notifications=True):
     """Create a mock contact object."""
     if nick == LOCAL_ID:
         pub_key = LOCAL_PUBKEY
@@ -501,8 +501,8 @@ class WindowList(object):
         if not self.has_window(uid):
             self.windows.append(RxWindow(uid=uid,
                                          contact_list=self.contact_list,
-                                         group_list  =self.group_list,
-                                         settings    =self.settings,
-                                         packet_list =self.packet_list))
+                                         group_list=self.group_list,
+                                         settings=self.settings,
+                                         packet_list=self.packet_list))
 
         return next(w for w in self.windows if w.uid == uid)

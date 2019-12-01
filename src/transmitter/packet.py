@@ -292,11 +292,11 @@ def send_file(path:     str,
     key_delivery_msg = base64.b85encode(ct_hash + file_key).decode()
     for contact in window:
         queue_message(user_input=UserInput(key_delivery_msg, MESSAGE),
-                      window    =MockWindow(contact.onion_pub_key, [contact]),
-                      settings  =settings,
-                      queues    =queues,
-                      header    =FILE_KEY_HEADER,
-                      log_as_ph =True)
+                      window=MockWindow(contact.onion_pub_key, [contact]),
+                      settings=settings,
+                      queues=queues,
+                      header=FILE_KEY_HEADER,
+                      log_as_ph=True)
     phase(DONE)
     print_on_previous_line(flush=True)
     m_print(f"Sent file '{name}' to {window.type_print} {window.name}.")

@@ -78,9 +78,9 @@ def process_group_command(user_input:   'UserInput',
     pub_keys  = [contact_list.get_contact_by_address_or_nick(m).onion_pub_key for m in purp_members if m in selectors]
 
     func_d = dict(create=group_create,
-                  join  =group_create,
-                  add   =group_add_member,
-                  rm    =group_rm_member)  # type: FuncDict
+                  join=group_create,
+                  add=group_add_member,
+                  rm=group_rm_member)  # type: FuncDict
 
     func = func_d[command_type]
 

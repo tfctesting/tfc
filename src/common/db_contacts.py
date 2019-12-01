@@ -281,14 +281,14 @@ class ContactList(Iterable[Contact], Sized):
                                             + [KEX_STATUS_LENGTH]
                                             + 3*[ENCODED_BOOLEAN_LENGTH])
 
-            self.contacts.append(Contact(onion_pub_key =onion_pub_key,
+            self.contacts.append(Contact(onion_pub_key=onion_pub_key,
                                          tx_fingerprint=tx_fingerprint,
                                          rx_fingerprint=rx_fingerprint,
-                                         kex_status    =kex_status_byte,
-                                         log_messages  =bytes_to_bool(log_messages_byte),
+                                         kex_status=kex_status_byte,
+                                         log_messages=bytes_to_bool(log_messages_byte),
                                          file_reception=bytes_to_bool(file_reception_byte),
-                                         notifications =bytes_to_bool(notifications_byte),
-                                         nick          =bytes_to_str(nick_bytes)))
+                                         notifications=bytes_to_bool(notifications_byte),
+                                         nick=bytes_to_str(nick_bytes)))
 
     @staticmethod
     def generate_dummy_contact() -> Contact:
@@ -298,14 +298,14 @@ class ContactList(Iterable[Contact], Sized):
         serialization when the data is stored to, or read from the
         database.
         """
-        return Contact(onion_pub_key =onion_address_to_pub_key(DUMMY_CONTACT),
-                       nick          =DUMMY_NICK,
+        return Contact(onion_pub_key=onion_address_to_pub_key(DUMMY_CONTACT),
+                       nick=DUMMY_NICK,
                        tx_fingerprint=bytes(FINGERPRINT_LENGTH),
                        rx_fingerprint=bytes(FINGERPRINT_LENGTH),
-                       kex_status    =KEX_STATUS_NONE,
-                       log_messages  =False,
+                       kex_status=KEX_STATUS_NONE,
+                       log_messages=False,
                        file_reception=False,
-                       notifications =False)
+                       notifications=False)
 
     def _dummy_contacts(self) -> List[Contact]:
         """\

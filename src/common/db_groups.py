@@ -301,13 +301,13 @@ class GroupList(Iterable[Group], Sized):
             group_pub_keys = [k for k in pub_key_list if k != dummy_pub_key]
             group_members  = [self.contact_list.get_contact_by_pub_key(k) for k in group_pub_keys if k in all_pub_keys]
 
-            self.groups.append(Group(name         =bytes_to_str(name_bytes),
-                                     group_id     =group_id,
-                                     log_messages =bytes_to_bool(log_messages_byte),
+            self.groups.append(Group(name=bytes_to_str(name_bytes),
+                                     group_id=group_id,
+                                     log_messages=bytes_to_bool(log_messages_byte),
                                      notifications=bytes_to_bool(notification_byte),
-                                     members      =group_members,
-                                     settings     =self.settings,
-                                     store_groups =self.store_groups))
+                                     members=group_members,
+                                     settings=self.settings,
+                                     store_groups=self.store_groups))
 
             update_db |= set(all_pub_keys) > set(group_pub_keys)
 
@@ -384,13 +384,13 @@ class GroupList(Iterable[Group], Sized):
         """
         dummy_member = self.contact_list.generate_dummy_contact()
 
-        return Group(name         =DUMMY_GROUP,
-                     group_id     =bytes(GROUP_ID_LENGTH),
-                     log_messages =False,
+        return Group(name=DUMMY_GROUP,
+                     group_id=bytes(GROUP_ID_LENGTH),
+                     log_messages=False,
                      notifications=False,
-                     members      =self.settings.max_number_of_group_members * [dummy_member],
-                     settings     =self.settings,
-                     store_groups =lambda: None)
+                     members=self.settings.max_number_of_group_members * [dummy_member],
+                     settings=self.settings,
+                     store_groups=lambda: None)
 
     def _dummy_groups(self) -> List[Group]:
         """Generate a proper size list of dummy groups for database padding."""

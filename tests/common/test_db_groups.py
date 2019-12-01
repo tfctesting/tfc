@@ -42,13 +42,13 @@ class TestGroup(unittest.TestCase):
         self.nicks         = ['Alice', 'Bob', 'Charlie']
         members            = list(map(create_contact, self.nicks))
         self.settings      = Settings()
-        self.group         = Group(name         ='test_group',
-                                   group_id     =group_name_to_group_id('test_group'),
-                                   log_messages =False,
+        self.group         = Group(name='test_group',
+                                   group_id=group_name_to_group_id('test_group'),
+                                   log_messages=False,
                                    notifications=False,
-                                   members      =members,
-                                   settings     =self.settings,
-                                   store_groups =lambda: None)
+                                   members=members,
+                                   settings=self.settings,
+                                   store_groups=lambda: None)
         ensure_dir(DIR_USER_DATA)
 
     def tearDown(self):
@@ -137,13 +137,13 @@ class TestGroupList(TFCTestCase):
         self.contact_list.contacts = members
 
         self.group_list.groups = \
-            [Group(name         =name,
-                   group_id     =group_name_to_group_id(name),
-                   log_messages =False,
+            [Group(name=name,
+                   group_id=group_name_to_group_id(name),
+                   log_messages=False,
                    notifications=False,
-                   members      =members,
-                   settings     =self.settings,
-                   store_groups =self.group_list.store_groups)
+                   members=members,
+                   settings=self.settings,
+                   store_groups=self.group_list.store_groups)
              for name in self.group_names]
 
         self.single_member_data_len = (GROUP_STATIC_LENGTH

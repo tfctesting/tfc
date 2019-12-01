@@ -67,11 +67,11 @@ class TestGroupCreate(TFCTestCase):
         group_list   = GroupList(groups=['test_group'])
         cmd_data     = group_name_to_group_id('test_group') + b'test_group2' + US_BYTE + nick_to_pub_key('Bob')
         contact_list = ContactList(nicks=['Alice', 'Bob'])
-        window_list  = WindowList(nicks       =['Alice', 'Bob'],
+        window_list  = WindowList(nicks=['Alice', 'Bob'],
                                   contact_list=contact_list,
-                                  group_lis   =group_list,
-                                  packet_list =None,
-                                  settings    =Settings)
+                                  group_lis=group_list,
+                                  packet_list=None,
+                                  settings=Settings)
         # Test
         self.assertIsNone(group_create(cmd_data, self.ts, window_list, contact_list, group_list, self.settings))
         self.assertEqual(len(group_list.get_group('test_group')), 2)

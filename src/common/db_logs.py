@@ -319,7 +319,7 @@ def print_logs(message_list: List[MsgTuple],
             clear_screen()
         print(title,                 file=f_name)
         print(terminal_width * '═',  file=f_name)
-        log_window.redraw(           file=f_name)
+        log_window.redraw(file=f_name)
         print("<End of log file>\n", file=f_name)
     else:
         raise FunctionReturn(f"No logged messages for {window.type} '{window.name}'.", head_clear=True)

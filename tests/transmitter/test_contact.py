@@ -271,10 +271,10 @@ class TestChangeNick(TFCTestCase):
         # Setup
         group      = create_group('test_group')
         user_input = UserInput("nick group2")
-        window     = TxWindow(name ='test_group',
-                              type =WIN_TYPE_GROUP,
+        window     = TxWindow(name='test_group',
+                              type=WIN_TYPE_GROUP,
                               group=group,
-                              uid  =group.group_id)
+                              uid=group.group_id)
 
         # Test
         self.assert_fr("Renamed group 'test_group' to 'group2'.", change_nick, user_input, window, *self.args)

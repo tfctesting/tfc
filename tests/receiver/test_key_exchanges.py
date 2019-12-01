@@ -51,8 +51,8 @@ class TestProcessLocalKey(TFCTestCase):
     def setUp(self):
         """Pre-test actions."""
         self.contact_list  = ContactList(nicks=[LOCAL_ID, 'Alice'])
-        self.key_list      = KeyList(    nicks=[LOCAL_ID, 'Alice'])
-        self.window_list   = WindowList( nicks=[LOCAL_ID, 'Alice'])
+        self.key_list      = KeyList(nicks=[LOCAL_ID, 'Alice'])
+        self.window_list   = WindowList(nicks=[LOCAL_ID, 'Alice'])
         self.settings      = Settings()
         self.ts            = datetime.now()
         self.kdk_hashes    = list()
@@ -127,7 +127,7 @@ class TestProcessLocalKey(TFCTestCase):
         self.assert_fr("Error: Received old local key packet.", process_local_key, self.ts, self.packet, *self.args)
         self.assert_fr("Added new local key.",                  process_local_key, self.ts, new_packet,  *self.args)
 
-    @mock.patch('tkinter.Tk',     side_effect=[MagicMock(clipboard_get  =MagicMock(return_value=b58encode(new_kek)),
+    @mock.patch('tkinter.Tk',     side_effect=[MagicMock(clipboard_get=MagicMock(return_value=b58encode(new_kek)),
                                                          clipboard_clear=MagicMock(side_effect=[tkinter.TclError]))])
     @mock.patch('os.system',      return_value=None)
     @mock.patch('time.sleep',     return_value=None)
@@ -293,9 +293,9 @@ class TestKeyExPSKRx(TFCTestCase):
         self.unit_test_dir = cd_unit_test()
         self.packet        = b'\x00' + nick_to_pub_key("Alice")
         self.ts            = datetime.now()
-        self.window_list   = WindowList( nicks=['Alice', LOCAL_ID])
+        self.window_list   = WindowList(nicks=['Alice', LOCAL_ID])
         self.contact_list  = ContactList(nicks=['Alice', LOCAL_ID])
-        self.key_list      = KeyList(    nicks=['Alice', LOCAL_ID])
+        self.key_list      = KeyList(nicks=['Alice', LOCAL_ID])
         self.settings      = Settings(disable_gui_dialog=True)
         self.file_name     = self.file_name
         self.args          = self.packet, self.ts, self.window_list, self.contact_list, self.key_list, self.settings

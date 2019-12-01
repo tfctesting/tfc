@@ -748,7 +748,6 @@ class TestRemoveLog(TFCTestCase):
         # Setup
         write_log_entry(M_S_HEADER + PADDING_LENGTH * b'a', nick_to_pub_key("Alice"), self.tfc_log_database)
 
-
         # Test
         self.assert_fr("Removed log entries for contact 'Alice'.",
                        remove_log, UserInput('/rmlogs Alice'), *self.args)

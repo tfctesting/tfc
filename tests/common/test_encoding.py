@@ -138,8 +138,8 @@ class TestConversions(unittest.TestCase):
         self.assertIsInstance(pub_key_to_short_address(bytes(ONION_SERVICE_PUBLIC_KEY_LENGTH)), str)
 
     def test_bool_to_bytes(self):
-        self.assertEqual(    bool_to_bytes(False), b'\x00')
-        self.assertEqual(    bool_to_bytes(True),  b'\x01')
+        self.assertEqual(bool_to_bytes(False), b'\x00')
+        self.assertEqual(bool_to_bytes(True),  b'\x01')
         self.assertEqual(len(bool_to_bytes(True)), ENCODED_BOOLEAN_LENGTH)
 
     def test_bytes_to_bool(self):
@@ -147,15 +147,15 @@ class TestConversions(unittest.TestCase):
         self.assertEqual(bytes_to_bool(b'\x01'), True)
 
     def test_int_to_bytes(self):
-        self.assertEqual(    int_to_bytes(1),  b'\x00\x00\x00\x00\x00\x00\x00\x01')
+        self.assertEqual(int_to_bytes(1),  b'\x00\x00\x00\x00\x00\x00\x00\x01')
         self.assertEqual(len(int_to_bytes(1)), ENCODED_INTEGER_LENGTH)
 
     def test_bytes_to_int(self):
         self.assertEqual(bytes_to_int(b'\x00\x00\x00\x00\x00\x00\x00\x01'), 1)
 
     def test_double_to_bytes(self):
-        self.assertEqual(    double_to_bytes(1.0),  bytes.fromhex('000000000000f03f'))
-        self.assertEqual(    double_to_bytes(1.1),  bytes.fromhex('9a9999999999f13f'))
+        self.assertEqual(double_to_bytes(1.0),  bytes.fromhex('000000000000f03f'))
+        self.assertEqual(double_to_bytes(1.1),  bytes.fromhex('9a9999999999f13f'))
         self.assertEqual(len(double_to_bytes(1.1)), ENCODED_FLOAT_LENGTH)
 
     def test_bytes_to_double(self):

@@ -141,8 +141,7 @@ class TestBLAKE2bWrapper(unittest.TestCase):
                 blake2b(b'test_string', person=os.urandom(invalid_person_length))
 
     def test_invalid_digest_size_raises_critical_error(self):
-        for invalid_digest_size in [-1, BLAKE2_DIGEST_LENGTH_MIN-1,
-                                        BLAKE2_DIGEST_LENGTH_MAX+1, 1000]:
+        for invalid_digest_size in [-1, BLAKE2_DIGEST_LENGTH_MIN-1, BLAKE2_DIGEST_LENGTH_MAX+1, 1000]:
             with self.assertRaises(SystemExit):
                 blake2b(b'test_string', digest_size=invalid_digest_size)
 
@@ -275,8 +274,7 @@ class TestArgon2Wrapper(unittest.TestCase):
         self.salt = os.urandom(ARGON2_SALT_LENGTH)
 
     def test_invalid_length_salt_raises_critical_error(self):
-        invalid_salts = [salt_length * b'a' for salt_length in [0, ARGON2_SALT_LENGTH-1,
-                                                                   ARGON2_SALT_LENGTH+1, 1000]]
+        invalid_salts = [salt_length * b'a' for salt_length in [0, ARGON2_SALT_LENGTH-1, ARGON2_SALT_LENGTH+1, 1000]]
         for invalid_salt in invalid_salts:
             with self.assertRaises(SystemExit):
                 argon2_kdf('password', invalid_salt,
@@ -397,8 +395,10 @@ class TestX448(unittest.TestCase):
 
     def test_deriving_shared_secret_with_an_invalid_size_public_key_raises_critical_error(self):
         private_key         = X448.generate_private_key()
-        invalid_public_keys = [key_length * b'a' for key_length in (1, TFC_PUBLIC_KEY_LENGTH-1,
-                                                                       TFC_PUBLIC_KEY_LENGTH+1, 1000)]
+        invalid_public_keys = [key_length * b'a' for key_length in (1,
+                                                                    TFC_PUBLIC_KEY_LENGTH-1,
+                                                                    TFC_PUBLIC_KEY_LENGTH+1,
+                                                                    1000)]
         for invalid_public_key in invalid_public_keys:
             with self.assertRaises(SystemExit):
                 X448.shared_key(private_key, invalid_public_key)
@@ -593,8 +593,10 @@ class TestXChaCha20Poly1305(unittest.TestCase):
         self.assertEqual(auth_and_decrypt(self.nonce_ct_tag_libsodium, self.key, ad=self.ad), self.plaintext)
 
     def test_invalid_size_key_raises_critical_error(self):
-        invalid_keys = [key_length * b'a' for key_length in [1, SYMMETRIC_KEY_LENGTH-1,
-                                                                SYMMETRIC_KEY_LENGTH+1, 1000]]
+        invalid_keys = [key_length * b'a' for key_length in [1,
+                                                             SYMMETRIC_KEY_LENGTH-1,
+                                                             SYMMETRIC_KEY_LENGTH+1,
+                                                             1000]]
         for invalid_key in invalid_keys:
             with self.assertRaises(SystemExit):
                 encrypt_and_sign(self.libsodium_plaintext, invalid_key)

@@ -43,9 +43,9 @@ class TestContact(unittest.TestCase):
                                FINGERPRINT_LENGTH * b'\x01',
                                FINGERPRINT_LENGTH * b'\x02',
                                KEX_STATUS_UNVERIFIED,
-                               log_messages  =True,
+                               log_messages=True,
                                file_reception=True,
-                               notifications =True)
+                               notifications=True)
 
     def test_contact_serialization_length_and_type(self):
         serialized = self.contact.serialize_c()
@@ -108,7 +108,7 @@ class TestContactList(TFCTestCase):
         # Setup
         invalid_data = b'a'
         pt_bytes     = b''.join([c.serialize_c() for c in self.contact_list.contacts
-                                                        + self.contact_list._dummy_contacts()])
+                                 + self.contact_list._dummy_contacts()])
         ct_bytes     = encrypt_and_sign(pt_bytes + invalid_data, self.master_key.master_key)
 
         ensure_dir(DIR_USER_DATA)
