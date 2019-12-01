@@ -655,7 +655,7 @@ def gf_poly_mul(p: Any,
             # Optimization: precache the logarithm
             # of the current coefficient of q
             lq = gf_log[qj]
-            for i in range(len(p)):
+            for i, _ in enumerate(p):
                 # log(0) is undefined, need to check that...
                 if p[i] != 0:
                     # Equivalent to:
@@ -678,7 +678,7 @@ def gf_poly_mul_simple(p: List[int],
     # Compute the polynomial multiplication (just like the outer product
     # of two vectors, we multiply each coefficients of p with all
     # coefficients of q)
-    for j in range(len(q)):
+    for j, _ in enumerate(q):
         for i, _ in enumerate(p):
             # equivalent to: r[i + j] = gf_add(r[i+j], gf_mul(p[i], q[j]))
             # -- you can see it's your usual polynomial multiplication
