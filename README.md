@@ -1,4 +1,4 @@
-<img align="right" src="https://cs.helsinki.fi/u/oottela/tfclogo.png" style="position: relative; top: 0; left: 0;">
+<img align="right" src="https://cs.helsinki.fi/u/oottela/tfc_logo.png" style="position: relative; top: 0; left: 0;">
 
 ### Tinfoil Chat
 
