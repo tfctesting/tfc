@@ -647,7 +647,7 @@ def gf_poly_mul(p: Any,
     # Compute the polynomial multiplication (just like the
     # outer product of two vectors, we multiply each
     # coefficients of p with all coefficients of q)
-    for j in range(len(q)):
+    for j, _ in enumerate(q):
         # Optimization: load the coefficient once
         qj = q[j]
         # log(0) is undefined, we need to check that
