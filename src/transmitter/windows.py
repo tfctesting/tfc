@@ -85,52 +85,13 @@ class TxWindow(Iterable[Contact], Sized):
                          ) -> None:
         """Select specified window or ask the user to specify one."""
         if selection is None:
-            self.contact_list.print_contacts()
-            self.group_list.print_groups()
-
-            if self.contact_list.has_only_pending_contacts():
-                print("\n'/connect'   sends Onion Service/contact data to Relay"
-                      "\n'/add'       adds another contact."
-                      "\n'/rm <Nick>' removes an existing contact.\n")
-
-            selection = input("Select recipient: ").strip()
+            selection = self.select_recipient()
 
         if selection in self.group_list.get_list_of_group_names():
-            if cmd and settings.traffic_masking and selection != self.name:
-                raise FunctionReturn("Error: Can't change window during traffic masking.", head_clear=True)
-
-            self.contact         = None
-            self.group           = self.group_list.get_group(selection)
-            self.window_contacts = self.group.members
-            self.name            = self.group.name
-            self.uid             = self.group.group_id
-            self.group_id        = self.group.group_id
-            self.log_messages    = self.group.log_messages
-            self.type            = WIN_TYPE_GROUP
-            self.type_print      = 'group'
+            self.select_group(selection, cmd, settings)
 
         elif selection in self.contact_list.contact_selectors():
-            if cmd and settings.traffic_masking:
-                contact = self.contact_list.get_contact_by_address_or_nick(selection)
-                if contact.onion_pub_key != self.uid:
-                    raise FunctionReturn("Error: Can't change window during traffic masking.", head_clear=True)
-
-            self.contact = self.contact_list.get_contact_by_address_or_nick(selection)
-
-            if self.contact.kex_status == KEX_STATUS_PENDING:
-                start_key_exchange(self.contact.onion_pub_key,
-                                   self.contact.nick,
-                                   self.contact_list,
-                                   settings, queues)
-
-            self.group           = None
-            self.group_id        = None
-            self.window_contacts = [self.contact]
-            self.name            = self.contact.nick
-            self.uid             = self.contact.onion_pub_key
-            self.log_messages    = self.contact.log_messages
-            self.type            = WIN_TYPE_CONTACT
-            self.type_print      = 'contact'
+            self.select_contact(selection, cmd, queues, settings)
 
         elif selection.startswith('/'):
             self.window_selection_command(selection, settings, queues, onion_service, gateway)
@@ -145,6 +106,67 @@ class TxWindow(Iterable[Contact], Sized):
         queue_command(packet, settings, queues)
 
         clear_screen()
+
+    def select_recipient(self) -> str:
+        """Select recipient."""
+        self.contact_list.print_contacts()
+        self.group_list.print_groups()
+
+        if self.contact_list.has_only_pending_contacts():
+            print("\n'/connect'   sends Onion Service/contact data to Relay"
+                  "\n'/add'       adds another contact."
+                  "\n'/rm <Nick>' removes an existing contact.\n")
+
+        selection = input("Select recipient: ").strip()
+
+        return selection
+
+    def select_contact(self,
+                       selection: str,
+                       cmd:       bool,
+                       queues:    'QueueDict',
+                       settings:  'Settings'
+                       ) -> None:
+        """Select contact."""
+        if cmd and settings.traffic_masking:
+            contact = self.contact_list.get_contact_by_address_or_nick(selection)
+            if contact.onion_pub_key != self.uid:
+                raise FunctionReturn("Error: Can't change window during traffic masking.", head_clear=True)
+
+        self.contact = self.contact_list.get_contact_by_address_or_nick(selection)
+
+        if self.contact.kex_status == KEX_STATUS_PENDING:
+            start_key_exchange(self.contact.onion_pub_key,
+                               self.contact.nick,
+                               self.contact_list,
+                               settings, queues)
+
+        self.group           = None
+        self.group_id        = None
+        self.window_contacts = [self.contact]
+        self.name            = self.contact.nick
+        self.uid             = self.contact.onion_pub_key
+        self.log_messages    = self.contact.log_messages
+        self.type            = WIN_TYPE_CONTACT
+        self.type_print      = 'contact'
+
+    def select_group(self, selection: str,
+                     cmd:             bool,
+                     settings:        'Settings'
+                     ) -> None:
+        """Select group."""
+        if cmd and settings.traffic_masking and selection != self.name:
+            raise FunctionReturn("Error: Can't change window during traffic masking.", head_clear=True)
+
+        self.contact         = None
+        self.group           = self.group_list.get_group(selection)
+        self.window_contacts = self.group.members
+        self.name            = self.group.name
+        self.uid             = self.group.group_id
+        self.group_id        = self.group.group_id
+        self.log_messages    = self.group.log_messages
+        self.type            = WIN_TYPE_GROUP
+        self.type_print      = 'group'
 
     def window_selection_command(self,
                                  selection:     str,
