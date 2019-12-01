@@ -138,9 +138,9 @@ class Gateway(OrigGateway):
         self.settings = GatewaySettings(**kwargs)
         self.rs       = RSCodec(2 * self.settings.serial_error_correction)
 
-    def write(self, output):
+    def write(self, orig_packet: bytes) -> None:
         """Mock method."""
-        self.packets.append(output)
+        self.packets.append(orig_packet)
 
 
 class GroupList(OrigGroupList, Iterable, Sized):
