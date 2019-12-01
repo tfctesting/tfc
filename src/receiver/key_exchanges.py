@@ -255,7 +255,6 @@ def key_ex_psk_tx(packet:       bytes,
                   settings:     'Settings'
                   ) -> None:
     """Add contact and Tx-PSKs."""
-
     onion_pub_key, tx_mk, _, tx_hk, _, nick_bytes \
         = separate_headers(packet, [ONION_SERVICE_PUBLIC_KEY_LENGTH] + 4*[SYMMETRIC_KEY_LENGTH])
 
