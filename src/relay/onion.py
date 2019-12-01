@@ -29,7 +29,7 @@ import tempfile
 import time
 import typing
 
-from typing import Any, Dict, Optional
+from typing import Any, Dict, Optional, Union
 
 import nacl.signing
 
@@ -46,6 +46,7 @@ from src.common.statics    import (EXIT, EXIT_QUEUE, ONION_CLOSE_QUEUE, ONION_KE
 
 if typing.TYPE_CHECKING:
     from multiprocessing import Queue
+    QueueDict = Dict[bytes, Queue[Any]]
 
 
 def get_available_port(min_port: int, max_port: int) -> int:
@@ -96,21 +97,7 @@ class Tor(object):
         if not os.path.isfile('/usr/bin/tor'):
             raise CriticalError("Check that Tor is installed.")
 
-        while True:
-            try:
-                self.tor_process = stem.process.launch_tor_with_config(
-                    config={'DataDirectory':   tor_data_directory.name,
-                            'SocksPort':       str(port),
-                            'ControlSocket':   tor_control_socket,
-                            'AvoidDiskWrites': '1',
-                            'Log':             'notice stdout',
-                            'GeoIPFile':       '/usr/share/tor/geoip',
-                            'GeoIPv6File ':    '/usr/share/tor/geoip6'},
-                    tor_cmd='/usr/bin/tor')
-                break
-
-            except OSError:
-                pass  # Tor timed out. Try again.
+        self.launch_tor_process(port, tor_control_socket, tor_data_directory)
 
         start_ts = time.monotonic()
         self.controller = stem.control.Controller.from_socket_file(path=tor_control_socket)
@@ -136,6 +123,28 @@ class Tor(object):
                 start_ts = time.monotonic()
                 self.controller = stem.control.Controller.from_socket_file(path=tor_control_socket)
                 self.controller.authenticate()
+
+    def launch_tor_process(self,
+                           port:               int,
+                           tor_control_socket: Union[bytes, str],
+                           tor_data_directory: Any
+                           ) -> None:
+        """Launch Tor process."""
+        while True:
+            try:
+                self.tor_process = stem.process.launch_tor_with_config(
+                    config={'DataDirectory':   tor_data_directory.name,
+                            'SocksPort':       str(port),
+                            'ControlSocket':   tor_control_socket,
+                            'AvoidDiskWrites': '1',
+                            'Log':             'notice stdout',
+                            'GeoIPFile':       '/usr/share/tor/geoip',
+                            'GeoIPv6File ':    '/usr/share/tor/geoip6'},
+                    tor_cmd='/usr/bin/tor')
+                break
+
+            except OSError:
+                pass  # Tor timed out. Try again.
 
     def stop(self) -> None:
         """Stop the Tor subprocess."""
@@ -223,6 +232,14 @@ def onion_service(queues: Dict[bytes, 'Queue[Any]']) -> None:
         tor.stop()
         return
 
+    monitor_queues(tor, response, queues)
+
+
+def monitor_queues(tor:      Tor,
+                   response: Any,
+                   queues:   'QueueDict'
+                   ) -> None:
+    """Monitor queues for incoming packets."""
     while True:
         try:
             time.sleep(0.1)
@@ -235,7 +252,7 @@ def onion_service(queues: Dict[bytes, 'Queue[Any]']) -> None:
 
             if queues[ONION_CLOSE_QUEUE].qsize() > 0:
                 command = queues[ONION_CLOSE_QUEUE].get()
-                if not tor.platform_is_tails() and command == EXIT:
+                if not tor.platform_is_tails() and command == EXIT and tor.controller is not None:
                     tor.controller.remove_hidden_service(response.service_id)
                     tor.stop()
                 queues[EXIT_QUEUE].put(command)
@@ -245,6 +262,7 @@ def onion_service(queues: Dict[bytes, 'Queue[Any]']) -> None:
         except (EOFError, KeyboardInterrupt):
             pass
         except stem.SocketClosed:
-            tor.controller.remove_hidden_service(response.service_id)
-            tor.stop()
+            if tor.controller is not None:
+                tor.controller.remove_hidden_service(response.service_id)
+                tor.stop()
             break
