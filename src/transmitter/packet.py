@@ -489,42 +489,60 @@ def cancel_packet(user_input: 'UserInput',
 
     cancel = False
     if settings.traffic_masking:
-        if queue.qsize() != 0:
-            cancel = True
-
-            # Get most recent log_messages setting status in queue
-            log_messages = False
-            while queue.qsize() != 0:
-                log_messages = queue.get()[1]
-
-            queue.put((cancel_pt, log_messages, log_as_ph))
-
-        m_print(f"Cancelled queues {p_type}." if cancel else f"No {p_type} to cancel.", head=1, tail=1)
+        cancel_traffic_masking_packet(cancel, cancel_pt, log_as_ph, p_type, queue)
 
     else:
-        p_buffer = []
-        while queue.qsize() != 0:
-            queue_data = queue.get()
-            window_uid = queue_data[4]
+        cancel_standard_packet(cancel, cancel_pt, log_as_ph, p_type, queue, window)
 
-            # Put messages unrelated to the active window into the buffer
-            if window_uid != window.uid:
-                p_buffer.append(queue_data)
-            else:
-                cancel = True
 
-        # Put cancel packets for each window contact to queue first
-        if cancel:
-            for c in window:
-                queue.put((cancel_pt, c.onion_pub_key, c.log_messages, log_as_ph, window.uid))
+def cancel_standard_packet(cancel:    bool,
+                           cancel_pt: bytes,
+                           log_as_ph: bool,
+                           p_type:    str,
+                           queue:     'Queue[Any]',
+                           window:    'TxWindow'
+                           ) -> None:
+    """Cancel standard packet."""
+    p_buffer = []
+    while queue.qsize() != 0:
+        queue_data = queue.get()
+        window_uid = queue_data[4]
 
-        # Put buffered tuples back to the queue
-        for p in p_buffer:
-            queue.put(p)
-
-        if cancel:
-            message = f"Cancelled queued {p_type} to {window.type_print} {window.name}."
+        # Put messages unrelated to the active window into the buffer
+        if window_uid != window.uid:
+            p_buffer.append(queue_data)
         else:
-            message = f"No {p_type} queued for {window.type_print} {window.name}."
+            cancel = True
+    # Put cancel packets for each window contact to queue first
+    if cancel:
+        for c in window:
+            queue.put((cancel_pt, c.onion_pub_key, c.log_messages, log_as_ph, window.uid))
 
-        raise FunctionReturn(message, head_clear=True)
+    # Put buffered tuples back to the queue
+    for p in p_buffer:
+        queue.put(p)
+    if cancel:
+        message = f"Cancelled queued {p_type} to {window.type_print} {window.name}."
+    else:
+        message = f"No {p_type} queued for {window.type_print} {window.name}."
+    raise FunctionReturn(message, head_clear=True)
+
+
+def cancel_traffic_masking_packet(cancel:    bool,
+                                  cancel_pt: bytes,
+                                  log_as_ph: bool,
+                                  p_type:    str,
+                                  queue:     'Queue[Any]'
+                                  ) -> None:
+    """Cancel traffic masking packet."""
+    if queue.qsize() != 0:
+        cancel = True
+
+        # Get most recent log_messages setting status in queue
+        log_messages = False
+        while queue.qsize() != 0:
+            log_messages = queue.get()[1]
+
+        queue.put((cancel_pt, log_messages, log_as_ph))
+
+    m_print(f"Cancelled queues {p_type}." if cancel else f"No {p_type} to cancel.", head=1, tail=1)
