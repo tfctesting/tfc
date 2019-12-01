@@ -6,8 +6,8 @@
 [![Coverage Status](https://coveralls.io/repos/github/tfctesting/tfc/badge.svg?branch=master)](https://coveralls.io/github/tfctesting/tfc?branch=master)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/4a3de2a3691f44029d9c779a01b912e1)](https://www.codacy.com/manual/tfctesting/tfc?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=tfctesting/tfc&amp;utm_campaign=Badge_Grade)
 
-# Do not use this repository!
+# Do not use this repository
 
-## The code in this repository is not stable and it is signed with an insecurely stored key!
+## The code in this repository is not stable and it is signed with an insecurely stored key
 
-## Use the [official repository](https://github.com/maqp/tfc/) instead!
+## Use the [official repository](https://github.com/maqp/tfc/) instead
