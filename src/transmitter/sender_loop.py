@@ -24,13 +24,14 @@ import typing
 
 from typing import Any, Dict, List, Optional, Tuple
 
-from src.common.misc    import ignored
-from src.common.statics import (COMMAND_PACKET_QUEUE, DATAGRAM_HEADER_LENGTH, EXIT, EXIT_QUEUE, KEY_MANAGEMENT_QUEUE,
-                                LOG_PACKET_QUEUE, MESSAGE_PACKET_QUEUE, RELAY_PACKET_QUEUE, SENDER_MODE_QUEUE,
-                                TM_COMMAND_PACKET_QUEUE, TM_FILE_PACKET_QUEUE, TM_MESSAGE_PACKET_QUEUE,
-                                TM_NOISE_COMMAND_QUEUE, TM_NOISE_PACKET_QUEUE, TRAFFIC_MASKING,
-                                TRAFFIC_MASKING_QUEUE_CHECK_DELAY, UNENCRYPTED_EXIT_COMMAND, UNENCRYPTED_WIPE_COMMAND,
-                                WINDOW_SELECT_QUEUE, WIPE)
+from src.common.exceptions import FunctionReturn
+from src.common.misc       import ignored
+from src.common.statics    import (COMMAND_PACKET_QUEUE, DATAGRAM_HEADER_LENGTH, EXIT, EXIT_QUEUE, KEY_MANAGEMENT_QUEUE,
+                                   LOG_PACKET_QUEUE, MESSAGE_PACKET_QUEUE, RELAY_PACKET_QUEUE, SENDER_MODE_QUEUE,
+                                   TM_COMMAND_PACKET_QUEUE, TM_FILE_PACKET_QUEUE, TM_MESSAGE_PACKET_QUEUE,
+                                   TM_NOISE_COMMAND_QUEUE, TM_NOISE_PACKET_QUEUE, TRAFFIC_MASKING,
+                                   TRAFFIC_MASKING_QUEUE_CHECK_DELAY, UNENCRYPTED_EXIT_COMMAND, UNENCRYPTED_WIPE_COMMAND,
+                                   WINDOW_SELECT_QUEUE, WIPE)
 
 from src.transmitter.packet          import send_packet
 from src.transmitter.traffic_masking import HideRunTime
@@ -40,8 +41,8 @@ if typing.TYPE_CHECKING:
     from src.common.db_keys     import KeyList
     from src.common.db_settings import Settings
     from src.common.gateway     import Gateway
-    QueueDict      = Dict[bytes, Queue[Any]]
-    Message_buffer = Dict[bytes, List[Tuple[bytes, bytes, bool, bool, bytes]]]
+    QueueDict     = Dict[bytes, Queue[Any]]
+    MessageBuffer = Dict[bytes, List[Tuple[bytes, bytes, bool, bool, bytes]]]
 
 
 def sender_loop(queues:    'QueueDict',
@@ -55,7 +56,7 @@ def sender_loop(queues:    'QueueDict',
     Depending on traffic masking setting adjusted by the user, enable
     either traffic masking or standard sender loop for packet output.
     """
-    m_buffer = dict()  # type: Message_buffer
+    m_buffer = dict()  # type: MessageBuffer
 
     while True:
         if settings.traffic_masking:
@@ -110,7 +111,6 @@ def traffic_masking_loop(queues:   'QueueDict',
     c_queue   = queues[TM_COMMAND_PACKET_QUEUE]
     np_queue  = queues[TM_NOISE_PACKET_QUEUE]
     nc_queue  = queues[TM_NOISE_COMMAND_QUEUE]
-    rp_queue  = queues[RELAY_PACKET_QUEUE]
     log_queue = queues[LOG_PACKET_QUEUE]
     sm_queue  = queues[SENDER_MODE_QUEUE]
 
@@ -161,20 +161,7 @@ def traffic_masking_loop(queues:   'QueueDict',
 
                     send_packet(key_list, gateway, log_queue, command)
 
-                    # The two queues below are empty until the user is willing to reveal to
-                    # Networked Computer they are either disabling Traffic masking or exiting
-                    # TFC. Until that happens, queue status check takes constant time.
-
-                    # Check for unencrypted commands that close TFC.
-                    if rp_queue.qsize() != 0:
-                        packet  = rp_queue.get()
-                        command = packet[DATAGRAM_HEADER_LENGTH:]
-                        if command in [UNENCRYPTED_EXIT_COMMAND, UNENCRYPTED_WIPE_COMMAND]:
-                            gateway.write(packet)
-                            time.sleep(gateway.settings.local_testing_mode * 0.1)
-                            time.sleep(gateway.settings.data_diode_sockets * 1.5)
-                            signal = WIPE if command == UNENCRYPTED_WIPE_COMMAND else EXIT
-                            queues[EXIT_QUEUE].put(signal)
+                    exit_packet_check(queues, gateway)
 
             # If traffic masking has been disabled, wait until queued messages are sent before returning.
             if sm_queue.qsize() != 0 and all(q.qsize() == 0 for q in (m_queue, f_queue, c_queue)):
@@ -182,11 +169,33 @@ def traffic_masking_loop(queues:   'QueueDict',
                 return settings
 
 
+def exit_packet_check(queues:  'QueueDict',
+                      gateway: 'Gateway'
+                      ) -> None:
+    """Check for unencrypted commands that close TFC.
+
+    The relay packet queue is empty until the user is willing to reveal to
+    Networked Computer they are either disabling traffic masking or exiting
+    TFC. Until that happens, queue status check takes constant time.
+    """
+    rp_queue = queues[RELAY_PACKET_QUEUE]
+
+    if rp_queue.qsize() != 0:
+        packet = rp_queue.get()
+        command = packet[DATAGRAM_HEADER_LENGTH:]
+        if command in [UNENCRYPTED_EXIT_COMMAND, UNENCRYPTED_WIPE_COMMAND]:
+            gateway.write(packet)
+            time.sleep(gateway.settings.local_testing_mode * 0.1)
+            time.sleep(gateway.settings.data_diode_sockets * 1.5)
+            signal = WIPE if command == UNENCRYPTED_WIPE_COMMAND else EXIT
+            queues[EXIT_QUEUE].put(signal)
+
+
 def standard_sender_loop(queues:   'QueueDict',
                          gateway:  'Gateway',
                          key_list: 'KeyList',
-                         m_buffer: Optional['Message_buffer'] = None
-                         ) -> Tuple['Settings', 'Message_buffer']:
+                         m_buffer: Optional['MessageBuffer'] = None
+                         ) -> Tuple['Settings', 'MessageBuffer']:
     """Run Transmitter program in standard send mode.
 
     The standard sender loop loads assembly packets from a set of queues.
@@ -223,57 +232,26 @@ def standard_sender_loop(queues:   'QueueDict',
     can be output later, if the user resumes to standard_sender_loop and
     adds new keys for the contact.
     """
-    km_queue  = queues[KEY_MANAGEMENT_QUEUE]
-    c_queue   = queues[COMMAND_PACKET_QUEUE]
-    rp_queue  = queues[RELAY_PACKET_QUEUE]
-    m_queue   = queues[MESSAGE_PACKET_QUEUE]
-    sm_queue  = queues[SENDER_MODE_QUEUE]
-    log_queue = queues[LOG_PACKET_QUEUE]
+    km_queue = queues[KEY_MANAGEMENT_QUEUE]
+    c_queue  = queues[COMMAND_PACKET_QUEUE]
+    rp_queue = queues[RELAY_PACKET_QUEUE]
+    sm_queue = queues[SENDER_MODE_QUEUE]
+    m_queue  = queues[MESSAGE_PACKET_QUEUE]
 
     if m_buffer is None:
         m_buffer = dict()
 
     while True:
-        with ignored(EOFError, KeyboardInterrupt):
-            if km_queue.qsize() != 0:
-                key_list.manage(queues, *km_queue.get())
-                continue
+        try:
+            process_key_management_command(queues, key_list)
 
-            # Commands to Receiver
-            if c_queue.qsize() != 0:
-                if key_list.has_local_keyset():
-                    send_packet(key_list, gateway, log_queue, c_queue.get())
-                continue
+            process_command(queues, key_list, gateway)
 
-            # Commands/files to Networked Computer
-            if rp_queue.qsize() != 0:
-                packet = rp_queue.get()
-                gateway.write(packet)
+            process_relay_packets(queues, gateway)
 
-                command = packet[DATAGRAM_HEADER_LENGTH:]
-                if command in [UNENCRYPTED_EXIT_COMMAND, UNENCRYPTED_WIPE_COMMAND]:
-                    time.sleep(gateway.settings.local_testing_mode * 0.1)
-                    time.sleep(gateway.settings.data_diode_sockets * 1.5)
-                    signal = WIPE if command == UNENCRYPTED_WIPE_COMMAND else EXIT
-                    queues[EXIT_QUEUE].put(signal)
-                continue
+            process_buffered_messages(m_buffer, queues, key_list, gateway)
 
-            # Buffered messages
-            for onion_pub_key in m_buffer:
-                if key_list.has_keyset(onion_pub_key) and m_buffer[onion_pub_key]:
-                    send_packet(key_list, gateway, log_queue, *m_buffer[onion_pub_key].pop(0)[:-1])
-                    continue
-
-            # New messages
-            if m_queue.qsize() != 0:
-                queue_data    = m_queue.get()  # type: Tuple[bytes, bytes, bool, bool, bytes]
-                onion_pub_key = queue_data[1]
-
-                if key_list.has_keyset(onion_pub_key):
-                    send_packet(key_list, gateway, log_queue, *queue_data[:-1])
-                else:
-                    m_buffer.setdefault(onion_pub_key, []).append(queue_data)
-                continue
+            process_new_message(m_buffer, queues, key_list, gateway)
 
             # If traffic masking has been enabled, switch send mode when all queues are empty.
             if sm_queue.qsize() != 0 and all(q.qsize() == 0 for q in (km_queue, c_queue, rp_queue, m_queue)):
@@ -281,3 +259,85 @@ def standard_sender_loop(queues:   'QueueDict',
                 return settings, m_buffer
 
             time.sleep(0.01)
+
+        except (EOFError, FunctionReturn, KeyboardInterrupt):
+            pass
+
+
+def process_key_management_command(queues:   'QueueDict',
+                                   key_list: 'KeyList'
+                                   ) -> None:
+    """Process key management command."""
+    km_queue = queues[KEY_MANAGEMENT_QUEUE]
+
+    if km_queue.qsize() != 0:
+        key_list.manage(queues, *km_queue.get())
+        FunctionReturn("Key management command processing complete.", output=False)
+
+
+def process_command(queues:   'QueueDict',
+                    key_list: 'KeyList',
+                    gateway:  'Gateway'
+                    ) -> None:
+    """Process command."""
+    c_queue   = queues[COMMAND_PACKET_QUEUE]
+    log_queue = queues[LOG_PACKET_QUEUE]
+
+    if c_queue.qsize() != 0:
+        if key_list.has_local_keyset():
+            send_packet(key_list, gateway, log_queue, c_queue.get())
+        FunctionReturn("Command processing complete.", output=False)
+
+
+def process_relay_packets(queues:  'QueueDict',
+                          gateway: 'Gateway'
+                          ) -> None:
+    """Process packet to Relay Program on Networked Computer."""
+    rp_queue = queues[RELAY_PACKET_QUEUE]
+
+    if rp_queue.qsize() != 0:
+        packet = rp_queue.get()
+        gateway.write(packet)
+
+        command = packet[DATAGRAM_HEADER_LENGTH:]
+        if command in [UNENCRYPTED_EXIT_COMMAND, UNENCRYPTED_WIPE_COMMAND]:
+            time.sleep(gateway.settings.local_testing_mode * 0.1)
+            time.sleep(gateway.settings.data_diode_sockets * 1.5)
+            signal = WIPE if command == UNENCRYPTED_WIPE_COMMAND else EXIT
+            queues[EXIT_QUEUE].put(signal)
+        FunctionReturn("Relay packet processing complete.", output=False)
+
+
+def process_buffered_messages(m_buffer: 'MessageBuffer',
+                              queues:   'QueueDict',
+                              key_list: 'KeyList',
+                              gateway:  'Gateway'
+                              ) -> None:
+    """Process messages cached in `m_buffer`."""
+    log_queue = queues[LOG_PACKET_QUEUE]
+
+    for onion_pub_key in m_buffer:
+        if key_list.has_keyset(onion_pub_key) and m_buffer[onion_pub_key]:
+            send_packet(key_list, gateway, log_queue, *m_buffer[onion_pub_key].pop(0)[:-1])
+            raise FunctionReturn("Buffered message processing complete.", output=False)
+
+
+def process_new_message(m_buffer: 'MessageBuffer',
+                        queues:   'QueueDict',
+                        key_list: 'KeyList',
+                        gateway:  'Gateway'
+                        ) -> None:
+    """Process new message in message queue."""
+    m_queue   = queues[MESSAGE_PACKET_QUEUE]
+    log_queue = queues[LOG_PACKET_QUEUE]
+
+    if m_queue.qsize() != 0:
+        queue_data    = m_queue.get()  # type: Tuple[bytes, bytes, bool, bool, bytes]
+        onion_pub_key = queue_data[1]
+
+        if key_list.has_keyset(onion_pub_key):
+            send_packet(key_list, gateway, log_queue, *queue_data[:-1])
+        else:
+            m_buffer.setdefault(onion_pub_key, []).append(queue_data)
+
+        raise FunctionReturn("New message processing complete.", output=False)
