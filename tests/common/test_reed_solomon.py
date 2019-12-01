@@ -50,12 +50,12 @@ class TestReedSolomon(unittest.TestCase):
         rs         = RSCodec()
         msg        = bytearray("hello world " * 10, "latin1")
         enc        = rs.encode(msg)
-        rmsg, renc = rs.decode(enc)
+        _, renc = rs.decode(enc)
         self.assertEqual(rs.check(enc), [True])
         self.assertEqual(rs.check(renc), [True])
         for i in [27, -3, -9, 7, 0]:
             enc[i]     = 99
-            rmsg, renc = rs.decode(enc)
+            _, renc = rs.decode(enc)
             self.assertEqual(rs.check(enc), [False])
             self.assertEqual(rs.check(renc), [True])
 
