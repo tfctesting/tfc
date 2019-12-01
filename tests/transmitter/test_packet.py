@@ -343,7 +343,7 @@ class TestQueueAssemblyPackets(unittest.TestCase):
                                  log_messages=True)
         self.window.window_contacts = [create_contact('Alice')]
         self.args                   = self.settings, self.queues, self.window
-    
+
     def tearDown(self):
         """Post-test actions."""
         tear_queues(self.queues)
