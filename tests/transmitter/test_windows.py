@@ -28,7 +28,8 @@ from src.common.db_contacts import Contact
 from src.common.statics     import (COMMAND_PACKET_QUEUE, CONFIRM_CODE_LENGTH, KEX_STATUS_PENDING, KEX_STATUS_VERIFIED,
                                     WINDOW_SELECT_QUEUE, WIN_TYPE_CONTACT, WIN_TYPE_GROUP)
 
-from src.transmitter.windows import MockWindow, select_window, TxWindow
+from src.transmitter.windows     import select_window, TxWindow
+from src.transmitter.window_mock import MockWindow
 
 from tests.mock_classes import ContactList, create_contact, Gateway, GroupList, OnionService, Settings, UserInput
 from tests.utils        import gen_queue_dict, group_name_to_group_id, nick_to_onion_address, nick_to_pub_key

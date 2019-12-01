@@ -42,8 +42,9 @@ from src.common.statics    import (ASSEMBLY_PACKET_LENGTH, COMMAND, COMMAND_DATA
                                    PADDING_LENGTH, PRIVATE_MESSAGE_HEADER, RELAY_PACKET_QUEUE, TM_COMMAND_PACKET_QUEUE,
                                    TM_FILE_PACKET_QUEUE, TM_MESSAGE_PACKET_QUEUE, WIN_TYPE_GROUP)
 
-from src.transmitter.files      import File
-from src.transmitter.user_input import UserInput
+from src.transmitter.files       import File
+from src.transmitter.window_mock import MockWindow
+from src.transmitter.user_input  import UserInput
 
 if typing.TYPE_CHECKING:
     from multiprocessing         import Queue
@@ -51,7 +52,8 @@ if typing.TYPE_CHECKING:
     from src.common.db_masterkey import MasterKey
     from src.common.db_settings  import Settings
     from src.common.gateway      import Gateway
-    from src.transmitter.windows import TxWindow, MockWindow
+    from src.transmitter.windows import TxWindow
+
     QueueDict      = Dict[bytes, Queue[Any]]
     log_queue_data = Tuple[Optional[bytes], bytes, Optional[bool], Optional[bool], MasterKey]
 
@@ -250,8 +252,6 @@ def send_file(path:     str,
     of Bob, it's as if Chuck had dropped Alice's file and sent him
     another file instead.
     """
-    from src.transmitter.windows import MockWindow  # Avoid circular import
-
     if settings.traffic_masking:
         raise FunctionReturn("Error: Command is disabled during traffic masking.", head_clear=True)
 
