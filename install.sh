@@ -44,7 +44,7 @@ WERKZEUG=Werkzeug-0.16.0-py2.py3-none-any.whl
 function compare_digest {
     # Compare the SHA512 digest of TFC file against the digest pinned in
     # this installer.
-    if sha512sum /opt/tfc/$2$3 | grep -Eo '^\w+' | cmp -s <(echo "$1"); then
+    if sha512sum "/opt/tfc/${2}${3}" | grep -Eo '^\w+' | cmp -s <(echo "$1"); then
         echo "OK - Pinned SHA512 hash matched file /opt/tfc/${2}${3}"
     else
         echo "Error: /opt/tfc/${2}${3} had an invalid SHA512 hash"
