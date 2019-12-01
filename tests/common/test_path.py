@@ -120,7 +120,7 @@ class TestPath(TFCTestCase):
 
     def setUp(self):
         """Pre-test actions."""
-        with ignored(FileExistsError):
+        with ignored(OSError):
             os.mkdir('test_dir/')
 
     def tearDown(self):

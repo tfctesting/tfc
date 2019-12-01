@@ -270,11 +270,11 @@ class Gateway(object):
                             print_on_previous_line(reps=2)
                         self.init_found = True
                         return f'/dev/{f}'
-                else:
-                    time.sleep(0.1)
-                    if self.init_found and not search_announced:
-                        phase("Serial adapter disconnected. Waiting for interface", head=1, offset=len('Found'))
-                        search_announced = True
+
+                time.sleep(0.1)
+                if self.init_found and not search_announced:
+                    phase("Serial adapter disconnected. Waiting for interface", head=1, offset=len('Found'))
+                    search_announced = True
 
         else:
             if self.settings.built_in_serial_interface in sorted(os.listdir('/dev/')):
