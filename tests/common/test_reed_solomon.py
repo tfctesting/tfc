@@ -328,7 +328,7 @@ class TestReedSolomon(unittest.TestCase):
             ]
         ]
 
-        for i in range(len(params)):
+        for i, _ in enumerate(params):
             p                                                       = params[i]
             expected_log_t, expected_exp_t, expected_field_charac_t = expected[i]
             log_t, exp_t, field_charac_t                            = init_tables(prim=p[0], generator=p[1], c_exp=p[2])
@@ -377,7 +377,8 @@ class TestBigReedSolomon(unittest.TestCase):
         self.assertEqual(rsc.check(rmesecc), [True])
         self.assertEqual([x for x in rmes],  [ord(x) for x in mes])
 
-    def test_multiple_rs_codec(self):
+    @staticmethod
+    def test_multiple_rs_codec():
         """Test multiple RSCodec instances with different parameters."""
         mes     = 'A' * 30
         rs_256  = RSCodec(102)
