@@ -438,9 +438,8 @@ class GatewaySettings(object):
                 for f in sorted(os.listdir('/dev/')):
                     if f.startswith('ttyUSB'):
                         return None
-                else:
-                    m_print("Error: USB-to-serial/TTL adapter not found.")
-                    self.setup()
+                m_print("Error: USB-to-serial/TTL adapter not found.")
+                self.setup()
             else:
                 if self.built_in_serial_interface in sorted(os.listdir('/dev/')):
                     return None
