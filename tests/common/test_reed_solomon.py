@@ -94,18 +94,16 @@ class TestReedSolomon(unittest.TestCase):
 
         # Encoding and decoding intact message seem OK, so test errors
         numerrs = tt >> 1  # Inject tt/2 errors (expected to recover fully)
+        i: int
         for i in sample(range(nn), numerrs):  # inject errors in random places
-            if not isinstance(i, int):
-                raise SystemExit("invalid index.")
             tem1[i] ^= 0xff  # flip all 8 bits
         tdm, _ = rs.decode(tem1)
         self.assertEqual(tdm, decmsg, msg="decoded with errors does not match original")
 
         tem1 = bytearray(tem)  # Clone another copy
         numerrs += 1  # Inject tt/2 + 1 errors (expected to fail and detect it)
+        i: int
         for i in sample(range(nn), numerrs):  # Inject errors in random places
-            if not isinstance(i, int):
-                raise SystemExit("invalid index.")
             tem1[i] ^= 0xff  # Flip all 8 bits
         # If this fails, it means excessive errors not detected
         self.assertRaises(ReedSolomonError, rs.decode, tem1)
@@ -129,9 +127,8 @@ class TestReedSolomon(unittest.TestCase):
 
         tem1    = bytearray(tem)
         numerrs = tt >> 1
+        i: int
         for i in sample(range(nn), numerrs):
-            if not isinstance(i, int):
-                raise SystemExit("invalid index.")
             tem1[i] ^= 0xff
         tdm, rtem = rs.decode(tem1)
         self.assertEqual(tdm, decmsg, msg="decoded with errors does not match original")
