@@ -478,8 +478,8 @@ function install_relay_tails {
 
     install_tails_setuptools
 
-    torsocks python3.7 -m pip download --no-cache-dir -r "/opt/tfc/requirements-venv.txt"        --require-hashes --no-deps -d $HOME/
-    torsocks python3.7 -m pip download --no-cache-dir -r "/opt/tfc/requirements-relay-tails.txt" --require-hashes --no-deps -d $HOME/
+    torsocks python3.7 -m pip download --no-cache-dir -r "/opt/tfc/requirements-venv.txt"        --require-hashes --no-deps -d "${HOME}/"
+    torsocks python3.7 -m pip download --no-cache-dir -r "/opt/tfc/requirements-relay-tails.txt" --require-hashes --no-deps -d "${HOME}/"
 
     move_tails_dependencies
     verify_tails_dependencies
@@ -608,7 +608,7 @@ function add_serial_permissions {
 
 function c_echo {
     # Justify printed text to the center of the terminal.
-    printf "%*s\n" "$(( ( $(echo $1 | wc -c ) + 80 ) / 2 ))" "$1"
+    printf "%*s\n" "$(( ( $(echo $1 | wc -c ) + 80 ) / 2 ))" "${1}"
 }
 
 
