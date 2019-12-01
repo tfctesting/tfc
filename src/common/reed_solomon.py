@@ -317,7 +317,7 @@ def find_prime_polys(generator:   int  = 2,
 
         # Second loop, build the whole Galois Field
         x = 1
-        for i in range(field_charac_):
+        for _ in range(field_charac_):
             # Compute the next value in the field
             # (i.e., the next power of alpha/generator)
             x = gf_mult_nolut(x, generator, prim, field_charac_ + 1)
