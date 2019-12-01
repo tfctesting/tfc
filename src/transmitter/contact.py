@@ -157,6 +157,19 @@ def remove_contact(user_input:   'UserInput',
     relay_command = UNENCRYPTED_DATAGRAM_HEADER + UNENCRYPTED_REM_CONTACT + onion_pub_key
     queue_to_nc(relay_command, queues[RELAY_PACKET_QUEUE])
 
+    target = determine_target(selection, onion_pub_key, contact_list)
+
+    if any([g.remove_members([onion_pub_key]) for g in group_list]):
+        m_print(f"Removed {target} from group(s).", tail=1)
+
+    check_for_window_deselection(onion_pub_key, window, group_list)
+
+
+def determine_target(selection:     str,
+                     onion_pub_key: bytes,
+                     contact_list: 'ContactList'
+                     ) -> str:
+    """Determine name of the target that will be removed."""
     if onion_pub_key in contact_list.get_list_of_pub_keys():
         contact = contact_list.get_contact_by_pub_key(onion_pub_key)
         target  = f"{contact.nick} ({contact.short_address})"
@@ -166,13 +179,19 @@ def remove_contact(user_input:   'UserInput',
         target = f"{selection[:TRUNC_ADDRESS_LENGTH]}"
         m_print(f"Transmitter has no {target} to remove.", head=1, tail=1)
 
-    if any([g.remove_members([onion_pub_key]) for g in group_list]):
-        m_print(f"Removed {target} from group(s).", tail=1)
+    return target
 
+
+def check_for_window_deselection(onion_pub_key: bytes,
+                                 window:        'TxWindow',
+                                 group_list:    'GroupList'
+                                 ) -> None:
+    """\
+    Check if the window should be deselected after contact is removed.
+    """
     if window.type == WIN_TYPE_CONTACT:
         if onion_pub_key == window.uid:
             window.deselect()
-
     if window.type == WIN_TYPE_GROUP:
         for c in window:
             if c.onion_pub_key == onion_pub_key:
@@ -254,41 +273,10 @@ def contact_setting(user_input:   'UserInput',
         cmd_value = setting + win_uid
 
     if win_uid:
-        if window.type == WIN_TYPE_CONTACT and window.contact is not None:
-            if cmd_key == LOGGING:
-                window.contact.log_messages   = b_value
-            if cmd_key == STORE:
-                window.contact.file_reception = b_value
-            if cmd_key == NOTIFY:
-                window.contact.notifications  = b_value
-            contact_list.store_contacts()
-
-        if window.type == WIN_TYPE_GROUP and window.group is not None:
-            if cmd_key == LOGGING:
-                window.group.log_messages = b_value
-            if cmd_key == STORE:
-                for c in window:
-                    c.file_reception = b_value
-            if cmd_key == NOTIFY:
-                window.group.notifications = b_value
-            group_list.store_groups()
+        change_setting_for_selected_contact(cmd_key, b_value, window, contact_list, group_list)
 
     else:
-        for contact in contact_list:
-            if cmd_key == LOGGING:
-                contact.log_messages   = b_value
-            if cmd_key == STORE:
-                contact.file_reception = b_value
-            if cmd_key == NOTIFY:
-                contact.notifications  = b_value
-        contact_list.store_contacts()
-
-        for group in group_list:
-            if cmd_key == LOGGING:
-                group.log_messages  = b_value
-            if cmd_key == NOTIFY:
-                group.notifications = b_value
-        group_list.store_groups()
+        change_setting_for_all_contacts(cmd_key, b_value, contact_list, group_list)
 
     command = cmd_header + cmd_value
 
@@ -300,3 +288,55 @@ def contact_setting(user_input:   'UserInput',
     window.update_log_messages()
 
     queue_command(command, settings, queues)
+
+
+def change_setting_for_selected_contact(cmd_key:      str,
+                                        b_value:      bool,
+                                        window:       'TxWindow',
+                                        contact_list: 'ContactList',
+                                        group_list:   'GroupList'
+                                        ) -> None:
+    """Change setting for selected contact."""
+    if window.type == WIN_TYPE_CONTACT and window.contact is not None:
+        if cmd_key == LOGGING:
+            window.contact.log_messages = b_value
+        if cmd_key == STORE:
+            window.contact.file_reception = b_value
+        if cmd_key == NOTIFY:
+            window.contact.notifications = b_value
+        contact_list.store_contacts()
+
+    if window.type == WIN_TYPE_GROUP and window.group is not None:
+        if cmd_key == LOGGING:
+            window.group.log_messages = b_value
+        if cmd_key == STORE:
+            for c in window:
+                c.file_reception = b_value
+        if cmd_key == NOTIFY:
+            window.group.notifications = b_value
+        group_list.store_groups()
+
+
+def change_setting_for_all_contacts(cmd_key:      str,
+                                    b_value:      bool,
+                                    contact_list: 'ContactList',
+                                    group_list:   'GroupList'
+                                    ) -> None:
+    """Change setting for all contacts."""
+    for contact in contact_list:
+        if cmd_key == LOGGING:
+            contact.log_messages = b_value
+        if cmd_key == STORE:
+            contact.file_reception = b_value
+        if cmd_key == NOTIFY:
+            contact.notifications = b_value
+
+    contact_list.store_contacts()
+
+    for group in group_list:
+        if cmd_key == LOGGING:
+            group.log_messages = b_value
+        if cmd_key == NOTIFY:
+            group.notifications = b_value
+
+    group_list.store_groups()
