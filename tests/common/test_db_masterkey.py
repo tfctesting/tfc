@@ -113,7 +113,7 @@ class TestMasterKey(unittest.TestCase):
     @mock.patch('builtins.input',  side_effect=[''])
     @mock.patch('os.system',       return_value=None)
     @mock.patch('time.sleep',      return_value=None)
-    def test_password_generation(self, *_):
+    def test_new_masterkey_key_type(self, *_):
         master_key = MasterKey(self.operation, local_test=True)
         self.assertIsInstance(master_key.master_key, bytes)
 
