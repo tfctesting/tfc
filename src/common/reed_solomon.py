@@ -626,7 +626,7 @@ def gf_poly_add(p: bytes, q: Union[bytearray, List[int]]) -> Any:
 
     r[len(r) - len(p):len(r)] = p
 
-    for i in range(len(q)):
+    for i, _ in enumerate(q):
         r[i + len(r) - len(q)] ^= q[i]
     return r
 
@@ -679,7 +679,7 @@ def gf_poly_mul_simple(p: List[int],
     # of two vectors, we multiply each coefficients of p with all
     # coefficients of q)
     for j in range(len(q)):
-        for i in range(len(p)):
+        for i, _ in enumerate(p):
             # equivalent to: r[i + j] = gf_add(r[i+j], gf_mul(p[i], q[j]))
             # -- you can see it's your usual polynomial multiplication
             r[i + j] ^= gf_mul(p[i], q[j])
@@ -963,7 +963,7 @@ def rs_correct_errata(msg_in:    bytearray,
     # from the error positions in err_pos (the roots of the error
     # locator polynomial, i.e., where it evaluates to 0)
     x = []  # will store the position of the errors
-    for i in range(len(coef_pos)):
+    for i, _ in enumerate(coef_pos):
         pos = field_charac - coef_pos[i]
         x.append(gf_pow(generator, -pos))
 
