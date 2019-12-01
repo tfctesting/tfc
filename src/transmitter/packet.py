@@ -513,6 +513,7 @@ def cancel_standard_packet(cancel:    bool,
             p_buffer.append(queue_data)
         else:
             cancel = True
+
     # Put cancel packets for each window contact to queue first
     if cancel:
         for c in window:
