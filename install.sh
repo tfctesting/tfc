@@ -257,7 +257,7 @@ function verify_tails_dependencies {
 
 function install_tails_setuptools {
     # Download setuptools package for Tails and then authenticate and install it.
-    torsocks python3.7 -m pip download --no-cache-dir -r "/opt/tfc/requirements-setuptools.txt" --require-hashes --no-deps -d $HOME/
+    torsocks python3.7 -m pip download --no-cache-dir -r "/opt/tfc/requirements-setuptools.txt" --require-hashes --no-deps -d "${HOME}/"
     t_sudo mv "$HOME/${SETUPTOOLS} /opt/tfc/"
     compare_digest 2e90929aa61c847e1d414d427b08403679ba5f512a56d58b92ee64d47e8a2c5da18e47126e5f59faca335b3a4b5ec9857aa323d866252546a6df42c3e3ef3884 '' ${SETUPTOOLS}
     t_sudo python3.7 -m pip install "/opt/tfc/${SETUPTOOLS}"
@@ -397,26 +397,26 @@ function install_developer {
     sudo torsocks apt update
     sudo torsocks apt install git libssl-dev python3-pip python3-tk terminator -y
 
-    torsocks git clone https://github.com/tfctesting/tfc.git $HOME/tfc
+    torsocks git clone https://github.com/tfctesting/tfc.git "${HOME}/tfc"
 
-    torsocks python3.7 -m pip install -r $HOME/tfc/requirements-venv.txt --require-hashes --no-deps
+    torsocks python3.7 -m pip install -r "{$HOME}/tfc/requirements-venv.txt" --require-hashes --no-deps
 
-    python3.7 -m virtualenv $HOME/tfc/venv_tfc --system-site-packages
+    python3.7 -m virtualenv "${HOME}/tfc/venv_tfc" --system-site-packages
 
-    . $HOME/tfc/venv_tfc/bin/activate
+    . "${HOME}/tfc/venv_tfc/bin/activate"
     torsocks python3.7 -m pip install -r $HOME/tfc/requirements-dev.txt
     deactivate
 
-    sudo cp $HOME/tfc/tfc.png                   /usr/share/pixmaps/
-    sudo cp $HOME/tfc/launchers/TFC-Dev.desktop /usr/share/applications/
-    sudo sed -i "s|\$HOME|${HOME}|g"            /usr/share/applications/TFC-Dev.desktop
+    sudo cp "${HOME}/tfc/tfc.png                   /usr/share/pixmaps/"
+    sudo cp "${HOME}/tfc/launchers/TFC-Dev.desktop /usr/share/applications/"
+    sudo sed -i "s|\$HOME|${HOME}|g"              "/usr/share/applications/TFC-Dev.desktop"
     modify_terminator_font_size "" "${HOME}/tfc/launchers/terminator-config-dev"
     chmod a+rwx -R $HOME/tfc/
 
     # Remove unnecessary files
-    sudo rm -f /opt/install.sh
-    sudo rm -f /opt/install.sh.asc
-    sudo rm -f /opt/pubkey.asc
+    sudo rm -f "/opt/install.sh"
+    sudo rm -f "/opt/install.sh.asc"
+    sudo rm -f "/opt/pubkey.asc"
 
     add_serial_permissions
 
