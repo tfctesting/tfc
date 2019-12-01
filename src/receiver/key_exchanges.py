@@ -97,10 +97,10 @@ def process_local_key_buffer(kdk:     bytes,
 
         except nacl.exceptions.CryptoError:
             continue
-    else:
-        # Finished the buffer without finding local key CT
-        # for the kdk. Maybe the kdk is from another session.
-        raise FunctionReturn("Error: Incorrect key decryption key.", delay=1)
+
+    # Finished the buffer without finding local key CT
+    # for the kdk. Maybe the kdk is from another session.
+    raise FunctionReturn("Error: Incorrect key decryption key.", delay=1)
 
 
 def decrypt_local_key(ts:            'datetime',
