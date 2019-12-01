@@ -449,10 +449,7 @@ def change_master_key(user_input:    'UserInput',
     if authenticated:
         # Halt `sender_loop` for the duration of database re-encryption.
         queues[KEY_MANAGEMENT_QUEUE].put((KDB_M_KEY_CHANGE_HALT_HEADER,))
-        while queues[KEY_MGMT_ACK_QUEUE].qsize() == 0:
-            time.sleep(0.001)
-        if queues[KEY_MGMT_ACK_QUEUE].get() != KDB_HALT_ACK_HEADER:
-            raise FunctionReturn("Error: Key database returned wrong signal.")
+        wait_for_key_db_halt(queues)
 
         # Load old key_list from database file as it's not used on input_loop side.
         key_list = KeyList(master_key, settings)
@@ -498,15 +495,26 @@ def change_master_key(user_input:    'UserInput',
         # the key database know what the new master key is.
         queues[KEY_MANAGEMENT_QUEUE].put(new_master_key)
 
-        # We then wait for the key database to acknowledge
-        # it has successfully replaced the master key.
-        while queues[KEY_MGMT_ACK_QUEUE].qsize() == 0:
-            time.sleep(0.001)
-        if queues[KEY_MGMT_ACK_QUEUE].get() != new_master_key:
-            raise CriticalError("Key database failed to install new master key.")
+        wait_for_key_db_ack(new_master_key, queues)
 
         phase(DONE)
         m_print("Master key successfully changed.", bold=True, tail_clear=True, delay=1, head=1)
+
+
+def wait_for_key_db_halt(queues: 'QueueDict') -> None:
+    """Wait for the key database to acknowledge it has halted output of packets."""
+    while queues[KEY_MGMT_ACK_QUEUE].qsize() == 0:
+        time.sleep(0.001)
+    if queues[KEY_MGMT_ACK_QUEUE].get() != KDB_HALT_ACK_HEADER:
+        raise FunctionReturn("Error: Key database returned wrong signal.")
+
+
+def wait_for_key_db_ack(new_master_key: bytes, queues: 'QueueDict') -> None:
+    """Wait for the key database to acknowledge it has replaced the master key."""
+    while queues[KEY_MGMT_ACK_QUEUE].qsize() == 0:
+        time.sleep(0.001)
+    if queues[KEY_MGMT_ACK_QUEUE].get() != new_master_key:
+        raise CriticalError("Key database failed to install new master key.")
 
 
 def remove_log(user_input:   'UserInput',
@@ -525,7 +533,20 @@ def remove_log(user_input:   'UserInput',
     if not yes(f"Remove logs for {selection}?", abort=False, head=1):
         raise FunctionReturn("Log file removal aborted.", tail_clear=True, delay=1, head=0)
 
-    # Determine selector (group ID or Onion Service public key) from command parameters
+    selector = determine_selector(selection, contact_list, group_list)
+
+    # Remove logs that match the selector
+    command = LOG_REMOVE + selector
+    queue_command(command, settings, queues)
+
+    remove_logs(contact_list, group_list, settings, master_key, selector)
+
+
+def determine_selector(selection:    str,
+                       contact_list: 'ContactList',
+                       group_list:   'GroupList'
+                       ) -> bytes:
+    """Determine selector (group ID or Onion Service public key)."""
     if selection in contact_list.contact_selectors():
         selector = contact_list.get_contact_by_address_or_nick(selection).onion_pub_key
 
@@ -546,11 +567,7 @@ def remove_log(user_input:   'UserInput',
     else:
         raise FunctionReturn("Error: Unknown selector.", head_clear=True)
 
-    # Remove logs that match the selector
-    command = LOG_REMOVE + selector
-    queue_command(command, settings, queues)
-
-    remove_logs(contact_list, group_list, settings, master_key, selector)
+    return selector
 
 
 def change_setting(user_input:   'UserInput',
@@ -577,10 +594,23 @@ def change_setting(user_input:   'UserInput',
     except IndexError:
         raise FunctionReturn("Error: No value for setting specified.", head_clear=True)
 
-    # Check if the setting can be changed
     relay_settings = dict(serial_error_correction=UNENCRYPTED_EC_RATIO,
                           serial_baudrate        =UNENCRYPTED_BAUDRATE,
-                          allow_contact_requests =UNENCRYPTED_MANAGE_CONTACT_REQ)
+                          allow_contact_requests =UNENCRYPTED_MANAGE_CONTACT_REQ)  # type: Dict[str, bytes]
+
+    check_setting_change_conditions(setting, settings, relay_settings, master_key)
+
+    change_setting_value(setting, value, relay_settings, queues, contact_list, group_list, settings, gateway)
+
+    propagate_setting_effects(setting, queues, contact_list, group_list, settings, window)
+
+
+def check_setting_change_conditions(setting:        str,
+                                    settings:       'Settings',
+                                    relay_settings: Dict[str, bytes],
+                                    master_key:     'MasterKey'
+                                    ) -> None:
+    """Check if the setting can be changed."""
     if settings.traffic_masking and (setting in relay_settings or setting == 'max_number_of_contacts'):
         raise FunctionReturn("Error: Can't change this setting during traffic masking.", head_clear=True)
 
@@ -591,13 +621,24 @@ def change_setting(user_input:   'UserInput',
         if not master_key.authenticate_action():
             raise FunctionReturn("Error: No permission to change setting.", head_clear=True)
 
-    # Change the setting
+
+def change_setting_value(setting:        str,
+                         value:          str,
+                         relay_settings: Dict[str, bytes],
+                         queues:         'QueueDict',
+                         contact_list:   'ContactList',
+                         group_list:     'GroupList',
+                         settings:       'Settings',
+                         gateway:        'Gateway'
+                         ) -> None:
+    """Change setting value in setting databases."""
     if setting in gateway.settings.key_list:
         gateway.settings.change_setting(setting, value)
     else:
         settings.change_setting(setting, value, contact_list, group_list)
 
     receiver_command = CH_SETTING + setting.encode() + US_BYTE + value.encode()
+
     queue_command(receiver_command, settings, queues)
 
     if setting in relay_settings:
@@ -606,7 +647,15 @@ def change_setting(user_input:   'UserInput',
         relay_command = UNENCRYPTED_DATAGRAM_HEADER + relay_settings[setting] + value.encode()
         queue_to_nc(relay_command, queues[RELAY_PACKET_QUEUE])
 
-    # Propagate the effects of the setting
+
+def propagate_setting_effects(setting:      str,
+                              queues:       'QueueDict',
+                              contact_list: 'ContactList',
+                              group_list:   'GroupList',
+                              settings:     'Settings',
+                              window:       'TxWindow'
+                              ) -> None:
+    """Propagate the effects of the setting."""
     if setting == 'max_number_of_contacts':
         contact_list.store_contacts()
         queues[KEY_MANAGEMENT_QUEUE].put((KDB_UPDATE_SIZE_HEADER, settings))
