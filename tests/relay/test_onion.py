@@ -40,7 +40,7 @@ from tests.utils import gen_queue_dict, tear_queues
 
 class TestGetAvailablePort(unittest.TestCase):
 
-    @mock.patch('random.randint', side_effect=[OSError, 1234])
+    @mock.patch('random.SystemRandom.randint', side_effect=[OSError, 1234])
     def test_get_available_port(self, _):
         port = get_available_port(1000, 65535)
         self.assertEqual(port, 1234)

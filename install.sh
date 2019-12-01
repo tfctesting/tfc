@@ -35,7 +35,7 @@ PYSOCKS=PySocks-1.7.1-py3-none-any.whl
 REQUESTS=requests-2.22.0-py2.py3-none-any.whl
 SETUPTOOLS=setuptools-41.6.0-py2.py3-none-any.whl
 SIX=six-1.13.0-py2.py3-none-any.whl
-STEM=stem-1.7.1.tar.gz
+# STEM=stem-1.7.1.tar.gz
 URLLIB3=urllib3-1.25.7-py2.py3-none-any.whl
 VIRTUALENV=virtualenv-16.7.7-py2.py3-none-any.whl
 WERKZEUG=Werkzeug-0.16.0-py2.py3-none-any.whl
@@ -45,9 +45,9 @@ function compare_digest {
     # Compare the SHA512 digest of TFC file against the digest pinned in
     # this installer.
     if sha512sum /opt/tfc/$2$3 | grep -Eo '^\w+' | cmp -s <(echo "$1"); then
-        echo OK - Pinned SHA512 hash matched file /opt/tfc/$2$3
+        echo "OK - Pinned SHA512 hash matched file /opt/tfc/${2}${3}"
     else
-        echo Error: /opt/tfc/$2$3 had an invalid SHA512 hash
+        echo "Error: /opt/tfc/${2}${3} had an invalid SHA512 hash"
         exit 1
     fi
 }
@@ -91,7 +91,7 @@ function verify_files {
     compare_digest ef32bf3c3bd7c57cf0521db9e41920e4aa60daf6d795592eebf23d4b8eca97b3b9a5ff3f11e89d1ec6b64212bf5b9a38c53bc6b87613b955f0e500e0de228093 src/common/ db_groups.py
     compare_digest 2a25018e319de5438883e2af2d81d863b7fd340d071cbaeb47f8f8a7f5c93e12db7d62bce22775f938ad5766fd476b0b8c404cef44f5f00a72214243f6f90034 src/common/ db_keys.py
     compare_digest 4fe9f2ea5a16d6b81aaf82abb86742b2df99101e72c32d046a04d2e0ff2a15216bb63a54d65965d313c8f1a453f579846c64b3f6a259e44b79342bad01e8bee8 src/common/ db_logs.py
-    compare_digest bf37ce3d4341c65a1ab04dc1fccbc77476695bfec34335679f188d225383fd54283f0b7157c5e2c46b2a64726cf7c60bfc45ead4ad702731b4704e3b9e04a00f src/common/ db_masterkey.py
+    compare_digest 85a33935f0af520f5a3e1a43bfb9574fc50bde00ea89048b062ed146cce5af790faa6f7d47d92833a7446005c79dd362b11da2b4f77d456a40d95bb5179a2789 src/common/ db_masterkey.py
     compare_digest c9000d541149835aa0812aa4b3108356d2f9465a767ea4273ece6340212eff287447af9247df4cea309ef7f8a5cfc887a01c8190523d1616164dd0f98718905f src/common/ db_onion.py
     compare_digest 18e86599ee813be8a38d5775cff7d423735677bc40f1758dcc676d683b29dd3b4ba3eba72a300a1c3fabc4d68ad211329cef0c934403909491cb981e4a1bcda8 src/common/ db_settings.py
     compare_digest 7a673e6feb7a5b2e3417d2c0eee82a59b3730a5d241938a84fd866dfc838c3cd63d7ef96772d43f62df740a2ba1001456746dd6c86e950484eac3ebabed498ce src/common/ encoding.py
@@ -141,14 +141,14 @@ function verify_files {
 function process_tcb_dependencies {
     # Manage TCB dependencies in batch. The command that uses the files
     # is passed to the function as a parameter.
-    sudo $1 /opt/tfc/${SIX}
-    sudo $1 /opt/tfc/${PYCPARSER}
-    sudo $1 /opt/tfc/${CFFI}
-    sudo $1 /opt/tfc/${ARGON2}
-    sudo $1 /opt/tfc/${SETUPTOOLS}
-    sudo $1 /opt/tfc/${PYNACL}
-    sudo $1 /opt/tfc/${PYSERIAL}
-    sudo $1 /opt/tfc/${CRYPTOGRAPHY}
+    sudo $1 "/opt/tfc/${SIX}"
+    sudo $1 "/opt/tfc/${PYCPARSER}"
+    sudo $1 "/opt/tfc/${CFFI}"
+    sudo $1 "/opt/tfc/${ARGON2}"
+    sudo $1 "/opt/tfc/${SETUPTOOLS}"
+    sudo $1 "/opt/tfc/${PYNACL}"
+    sudo $1 "/opt/tfc/${PYSERIAL}"
+    sudo $1 "/opt/tfc/${CRYPTOGRAPHY}"
 }
 
 
@@ -156,66 +156,66 @@ function process_tails_dependencies {
     # Manage Tails dependencies in batch. The command that uses the
     # files is passed to the function as a parameter.
 
-    t_sudo -E $1 /opt/tfc/${PYSERIAL}
-    # t_sudo -E $1 /opt/tfc/${STEM}
-    t_sudo -E $1 /opt/tfc/${PYSOCKS}
+    t_sudo -E $1 "/opt/tfc/${PYSERIAL}"
+    # t_sudo -E $1 "/opt/tfc/${STEM}"
+    t_sudo -E $1 "/opt/tfc/${PYSOCKS}"
 
     # Requests
-    t_sudo -E $1 /opt/tfc/${URLLIB3}
-    t_sudo -E $1 /opt/tfc/${IDNA}
-    t_sudo -E $1 /opt/tfc/${CHARDET}
-    t_sudo -E $1 /opt/tfc/${CERTIFI}
-    t_sudo -E $1 /opt/tfc/${REQUESTS}
+    t_sudo -E $1 "/opt/tfc/${URLLIB3}"
+    t_sudo -E $1 "/opt/tfc/${IDNA}"
+    t_sudo -E $1 "/opt/tfc/${CHARDET}"
+    t_sudo -E $1 "/opt/tfc/${CERTIFI}"
+    t_sudo -E $1 "/opt/tfc/${REQUESTS}"
 
     # Flask
-    t_sudo -E $1 /opt/tfc/${WERKZEUG}
-    t_sudo -E $1 /opt/tfc/${MARKUPSAFE}
-    t_sudo -E $1 /opt/tfc/${JINJA2}
-    t_sudo -E $1 /opt/tfc/${ITSDANGEROUS}
-    t_sudo -E $1 /opt/tfc/${CLICK}
-    t_sudo -E $1 /opt/tfc/${FLASK}
+    t_sudo -E $1 "/opt/tfc/${WERKZEUG}"
+    t_sudo -E $1 "/opt/tfc/${MARKUPSAFE}"
+    t_sudo -E $1 "/opt/tfc/${JINJA2}"
+    t_sudo -E $1 "/opt/tfc/${ITSDANGEROUS}"
+    t_sudo -E $1 "/opt/tfc/${CLICK}"
+    t_sudo -E $1 "/opt/tfc/${FLASK}"
 
     # Cryptography
-    t_sudo -E $1 /opt/tfc/${SIX}
-    t_sudo -E $1 /opt/tfc/${PYCPARSER}
-    t_sudo -E $1 /opt/tfc/${CFFI}
-    t_sudo -E $1 /opt/tfc/${CRYPTOGRAPHY}
+    t_sudo -E $1 "/opt/tfc/${SIX}"
+    t_sudo -E $1 "/opt/tfc/${PYCPARSER}"
+    t_sudo -E $1 "/opt/tfc/${CFFI}"
+    t_sudo -E $1 "/opt/tfc/${CRYPTOGRAPHY}"
 
     # PyNaCl
-    t_sudo -E $1 /opt/tfc/${PYNACL}
+    t_sudo -E $1 "/opt/tfc/${PYNACL}"
 }
 
 
 function move_tails_dependencies {
     # Move Tails dependencies in batch.
-    t_sudo mv $HOME/${VIRTUALENV} /opt/tfc/
-    t_sudo mv $HOME/${PYSERIAL} /opt/tfc/
-    # t_sudo mv $HOME/${STEM}     /opt/tfc/
-    t_sudo mv $HOME/${PYSOCKS}  /opt/tfc/
+    t_sudo mv "$HOME/${VIRTUALENV} /opt/tfc/"
+    t_sudo mv "$HOME/${PYSERIAL}   /opt/tfc/"
+    # t_sudo mv "$HOME/${STEM}       /opt/tfc/"
+    t_sudo mv "$HOME/${PYSOCKS}    /opt/tfc/"
 
     # Requests
-    t_sudo mv $HOME/${URLLIB3}  /opt/tfc/
-    t_sudo mv $HOME/${IDNA}     /opt/tfc/
-    t_sudo mv $HOME/${CHARDET}  /opt/tfc/
-    t_sudo mv $HOME/${CERTIFI}  /opt/tfc/
-    t_sudo mv $HOME/${REQUESTS} /opt/tfc/
+    t_sudo mv "$HOME/${URLLIB3}  /opt/tfc/"
+    t_sudo mv "$HOME/${IDNA}     /opt/tfc/"
+    t_sudo mv "$HOME/${CHARDET}  /opt/tfc/"
+    t_sudo mv "$HOME/${CERTIFI}  /opt/tfc/"
+    t_sudo mv "$HOME/${REQUESTS} /opt/tfc/"
 
     # Flask
-    t_sudo mv $HOME/${WERKZEUG}     /opt/tfc/
-    t_sudo mv $HOME/${MARKUPSAFE}   /opt/tfc/
-    t_sudo mv $HOME/${JINJA2}       /opt/tfc/
-    t_sudo mv $HOME/${ITSDANGEROUS} /opt/tfc/
-    t_sudo mv $HOME/${CLICK}        /opt/tfc/
-    t_sudo mv $HOME/${FLASK}        /opt/tfc/
+    t_sudo mv "$HOME/${WERKZEUG}     /opt/tfc/"
+    t_sudo mv "$HOME/${MARKUPSAFE}   /opt/tfc/"
+    t_sudo mv "$HOME/${JINJA2}       /opt/tfc/"
+    t_sudo mv "$HOME/${ITSDANGEROUS} /opt/tfc/"
+    t_sudo mv "$HOME/${CLICK}        /opt/tfc/"
+    t_sudo mv "$HOME/${FLASK}        /opt/tfc/"
 
     # Cryptography
-    t_sudo mv $HOME/${SIX}          /opt/tfc/
-    t_sudo mv $HOME/${PYCPARSER}    /opt/tfc/
-    t_sudo mv $HOME/${CFFI}         /opt/tfc/
-    t_sudo mv $HOME/${CRYPTOGRAPHY} /opt/tfc/
+    t_sudo mv "$HOME/${SIX}          /opt/tfc/"
+    t_sudo mv "$HOME/${PYCPARSER}    /opt/tfc/"
+    t_sudo mv "$HOME/${CFFI}         /opt/tfc/"
+    t_sudo mv "$HOME/${CRYPTOGRAPHY} /opt/tfc/"
 
     # PyNaCl
-    t_sudo mv $HOME/${PYNACL} /opt/tfc/
+    t_sudo mv "$HOME/${PYNACL} /opt/tfc/"
 }
 
 
@@ -305,8 +305,8 @@ function steps_before_network_kill {
     sudo torsocks git clone --depth 1 https://github.com/tfctesting/tfc.git /opt/tfc
 
     verify_tcb_requirements_files
-    sudo torsocks python3.7 -m pip download --no-cache-dir -r /opt/tfc/requirements-venv.txt --require-hashes --no-deps -d /opt/tfc/
-    sudo torsocks python3.7 -m pip download --no-cache-dir -r /opt/tfc/requirements.txt      --require-hashes --no-deps -d /opt/tfc/
+    sudo torsocks python3.7 -m pip download --no-cache-dir -r "/opt/tfc/requirements-venv.txt" --require-hashes --no-deps -d /opt/tfc/
+    sudo torsocks python3.7 -m pip download --no-cache-dir -r "/opt/tfc/requirements.txt"      --require-hashes --no-deps -d /opt/tfc/
 }
 
 

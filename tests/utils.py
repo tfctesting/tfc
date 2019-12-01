@@ -222,7 +222,8 @@ def assembly_packet_creator(
 
     if packet_type == MESSAGE:
 
-        assert isinstance(payload, str)
+        if not isinstance(payload, str):
+            raise SystemExit("Invalid payload type.")
 
         if message_header is None:
             if group_id is not None:

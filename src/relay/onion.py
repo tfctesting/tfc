@@ -51,10 +51,12 @@ if typing.TYPE_CHECKING:
 
 def get_available_port(min_port: int, max_port: int) -> int:
     """Find a random available port within the given range."""
+    sys_rand = random.SystemRandom()
+
     with socket.socket() as temp_sock:
         while True:
             try:
-                temp_sock.bind(('127.0.0.1', random.randint(min_port, max_port)))
+                temp_sock.bind(('127.0.0.1', sys_rand.randint(min_port, max_port)))
                 break
             except OSError:
                 pass
