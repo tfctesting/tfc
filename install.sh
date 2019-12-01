@@ -74,7 +74,7 @@ function verify_files {
     compare_digest 79f8272a2ab122a48c60630c965cd9d000dcafabf5ee9d69b1c33c58ec321feb17e4654dbbbf783cc8868ccdfe2777d60c6c3fc9ef16f8264d9fcf43724e83c2 '' tfc.png
     compare_digest 7e24d0962e0be4b8e206d9390e888caab10604f5bf1bb29af4b91c4c20e42bcc04ef4ef15ce3248ac68c0acfd2e391a96a5567d87d91223f7be63a05b9dbf843 '' tfc.py
     compare_digest 7ae1c2a393d96761843bea90edd569244bfb4e0f9943e68a4549ee46d93180d26d4101c2471c1a37785ccdfaef45eedecf15057c0a9cc6c056460c5f9a69d37b '' tfc.yml
-    compare_digest c6a61b3050624874cabc28cc51e947aa1ba629b0fd62564466b902cc433c08be6ae64d53bb2f33158e198c60ef2eb7c38b0bee1a64ef9659d101dee07557ddc7 '' uninstall.sh
+    compare_digest 50bb3db478184b954480069e40e47167f28f13e55aa87961eed36804c612a8c25e9ab0c0505cf5d36d790051ccfb465a2d7641ab3efb659503b634541d07e9c2 '' uninstall.sh
 
     compare_digest d4f503df2186db02641f54a545739d90974b6d9d920f76ad7e93fe1a38a68a85c167da6c19f7574d11fbb69e57d563845d174d420c55691bc2cd75a1a72806dc launchers/ terminator-config-local-test
     compare_digest 6e1c1082b7850e55fe19fb2ebe0f622dea16e038072adcfe1347305324d10b97bbc443d7ed1ff3ee141d647b4561874c7736ba449c1e8e34dccd4be9dab5db8b launchers/ TFC-Local-test.desktop
@@ -91,7 +91,7 @@ function verify_files {
     compare_digest ef32bf3c3bd7c57cf0521db9e41920e4aa60daf6d795592eebf23d4b8eca97b3b9a5ff3f11e89d1ec6b64212bf5b9a38c53bc6b87613b955f0e500e0de228093 src/common/ db_groups.py
     compare_digest 2a25018e319de5438883e2af2d81d863b7fd340d071cbaeb47f8f8a7f5c93e12db7d62bce22775f938ad5766fd476b0b8c404cef44f5f00a72214243f6f90034 src/common/ db_keys.py
     compare_digest 4fe9f2ea5a16d6b81aaf82abb86742b2df99101e72c32d046a04d2e0ff2a15216bb63a54d65965d313c8f1a453f579846c64b3f6a259e44b79342bad01e8bee8 src/common/ db_logs.py
-    compare_digest 85a33935f0af520f5a3e1a43bfb9574fc50bde00ea89048b062ed146cce5af790faa6f7d47d92833a7446005c79dd362b11da2b4f77d456a40d95bb5179a2789 src/common/ db_masterkey.py
+    compare_digest bf37ce3d4341c65a1ab04dc1fccbc77476695bfec34335679f188d225383fd54283f0b7157c5e2c46b2a64726cf7c60bfc45ead4ad702731b4704e3b9e04a00f src/common/ db_masterkey.py
     compare_digest c9000d541149835aa0812aa4b3108356d2f9465a767ea4273ece6340212eff287447af9247df4cea309ef7f8a5cfc887a01c8190523d1616164dd0f98718905f src/common/ db_onion.py
     compare_digest 18e86599ee813be8a38d5775cff7d423735677bc40f1758dcc676d683b29dd3b4ba3eba72a300a1c3fabc4d68ad211329cef0c934403909491cb981e4a1bcda8 src/common/ db_settings.py
     compare_digest 7a673e6feb7a5b2e3417d2c0eee82a59b3730a5d241938a84fd866dfc838c3cd63d7ef96772d43f62df740a2ba1001456746dd6c86e950484eac3ebabed498ce src/common/ encoding.py
@@ -119,7 +119,7 @@ function verify_files {
     compare_digest cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce47d0d13c5d85f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e src/relay/ __init__.py
     compare_digest 226836aeb214c5bef07bb66383fcf38285ee3921398dc8e1797c6f1dc8608114bbfde53b6d7a8823b1cebebffca8a10a26886823dd79326b7ab4929395a173c1 src/relay/ client.py
     compare_digest c32b5b78e28567d5ef0c6f41f1a3c69f6d31b1cb3b9d58faf6516fa27fc62e12b2f359f7b60176b5fe20a2d94725f5fd76a879d4b795513d1588f8ecf9bae5b0 src/relay/ commands.py
-    compare_digest aa40800d564da8ed1b662ac83f6fd6a85b9d9db2834066b10c5c166662d7cd8bf62a6a16c172ec62ebb3e89167400fb3a57e3ad9cd2d9c0a880affcfd1e5c0cb src/relay/ onion.py
+    compare_digest 8192da7588bf4c6cdd05facab8443b64b932d78181f632b6842b3d14b257b8d9b76d559414f197eb4b74946ac11544920aa1692926556471abd7f9da760fb5b4 src/relay/ onion.py
     compare_digest 401745f743525517c724558fd85051b0d4cc2359c1115fb1fa9099dc1fdfb98efbdf13f251da243626b496786e54fd7c2510a831b8d4ebf8cda18400f2f78896 src/relay/ server.py
     compare_digest f60e75581ec996098d4eff996fa959acf8a5c8b5790635b94fdf7892ea2958258c1fda8fa46aab7cca812c13b96cc653d528fb77a5d73784ab6e3583841e5602 src/relay/ tcb.py
 
@@ -257,11 +257,11 @@ function verify_tails_dependencies {
 
 function install_tails_setuptools {
     # Download setuptools package for Tails and then authenticate and install it.
-    torsocks python3.7 -m pip download --no-cache-dir -r /opt/tfc/requirements-setuptools.txt --require-hashes --no-deps -d $HOME/
-    t_sudo mv $HOME/${SETUPTOOLS} /opt/tfc/
+    torsocks python3.7 -m pip download --no-cache-dir -r "/opt/tfc/requirements-setuptools.txt" --require-hashes --no-deps -d $HOME/
+    t_sudo mv "$HOME/${SETUPTOOLS} /opt/tfc/"
     compare_digest 2e90929aa61c847e1d414d427b08403679ba5f512a56d58b92ee64d47e8a2c5da18e47126e5f59faca335b3a4b5ec9857aa323d866252546a6df42c3e3ef3884 '' ${SETUPTOOLS}
-    t_sudo python3.7 -m pip install /opt/tfc/${SETUPTOOLS}
-    t_sudo -E rm /opt/tfc/${SETUPTOOLS}
+    t_sudo python3.7 -m pip install "/opt/tfc/${SETUPTOOLS}"
+    t_sudo -E rm "/opt/tfc/${SETUPTOOLS}"
 }
 
 
