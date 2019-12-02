@@ -563,7 +563,7 @@ function check_tails_tor_version {
 function kill_network {
     # Kill network interfaces to protect the TCB from remote compromise.
     for interface in /sys/class/net/*; do
-        name=$("basename ${interface}")
+        name=$(basename "${interface}")
         if [[ $name != "lo" ]]; then
             echo "Disabling network interface ${name}"
             sudo ifconfig "${name}" down
