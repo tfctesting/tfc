@@ -19,55 +19,19 @@ You should have received a copy of the GNU General Public License
 along with TFC. If not, see <https://www.gnu.org/licenses/>.
 """
 
-import random
-import threading
 import time
 import typing
 
 from typing import Any, Dict, Optional, Tuple, Union
 
 from src.common.misc    import ignored
-from src.common.statics import (C_N_HEADER, NOISE_PACKET_BUFFER, PADDING_LENGTH, P_N_HEADER, STATIC,
-                                TM_NOISE_COMMAND_QUEUE, TM_NOISE_PACKET_QUEUE, TRAFFIC_MASKING)
+from src.common.statics import (C_N_HEADER, NOISE_PACKET_BUFFER, PADDING_LENGTH, P_N_HEADER,
+                                TM_NOISE_COMMAND_QUEUE, TM_NOISE_PACKET_QUEUE)
 
 if typing.TYPE_CHECKING:
     from multiprocessing        import Queue
     from src.common.db_contacts import ContactList
-    from src.common.db_settings import Settings
     QueueDict = Dict[bytes, Queue[Any]]
-
-
-class HideRunTime(object):
-    """Runtime hiding time context manager.
-
-    By joining a thread that sleeps for a longer time than it takes for
-    the function to run, this context manager hides the actual running
-    time of the function.
-
-    Note that random.SystemRandom() uses the Kernel CSPRNG (/dev/urandom),
-    not Python's weak PRNG based on Mersenne Twister:
-        https://docs.python.org/2/library/random.html#random.SystemRandom
-    """
-
-    def __init__(self,
-                 settings:   'Settings',
-                 delay_type: str   = STATIC,
-                 duration:   float = 0.0
-                 ) -> None:
-
-        if delay_type == TRAFFIC_MASKING:
-            self.length  = settings.tm_static_delay
-            self.length += random.SystemRandom().uniform(0, settings.tm_random_delay)
-
-        elif delay_type == STATIC:
-            self.length = duration
-
-    def __enter__(self) -> None:
-        self.timer = threading.Thread(target=time.sleep, args=(self.length,))
-        self.timer.start()
-
-    def __exit__(self, exc_type: Any, exc_value: Any, traceback: Any) -> None:
-        self.timer.join()
 
 
 def noise_loop(queues:       'QueueDict',

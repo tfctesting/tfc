@@ -25,10 +25,12 @@ import binascii
 import hashlib
 import math
 import os
+import random
 import shutil
 import subprocess
 import sys
 import time
+import threading
 import typing
 import zlib
 
@@ -41,7 +43,7 @@ from src.common.statics      import (BAUDS_PER_BYTE, COMMAND_LENGTH, CURSOR_UP_O
                                      DUMMY_CONTACT, DUMMY_GROUP, DUMMY_MEMBER, ECDHE, EVENT, EXIT, EXIT_QUEUE, LOCAL_ID,
                                      LOCAL_PUBKEY, ME, ONION_ADDRESS_CHECKSUM_ID, ONION_ADDRESS_CHECKSUM_LENGTH,
                                      ONION_ADDRESS_LENGTH, ONION_SERVICE_PUBLIC_KEY_LENGTH, PACKET_LENGTH,
-                                     PADDING_LENGTH, POWEROFF, PSK, RX, TAILS, TX, WIPE)
+                                     PADDING_LENGTH, POWEROFF, PSK, RX, STATIC, TAILS, TRAFFIC_MASKING, TX, WIPE)
 
 if typing.TYPE_CHECKING:
     from multiprocessing        import Queue
@@ -156,6 +158,39 @@ def get_terminal_height() -> int:
 def get_terminal_width() -> int:
     """Return the width of the terminal."""
     return shutil.get_terminal_size()[0]
+
+
+class HideRunTime(object):
+    """Runtime hiding time context manager.
+
+    By joining a thread that sleeps for a longer time than it takes for
+    the function to run, this context manager hides the actual running
+    time of the function.
+
+    Note that random.SystemRandom() uses the Kernel CSPRNG (/dev/urandom),
+    not Python's weak PRNG based on Mersenne Twister:
+        https://docs.python.org/2/library/random.html#random.SystemRandom
+    """
+
+    def __init__(self,
+                 settings:   Optional['Settings'] = None,
+                 delay_type: str                  = STATIC,
+                 duration:   float                = 0.0
+                 ) -> None:
+
+        if delay_type == TRAFFIC_MASKING and settings is not None:
+            self.length  = settings.tm_static_delay
+            self.length += random.SystemRandom().uniform(0, settings.tm_random_delay)
+
+        elif delay_type == STATIC:
+            self.length = duration
+
+    def __enter__(self) -> None:
+        self.timer = threading.Thread(target=time.sleep, args=(self.length,))
+        self.timer.start()
+
+    def __exit__(self, exc_type: Any, exc_value: Any, traceback: Any) -> None:
+        self.timer.join()
 
 
 @contextmanager

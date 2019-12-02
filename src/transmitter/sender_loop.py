@@ -25,7 +25,7 @@ import typing
 from typing import Any, Dict, List, Optional, Tuple
 
 from src.common.exceptions import FunctionReturn
-from src.common.misc       import ignored
+from src.common.misc       import HideRunTime, ignored
 from src.common.statics    import (COMMAND_PACKET_QUEUE, DATAGRAM_HEADER_LENGTH, EXIT, EXIT_QUEUE, KEY_MANAGEMENT_QUEUE,
                                    LOG_PACKET_QUEUE, MESSAGE_PACKET_QUEUE, RELAY_PACKET_QUEUE, SENDER_MODE_QUEUE,
                                    TM_COMMAND_PACKET_QUEUE, TM_FILE_PACKET_QUEUE, TM_MESSAGE_PACKET_QUEUE,
@@ -33,8 +33,7 @@ from src.common.statics    import (COMMAND_PACKET_QUEUE, DATAGRAM_HEADER_LENGTH,
                                    TRAFFIC_MASKING_QUEUE_CHECK_DELAY, UNENCRYPTED_EXIT_COMMAND, UNENCRYPTED_WIPE_COMMAND,
                                    WINDOW_SELECT_QUEUE, WIPE)
 
-from src.transmitter.packet          import send_packet
-from src.transmitter.traffic_masking import HideRunTime
+from src.transmitter.packet import send_packet
 
 if typing.TYPE_CHECKING:
     from multiprocessing        import Queue

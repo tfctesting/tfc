@@ -21,8 +21,6 @@ along with TFC. If not, see <https://www.gnu.org/licenses/>.
 
 import hmac
 import logging
-import threading
-import time
 import typing
 
 from io              import BytesIO
@@ -31,6 +29,7 @@ from typing          import Any, Dict, List, Optional
 
 from flask import Flask, send_file
 
+from src.common.misc    import HideRunTime
 from src.common.statics import CONTACT_REQ_QUEUE, F_TO_FLASK_QUEUE, M_TO_FLASK_QUEUE, URL_TOKEN_QUEUE
 
 if typing.TYPE_CHECKING:
@@ -40,25 +39,6 @@ if typing.TYPE_CHECKING:
     FileDict    = Dict[bytes, List[bytes]]
 
 
-class HideRunTime(object):
-    """Context manager that hides function runtime.
-
-    By joining a thread that sleeps for a longer time than it takes
-    for the function to run, this context manager hides the actual
-    running time of the function.
-    """
-
-    def __init__(self, length: float = 0.0) -> None:
-        self.length = length
-
-    def __enter__(self) -> None:
-        self.timer = threading.Thread(target=time.sleep, args=(self.length,))
-        self.timer.start()
-
-    def __exit__(self, exc_type: Any, exc_value: Any, traceback: Any) -> None:
-        self.timer.join()
-
-
 def validate_url_token(purp_url_token: str,
                        queues:         'QueueDict',
                        pub_key_dict:   'PubKeyDict'
@@ -66,7 +46,7 @@ def validate_url_token(purp_url_token: str,
     """Validate URL token using constant time comparison."""
     # This context manager hides the duration of URL_TOKEN_QUEUE check as
     # well as the number of accounts in pub_key_dict when iterating over keys.
-    with HideRunTime(0.01):
+    with HideRunTime(duration=0.01):
 
         # Check if the client has derived new URL token for contact(s).
         # If yes, add the url tokens to pub_key_dict to have up-to-date
