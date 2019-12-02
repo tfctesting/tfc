@@ -210,8 +210,7 @@ class MasterKey(OrigMasterKey):
         """Create mock master key bytes."""
         if getpass.getpass() == 'test_password':
             return self.master_key
-        else:
-            return SYMMETRIC_KEY_LENGTH * b'f'
+        return SYMMETRIC_KEY_LENGTH * b'f'
 
 
 class OnionService(OrigOnionService):
