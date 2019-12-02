@@ -64,7 +64,7 @@ from tests.utils import (
 
 
 class TestRxWindow(TFCTestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         """Pre-test actions."""
         self.contact_list = ContactList(nicks=["Alice", "Bob", "Charlie", LOCAL_ID])
         self.group_list = GroupList(groups=["test_group", "test_group2"])
@@ -87,16 +87,16 @@ class TestRxWindow(TFCTestCase):
             uid, self.contact_list, self.group_list, self.settings, self.packet_list
         )
 
-    def test_command_window_creation(self):
+    def test_command_window_creation(self) -> None:
         window = self.create_window(WIN_UID_COMMAND)
         self.assertEqual(window.type, WIN_TYPE_COMMAND)
         self.assertEqual(window.name, WIN_TYPE_COMMAND)
 
-    def test_file_window_creation(self):
+    def test_file_window_creation(self) -> None:
         window = self.create_window(WIN_UID_FILE)
         self.assertEqual(window.type, WIN_TYPE_FILE)
 
-    def test_contact_window_creation(self):
+    def test_contact_window_creation(self) -> None:
         window = self.create_window(nick_to_pub_key("Alice"))
         self.assertEqual(window.type, WIN_TYPE_CONTACT)
         self.assertEqual(
@@ -104,7 +104,7 @@ class TestRxWindow(TFCTestCase):
         )
         self.assertEqual(window.name, "Alice")
 
-    def test_group_window_creation(self):
+    def test_group_window_creation(self) -> None:
         window = self.create_window(group_name_to_group_id("test_group"))
         self.assertEqual(window.type, WIN_TYPE_GROUP)
         self.assertEqual(
@@ -112,24 +112,24 @@ class TestRxWindow(TFCTestCase):
         )
         self.assertEqual(window.name, "test_group")
 
-    def test_invalid_uid_raises_fr(self):
-        self.assert_fr(
+    def test_invalid_uid_raises_fr(self) -> None:
+        self.assert_se(
             "Invalid window 'mfqwcylbmfqwcylbmfqwcylbmfqwcylbmfqwcylbmfqwcylbmfqwbfad'.",
             self.create_window,
             ONION_SERVICE_PUBLIC_KEY_LENGTH * b"a",
         )
 
-        self.assert_fr(
+        self.assert_se(
             "Invalid window '2dnAMoWNfTXAJ'.",
             self.create_window,
             GROUP_ID_LENGTH * b"a",
         )
 
-        self.assert_fr(
+        self.assert_se(
             "Invalid window '<unable to encode>'.", self.create_window, b"bad_uid"
         )
 
-    def test_window_iterates_over_message_tuples(self):
+    def test_window_iterates_over_message_tuples(self) -> None:
         # Setup
         window = self.create_window(nick_to_pub_key("Alice"))
         window.message_log = 5 * [
@@ -156,7 +156,7 @@ class TestRxWindow(TFCTestCase):
                 ),
             )
 
-    def test_len_returns_number_of_messages_in_window(self):
+    def test_len_returns_number_of_messages_in_window(self) -> None:
         # Setup
         window = self.create_window(nick_to_pub_key("Alice"))
         window.message_log = 5 * [
@@ -173,7 +173,7 @@ class TestRxWindow(TFCTestCase):
         # Test
         self.assertEqual(len(window), 5)
 
-    def test_remove_contacts(self):
+    def test_remove_contacts(self) -> None:
         # Setup
         window = self.create_window(group_name_to_group_id("test_group"))
 
@@ -190,7 +190,7 @@ class TestRxWindow(TFCTestCase):
         )
         self.assertEqual(len(window.window_contacts), 1)
 
-    def test_add_contacts(self):
+    def test_add_contacts(self) -> None:
         # Setup
         window = self.create_window(group_name_to_group_id("test_group"))
         window.window_contacts = [
@@ -209,7 +209,7 @@ class TestRxWindow(TFCTestCase):
         )
         self.assertEqual(len(window.window_contacts), 2)
 
-    def test_reset_window(self):
+    def test_reset_window(self) -> None:
         # Setup
         window = self.create_window(group_name_to_group_id("test_group"))
         window.message_log = [
@@ -243,12 +243,12 @@ class TestRxWindow(TFCTestCase):
         self.assertIsNone(window.reset_window())
         self.assertEqual(len(window), 0)
 
-    def test_has_contact(self):
+    def test_has_contact(self) -> None:
         window = self.create_window(group_name_to_group_id("test_group"))
         self.assertTrue(window.has_contact(nick_to_pub_key("Alice")))
         self.assertFalse(window.has_contact(nick_to_pub_key("DoesNotExist")))
 
-    def test_create_handle_dict(self):
+    def test_create_handle_dict(self) -> None:
         # Setup
         window = self.create_window(group_name_to_group_id("test_group"))
         message_log = [
@@ -323,7 +323,7 @@ class TestRxWindow(TFCTestCase):
             },
         )
 
-    def test_get_command_handle(self):
+    def test_get_command_handle(self) -> None:
         # Setup
         window = self.create_window(WIN_UID_COMMAND)
         window.is_active = True
@@ -334,7 +334,7 @@ class TestRxWindow(TFCTestCase):
             f"{self.time} -!- ",
         )
 
-    def test_get_contact_handle(self):
+    def test_get_contact_handle(self) -> None:
         # Setup
         window = self.create_window(nick_to_pub_key("Alice"))
         window.is_active = True
@@ -360,7 +360,7 @@ class TestRxWindow(TFCTestCase):
             f"{self.time} Alice (private message): ",
         )
 
-    def test_get_group_contact_handle(self):
+    def test_get_group_contact_handle(self) -> None:
         # Setup
         window = self.create_window(group_name_to_group_id("test_group"))
         window.is_active = True
@@ -396,7 +396,7 @@ class TestRxWindow(TFCTestCase):
         )
 
     @mock.patch("time.sleep", return_value=None)
-    def test_print_to_inactive_window_preview_on_short_message(self, _):
+    def test_print_to_inactive_window_preview_on_short_message(self, _) -> None:
         # Setup
         window = self.create_window(nick_to_pub_key("Alice"))
         window.handle_dict = {nick_to_pub_key("Alice"): "Alice"}
@@ -420,7 +420,7 @@ class TestRxWindow(TFCTestCase):
         )
 
     @mock.patch("time.sleep", return_value=None)
-    def test_print_to_inactive_window_preview_on_long_message(self, _):
+    def test_print_to_inactive_window_preview_on_long_message(self, _) -> None:
         # Setup
         window = self.create_window(nick_to_pub_key("Alice"))
         window.is_active = False
@@ -452,7 +452,7 @@ class TestRxWindow(TFCTestCase):
         )
 
     @mock.patch("time.sleep", return_value=None)
-    def test_print_to_inactive_window_preview_off(self, _):
+    def test_print_to_inactive_window_preview_off(self, _) -> None:
         # Setup
         window = self.create_window(nick_to_pub_key("Alice"))
         window.is_active = False
@@ -475,7 +475,7 @@ class TestRxWindow(TFCTestCase):
             msg_tuple,
         )
 
-    def test_print_to_active_window_no_date_change(self):
+    def test_print_to_active_window_no_date_change(self) -> None:
         # Setup
         window = self.create_window(nick_to_pub_key("Alice"))
         window.previous_msg_ts = datetime.fromtimestamp(1502750000)
@@ -498,7 +498,7 @@ class TestRxWindow(TFCTestCase):
             msg_tuple,
         )
 
-    def test_print_to_active_window_with_date_change_and_whisper(self):
+    def test_print_to_active_window_with_date_change_and_whisper(self) -> None:
         # Setup
         window = self.create_window(nick_to_pub_key("Alice"))
         window.previous_msg_ts = datetime.fromtimestamp(1501750000)
@@ -525,7 +525,9 @@ class TestRxWindow(TFCTestCase):
             msg_tuple,
         )
 
-    def test_print_to_active_window_with_date_change_and_whisper_empty_message(self):
+    def test_print_to_active_window_with_date_change_and_whisper_empty_message(
+        self,
+    ) -> None:
         # Setup
         window = self.create_window(nick_to_pub_key("Alice"))
         window.previous_msg_ts = datetime.fromtimestamp(1501750000)
@@ -552,7 +554,7 @@ class TestRxWindow(TFCTestCase):
         )
 
     @mock.patch("time.sleep", return_value=None)
-    def test_print_new(self, _):
+    def test_print_new(self, _) -> None:
         # Setup
         window = self.create_window(nick_to_pub_key("Alice"))
 
@@ -569,7 +571,7 @@ class TestRxWindow(TFCTestCase):
         self.assertEqual(len(window.message_log), 1)
         self.assertEqual(window.handle_dict[nick_to_pub_key("Bob")], "Bob")
 
-    def test_redraw_message_window(self):
+    def test_redraw_message_window(self) -> None:
         # Setup
         window = self.create_window(nick_to_pub_key("Alice"))
         window.is_active = True
@@ -597,7 +599,7 @@ class TestRxWindow(TFCTestCase):
         )
         self.assertEqual(window.unread_messages, 0)
 
-    def test_redraw_empty_window(self):
+    def test_redraw_empty_window(self) -> None:
         # Setup
         window = self.create_window(nick_to_pub_key("Alice"))
         window.is_active = True
@@ -613,7 +615,7 @@ class TestRxWindow(TFCTestCase):
         )
 
     @mock.patch("time.sleep", return_value=None)
-    def test_redraw_file_win(self, _):
+    def test_redraw_file_win(self, _) -> None:
         # Setup
         self.packet_list.packets = [
             Packet(
@@ -649,7 +651,7 @@ testfile2.txt    15.0KB     Charlie    7.00%
         )
 
     @mock.patch("time.sleep", return_value=None)
-    def test_redraw_empty_file_win(self, _):
+    def test_redraw_empty_file_win(self, _) -> None:
         # Setup
         self.packet_list.packet_l = []
 
@@ -666,7 +668,7 @@ testfile2.txt    15.0KB     Charlie    7.00%
 
 
 class TestWindowList(TFCTestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         """Pre-test actions."""
         self.settings = Settings()
         self.contact_list = ContactList(nicks=["Alice", "Bob", "Charlie", LOCAL_ID])
@@ -685,13 +687,13 @@ class TestWindowList(TFCTestCase):
             self.settings, self.contact_list, self.group_list, self.packet_list
         )
 
-    def create_window(self, uid):
+    def create_window(self, uid) -> RxWindow:
         """Create new RxWindow object."""
         return RxWindow(
             uid, self.contact_list, self.group_list, self.settings, self.packet_list
         )
 
-    def test_active_win_is_none_if_local_key_is_not_present(self):
+    def test_active_win_is_none_if_local_key_is_not_present(self) -> None:
         # Setup
         self.contact_list.contacts = []
 
@@ -701,21 +703,21 @@ class TestWindowList(TFCTestCase):
         )
         self.assertEqual(window_list.active_win, None)
 
-    def test_active_win_is_command_win_if_local_key_is_present(self):
+    def test_active_win_is_command_win_if_local_key_is_present(self) -> None:
         # Setup
         self.contact_list.contacts = [create_contact(LOCAL_ID)]
 
         # Test
         self.assertEqual(self.window_list.active_win.uid, WIN_UID_COMMAND)
 
-    def test_window_list_iterates_over_windows(self):
+    def test_window_list_iterates_over_windows(self) -> None:
         for w in self.window_list:
             self.assertIsInstance(w, RxWindow)
 
-    def test_len_returns_number_of_windows(self):
+    def test_len_returns_number_of_windows(self) -> None:
         self.assertEqual(len(self.window_list), 7)
 
-    def test_group_windows(self):
+    def test_group_windows(self) -> None:
         # Setup
         self.window_list.windows = [
             self.create_window(group_name_to_group_id(g))
@@ -726,7 +728,7 @@ class TestWindowList(TFCTestCase):
         for g in self.window_list.get_group_windows():
             self.assertEqual(g.type, WIN_TYPE_GROUP)
 
-    def test_has_window(self):
+    def test_has_window(self) -> None:
         # Setup
         self.window_list.windows = [
             self.create_window(group_name_to_group_id(g))
@@ -744,7 +746,7 @@ class TestWindowList(TFCTestCase):
             self.window_list.has_window(group_name_to_group_id("test_group3"))
         )
 
-    def test_remove_window(self):
+    def test_remove_window(self) -> None:
         # Setup
         self.window_list.windows = [
             self.create_window(group_name_to_group_id(g))
@@ -762,7 +764,7 @@ class TestWindowList(TFCTestCase):
         )
         self.assertEqual(len(self.window_list), 1)
 
-    def test_select_rx_window(self):
+    def test_select_rx_window(self) -> None:
         # Setup
         self.window_list.windows = [
             self.create_window(group_name_to_group_id(g))
@@ -786,7 +788,7 @@ class TestWindowList(TFCTestCase):
         self.assertTrue(tg2_win.is_active)
 
     @mock.patch("time.sleep", return_value=None)
-    def test_select_rx_file_window(self, _):
+    def test_select_rx_file_window(self, _) -> None:
         # Setup
         self.window_list.windows = [self.create_window(WIN_UID_FILE)]
         self.window_list.windows += [
@@ -823,7 +825,7 @@ testfile.txt    100.0KB    Bob       50.00%
         self.assertFalse(tg_win.is_active)
         self.assertTrue(self.window_list.get_window(WIN_UID_FILE).is_active)
 
-    def test_get_command_window(self):
+    def test_get_command_window(self) -> None:
         # Setup
         self.window_list.windows = [
             self.create_window(uid)
@@ -838,7 +840,7 @@ testfile.txt    100.0KB    Bob       50.00%
         # Test
         self.assertEqual(self.window_list.get_command_window().uid, WIN_UID_COMMAND)
 
-    def test_get_non_existing_window(self):
+    def test_get_non_existing_window(self) -> None:
         # Setup
         self.window_list.windows = [
             self.create_window(uid)

@@ -97,7 +97,7 @@ from tests.utils import tear_queue, TFCTestCase
 
 
 class TestProcessCommand(TFCTestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         """Pre-test actions."""
         self.unit_test_dir = cd_unit_test()
         self.ts = datetime.now()
@@ -124,24 +124,24 @@ class TestProcessCommand(TFCTestCase):
             self.exit_queue,
         )
 
-    def tearDown(self):
+    def tearDown(self) -> None:
         """Post-test actions."""
         cleanup(self.unit_test_dir)
         tear_queue(self.exit_queue)
 
-    def test_incomplete_command_raises_fr(self):
+    def test_incomplete_command_raises_fr(self) -> None:
         packet = assembly_packet_creator(
             COMMAND, b"test_command", s_header_override=C_L_HEADER, encrypt_packet=True
         )[0]
-        self.assert_fr(
+        self.assert_se(
             "Incomplete command.", process_command, self.ts, packet, *self.args
         )
 
-    def test_invalid_command_header(self):
+    def test_invalid_command_header(self) -> None:
         packet = assembly_packet_creator(
             COMMAND, b"invalid_header", encrypt_packet=True
         )[0]
-        self.assert_fr(
+        self.assert_se(
             "Error: Received an invalid command.",
             process_command,
             self.ts,
@@ -149,15 +149,15 @@ class TestProcessCommand(TFCTestCase):
             *self.args,
         )
 
-    def test_process_command(self):
+    def test_process_command(self) -> None:
         packet = assembly_packet_creator(COMMAND, LOG_REMOVE, encrypt_packet=True)[0]
-        self.assert_fr(
+        self.assert_se(
             f"No log database available.", process_command, self.ts, packet, *self.args
         )
 
 
 class TestWinActivity(TFCTestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         """Pre-test actions."""
         self.window_list = WindowList()
         self.window_list.windows = [
@@ -166,7 +166,7 @@ class TestWinActivity(TFCTestCase):
         ]
 
     @mock.patch("time.sleep", return_value=None)
-    def test_function(self, _):
+    def test_function(self, _) -> None:
         self.assert_prints(
             f"""\
                               ┌─────────────────┐                               
@@ -181,7 +181,7 @@ class TestWinActivity(TFCTestCase):
 
 
 class TestWinSelect(unittest.TestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         """Pre-test actions."""
         self.window_list = WindowList()
         self.window_list.windows = [
@@ -189,7 +189,7 @@ class TestWinSelect(unittest.TestCase):
             RxWindow(uid=nick_to_pub_key("Bob"), name="Bob"),
         ]
 
-    def test_window_selection(self):
+    def test_window_selection(self) -> None:
         self.assertIsNone(win_select(nick_to_pub_key("Alice"), self.window_list))
         self.assertEqual(self.window_list.active_win.name, "Alice")
 
@@ -201,7 +201,7 @@ class TestWinSelect(unittest.TestCase):
 
 
 class TestResetScreen(unittest.TestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         """Pre-test actions."""
         self.cmd_data = nick_to_pub_key("Alice")
         self.window_list = WindowList()
@@ -215,7 +215,7 @@ class TestResetScreen(unittest.TestCase):
         ]
 
     @mock.patch("src.common.misc.reset_terminal", return_value=None)
-    def test_screen_reset(self, reset):
+    def test_screen_reset(self, reset) -> None:
         # Ensure there is a message to be removed from the ephemeral message log
         self.assertEqual(len(self.window.message_log), 1)
 
@@ -229,21 +229,21 @@ class TestResetScreen(unittest.TestCase):
 
 
 class TestExitTFC(unittest.TestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         """Pre-test actions."""
         self.exit_queue = Queue()
 
-    def tearDown(self):
+    def tearDown(self) -> None:
         """Post-test actions."""
         tear_queue(self.exit_queue)
 
-    def test_function(self):
+    def test_function(self) -> None:
         self.assertIsNone(exit_tfc(self.exit_queue))
         self.assertEqual(self.exit_queue.qsize(), 1)
 
 
 class TestLogCommand(TFCTestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         """Pre-test actions."""
         self.unit_test_dir = cd_unit_test()
         self.cmd_data = int_to_bytes(1) + nick_to_pub_key("Bob")
@@ -271,23 +271,23 @@ class TestLogCommand(TFCTestCase):
         time_float = struct.unpack("<L", bytes.fromhex("08ceae02"))[0]
         self.time = datetime.fromtimestamp(time_float).strftime("%H:%M:%S.%f")[:-4]
 
-    def tearDown(self):
+    def tearDown(self) -> None:
         """Post-test actions."""
         cleanup(self.unit_test_dir)
         with ignored(OSError):
             os.remove("Receiver - Plaintext log (None)")
 
-    def test_print(self):
+    def test_print(self) -> None:
         # Setup
         os.remove(self.log_file)
 
         # Test
-        self.assert_fr(
+        self.assert_se(
             f"No log database available.", log_command, self.cmd_data, *self.args
         )
 
     @mock.patch("struct.pack", return_value=bytes.fromhex("08ceae02"))
-    def test_export(self, _):
+    def test_export(self, _) -> None:
         # Setup
         for p in assembly_packet_creator(MESSAGE, "A short message"):
             write_log_entry(
@@ -316,7 +316,7 @@ Log file of 1 most recent message(s) to/from contact Bob
 
 
 class TestRemoveLog(TFCTestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         """Pre-test actions."""
         self.unit_test_dir = cd_unit_test()
         self.win_name = nick_to_pub_key("Alice")
@@ -325,12 +325,12 @@ class TestRemoveLog(TFCTestCase):
         self.settings = Settings()
         self.master_key = MasterKey()
 
-    def tearDown(self):
+    def tearDown(self) -> None:
         """Post-test actions."""
         cleanup(self.unit_test_dir)
 
-    def test_remove_log_file(self):
-        self.assert_fr(
+    def test_remove_log_file(self) -> None:
+        self.assert_se(
             f"No log database available.",
             remove_log,
             self.win_name,
@@ -342,7 +342,7 @@ class TestRemoveLog(TFCTestCase):
 
 
 class TestChMasterKey(TFCTestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         """Pre-test actions."""
         self.unit_test_dir = cd_unit_test()
         self.ts = datetime.now()
@@ -364,7 +364,7 @@ class TestChMasterKey(TFCTestCase):
         self.log_file = f"{DIR_USER_DATA}{self.settings.software_operation}_logs"
         self.tfc_log_database = MessageLog(self.log_file, self.master_key.master_key)
 
-    def tearDown(self):
+    def tearDown(self) -> None:
         """Post-test actions."""
         cleanup(self.unit_test_dir)
 
@@ -383,7 +383,7 @@ class TestChMasterKey(TFCTestCase):
     @mock.patch("multiprocessing.cpu_count", return_value=1)
     @mock.patch("getpass.getpass", side_effect=["test_password", "a", "a"])
     @mock.patch("time.sleep", return_value=None)
-    def test_master_key_change(self, *_):
+    def test_master_key_change(self, *_) -> None:
         # Setup
         write_log_entry(
             F_S_HEADER + bytes(PADDING_LENGTH),
@@ -445,19 +445,19 @@ class TestChMasterKey(TFCTestCase):
     @mock.patch("multiprocessing.cpu_count", return_value=1)
     @mock.patch("getpass.getpass", return_value="a")
     @mock.patch("time.sleep", return_value=None)
-    def test_invalid_password_raises_function_return(self, *_):
+    def test_invalid_password_raises_function_return(self, *_) -> None:
         self.assertEqual(self.master_key.master_key, bytes(SYMMETRIC_KEY_LENGTH))
-        self.assert_fr("Error: Invalid password.", ch_master_key, *self.args)
+        self.assert_se("Error: Invalid password.", ch_master_key, *self.args)
 
     @mock.patch("getpass.getpass", return_value="a")
     @mock.patch("time.sleep", return_value=None)
     @mock.patch("os.getrandom", side_effect=KeyboardInterrupt)
-    def test_keyboard_interrupt_raises_fr(self, *_):
-        self.assert_fr("Error: Invalid password.", ch_master_key, *self.args)
+    def test_keyboard_interrupt_raises_fr(self, *_) -> None:
+        self.assert_se("Error: Invalid password.", ch_master_key, *self.args)
 
 
 class TestChNick(TFCTestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         """Pre-test actions."""
         self.ts = datetime.now()
         self.contact_list = ContactList(nicks=["Alice"])
@@ -467,20 +467,20 @@ class TestChNick(TFCTestCase):
         self.window = self.window_list.get_window(nick_to_pub_key("Alice"))
         self.window.type = WIN_TYPE_CONTACT
 
-    def test_unknown_account_raises_fr(self):
+    def test_unknown_account_raises_fr(self) -> None:
         # Setup
         cmd_data = nick_to_pub_key("Bob") + b"Bob_"
 
         # Test
         trunc_addr = nick_to_short_address("Bob")
-        self.assert_fr(
+        self.assert_se(
             f"Error: Receiver has no contact '{trunc_addr}' to rename.",
             ch_nick,
             cmd_data,
             *self.args,
         )
 
-    def test_nick_change(self):
+    def test_nick_change(self) -> None:
         # Setup
         cmd_data = nick_to_pub_key("Alice") + b"Alice_"
 
@@ -494,7 +494,7 @@ class TestChNick(TFCTestCase):
 
 
 class TestChSetting(TFCTestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         """Pre-test actions."""
         self.ts = datetime.now()
         self.window_list = WindowList()
@@ -513,27 +513,27 @@ class TestChSetting(TFCTestCase):
             self.gateway,
         )
 
-    def test_invalid_data_raises_fr(self):
+    def test_invalid_data_raises_fr(self) -> None:
         # Setup
         self.settings.key_list = [""]
 
         # Test
         cmd_data = b"setting" + b"True"
-        self.assert_fr(
+        self.assert_se(
             "Error: Received invalid setting data.", ch_setting, cmd_data, *self.args
         )
 
-    def test_invalid_setting_raises_fr(self):
+    def test_invalid_setting_raises_fr(self) -> None:
         # Setup
         self.settings.key_list = [""]
 
         # Test
         cmd_data = b"setting" + US_BYTE + b"True"
-        self.assert_fr(
+        self.assert_se(
             "Error: Invalid setting 'setting'.", ch_setting, cmd_data, *self.args
         )
 
-    def test_databases(self):
+    def test_databases(self) -> None:
         # Setup
         self.settings.key_list = [
             "max_number_of_group_members",
@@ -547,7 +547,7 @@ class TestChSetting(TFCTestCase):
         cmd_data = b"max_number_of_contacts" + US_BYTE + b"30"
         self.assertIsNone(ch_setting(cmd_data, *self.args))
 
-    def test_change_gateway_setting(self):
+    def test_change_gateway_setting(self) -> None:
         # Setup
         self.settings.key_list = [
             "max_number_of_group_members",
@@ -560,7 +560,7 @@ class TestChSetting(TFCTestCase):
 
 
 class TestChContactSetting(TFCTestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         """Pre-test actions."""
         self.ts = datetime.fromtimestamp(1502750000)
         self.contact_list = ContactList(nicks=["Alice", "Bob"])
@@ -570,7 +570,7 @@ class TestChContactSetting(TFCTestCase):
         )
         self.args = self.ts, self.window_list, self.contact_list, self.group_list
 
-    def test_invalid_window_raises_fr(self):
+    def test_invalid_window_raises_fr(self) -> None:
         # Setup
         cmd_data = ENABLE + nick_to_pub_key("Bob")
         header = CH_LOGGING
@@ -579,7 +579,7 @@ class TestChContactSetting(TFCTestCase):
             contact_list=self.contact_list, group_list=self.group_list
         )
         # Test
-        self.assert_fr(
+        self.assert_se(
             f"Error: Found no window for '{nick_to_short_address('Bob')}'.",
             ch_contact_s,
             cmd_data,
@@ -587,7 +587,7 @@ class TestChContactSetting(TFCTestCase):
             header,
         )
 
-    def test_setting_change_contact(self):
+    def test_setting_change_contact(self) -> None:
         # Setup
         self.window = self.window_list.get_window(nick_to_pub_key("Bob"))
         self.window.type = WIN_TYPE_CONTACT
@@ -606,7 +606,7 @@ class TestChContactSetting(TFCTestCase):
                 self.assertIsNone(ch_contact_s(cmd_data, *self.args, header))
                 self.assertEqual(bob.__getattribute__(attr), (s == ENABLE))
 
-    def test_setting_change_group(self):
+    def test_setting_change_group(self) -> None:
         # Setup
         self.window = self.window_list.get_window(group_name_to_group_id("test_group"))
         self.window.type = WIN_TYPE_GROUP
@@ -633,7 +633,7 @@ class TestChContactSetting(TFCTestCase):
                     for m in self.group_list.get_group("test_group").members:
                         self.assertEqual(m.file_reception, (s == ENABLE))
 
-    def test_setting_change_all(self):
+    def test_setting_change_all(self) -> None:
         # Setup
         self.window = self.window_list.get_window(nick_to_pub_key("Bob"))
         self.window.type = WIN_TYPE_CONTACT
@@ -662,7 +662,7 @@ class TestChContactSetting(TFCTestCase):
 
 
 class TestContactRemove(TFCTestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         """Pre-test actions."""
         self.unit_test_dir = cd_unit_test()
         self.ts = datetime.now()
@@ -672,18 +672,18 @@ class TestContactRemove(TFCTestCase):
         self.master_key = MasterKey()
         self.args = self.cmd_data, self.ts, self.window_list
 
-    def tearDown(self):
+    def tearDown(self) -> None:
         """Post-test actions."""
         cleanup(self.unit_test_dir)
 
-    def test_no_contact_raises_fr(self):
+    def test_no_contact_raises_fr(self) -> None:
         # Setup
         contact_list = ContactList(nicks=["Alice"])
         group_list = GroupList(groups=[])
         key_list = KeyList(nicks=["Alice"])
 
         # Test
-        self.assert_fr(
+        self.assert_se(
             f"Receiver has no account '{nick_to_short_address('Bob')}' to remove.",
             contact_rem,
             *self.args,
@@ -694,7 +694,7 @@ class TestContactRemove(TFCTestCase):
             self.master_key,
         )
 
-    def test_successful_removal(self):
+    def test_successful_removal(self) -> None:
         # Setup
         contact_list = ContactList(nicks=["Alice", "Bob"])
         contact = contact_list.get_contact_by_address_or_nick("Bob")
@@ -703,7 +703,7 @@ class TestContactRemove(TFCTestCase):
         self.window_list.windows = [RxWindow(type=WIN_TYPE_GROUP)]
 
         # Test
-        self.assert_fr(
+        self.assert_se(
             "No log database available.",
             contact_rem,
             *self.args,
@@ -729,7 +729,7 @@ class TestWipe(unittest.TestCase):
         tear_queue(self.exit_queue)
 
     @mock.patch("src.common.misc.reset_terminal", return_value=None)
-    def test_wipe_command(self, _):
+    def test_wipe_command(self, _) -> None:
         self.assertIsNone(wipe(self.exit_queue))
         self.assertEqual(self.exit_queue.get(), WIPE)
 

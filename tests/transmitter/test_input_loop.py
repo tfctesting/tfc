@@ -65,7 +65,7 @@ class TestInputLoop(unittest.TestCase):
         "/exit",
     ]  # Enter exit command
 
-    def setUp(self):
+    def setUp(self) -> None:
         """Pre-test actions."""
         self.settings = Settings(disable_gui_dialog=True)
         self.gateway = Gateway()
@@ -75,7 +75,7 @@ class TestInputLoop(unittest.TestCase):
         self.onion_service = OnionService()
         self.queues = gen_queue_dict()
 
-    def tearDown(self):
+    def tearDown(self) -> None:
         """Post-test actions."""
         tear_queues(self.queues)
 
@@ -88,7 +88,7 @@ class TestInputLoop(unittest.TestCase):
     @mock.patch("sys.stdin", MagicMock())
     @mock.patch("time.sleep", return_value=None)
     @mock.patch("src.common.misc.reset_terminal", return_value=None)
-    def test_input_loop_functions(self, *_):
+    def test_input_loop_functions(self, *_) -> None:
         with self.assertRaises(SystemExit):
             self.assertIsNone(
                 input_loop(

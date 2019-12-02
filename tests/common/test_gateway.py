@@ -47,12 +47,12 @@ from tests.utils import cd_unit_test, cleanup, gen_queue_dict, tear_queues, TFCT
 
 
 class TestGatewayLoop(unittest.TestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         """Pre-test actions."""
         self.unit_test_dir = cd_unit_test()
         self.queues = gen_queue_dict()
 
-    def tearDown(self):
+    def tearDown(self) -> None:
         """Post-test actions."""
         cleanup(self.unit_test_dir)
         tear_queues(self.queues)
@@ -63,7 +63,7 @@ class TestGatewayLoop(unittest.TestCase):
             accept=lambda: MagicMock(recv=MagicMock(return_value="message"))
         ),
     )
-    def test_loop(self, _):
+    def test_loop(self, _) -> None:
         gateway = Gateway(operation=RX, local_test=True, dd_sockets=False)
         self.assertIsNone(gateway_loop(self.queues, gateway, unit_test=True))
 
@@ -73,12 +73,12 @@ class TestGatewayLoop(unittest.TestCase):
 
 
 class TestGatewaySerial(TFCTestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         """Pre-test actions."""
         self.unit_test_dir = cd_unit_test()
         self.settings = Settings(session_usb_serial_adapter=True)
 
-    def tearDown(self):
+    def tearDown(self) -> None:
         """Post-test actions."""
         cleanup(self.unit_test_dir)
 
@@ -86,7 +86,7 @@ class TestGatewaySerial(TFCTestCase):
     @mock.patch("serial.Serial", return_value=MagicMock())
     @mock.patch("os.listdir", side_effect=[["ttyUSB0"], ["ttyUSB0"]])
     @mock.patch("builtins.input", side_effect=["Yes"])
-    def test_search_and_establish_serial(self, *_):
+    def test_search_and_establish_serial(self, *_) -> None:
         gateway = Gateway(operation=RX, local_test=False, dd_sockets=False)
         self.assertIsInstance(gateway.rs, RSCodec)
         self.assertIs(gateway.tx_serial, gateway.rx_serial)
@@ -95,7 +95,7 @@ class TestGatewaySerial(TFCTestCase):
     @mock.patch("serial.Serial", side_effect=SerialException)
     @mock.patch("os.listdir", side_effect=[["ttyUSB0"], ["ttyUSB0"]])
     @mock.patch("builtins.input", side_effect=["Yes"])
-    def test_serialexception_during_establish_exists(self, *_):
+    def test_serialexception_during_establish_exists(self, *_) -> None:
         with self.assertRaises(SystemExit):
             Gateway(operation=RX, local_test=False, dd_sockets=False)
 
@@ -106,7 +106,7 @@ class TestGatewaySerial(TFCTestCase):
     )
     @mock.patch("os.listdir", side_effect=[["ttyUSB0"], ["ttyUSB0"], ["ttyUSB0"]])
     @mock.patch("builtins.input", side_effect=["Yes"])
-    def test_write_serial_(self, *_):
+    def test_write_serial_(self, *_) -> None:
         gateway = Gateway(operation=RX, local_test=False, dd_sockets=False)
         self.assertIsNone(gateway.write(b"message"))
 
@@ -123,7 +123,7 @@ class TestGatewaySerial(TFCTestCase):
     @mock.patch("builtins.input", side_effect=["Yes"])
     def test_serial_uninitialized_serial_interface_for_read_raises_critical_error(
         self, *_
-    ):
+    ) -> None:
         # Setup
         gateway = Gateway(operation=RX, local_test=False, dd_sockets=False)
         gateway.rx_serial = None
@@ -138,7 +138,7 @@ class TestGatewaySerial(TFCTestCase):
     @mock.patch("builtins.input", side_effect=["Yes"])
     def test_serial_uninitialized_socket_interface_for_read_raises_critical_error(
         self, *_
-    ):
+    ) -> None:
         # Setup
         gateway = Gateway(operation=RX, local_test=True, dd_sockets=False)
         gateway.rx_socket = None
@@ -157,7 +157,7 @@ class TestGatewaySerial(TFCTestCase):
     )
     @mock.patch("os.listdir", side_effect=[["ttyUSB0"], ["ttyUSB0"], ["ttyUSB0"]])
     @mock.patch("builtins.input", side_effect=["Yes"])
-    def test_read_socket(self, *_):
+    def test_read_socket(self, *_) -> None:
         gateway = Gateway(operation=RX, local_test=True, dd_sockets=False)
         data = gateway.read()
         self.assertEqual(data, b"12")
@@ -174,7 +174,7 @@ class TestGatewaySerial(TFCTestCase):
     )
     @mock.patch("os.listdir", side_effect=[["ttyUSB0"], ["ttyUSB0"], ["ttyUSB0"]])
     @mock.patch("builtins.input", side_effect=["Yes"])
-    def test_read_serial(self, *_):
+    def test_read_serial(self, *_) -> None:
         gateway = Gateway(operation=RX, local_test=False, dd_sockets=False)
         data = gateway.read()
         self.assertEqual(data, b"12")
@@ -183,7 +183,7 @@ class TestGatewaySerial(TFCTestCase):
     @mock.patch("serial.Serial", return_value=MagicMock())
     @mock.patch("os.listdir", side_effect=[["ttyUSB0"], ["ttyUSB0"]])
     @mock.patch("builtins.input", side_effect=["Yes"])
-    def test_add_error_correction(self, *_):
+    def test_add_error_correction(self, *_) -> None:
         gateway = Gateway(operation=RX, local_test=False, dd_sockets=False)
         packet = b"packet"
 
@@ -205,7 +205,7 @@ class TestGatewaySerial(TFCTestCase):
     @mock.patch("serial.Serial", return_value=MagicMock())
     @mock.patch("os.listdir", side_effect=[["ttyUSB0"], ["ttyUSB0"]])
     @mock.patch("builtins.input", side_effect=["Yes"])
-    def test_detect_errors(self, *_):
+    def test_detect_errors(self, *_) -> None:
         gateway = Gateway(operation=RX, local_test=False, dd_sockets=False)
         packet = b"packet"
 
@@ -216,7 +216,7 @@ class TestGatewaySerial(TFCTestCase):
         )
 
         # Test unrecoverable error raises FR
-        self.assert_fr(
+        self.assert_se(
             "Warning! Received packet had an invalid checksum.",
             gateway.detect_errors,
             300 * b"a",
@@ -230,7 +230,7 @@ class TestGatewaySerial(TFCTestCase):
         )
 
         # Test unrecoverable error raises FR
-        self.assert_fr(
+        self.assert_se(
             "Error: Reed-Solomon failed to correct errors in the received packet.",
             gateway.detect_errors,
             300 * b"a",
@@ -243,7 +243,7 @@ class TestGatewaySerial(TFCTestCase):
         side_effect=[["ttyUSB0"], ["ttyUSB0"], [""], ["ttyUSB0"], ["ttyS0"], [""]],
     )
     @mock.patch("builtins.input", side_effect=["Yes"])
-    def test_search_serial_interfaces(self, *_):
+    def test_search_serial_interfaces(self, *_) -> None:
         gateway = Gateway(operation=RX, local_test=False, dd_sockets=False)
 
         interface = gateway.search_serial_interface()
@@ -261,7 +261,7 @@ class TestGatewaySerial(TFCTestCase):
     @mock.patch("time.sleep", return_value=None)
     @mock.patch("multiprocessing.connection.Client", MagicMock())
     @mock.patch("multiprocessing.connection.Listener", MagicMock())
-    def test_establish_local_testing_gateway(self, *_):
+    def test_establish_local_testing_gateway(self, *_) -> None:
         gateway = Gateway(operation=NC, local_test=True, dd_sockets=False)
         self.assertIsInstance(gateway.rs, RSCodec)
 
@@ -269,7 +269,7 @@ class TestGatewaySerial(TFCTestCase):
     @mock.patch(
         "multiprocessing.connection.Client", MagicMock(side_effect=KeyboardInterrupt)
     )
-    def test_keyboard_interrupt_exits(self, *_):
+    def test_keyboard_interrupt_exits(self, *_) -> None:
         with self.assertRaises(SystemExit):
             Gateway(operation=TX, local_test=True, dd_sockets=False)
 
@@ -278,7 +278,7 @@ class TestGatewaySerial(TFCTestCase):
         "multiprocessing.connection.Client",
         MagicMock(side_effect=[socket.error, ConnectionRefusedError, MagicMock()]),
     )
-    def test_socket_client(self, *_):
+    def test_socket_client(self, *_) -> None:
         gateway = Gateway(operation=TX, local_test=True, dd_sockets=False)
         self.assertIsInstance(gateway, Gateway)
 
@@ -287,7 +287,7 @@ class TestGatewaySerial(TFCTestCase):
         "multiprocessing.connection.Listener",
         MagicMock(side_effect=[MagicMock(), KeyboardInterrupt]),
     )
-    def test_socket_server(self, *_):
+    def test_socket_server(self, *_) -> None:
         gateway = Gateway(operation=RX, local_test=True, dd_sockets=False)
         self.assertIsInstance(gateway, Gateway)
 
@@ -303,7 +303,7 @@ class TestGatewaySerial(TFCTestCase):
             )
         ),
     )
-    def test_local_testing_read(self, *_):
+    def test_local_testing_read(self, *_) -> None:
         gateway = Gateway(operation=RX, local_test=True, dd_sockets=False)
         self.assertEqual(gateway.read(), b"data")
 
@@ -315,7 +315,7 @@ class TestGatewaySerial(TFCTestCase):
         "multiprocessing.connection.Client",
         return_value=MagicMock(send=MagicMock(side_effect=[None, BrokenPipeError])),
     )
-    def test_local_testing_write(self, *_):
+    def test_local_testing_write(self, *_) -> None:
         gateway = Gateway(operation=TX, local_test=True, dd_sockets=False)
 
         self.assertIsNone(gateway.write(b"data"))
@@ -325,7 +325,7 @@ class TestGatewaySerial(TFCTestCase):
 
 
 class TestGatewaySettings(TFCTestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         """Pre-test actions."""
         self.unit_test_dir = cd_unit_test()
         self.default_serialized = """\
@@ -336,7 +336,7 @@ class TestGatewaySettings(TFCTestCase):
     "built_in_serial_interface": "ttyS0"
 }"""
 
-    def tearDown(self):
+    def tearDown(self) -> None:
         """Post-test actions."""
         cleanup(self.unit_test_dir)
 
@@ -344,11 +344,11 @@ class TestGatewaySettings(TFCTestCase):
         "os.listdir", side_effect=[["ttyUSB0"], ["ttyS0"], ["ttyUSB0"], ["ttyS0"]]
     )
     @mock.patch("builtins.input", side_effect=["yes", "yes", "no", "no"])
-    def test_gateway_setup(self, *_):
+    def test_gateway_setup(self, *_) -> None:
         settings = GatewaySettings(operation=TX, local_test=False, dd_sockets=True)
         self.assertIsNone(settings.setup())
 
-    def test_store_and_load_of_settings(self):
+    def test_store_and_load_of_settings(self) -> None:
         settings = GatewaySettings(operation=TX, local_test=True, dd_sockets=True)
         self.assertTrue(os.path.isfile(f"{DIR_USER_DATA}/{TX}_serial_settings.json"))
 
@@ -363,7 +363,7 @@ class TestGatewaySettings(TFCTestCase):
         self.assertEqual(settings2.serial_baudrate, 115200)
         self.assertEqual(settings.use_serial_usb_adapter, False)
 
-    def test_manually_edited_settings_are_loaded(self):
+    def test_manually_edited_settings_are_loaded(self) -> None:
         # Setup
         ensure_dir(DIR_USER_DATA)
         with open(f"{DIR_USER_DATA}{TX}_serial_settings.json", "w+") as f:
@@ -383,7 +383,9 @@ class TestGatewaySettings(TFCTestCase):
         self.assertEqual(settings.use_serial_usb_adapter, False)
         self.assertEqual(settings.built_in_serial_interface, "ttyS0")
 
-    def test_missing_values_are_set_to_default_and_database_is_overwritten(self):
+    def test_missing_values_are_set_to_default_and_database_is_overwritten(
+        self,
+    ) -> None:
         # Setup
         ensure_dir(DIR_USER_DATA)
         with open(f"{DIR_USER_DATA}{TX}_serial_settings.json", "w+") as f:
@@ -402,7 +404,7 @@ class TestGatewaySettings(TFCTestCase):
         self.assertEqual(settings.use_serial_usb_adapter, False)
         self.assertEqual(settings.built_in_serial_interface, "ttyS0")
 
-    def test_invalid_format_is_replaced_with_defaults(self):
+    def test_invalid_format_is_replaced_with_defaults(self) -> None:
         # Setup
         ensure_dir(DIR_USER_DATA)
         with open(f"{DIR_USER_DATA}{TX}_serial_settings.json", "w+") as f:
@@ -426,7 +428,7 @@ class TestGatewaySettings(TFCTestCase):
 
         self.assertEqual(data, self.default_serialized)
 
-    def test_invalid_serial_baudrate_is_replaced_with_default(self):
+    def test_invalid_serial_baudrate_is_replaced_with_default(self) -> None:
         # Setup
         ensure_dir(DIR_USER_DATA)
         with open(f"{DIR_USER_DATA}{TX}_serial_settings.json", "w+") as f:
@@ -451,7 +453,7 @@ class TestGatewaySettings(TFCTestCase):
 
         self.assertEqual(data, self.default_serialized)
 
-    def test_invalid_serial_error_correction_is_replaced_with_default(self):
+    def test_invalid_serial_error_correction_is_replaced_with_default(self) -> None:
         # Setup
         ensure_dir(DIR_USER_DATA)
         with open(f"{DIR_USER_DATA}{TX}_serial_settings.json", "w+") as f:
@@ -476,7 +478,7 @@ class TestGatewaySettings(TFCTestCase):
 
         self.assertEqual(data, self.default_serialized)
 
-    def test_invalid_serial_interface_is_replaced_with_default(self):
+    def test_invalid_serial_interface_is_replaced_with_default(self) -> None:
         # Setup
         ensure_dir(DIR_USER_DATA)
         with open(f"{DIR_USER_DATA}{TX}_serial_settings.json", "w+") as f:
@@ -501,7 +503,7 @@ class TestGatewaySettings(TFCTestCase):
 
         self.assertEqual(data, self.default_serialized)
 
-    def test_invalid_type_is_replaced_with_default(self):
+    def test_invalid_type_is_replaced_with_default(self) -> None:
         # Setup
         ensure_dir(DIR_USER_DATA)
         with open(f"{DIR_USER_DATA}{TX}_serial_settings.json", "w+") as f:
@@ -526,7 +528,7 @@ class TestGatewaySettings(TFCTestCase):
 
         self.assertEqual(data, self.default_serialized)
 
-    def test_unknown_kv_pair_is_removed(self):
+    def test_unknown_kv_pair_is_removed(self) -> None:
         # Setup
         ensure_dir(DIR_USER_DATA)
         with open(f"{DIR_USER_DATA}{TX}_serial_settings.json", "w+") as f:
@@ -556,7 +558,7 @@ class TestGatewaySettings(TFCTestCase):
         "os.listdir", side_effect=[["ttyS0"], ["ttyUSB0"], ["ttyUSB0"], ["ttyS0"]]
     )
     @mock.patch("builtins.input", side_effect=["Yes", "Yes", "No", "No"])
-    def test_setup(self, *_):
+    def test_setup(self, *_) -> None:
         # Setup
         ensure_dir(DIR_USER_DATA)
         with open(f"{DIR_USER_DATA}{TX}_serial_settings.json", "w+") as f:
@@ -569,27 +571,27 @@ class TestGatewaySettings(TFCTestCase):
         self.assertIsNone(settings.setup())
 
     @mock.patch("time.sleep", return_value=None)
-    def test_change_setting(self, _):
+    def test_change_setting(self, _) -> None:
         settings = GatewaySettings(operation=TX, local_test=True, dd_sockets=True)
-        self.assert_fr(
+        self.assert_se(
             "Error: Invalid setting value 'Falsee'.",
             settings.change_setting,
             "serial_baudrate",
             "Falsee",
         )
-        self.assert_fr(
+        self.assert_se(
             "Error: Invalid setting value '1.1'.",
             settings.change_setting,
             "serial_baudrate",
             "1.1",
         )
-        self.assert_fr(
+        self.assert_se(
             "Error: Invalid setting value '18446744073709551616'.",
             settings.change_setting,
             "serial_baudrate",
             str(2 ** 64),
         )
-        self.assert_fr(
+        self.assert_se(
             "Error: Invalid setting value 'Falsee'.",
             settings.change_setting,
             "use_serial_usb_adapter",
@@ -608,27 +610,27 @@ class TestGatewaySettings(TFCTestCase):
         with self.assertRaises(SystemExit):
             settings.change_setting("serial_baudrate", "9600")
 
-    def test_validate_key_value_pair(self):
+    def test_validate_key_value_pair(self) -> None:
         settings = GatewaySettings(operation=TX, local_test=True, dd_sockets=True)
-        self.assert_fr(
+        self.assert_se(
             "Error: The specified baud rate is not supported.",
             settings.validate_key_value_pair,
             "serial_baudrate",
             0,
         )
-        self.assert_fr(
+        self.assert_se(
             "Error: The specified baud rate is not supported.",
             settings.validate_key_value_pair,
             "serial_baudrate",
             10,
         )
-        self.assert_fr(
+        self.assert_se(
             "Error: The specified baud rate is not supported.",
             settings.validate_key_value_pair,
             "serial_baudrate",
             9601,
         )
-        self.assert_fr(
+        self.assert_se(
             "Error: Invalid value for error correction ratio.",
             settings.validate_key_value_pair,
             "serial_error_correction",
@@ -644,11 +646,11 @@ class TestGatewaySettings(TFCTestCase):
         )
 
     @mock.patch("shutil.get_terminal_size", return_value=(64, 64))
-    def test_too_narrow_terminal_raises_fr_when_printing_settings(self, _):
+    def test_too_narrow_terminal_raises_fr_when_printing_settings(self, _) -> None:
         settings = GatewaySettings(operation=TX, local_test=True, dd_sockets=True)
-        self.assert_fr("Error: Screen width is too small.", settings.print_settings)
+        self.assert_se("Error: Screen width is too small.", settings.print_settings)
 
-    def test_print_settings(self):
+    def test_print_settings(self) -> None:
         settings = GatewaySettings(operation=TX, local_test=True, dd_sockets=True)
         self.assert_prints(
             """\

@@ -25,7 +25,7 @@ import time
 import unittest
 
 from unittest import mock
-from typing import Any
+from typing import Any, List
 
 import requests
 
@@ -83,7 +83,7 @@ class TestClient(unittest.TestCase):
     class MockResponse(object):
         """Mock Response object."""
 
-        def __init__(self, text):
+        def __init__(self, text: str) -> None:
             """Create new MockResponse object."""
             self.text = text
             self.content = text
@@ -91,14 +91,14 @@ class TestClient(unittest.TestCase):
     class MockSession(object):
         """Mock Session object."""
 
-        def __init__(self):
+        def __init__(self) -> None:
             """Create new MockSession object."""
             self.proxies = dict()
             self.timeout = None
             self.url = None
             self.test_no = 0
 
-        def get(self, url, timeout=0, stream=False):
+        def get(self, url: str, timeout: int = 0, stream: bool = False):
             """Mock .get() method."""
 
             self.timeout = timeout
@@ -111,7 +111,7 @@ class TestClient(unittest.TestCase):
                 "http://hpcrayuxhrcy2wtpfwgwjibderrvjll6azfr4tqat3eka2m2gbb55bid.onion/"
             ):
 
-                if self.test_no == 0:
+                if not self.test_no:
                     self.test_no += 1
                     (_ for _ in ()).throw(requests.exceptions.RequestException)
 
@@ -142,23 +142,23 @@ class TestClient(unittest.TestCase):
                     return TestClient.MockResponse(TestClient.ut_public_key.hex())
 
     @staticmethod
-    def mock_session():
+    def mock_session() -> MockSession:
         """Return MockSession object."""
         return TestClient.MockSession()
 
-    def setUp(self):
+    def setUp(self) -> None:
         """Pre-test actions."""
         self.o_session = requests.session
         self.queues = gen_queue_dict()
         requests.session = TestClient.mock_session
 
-    def tearDown(self):
+    def tearDown(self) -> None:
         """Post-test actions."""
         requests.session = self.o_session
         tear_queues(self.queues)
 
     @mock.patch("time.sleep", return_value=None)
-    def test_client(self, _):
+    def test_client(self, _) -> None:
         onion_pub_key = nick_to_pub_key("Alice")
         onion_address = nick_to_onion_address("Alice")
         tor_port = "1337"
@@ -192,10 +192,10 @@ class TestGetDataLoop(unittest.TestCase):
     class MockResponse(object):
         """Mock Response object."""
 
-        def __init__(self):
+        def __init__(self) -> None:
             self.test_no = 0
 
-        def iter_lines(self):
+        def iter_lines(self) -> List[bytes]:
             """Return data depending test number."""
             self.test_no += 1
             message = b""
@@ -253,7 +253,7 @@ class TestGetDataLoop(unittest.TestCase):
     class MockFileResponse(object):
         """MockFileResponse object."""
 
-        def __init__(self, content):
+        def __init__(self, content) -> None:
             self.content = content
 
     class Session(object):
@@ -292,7 +292,7 @@ class TestGetDataLoop(unittest.TestCase):
             elif url == f"{self.onion_url}/{self.url_token}/files":
 
                 # Test file data is received
-                if self.test_no == 0:
+                if not self.test_no:
                     self.test_no += 1
                     return TestGetDataLoop.MockFileResponse(b"test")
 
@@ -305,18 +305,18 @@ class TestGetDataLoop(unittest.TestCase):
         """Return mock Session object."""
         return TestGetDataLoop.Session()
 
-    def setUp(self):
+    def setUp(self) -> None:
         """Pre-test actions."""
         self.o_session = requests.session
         self.queues = gen_queue_dict()
         requests.session = TestGetDataLoop.mock_session
 
-    def tearDown(self):
+    def tearDown(self) -> None:
         """Post-test actions."""
         requests.session = self.o_session
         tear_queues(self.queues)
 
-    def test_get_data_loop(self):
+    def test_get_data_loop(self) -> None:
 
         onion_pub_key = bytes(ONION_SERVICE_PUBLIC_KEY_LENGTH)
         settings = Gateway()
@@ -356,11 +356,11 @@ class TestGetDataLoop(unittest.TestCase):
 
 
 class TestGroupManager(unittest.TestCase):
-    def test_group_manager(self):
+    def test_group_manager(self) -> None:
 
         queues = gen_queue_dict()
 
-        def queue_delayer():
+        def queue_delayer() -> None:
             """Place messages to queue one at a time."""
             time.sleep(0.1)
 
@@ -428,12 +428,12 @@ class TestGroupManager(unittest.TestCase):
 
 
 class TestClientScheduler(unittest.TestCase):
-    def test_client_scheduler(self):
+    def test_client_scheduler(self) -> None:
         queues = gen_queue_dict()
         gateway = Gateway()
         server_private_key = X448.generate_private_key()
 
-        def queue_delayer():
+        def queue_delayer() -> None:
             """Place messages to queue one at a time."""
             time.sleep(0.1)
             queues[TOR_DATA_QUEUE].put(("1234", nick_to_onion_address("Alice")))
@@ -466,11 +466,11 @@ class TestClientScheduler(unittest.TestCase):
 
 
 class TestContactRequestManager(unittest.TestCase):
-    def test_contact_request_manager(self):
+    def test_contact_request_manager(self) -> None:
 
         queues = gen_queue_dict()
 
-        def queue_delayer():
+        def queue_delayer() -> None:
             """Place messages to queue one at a time."""
             time.sleep(0.1)
             queues[C_REQ_MGMT_QUEUE].put(

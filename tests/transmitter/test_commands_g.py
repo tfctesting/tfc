@@ -61,7 +61,7 @@ from tests.utils import (
 
 
 class TestProcessGroupCommand(TFCTestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         """Pre-test actions."""
         self.contact_list = ContactList(nicks=["Alice"])
         self.group_list = GroupList()
@@ -76,56 +76,56 @@ class TestProcessGroupCommand(TFCTestCase):
             self.settings,
         )
 
-    def tearDown(self):
+    def tearDown(self) -> None:
         """Post-test actions."""
         tear_queues(self.queues)
 
-    def test_raises_fr_when_traffic_masking_is_enabled(self):
+    def test_raises_fr_when_traffic_masking_is_enabled(self) -> None:
         # Setup
         self.settings.traffic_masking = True
 
         # Test
-        self.assert_fr(
+        self.assert_se(
             "Error: Command is disabled during traffic masking.",
             process_group_command,
             UserInput(),
             *self.args,
         )
 
-    def test_invalid_command_raises_fr(self):
-        self.assert_fr(
+    def test_invalid_command_raises_fr(self) -> None:
+        self.assert_se(
             "Error: Invalid group command.",
             process_group_command,
             UserInput("group "),
             *self.args,
         )
 
-    def test_invalid_command_parameters_raises_fr(self):
-        self.assert_fr(
+    def test_invalid_command_parameters_raises_fr(self) -> None:
+        self.assert_se(
             "Error: Invalid group command.",
             process_group_command,
             UserInput("group bad"),
             *self.args,
         )
 
-    def test_missing_group_id_raises_fr(self):
-        self.assert_fr(
+    def test_missing_group_id_raises_fr(self) -> None:
+        self.assert_se(
             "Error: No group ID specified.",
             process_group_command,
             UserInput("group join "),
             *self.args,
         )
 
-    def test_invalid_group_id_raises_fr(self):
-        self.assert_fr(
+    def test_invalid_group_id_raises_fr(self) -> None:
+        self.assert_se(
             "Error: Invalid group ID.",
             process_group_command,
             UserInput("group join invalid"),
             *self.args,
         )
 
-    def test_missing_name_raises_fr(self):
-        self.assert_fr(
+    def test_missing_name_raises_fr(self) -> None:
+        self.assert_se(
             "Error: No group name specified.",
             process_group_command,
             UserInput("group create "),
@@ -134,12 +134,12 @@ class TestProcessGroupCommand(TFCTestCase):
 
     @mock.patch("builtins.input", return_value="Yes")
     @mock.patch("os.urandom", return_value=GROUP_ID_LENGTH * b"a")
-    def test_successful_command(self, *_):
+    def test_successful_command(self, *_) -> None:
         self.assertIsNone(
             process_group_command(UserInput("group create team Alice"), *self.args)
         )
         user_input = UserInput(f"group join {b58encode(GROUP_ID_LENGTH*b'a')} team2")
-        self.assert_fr(
+        self.assert_se(
             "Error: Group with matching ID already exists.",
             process_group_command,
             user_input,
@@ -148,7 +148,7 @@ class TestProcessGroupCommand(TFCTestCase):
 
 
 class TestGroupCreate(TFCTestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         """Pre-test actions."""
         self.contact_list = ContactList(nicks=["Alice", "Bob"])
         self.group_list = GroupList()
@@ -164,7 +164,7 @@ class TestGroupCreate(TFCTestCase):
             self.settings,
         )
 
-    def tearDown(self):
+    def tearDown(self) -> None:
         """Post-test actions."""
         tear_queues(self.queues)
 
@@ -176,12 +176,12 @@ class TestGroupCreate(TFCTestCase):
         self.group.members = self.contact_list.contacts
         self.account_list = [nick_to_pub_key(str(n)) for n in range(no_contacts)]
 
-    def test_invalid_group_name_raises_fr(self):
+    def test_invalid_group_name_raises_fr(self) -> None:
         # Setup
         self.configure_groups(no_contacts=21)
 
         # Test
-        self.assert_fr(
+        self.assert_se(
             "Error: Group name must be printable.",
             group_create,
             "test_group\x1f",
@@ -189,13 +189,13 @@ class TestGroupCreate(TFCTestCase):
             *self.args,
         )
 
-    def test_too_many_purp_accounts_raises_fr(self):
+    def test_too_many_purp_accounts_raises_fr(self) -> None:
         # Setup
         self.configure_groups(no_contacts=60)
 
         # Test
         cl_str = [nick_to_pub_key(str(n)) for n in range(51)]
-        self.assert_fr(
+        self.assert_se(
             "Error: TFC settings only allow 50 members per group.",
             group_create,
             "test_group_50",
@@ -207,12 +207,12 @@ class TestGroupCreate(TFCTestCase):
             self.master_key,
         )
 
-    def test_full_group_list_raises_fr(self):
+    def test_full_group_list_raises_fr(self) -> None:
         # Setup
         self.group_list = GroupList(groups=[f"testgroup_{n}" for n in range(50)])
 
         # Test
-        self.assert_fr(
+        self.assert_se(
             "Error: TFC settings only allow 50 groups.",
             group_create,
             "testgroup_50",
@@ -225,7 +225,7 @@ class TestGroupCreate(TFCTestCase):
         )
 
     @mock.patch("builtins.input", return_value="Yes")
-    def test_successful_group_creation(self, _):
+    def test_successful_group_creation(self, _) -> None:
         # Test
         self.assertIsNone(
             group_create("test_group_2", [nick_to_pub_key("Alice")], *self.args)
@@ -233,14 +233,14 @@ class TestGroupCreate(TFCTestCase):
         self.assertEqual(self.queues[COMMAND_PACKET_QUEUE].qsize(), 1)
         self.assertEqual(self.queues[RELAY_PACKET_QUEUE].qsize(), 1)
 
-    def test_successful_empty_group_creation(self):
+    def test_successful_empty_group_creation(self) -> None:
         self.assertIsNone(group_create("test_group_2", [], *self.args))
         self.assertEqual(self.queues[COMMAND_PACKET_QUEUE].qsize(), 1)
         self.assertEqual(self.queues[RELAY_PACKET_QUEUE].qsize(), 0)
 
 
 class TestGroupAddMember(TFCTestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         """Pre-test actions."""
         self.user_input = UserInput()
         self.contact_list = ContactList(nicks=["Alice", "Bob"])
@@ -256,7 +256,7 @@ class TestGroupAddMember(TFCTestCase):
             self.settings,
         )
 
-    def tearDown(self):
+    def tearDown(self) -> None:
         """Post-test actions."""
         tear_queues(self.queues)
 
@@ -271,19 +271,21 @@ class TestGroupAddMember(TFCTestCase):
     @mock.patch("builtins.input", return_value="Yes")
     def test_new_group_is_created_if_specified_group_does_not_exist_and_user_chooses_yes(
         self, _
-    ):
+    ) -> None:
         self.assertIsNone(group_add_member("test_group", [], *self.args))
         self.assertEqual(self.queues[COMMAND_PACKET_QUEUE].qsize(), 1)
         self.assertEqual(self.queues[RELAY_PACKET_QUEUE].qsize(), 0)
 
     @mock.patch("time.sleep", return_value=None)
     @mock.patch("builtins.input", return_value="No")
-    def test_raises_fr_if_specified_group_does_not_exist_and_user_chooses_no(self, *_):
-        self.assert_fr(
+    def test_raises_fr_if_specified_group_does_not_exist_and_user_chooses_no(
+        self, *_
+    ) -> None:
+        self.assert_se(
             "Group creation aborted.", group_add_member, "test_group", [], *self.args
         )
 
-    def test_too_large_final_member_list_raises_fr(self):
+    def test_too_large_final_member_list_raises_fr(self) -> None:
         # Setup
         contact_list = ContactList(nicks=[str(n) for n in range(51)])
         group_list = GroupList(groups=["testgroup"])
@@ -292,7 +294,7 @@ class TestGroupAddMember(TFCTestCase):
 
         # Test
         m_to_add = [nick_to_pub_key("49"), nick_to_pub_key("50")]
-        self.assert_fr(
+        self.assert_se(
             "Error: TFC settings only allow 50 members per group.",
             group_add_member,
             "testgroup",
@@ -305,7 +307,7 @@ class TestGroupAddMember(TFCTestCase):
         )
 
     @mock.patch("builtins.input", return_value="Yes")
-    def test_successful_group_add(self, _):
+    def test_successful_group_add(self, _) -> None:
         # Setup
         self.configure_groups(no_contacts=51)
         self.group.members = self.contact_list.contacts[:49]
@@ -333,7 +335,7 @@ class TestGroupAddMember(TFCTestCase):
 
 
 class TestGroupRmMember(TFCTestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         """Pre-test actions."""
         self.unit_test_dir = cd_unit_test()
         self.user_input = UserInput()
@@ -350,21 +352,21 @@ class TestGroupRmMember(TFCTestCase):
             self.settings,
         )
 
-    def tearDown(self):
+    def tearDown(self) -> None:
         """Post-test actions."""
         cleanup(self.unit_test_dir)
         tear_queues(self.queues)
 
     @mock.patch("time.sleep", return_value=None)
     @mock.patch("builtins.input", return_value="Yes")
-    def test_no_accounts_removes_group(self, *_):
-        self.assert_fr(
+    def test_no_accounts_removes_group(self, *_) -> None:
+        self.assert_se(
             "Removed group 'test_group'.", group_rm_member, "test_group", [], *self.args
         )
 
     @mock.patch("builtins.input", return_value="Yes")
-    def test_remove_members_from_unknown_group(self, _):
-        self.assert_fr(
+    def test_remove_members_from_unknown_group(self, _) -> None:
+        self.assert_se(
             "Group 'test_group_2' does not exist.",
             group_rm_member,
             "test_group_2",
@@ -373,7 +375,7 @@ class TestGroupRmMember(TFCTestCase):
         )
 
     @mock.patch("builtins.input", return_value="Yes")
-    def test_successful_group_remove(self, _):
+    def test_successful_group_remove(self, _) -> None:
         self.assertIsNone(
             group_rm_member("test_group", [nick_to_pub_key("Alice")], *self.args)
         )
@@ -382,7 +384,7 @@ class TestGroupRmMember(TFCTestCase):
 
 
 class TestGroupRmGroup(TFCTestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         """Pre-test actions."""
         self.unit_test_dir = cd_unit_test()
         self.user_input = UserInput()
@@ -399,22 +401,22 @@ class TestGroupRmGroup(TFCTestCase):
             self.settings,
         )
 
-    def tearDown(self):
+    def tearDown(self) -> None:
         """Post-test actions."""
         cleanup(self.unit_test_dir)
         tear_queues(self.queues)
 
     @mock.patch("time.sleep", return_value=None)
     @mock.patch("builtins.input", return_value="No")
-    def test_cancel_of_remove_raises_fr(self, *_):
-        self.assert_fr(
+    def test_cancel_of_remove_raises_fr(self, *_) -> None:
+        self.assert_se(
             "Group removal aborted.", group_rm_group, "test_group", *self.args
         )
 
     @mock.patch("builtins.input", return_value="Yes")
-    def test_remove_group_not_on_transmitter_raises_fr(self, _):
+    def test_remove_group_not_on_transmitter_raises_fr(self, _) -> None:
         unknown_group_id = b58encode(bytes(GROUP_ID_LENGTH))
-        self.assert_fr(
+        self.assert_se(
             "Transmitter has no group '2dVseX46KS9Sp' to remove.",
             group_rm_group,
             unknown_group_id,
@@ -423,9 +425,9 @@ class TestGroupRmGroup(TFCTestCase):
         self.assertEqual(self.queues[COMMAND_PACKET_QUEUE].qsize(), 2)
 
     @mock.patch("builtins.input", return_value="Yes")
-    def test_invalid_group_id_raises_fr(self, _):
+    def test_invalid_group_id_raises_fr(self, _) -> None:
         invalid_group_id = b58encode(bytes(GROUP_ID_LENGTH))[:-1]
-        self.assert_fr(
+        self.assert_se(
             "Error: Invalid group name/ID.",
             group_rm_group,
             invalid_group_id,
@@ -434,8 +436,8 @@ class TestGroupRmGroup(TFCTestCase):
 
     @mock.patch("time.sleep", return_value=None)
     @mock.patch("builtins.input", return_value="Yes")
-    def test_remove_group_and_notify(self, *_):
-        self.assert_fr(
+    def test_remove_group_and_notify(self, *_) -> None:
+        self.assert_se(
             "Removed group 'test_group'.", group_rm_group, "test_group", *self.args
         )
         self.assertEqual(self.queues[COMMAND_PACKET_QUEUE].qsize(), 2)
@@ -443,7 +445,7 @@ class TestGroupRmGroup(TFCTestCase):
 
 
 class TestGroupRename(TFCTestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         """Pre-test actions."""
         self.queues = gen_queue_dict()
         self.settings = Settings()
@@ -458,29 +460,29 @@ class TestGroupRename(TFCTestCase):
             self.queues,
         )
 
-    def tearDown(self):
+    def tearDown(self) -> None:
         """Post-test actions."""
         tear_queues(self.queues)
 
-    def test_contact_window_raises_fr(self):
+    def test_contact_window_raises_fr(self) -> None:
         # Setup
         self.window.type = WIN_TYPE_CONTACT
 
         # Test
-        self.assert_fr(
+        self.assert_se(
             "Error: Selected window is not a group window.",
             group_rename,
             "window",
             *self.args,
         )
 
-    def test_invalid_group_name_raises_fr(self):
+    def test_invalid_group_name_raises_fr(self) -> None:
         # Setup
         self.window.type = WIN_TYPE_GROUP
         self.window.group = self.group_list.get_group("test_group")
 
         # Test
-        self.assert_fr(
+        self.assert_se(
             "Error: Group name must be printable.",
             group_rename,
             "window\x1f",
@@ -488,7 +490,7 @@ class TestGroupRename(TFCTestCase):
         )
 
     @mock.patch("time.sleep", return_value=None)
-    def test_successful_group_change(self, _):
+    def test_successful_group_change(self, _) -> None:
         # Setup
         group = create_group("test_group")
         self.window.type = WIN_TYPE_GROUP
@@ -496,7 +498,7 @@ class TestGroupRename(TFCTestCase):
         self.window.group = group
 
         # Test
-        self.assert_fr(
+        self.assert_se(
             "Renamed group 'test_group' to 'window'.",
             group_rename,
             "window",

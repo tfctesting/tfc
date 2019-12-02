@@ -85,7 +85,7 @@ SLEEP_DELAY = 0.02
 
 
 class TestLogWriterLoop(unittest.TestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         """Pre-test actions."""
         self.unit_test_dir = cd_unit_test()
         self.master_key = MasterKey()
@@ -93,17 +93,17 @@ class TestLogWriterLoop(unittest.TestCase):
             f"{DIR_USER_DATA}{TX}_logs", self.master_key.master_key
         )
 
-    def tearDown(self):
+    def tearDown(self) -> None:
         """Post-test actions."""
         cleanup(self.unit_test_dir)
 
-    def test_function_logs_normal_data(self):
+    def test_function_logs_normal_data(self) -> None:
         # Setup
         settings = Settings()
         master_key = MasterKey()
         queues = gen_queue_dict()
 
-        def queue_delayer():
+        def queue_delayer() -> None:
             """Place messages to queue one at a time."""
             for p in [
                 (
@@ -160,7 +160,7 @@ class TestLogWriterLoop(unittest.TestCase):
         # Teardown
         tear_queues(queues)
 
-    def test_function_logs_traffic_masking_data(self):
+    def test_function_logs_traffic_masking_data(self) -> None:
         # Setup
         settings = Settings(log_file_masking=True, traffic_masking=False)
         master_key = MasterKey()
@@ -168,7 +168,7 @@ class TestLogWriterLoop(unittest.TestCase):
 
         queues[TRAFFIC_MASKING_QUEUE].put(True)
 
-        def queue_delayer():
+        def queue_delayer() -> None:
             """Place messages to queue one at a time."""
             for p in [
                 (
@@ -220,13 +220,13 @@ class TestLogWriterLoop(unittest.TestCase):
         # Teardown
         tear_queues(queues)
 
-    def test_function_log_file_masking_queue_controls_log_file_masking(self):
+    def test_function_log_file_masking_queue_controls_log_file_masking(self) -> None:
         # Setup
         settings = Settings(log_file_masking=False, traffic_masking=True)
         master_key = MasterKey()
         queues = gen_queue_dict()
 
-        def queue_delayer():
+        def queue_delayer() -> None:
             """Place messages to queue one at a time."""
             for p in [
                 (None, C_S_HEADER + bytes(PADDING_LENGTH), True, False, master_key),
@@ -287,7 +287,9 @@ class TestLogWriterLoop(unittest.TestCase):
         # Teardown
         tear_queues(queues)
 
-    def test_function_allows_control_of_noise_packets_based_on_log_setting_queue(self):
+    def test_function_allows_control_of_noise_packets_based_on_log_setting_queue(
+        self,
+    ) -> None:
         # Setup
         settings = Settings(log_file_masking=True, traffic_masking=True)
         master_key = MasterKey()
@@ -301,7 +303,7 @@ class TestLogWriterLoop(unittest.TestCase):
             master_key,
         )
 
-        def queue_delayer():
+        def queue_delayer() -> None:
             """Place packets to log into queue after delay."""
             for _ in range(5):
                 queues[LOG_PACKET_QUEUE].put(
@@ -338,7 +340,7 @@ class TestLogWriterLoop(unittest.TestCase):
 
 
 class TestWriteLogEntry(unittest.TestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         """Pre-test actions."""
         self.unit_test_dir = cd_unit_test()
         self.master_key = MasterKey()
@@ -346,11 +348,11 @@ class TestWriteLogEntry(unittest.TestCase):
         self.log_file = f"{DIR_USER_DATA}{self.settings.software_operation}_logs"
         self.tfc_log_database = MessageLog(self.log_file, self.master_key.master_key)
 
-    def tearDown(self):
+    def tearDown(self) -> None:
         """Post-test actions."""
         cleanup(self.unit_test_dir)
 
-    def test_oversize_packet_raises_critical_error(self):
+    def test_oversize_packet_raises_critical_error(self) -> None:
         # Setup
         assembly_p = F_S_HEADER + bytes(PADDING_LENGTH) + b"a"
 
@@ -358,8 +360,8 @@ class TestWriteLogEntry(unittest.TestCase):
         with self.assertRaises(SystemExit):
             write_log_entry(assembly_p, nick_to_pub_key("Alice"), self.tfc_log_database)
 
-    def test_log_entry_is_concatenated(self):
-        for i in range(5):
+    def test_log_entry_is_concatenated(self) -> None:
+        for _ in range(5):
             assembly_p = F_S_HEADER + bytes(PADDING_LENGTH)
             self.assertIsNone(
                 write_log_entry(
@@ -369,7 +371,7 @@ class TestWriteLogEntry(unittest.TestCase):
 
 
 class TestAccessHistoryAndPrintLogs(TFCTestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         """Pre-test actions."""
         self.unit_test_dir = cd_unit_test()
         self.master_key = MasterKey()
@@ -412,30 +414,30 @@ class TestAccessHistoryAndPrintLogs(TFCTestCase):
             "s neque a facilisis. Mauris id tortor placerat, aliquam dolor ac, venenatis arcu."
         )
 
-    def tearDown(self):
+    def tearDown(self) -> None:
         """Post-test actions."""
         cleanup(self.unit_test_dir)
 
-    def test_missing_log_file_raises_fr(self):
+    def test_missing_log_file_raises_fr(self) -> None:
         # Setup
         os.remove(self.log_file)
 
         # Test
-        self.assert_fr("No log database available.", access_logs, *self.args)
+        self.assert_se("No log database available.", access_logs, *self.args)
 
-    def test_empty_log_file(self):
+    def test_empty_log_file(self) -> None:
         # Setup
         open(f"{DIR_USER_DATA}{self.settings.software_operation}_logs", "wb+").close()
 
         # Test
-        self.assert_fr(
+        self.assert_se(
             f"No logged messages for contact '{self.window.name}'.",
             access_logs,
             *self.args,
         )
 
     @mock.patch("struct.pack", return_value=TIMESTAMP_BYTES)
-    def test_display_short_private_message(self, _):
+    def test_display_short_private_message(self, _) -> None:
         # Setup
         # Add a message from user (Bob) to different contact (Charlie). access_logs should not display this message.
         for p in assembly_packet_creator(MESSAGE, "Hi Charlie"):
@@ -473,7 +475,7 @@ Log file of message(s) sent to contact Alice
         )
 
     @mock.patch("struct.pack", return_value=TIMESTAMP_BYTES)
-    def test_export_short_private_message(self, _):
+    def test_export_short_private_message(self, _) -> None:
         # Setup
         # Test title displayed by the Receiver program.
         self.settings.software_operation = RX
@@ -510,7 +512,7 @@ Log file of message(s) to/from contact Alice
             )
 
     @mock.patch("struct.pack", return_value=TIMESTAMP_BYTES)
-    def test_long_private_message(self, _):
+    def test_long_private_message(self, _) -> None:
         # Setup
         # Add an assembly packet sequence sent to contact Alice containing cancel packet. access_logs should skip this.
         packets = assembly_packet_creator(MESSAGE, self.msg)
@@ -595,7 +597,7 @@ Log file of message(s) sent to contact Alice
         )
 
     @mock.patch("struct.pack", return_value=TIMESTAMP_BYTES)
-    def test_short_group_message(self, _):
+    def test_short_group_message(self, _) -> None:
         # Setup
         self.window = RxWindow(
             type=WIN_TYPE_GROUP,
@@ -649,7 +651,7 @@ Log file of message(s) sent to group test_group
         )
 
     @mock.patch("struct.pack", return_value=TIMESTAMP_BYTES)
-    def test_long_group_message(self, _):
+    def test_long_group_message(self, _) -> None:
         # Setup
         # Test title displayed by the Receiver program.
         self.settings.software_operation = RX
@@ -783,7 +785,7 @@ Log file of message(s) to/from group test_group
 
 
 class TestReEncrypt(TFCTestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         """Pre-test actions."""
         self.unit_test_dir = cd_unit_test()
         self.old_master_key = MasterKey()
@@ -796,16 +798,16 @@ class TestReEncrypt(TFCTestCase):
         self.log_file = f"{DIR_USER_DATA}{self.settings.software_operation}_logs"
         self.message_log = MessageLog(self.log_file, self.old_master_key.master_key)
 
-    def tearDown(self):
+    def tearDown(self) -> None:
         """Post-test actions."""
         cleanup(self.unit_test_dir)
 
-    def test_missing_log_database_raises_fr(self):
+    def test_missing_log_database_raises_fr(self) -> None:
         # Setup
         os.remove(self.log_file)
 
         # Test
-        self.assert_fr(
+        self.assert_se(
             f"No log database available.",
             change_log_db_key,
             self.old_master_key.master_key,
@@ -814,7 +816,7 @@ class TestReEncrypt(TFCTestCase):
         )
 
     @mock.patch("struct.pack", return_value=TIMESTAMP_BYTES)
-    def test_database_encryption_with_another_key(self, _):
+    def test_database_encryption_with_another_key(self, _) -> None:
         # Setup
         window = RxWindow(
             type=WIN_TYPE_CONTACT,
@@ -886,7 +888,7 @@ Log file of message(s) sent to contact Alice
 
 
 class TestRemoveLog(TFCTestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         """Pre-test actions."""
         self.unit_test_dir = cd_unit_test()
         self.master_key = MasterKey()
@@ -912,23 +914,23 @@ class TestRemoveLog(TFCTestCase):
             "s neque a facilisis. Mauris id tortor placerat, aliquam dolor ac, venenatis arcu."
         )
 
-    def tearDown(self):
+    def tearDown(self) -> None:
         """Post-test actions."""
         cleanup(self.unit_test_dir)
 
-    def test_missing_log_file_raises_fr(self):
+    def test_missing_log_file_raises_fr(self) -> None:
         # Setup
         os.remove(self.file_name)
 
         # Test
-        self.assert_fr(
+        self.assert_se(
             "No log database available.",
             remove_logs,
             *self.args,
             nick_to_pub_key("Alice"),
         )
 
-    def test_removal_of_group_logs(self):
+    def test_removal_of_group_logs(self) -> None:
         # Setup
         short_msg = "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
 
@@ -982,7 +984,7 @@ class TestRemoveLog(TFCTestCase):
             write_log_entry(p, nick_to_pub_key("David"), self.tfc_log_database)
 
         # Test log entries were found.
-        self.assert_fr(
+        self.assert_se(
             "Removed log entries for group 'test_group'.",
             remove_logs,
             *self.args,
@@ -990,14 +992,14 @@ class TestRemoveLog(TFCTestCase):
         )
 
         # Test log entries were not found when removing group again.
-        self.assert_fr(
+        self.assert_se(
             "Found no log entries for group 'test_group'.",
             remove_logs,
             *self.args,
             selector=group_name_to_group_id("test_group"),
         )
 
-    def test_removal_of_contact_logs(self):
+    def test_removal_of_contact_logs(self) -> None:
         # Setup
         short_msg = "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
 
@@ -1016,21 +1018,21 @@ class TestRemoveLog(TFCTestCase):
             write_log_entry(p, nick_to_pub_key("Charlie"), self.tfc_log_database)
 
         # Test
-        self.assert_fr(
+        self.assert_se(
             f"Removed log entries for contact '{nick_to_short_address('Alice')}'.",
             remove_logs,
             *self.args,
             selector=nick_to_pub_key("Alice"),
         )
 
-        self.assert_fr(
+        self.assert_se(
             f"Removed log entries for contact '{nick_to_short_address('Charlie')}'.",
             remove_logs,
             *self.args,
             selector=nick_to_pub_key("Charlie"),
         )
 
-        self.assert_fr(
+        self.assert_se(
             f"Found no log entries for contact '{nick_to_short_address('Alice')}'.",
             remove_logs,
             *self.args,
@@ -1039,14 +1041,14 @@ class TestRemoveLog(TFCTestCase):
 
         self.contact_list.contacts = [create_contact("Alice")]
 
-        self.assert_fr(
+        self.assert_se(
             f"Found no log entries for contact 'Alice'.",
             remove_logs,
             *self.args,
             selector=nick_to_pub_key("Alice"),
         )
 
-        self.assert_fr(
+        self.assert_se(
             f"Found no log entries for group '2e8b2Wns7dWjB'.",
             remove_logs,
             *self.args,

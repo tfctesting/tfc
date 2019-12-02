@@ -28,7 +28,7 @@ import typing
 from typing import Any, Dict
 
 from src.common.encoding import bytes_to_bool, bytes_to_int
-from src.common.exceptions import FunctionReturn
+from src.common.exceptions import SoftError
 from src.common.misc import (
     ignored,
     reset_terminal,
@@ -85,8 +85,8 @@ def relay_command(
     queue_from_src = queues[SRC_TO_RELAY_QUEUE]
 
     while True:
-        with ignored(EOFError, FunctionReturn, KeyboardInterrupt):
-            while queue_from_src.qsize() == 0:
+        with ignored(EOFError, KeyboardInterrupt, SoftError):
+            while not queue_from_src.qsize():
                 time.sleep(0.01)
 
             command = queue_from_src.get()
@@ -117,7 +117,7 @@ def process_command(command: bytes, gateway: "Gateway", queues: "QueueDict") -> 
     }  # type: Dict[bytes, Any]
 
     if header not in function_d:
-        raise FunctionReturn("Error: Received an invalid command.")
+        raise SoftError("Error: Received an invalid command.")
 
     from_dict = function_d[header]
     func = from_dict[0]
@@ -177,7 +177,7 @@ def change_ec_ratio(command: bytes, gateway: "Gateway") -> None:
         if value < 0 or value > MAX_INT:
             raise ValueError
     except ValueError:
-        raise FunctionReturn(
+        raise SoftError(
             "Error: Received invalid EC ratio value from Transmitter Program."
         )
 
@@ -194,7 +194,7 @@ def change_baudrate(command: bytes, gateway: "Gateway") -> None:
         if value not in serial.Serial.BAUDRATES:
             raise ValueError
     except ValueError:
-        raise FunctionReturn(
+        raise SoftError(
             "Error: Received invalid baud rate value from Transmitter Program."
         )
 

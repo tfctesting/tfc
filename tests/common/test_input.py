@@ -49,7 +49,7 @@ class TestAskConfirmationCode(unittest.TestCase):
     confirmation_code = "ff"
 
     @mock.patch("builtins.input", return_value=confirmation_code)
-    def test_ask_confirmation_code(self, _):
+    def test_ask_confirmation_code(self, _) -> None:
         self.assertEqual(ask_confirmation_code("Receiver"), self.confirmation_code)
 
 
@@ -58,7 +58,7 @@ class TestBoxInput(unittest.TestCase):
     @mock.patch(
         "builtins.input", side_effect=["mock_input", "mock_input", "", "invalid", "ok"]
     )
-    def test_box_input(self, *_):
+    def test_box_input(self, *_) -> None:
         self.assertEqual(box_input("test title"), "mock_input")
         self.assertEqual(box_input("test title", head=1, expected_len=20), "mock_input")
         self.assertEqual(
@@ -75,7 +75,7 @@ class TestBoxInput(unittest.TestCase):
 
 
 class TestGetB58Key(unittest.TestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         """Pre-test actions."""
         self.settings = Settings()
 
@@ -88,7 +88,7 @@ class TestGetB58Key(unittest.TestCase):
             + 2 * ["invalid", VALID_ECDHE_PUB_KEY[:-1], VALID_ECDHE_PUB_KEY]
         ),
     )
-    def test_get_b58_key(self, *_):
+    def test_get_b58_key(self, *_) -> None:
         for boolean in [True, False]:
             self.settings.local_testing_mode = boolean
             key = get_b58_key(B58_LOCAL_KEY, self.settings)
@@ -113,14 +113,14 @@ class TestGetB58Key(unittest.TestCase):
 
     @mock.patch("builtins.input", return_value="")
     @mock.patch("shutil.get_terminal_size", return_value=[200, 200])
-    def test_empty_pub_key_returns_empty_bytes(self, *_):
+    def test_empty_pub_key_returns_empty_bytes(self, *_) -> None:
         key = get_b58_key(B58_PUBLIC_KEY, self.settings)
         self.assertEqual(key, b"")
 
 
 class TestNCBypassMsg(unittest.TestCase):
     @mock.patch("builtins.input", return_value="")
-    def test_nc_bypass_msg(self, _):
+    def test_nc_bypass_msg(self, _) -> None:
         settings = Settings(nc_bypass_messages=True)
         self.assertIsNone(nc_bypass_msg(NC_BYPASS_START, settings))
         self.assertIsNone(nc_bypass_msg(NC_BYPASS_STOP, settings))
@@ -128,7 +128,7 @@ class TestNCBypassMsg(unittest.TestCase):
 
 class TestPwdPrompt(unittest.TestCase):
     @mock.patch("getpass.getpass", return_value="test_password")
-    def test_pwd_prompt(self, _):
+    def test_pwd_prompt(self, _) -> None:
         self.assertEqual(pwd_prompt("test prompt"), "test_password")
 
 
@@ -149,7 +149,7 @@ class TestYes(unittest.TestCase):
             EOFError,
         ],
     )
-    def test_yes(self, _):
+    def test_yes(self, _) -> None:
         self.assertTrue(yes("test prompt", head=1, tail=1))
         self.assertTrue(yes("test prompt"))
 

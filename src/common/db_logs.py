@@ -36,7 +36,7 @@ from src.common.encoding import (
     bytes_to_timestamp,
     pub_key_to_short_address,
 )
-from src.common.exceptions import CriticalError, FunctionReturn
+from src.common.exceptions import CriticalError, SoftError
 from src.common.misc import (
     ensure_dir,
     get_terminal_width,
@@ -115,7 +115,7 @@ def log_writer_loop(
     while True:
         with ignored(EOFError, KeyboardInterrupt):
 
-            while log_packet_queue.qsize() == 0:
+            while not log_packet_queue.qsize():
                 time.sleep(0.01)
 
             traffic_masking, logfile_masking = check_log_setting_queues(
@@ -186,10 +186,10 @@ def check_log_setting_queues(
     logfile_masking_queue: "Queue[Any]",
 ) -> Tuple[bool, bool]:
     """Check for updates to logging settings."""
-    if traffic_masking_queue.qsize() != 0:
+    if traffic_masking_queue.qsize():
         traffic_masking = traffic_masking_queue.get()
 
-    if logfile_masking_queue.qsize() != 0:
+    if logfile_masking_queue.qsize():
         logfile_masking = logfile_masking_queue.get()
 
     return traffic_masking, logfile_masking
@@ -211,7 +211,7 @@ def update_logging_state(
     every received noise packet.
     """
     if assembly_packet[:ASSEMBLY_PACKET_HEADER_LENGTH] == P_N_HEADER:
-        if log_setting_queue.qsize() != 0:
+        if log_setting_queue.qsize():
             logging_state = log_setting_queue.get()
     else:
         logging_state = log_messages
@@ -259,7 +259,7 @@ def check_log_file_exists(file_name: str) -> None:
     """Check that the log file exists."""
     ensure_dir(DIR_USER_DATA)
     if not os.path.isfile(file_name):
-        raise FunctionReturn("No log database available.")
+        raise SoftError("No log database available.")
 
 
 def access_logs(
@@ -299,7 +299,7 @@ def access_logs(
 
         try:
             packet.add_packet(assembly_packet)
-        except FunctionReturn:
+        except SoftError:
             continue
         if not packet.is_complete:
             continue
@@ -411,7 +411,7 @@ def print_logs(
         log_window.redraw(file=f_name)
         print("<End of log file>\n", file=f_name)
     else:
-        raise FunctionReturn(
+        raise SoftError(
             f"No logged messages for {window.type} '{window.name}'.", head_clear=True
         )
 
@@ -426,7 +426,7 @@ def change_log_db_key(old_key: bytes, new_key: bytes, settings: "Settings") -> N
     temp_name = file_name + TEMP_POSTFIX
 
     if not os.path.isfile(file_name):
-        raise FunctionReturn("No log database available.")
+        raise SoftError("No log database available.")
 
     if os.path.isfile(temp_name):
         os.remove(temp_name)
@@ -495,7 +495,7 @@ def remove_logs(
             )
             try:
                 packet.add_packet(assembly_packet, log_entry)
-            except FunctionReturn:
+            except SoftError:
                 continue
             if not packet.is_complete:
                 continue
@@ -524,7 +524,7 @@ def remove_logs(
     action = "Removed" if removed else "Found no"
     win_type = "contact" if contact else "group"
 
-    raise FunctionReturn(f"{action} log entries for {win_type} '{name}'.")
+    raise SoftError(f"{action} log entries for {win_type} '{name}'.")
 
 
 def check_packet_fate(

@@ -48,7 +48,7 @@ from tests.utils import cd_unit_test, cleanup, tamper_file, TFCTestCase
 
 
 class TestGroup(unittest.TestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         """Pre-test actions."""
         self.unit_test_dir = cd_unit_test()
         self.nicks = ["Alice", "Bob", "Charlie"]
@@ -65,18 +65,18 @@ class TestGroup(unittest.TestCase):
         )
         ensure_dir(DIR_USER_DATA)
 
-    def tearDown(self):
+    def tearDown(self) -> None:
         """Post-test actions."""
         cleanup(self.unit_test_dir)
 
-    def test_group_iterates_over_contact_objects(self):
+    def test_group_iterates_over_contact_objects(self) -> None:
         for c in self.group:
             self.assertIsInstance(c, Contact)
 
-    def test_len_returns_the_number_of_members(self):
+    def test_len_returns_the_number_of_members(self) -> None:
         self.assertEqual(len(self.group), len(self.nicks))
 
-    def test_group_serialization_length_and_type(self):
+    def test_group_serialization_length_and_type(self) -> None:
         serialized = self.group.serialize_g()
         self.assertIsInstance(serialized, bytes)
         self.assertEqual(
@@ -88,7 +88,7 @@ class TestGroup(unittest.TestCase):
             ),
         )
 
-    def test_add_members(self):
+    def test_add_members(self) -> None:
         # Test members to be added are not already in group
         self.assertFalse(self.group.has_member(nick_to_pub_key("David")))
         self.assertFalse(self.group.has_member(nick_to_pub_key("Eric")))
@@ -108,7 +108,7 @@ class TestGroup(unittest.TestCase):
             len(self.group), len(["Alice", "Bob", "Charlie", "David", "Eric"])
         )
 
-    def test_remove_members(self):
+    def test_remove_members(self) -> None:
         # Test members to be removed are part of group
         self.assertTrue(self.group.has_member(nick_to_pub_key("Alice")))
         self.assertTrue(self.group.has_member(nick_to_pub_key("Bob")))
@@ -135,7 +135,7 @@ class TestGroup(unittest.TestCase):
         self.assertTrue(self.group.has_member(nick_to_pub_key("Alice")))
         self.assertTrue(self.group.has_member(nick_to_pub_key("Bob")))
 
-    def test_get_list_of_member_pub_keys(self):
+    def test_get_list_of_member_pub_keys(self) -> None:
         self.assertEqual(
             first=self.group.get_list_of_member_pub_keys(),
             second=[
@@ -145,18 +145,18 @@ class TestGroup(unittest.TestCase):
             ],
         )
 
-    def test_has_member(self):
+    def test_has_member(self) -> None:
         self.assertTrue(self.group.has_member(nick_to_pub_key("Charlie")))
         self.assertFalse(self.group.has_member(nick_to_pub_key("David")))
 
-    def test_has_members(self):
+    def test_has_members(self) -> None:
         self.assertFalse(self.group.empty())
         self.group.members = []
         self.assertTrue(self.group.empty())
 
 
 class TestGroupList(TFCTestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         """Pre-test actions."""
         self.unit_test_dir = cd_unit_test()
         self.master_key = MasterKey()
@@ -213,18 +213,18 @@ class TestGroupList(TFCTestCase):
             * ONION_SERVICE_PUBLIC_KEY_LENGTH
         )
 
-    def tearDown(self):
+    def tearDown(self) -> None:
         """Post-test actions."""
         cleanup(self.unit_test_dir)
 
-    def test_group_list_iterates_over_group_objects(self):
+    def test_group_list_iterates_over_group_objects(self) -> None:
         for g in self.group_list:
             self.assertIsInstance(g, Group)
 
-    def test_len_returns_the_number_of_groups(self):
+    def test_len_returns_the_number_of_groups(self) -> None:
         self.assertEqual(len(self.group_list), len(self.group_names))
 
-    def test_storing_and_loading_of_groups(self):
+    def test_storing_and_loading_of_groups(self) -> None:
         self.group_list.store_groups()
 
         self.assertTrue(os.path.isfile(self.file_name))
@@ -252,7 +252,7 @@ class TestGroupList(TFCTestCase):
         group_list3 = GroupList(self.master_key, self.settings, self.contact_list)
         self.assertEqual(len(group_list3.get_group("test_group_1").members), 10)
 
-    def test_invalid_content_raises_critical_error(self):
+    def test_invalid_content_raises_critical_error(self) -> None:
         # Setup
         invalid_data = b"a"
         pt_bytes = self.group_list._generate_group_db_header()
@@ -272,7 +272,7 @@ class TestGroupList(TFCTestCase):
         with self.assertRaises(SystemExit):
             GroupList(self.master_key, self.settings, self.contact_list)
 
-    def test_load_of_modified_database_raises_critical_error(self):
+    def test_load_of_modified_database_raises_critical_error(self) -> None:
         self.group_list.store_groups()
 
         # Test reading works normally
@@ -285,7 +285,7 @@ class TestGroupList(TFCTestCase):
         with self.assertRaises(SystemExit):
             GroupList(self.master_key, self.settings, self.contact_list)
 
-    def test_check_db_settings(self):
+    def test_check_db_settings(self) -> None:
         self.assertFalse(
             self.group_list._check_db_settings(
                 number_of_actual_groups=self.settings.max_number_of_groups,
@@ -307,17 +307,17 @@ class TestGroupList(TFCTestCase):
             )
         )
 
-    def test_generate_group_db_header(self):
+    def test_generate_group_db_header(self) -> None:
         header = self.group_list._generate_group_db_header()
         self.assertEqual(len(header), GROUP_DB_HEADER_LENGTH)
         self.assertIsInstance(header, bytes)
 
-    def test_generate_dummy_group(self):
+    def test_generate_dummy_group(self) -> None:
         dummy_group = self.group_list._generate_dummy_group()
         self.assertIsInstance(dummy_group, Group)
         self.assertEqual(len(dummy_group.serialize_g()), self.single_member_data_len)
 
-    def test_dummy_groups(self):
+    def test_dummy_groups(self) -> None:
         dummies = self.group_list._dummy_groups()
         self.assertEqual(
             len(dummies), self.settings.max_number_of_contacts - len(self.nicks)
@@ -325,7 +325,7 @@ class TestGroupList(TFCTestCase):
         for g in dummies:
             self.assertIsInstance(g, Group)
 
-    def test_add_group(self):
+    def test_add_group(self) -> None:
         members = [create_contact("Laura")]
         self.group_list.add_group(
             "test_group_12", bytes(GROUP_ID_LENGTH), False, False, members
@@ -336,7 +336,7 @@ class TestGroupList(TFCTestCase):
         self.assertTrue(self.group_list.get_group("test_group_12").notifications)
         self.assertEqual(len(self.group_list), len(self.group_names) + 1)
 
-    def test_remove_group_by_name(self):
+    def test_remove_group_by_name(self) -> None:
         self.assertEqual(len(self.group_list), len(self.group_names))
 
         # Remove non-existing group
@@ -347,7 +347,7 @@ class TestGroupList(TFCTestCase):
         self.assertIsNone(self.group_list.remove_group_by_name("test_group_11"))
         self.assertEqual(len(self.group_list), len(self.group_names) - 1)
 
-    def test_remove_group_by_id(self):
+    def test_remove_group_by_id(self) -> None:
         self.assertEqual(len(self.group_list), len(self.group_names))
 
         # Remove non-existing group
@@ -362,10 +362,10 @@ class TestGroupList(TFCTestCase):
         )
         self.assertEqual(len(self.group_list), len(self.group_names) - 1)
 
-    def test_get_group(self):
+    def test_get_group(self) -> None:
         self.assertEqual(self.group_list.get_group("test_group_3").name, "test_group_3")
 
-    def test_get_group_by_id(self):
+    def test_get_group_by_id(self) -> None:
         members = [create_contact("Laura")]
         group_id = os.urandom(GROUP_ID_LENGTH)
         self.group_list.add_group("test_group_12", group_id, False, False, members)
@@ -373,16 +373,16 @@ class TestGroupList(TFCTestCase):
             self.group_list.get_group_by_id(group_id).name, "test_group_12"
         )
 
-    def test_get_list_of_group_names(self):
+    def test_get_list_of_group_names(self) -> None:
         self.assertEqual(self.group_list.get_list_of_group_names(), self.group_names)
 
-    def test_get_list_of_group_ids(self):
+    def test_get_list_of_group_ids(self) -> None:
         self.assertEqual(
             self.group_list.get_list_of_group_ids(),
             list(map(group_name_to_group_id, self.group_names)),
         )
 
-    def test_get_list_of_hr_group_ids(self):
+    def test_get_list_of_hr_group_ids(self) -> None:
         self.assertEqual(
             self.group_list.get_list_of_hr_group_ids(),
             [
@@ -391,28 +391,28 @@ class TestGroupList(TFCTestCase):
             ],
         )
 
-    def test_get_group_members(self):
+    def test_get_group_members(self) -> None:
         members = self.group_list.get_group_members(
             group_name_to_group_id("test_group_1")
         )
         for c in members:
             self.assertIsInstance(c, Contact)
 
-    def test_has_group(self):
+    def test_has_group(self) -> None:
         self.assertTrue(self.group_list.has_group("test_group_11"))
         self.assertFalse(self.group_list.has_group("test_group_12"))
 
-    def test_has_group_id(self):
+    def test_has_group_id(self) -> None:
         members = [create_contact("Laura")]
         group_id = os.urandom(GROUP_ID_LENGTH)
         self.assertFalse(self.group_list.has_group_id(group_id))
         self.group_list.add_group("test_group_12", group_id, False, False, members)
         self.assertTrue(self.group_list.has_group_id(group_id))
 
-    def test_largest_group(self):
+    def test_largest_group(self) -> None:
         self.assertEqual(self.group_list.largest_group(), len(self.nicks))
 
-    def test_print_group(self):
+    def test_print_group(self) -> None:
         self.group_list.get_group("test_group_1").name = "group"
         self.group_list.get_group("test_group_2").log_messages = True
         self.group_list.get_group("test_group_3").notifications = True

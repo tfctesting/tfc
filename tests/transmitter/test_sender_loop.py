@@ -66,7 +66,7 @@ from tests.utils import gen_queue_dict, tear_queues
 
 
 class TestSenderLoop(unittest.TestCase):
-    def test_loops(self):
+    def test_loops(self) -> None:
         queues = gen_queue_dict()
         window = TxWindow(log_messages=True)
         settings = Settings(
@@ -96,7 +96,7 @@ class TestSenderLoop(unittest.TestCase):
 
 
 class TestTrafficMaskingLoop(unittest.TestCase):
-    def test_loop(self):
+    def test_loop(self) -> None:
         # Setup
         queues = gen_queue_dict()
         settings = Settings(
@@ -110,7 +110,7 @@ class TestTrafficMaskingLoop(unittest.TestCase):
         window.window_contacts = [contact_list.get_contact_by_address_or_nick("Alice")]
         user_input = UserInput(plaintext="test")
 
-        def queue_delayer():
+        def queue_delayer() -> None:
             """Place packets to queue after delay."""
             time.sleep(0.01)
             queues[WINDOW_SELECT_QUEUE].put(window.window_contacts)
@@ -144,7 +144,7 @@ class TestTrafficMaskingLoop(unittest.TestCase):
 
 
 class TestStandardSenderLoop(unittest.TestCase):
-    def test_loop(self):
+    def test_loop(self) -> None:
         # Setup
         queues = gen_queue_dict()
         settings = Settings(traffic_masking=False)
@@ -158,7 +158,7 @@ class TestStandardSenderLoop(unittest.TestCase):
 
         delay = 0.015
 
-        def queue_delayer():
+        def queue_delayer() -> None:
             """Place datagrams into queue after delay."""
             time.sleep(delay)
             queue_command(b"test", settings, queues)

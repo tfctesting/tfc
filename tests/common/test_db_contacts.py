@@ -57,7 +57,7 @@ from tests.utils import (
 
 
 class TestContact(unittest.TestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         """Pre-test actions."""
         self.contact = Contact(
             nick_to_pub_key("Bob"),
@@ -70,12 +70,12 @@ class TestContact(unittest.TestCase):
             notifications=True,
         )
 
-    def test_contact_serialization_length_and_type(self):
+    def test_contact_serialization_length_and_type(self) -> None:
         serialized = self.contact.serialize_c()
         self.assertEqual(len(serialized), CONTACT_LENGTH)
         self.assertIsInstance(serialized, bytes)
 
-    def test_uses_psk(self):
+    def test_uses_psk(self) -> None:
         for kex_status in [KEX_STATUS_NO_RX_PSK, KEX_STATUS_HAS_RX_PSK]:
             self.contact.kex_status = kex_status
             self.assertTrue(self.contact.uses_psk())
@@ -92,7 +92,7 @@ class TestContact(unittest.TestCase):
 
 
 class TestContactList(TFCTestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         """Pre-test actions."""
         self.unit_test_dir = cd_unit_test()
         self.master_key = MasterKey()
@@ -104,18 +104,20 @@ class TestContactList(TFCTestCase):
         self.real_contact_list = self.full_contact_list[:]
         self.real_contact_list.remove(LOCAL_ID)
 
-    def tearDown(self):
+    def tearDown(self) -> None:
         """Post-test actions."""
         cleanup(self.unit_test_dir)
 
-    def test_contact_list_iterates_over_contact_objects(self):
+    def test_contact_list_iterates_over_contact_objects(self) -> None:
         for c in self.contact_list:
             self.assertIsInstance(c, Contact)
 
-    def test_len_returns_the_number_of_contacts_and_excludes_the_local_key(self):
+    def test_len_returns_the_number_of_contacts_and_excludes_the_local_key(
+        self,
+    ) -> None:
         self.assertEqual(len(self.contact_list), len(self.real_contact_list))
 
-    def test_storing_and_loading_of_contacts(self):
+    def test_storing_and_loading_of_contacts(self) -> None:
         # Test store
         self.contact_list.store_contacts()
         self.assertEqual(
@@ -132,7 +134,7 @@ class TestContactList(TFCTestCase):
         for c in contact_list2:
             self.assertIsInstance(c, Contact)
 
-    def test_invalid_content_raises_critical_error(self):
+    def test_invalid_content_raises_critical_error(self) -> None:
         # Setup
         invalid_data = b"a"
         pt_bytes = b"".join(
@@ -152,7 +154,7 @@ class TestContactList(TFCTestCase):
         with self.assertRaises(SystemExit):
             ContactList(self.master_key, self.settings)
 
-    def test_load_of_modified_database_raises_critical_error(self):
+    def test_load_of_modified_database_raises_critical_error(self) -> None:
         self.contact_list.store_contacts()
 
         # Test reading works normally
@@ -163,12 +165,12 @@ class TestContactList(TFCTestCase):
         with self.assertRaises(SystemExit):
             ContactList(self.master_key, self.settings)
 
-    def test_generate_dummy_contact(self):
+    def test_generate_dummy_contact(self) -> None:
         dummy_contact = ContactList.generate_dummy_contact()
         self.assertIsInstance(dummy_contact, Contact)
         self.assertEqual(len(dummy_contact.serialize_c()), CONTACT_LENGTH)
 
-    def test_dummy_contacts(self):
+    def test_dummy_contacts(self) -> None:
         dummies = self.contact_list._dummy_contacts()
         self.assertEqual(
             len(dummies),
@@ -177,7 +179,7 @@ class TestContactList(TFCTestCase):
         for c in dummies:
             self.assertIsInstance(c, Contact)
 
-    def test_add_contact(self):
+    def test_add_contact(self) -> None:
         tx_fingerprint = FINGERPRINT_LENGTH * b"\x03"
         rx_fingerprint = FINGERPRINT_LENGTH * b"\x04"
 
@@ -212,7 +214,7 @@ class TestContactList(TFCTestCase):
             faye.notifications, self.settings.show_notifications_by_default
         )
 
-    def test_add_contact_that_replaces_an_existing_contact(self):
+    def test_add_contact_that_replaces_an_existing_contact(self) -> None:
         alice = self.contact_list.get_contact_by_pub_key(nick_to_pub_key("Alice"))
         new_nick = "Alice2"
         new_tx_fingerprint = FINGERPRINT_LENGTH * b"\x03"
@@ -267,7 +269,7 @@ class TestContactList(TFCTestCase):
             alice.notifications, self.settings.show_notifications_by_default
         )
 
-    def test_remove_contact_by_pub_key(self):
+    def test_remove_contact_by_pub_key(self) -> None:
         # Verify both contacts exist
         self.assertTrue(self.contact_list.has_pub_key(nick_to_pub_key("Bob")))
         self.assertTrue(self.contact_list.has_pub_key(nick_to_pub_key("Charlie")))
@@ -278,7 +280,7 @@ class TestContactList(TFCTestCase):
         self.assertFalse(self.contact_list.has_pub_key(nick_to_pub_key("Bob")))
         self.assertTrue(self.contact_list.has_pub_key(nick_to_pub_key("Charlie")))
 
-    def test_remove_contact_by_address_or_nick(self):
+    def test_remove_contact_by_address_or_nick(self) -> None:
         # Verify both contacts exist
         self.assertTrue(self.contact_list.has_pub_key(nick_to_pub_key("Bob")))
         self.assertTrue(self.contact_list.has_pub_key(nick_to_pub_key("Charlie")))
@@ -299,7 +301,7 @@ class TestContactList(TFCTestCase):
         self.assertFalse(self.contact_list.has_pub_key(nick_to_pub_key("Bob")))
         self.assertFalse(self.contact_list.has_pub_key(nick_to_pub_key("Charlie")))
 
-    def test_get_contact_by_pub_key(self):
+    def test_get_contact_by_pub_key(self) -> None:
         self.assertIs(
             self.contact_list.get_contact_by_pub_key(nick_to_pub_key("Bob")),
             self.contact_list.get_contact_by_address_or_nick("Bob"),
@@ -307,7 +309,7 @@ class TestContactList(TFCTestCase):
 
     def test_get_contact_by_address_or_nick_returns_the_same_contact_object_with_address_and_nick(
         self,
-    ):
+    ) -> None:
         for selector in [nick_to_onion_address("Bob"), "Bob"]:
             self.assertIsInstance(
                 self.contact_list.get_contact_by_address_or_nick(selector), Contact
@@ -320,14 +322,14 @@ class TestContactList(TFCTestCase):
             ),
         )
 
-    def test_get_list_of_contacts(self):
+    def test_get_list_of_contacts(self) -> None:
         self.assertEqual(
             len(self.contact_list.get_list_of_contacts()), len(self.real_contact_list)
         )
         for c in self.contact_list.get_list_of_contacts():
             self.assertIsInstance(c, Contact)
 
-    def test_get_list_of_addresses(self):
+    def test_get_list_of_addresses(self) -> None:
         self.assertEqual(
             self.contact_list.get_list_of_addresses(),
             [
@@ -339,13 +341,13 @@ class TestContactList(TFCTestCase):
             ],
         )
 
-    def test_get_list_of_nicks(self):
+    def test_get_list_of_nicks(self) -> None:
         self.assertEqual(
             self.contact_list.get_list_of_nicks(),
             ["Alice", "Bob", "Charlie", "David", "Eric"],
         )
 
-    def test_get_list_of_pub_keys(self):
+    def test_get_list_of_pub_keys(self) -> None:
         self.assertEqual(
             self.contact_list.get_list_of_pub_keys(),
             [
@@ -357,7 +359,7 @@ class TestContactList(TFCTestCase):
             ],
         )
 
-    def test_get_list_of_pending_pub_keys(self):
+    def test_get_list_of_pending_pub_keys(self) -> None:
         # Set key exchange statuses to pending
         for nick in ["Alice", "Bob"]:
             contact = self.contact_list.get_contact_by_address_or_nick(nick)
@@ -369,7 +371,7 @@ class TestContactList(TFCTestCase):
             [nick_to_pub_key("Alice"), nick_to_pub_key("Bob")],
         )
 
-    def test_get_list_of_existing_pub_keys(self):
+    def test_get_list_of_existing_pub_keys(self) -> None:
         self.contact_list.get_contact_by_address_or_nick(
             "Alice"
         ).kex_status = KEX_STATUS_UNVERIFIED
@@ -396,7 +398,7 @@ class TestContactList(TFCTestCase):
             ],
         )
 
-    def test_contact_selectors(self):
+    def test_contact_selectors(self) -> None:
         self.assertEqual(
             self.contact_list.contact_selectors(),
             [
@@ -413,12 +415,12 @@ class TestContactList(TFCTestCase):
             ],
         )
 
-    def test_has_contacts(self):
+    def test_has_contacts(self) -> None:
         self.assertTrue(self.contact_list.has_contacts())
         self.contact_list.contacts = []
         self.assertFalse(self.contact_list.has_contacts())
 
-    def test_has_only_pending_contacts(self):
+    def test_has_only_pending_contacts(self) -> None:
         # Change all to pending
         for contact in self.contact_list.get_list_of_contacts():
             contact.kex_status = KEX_STATUS_PENDING
@@ -429,7 +431,7 @@ class TestContactList(TFCTestCase):
         alice.kex_status = KEX_STATUS_UNVERIFIED
         self.assertFalse(self.contact_list.has_only_pending_contacts())
 
-    def test_has_pub_key(self):
+    def test_has_pub_key(self) -> None:
         self.contact_list.contacts = []
         self.assertFalse(self.contact_list.has_pub_key(nick_to_pub_key("Bob")))
         self.assertFalse(self.contact_list.has_pub_key(nick_to_pub_key("Bob")))
@@ -438,14 +440,14 @@ class TestContactList(TFCTestCase):
         self.assertTrue(self.contact_list.has_pub_key(nick_to_pub_key("Bob")))
         self.assertTrue(self.contact_list.has_pub_key(nick_to_pub_key("Charlie")))
 
-    def test_has_local_contact(self):
+    def test_has_local_contact(self) -> None:
         self.contact_list.contacts = []
         self.assertFalse(self.contact_list.has_local_contact())
 
         self.contact_list.contacts = [create_contact(LOCAL_ID)]
         self.assertTrue(self.contact_list.has_local_contact())
 
-    def test_print_contacts(self):
+    def test_print_contacts(self) -> None:
         self.contact_list.contacts.append(create_contact(LOCAL_ID))
         self.contact_list.get_contact_by_pub_key(
             nick_to_pub_key("Alice")

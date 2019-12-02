@@ -130,7 +130,7 @@ def tx_loop(
 
     while True:
         with ignored(EOFError, KeyboardInterrupt):
-            while io_queue.qsize() == 0:
+            while not io_queue.qsize():
                 time.sleep(0.01)
             animate(argv)
             interface.send(io_queue.get())

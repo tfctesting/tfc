@@ -53,7 +53,7 @@ class TestTFCDatabase(unittest.TestCase):
         cleanup(self.unit_test_dir)
 
     @mock.patch("os.fsync", return_value=MagicMock)
-    def test_write_to_file(self, mock_os_fsync):
+    def test_write_to_file(self, mock_os_fsync) -> None:
         # Setup
         data = os.urandom(MASTERKEY_DB_SIZE)
 
@@ -66,7 +66,7 @@ class TestTFCDatabase(unittest.TestCase):
 
         mock_os_fsync.assert_called()
 
-    def test_verify_file(self):
+    def test_verify_file(self) -> None:
         # Setup
         pt_bytes = os.urandom(MASTERKEY_DB_SIZE)
         ct_bytes = encrypt_and_sign(pt_bytes, self.master_key.master_key)
@@ -80,7 +80,9 @@ class TestTFCDatabase(unittest.TestCase):
         tamper_file(self.database_name, tamper_size=1)
         self.assertFalse(self.database.verify_file(self.database_name))
 
-    def test_ensure_temp_write_raises_critical_error_after_exceeding_retry_limit(self):
+    def test_ensure_temp_write_raises_critical_error_after_exceeding_retry_limit(
+        self,
+    ) -> None:
         # Setup
         orig_verify_file = self.database.verify_file
         self.database.verify_file = MagicMock(
@@ -94,7 +96,7 @@ class TestTFCDatabase(unittest.TestCase):
         # Teardown
         self.database.verify_file = orig_verify_file
 
-    def test_ensure_temp_write_succeeds_just_before_limit(self):
+    def test_ensure_temp_write_succeeds_just_before_limit(self) -> None:
         # Setup
         orig_verify_file = self.database.verify_file
         self.database.verify_file = MagicMock(
@@ -109,7 +111,7 @@ class TestTFCDatabase(unittest.TestCase):
 
     def test_store_database_encrypts_data_with_master_key_and_replaces_temp_file_and_original_file(
         self,
-    ):
+    ) -> None:
         # Setup
         pt_old = os.urandom(MASTERKEY_DB_SIZE)
         ct_old = encrypt_and_sign(pt_old, self.master_key.master_key)
@@ -132,7 +134,7 @@ class TestTFCDatabase(unittest.TestCase):
         purp_pt = auth_and_decrypt(purp_data, self.master_key.master_key)
         self.assertEqual(purp_pt, pt_new)
 
-    def test_replace_database(self):
+    def test_replace_database(self) -> None:
         # Setup
         self.assertFalse(os.path.isfile(self.database.database_name))
         self.assertFalse(os.path.isfile(self.database.database_temp))
@@ -149,7 +151,7 @@ class TestTFCDatabase(unittest.TestCase):
         self.assertFalse(os.path.isfile(self.database.database_temp))
         self.assertTrue(os.path.isfile(self.database.database_name))
 
-    def test_load_database_ignores_invalid_temp_database(self):
+    def test_load_database_ignores_invalid_temp_database(self) -> None:
         # Setup
         pt_old = os.urandom(MASTERKEY_DB_SIZE)
         ct_old = encrypt_and_sign(pt_old, self.master_key.master_key)
@@ -165,7 +167,7 @@ class TestTFCDatabase(unittest.TestCase):
         self.assertEqual(self.database.load_database(), pt_old)
         self.assertFalse(os.path.isfile(self.database.database_temp))
 
-    def test_load_database_prefers_valid_temp_database(self):
+    def test_load_database_prefers_valid_temp_database(self) -> None:
         # Setup
         pt_old = os.urandom(MASTERKEY_DB_SIZE)
         ct_old = encrypt_and_sign(pt_old, self.master_key.master_key)
@@ -195,7 +197,7 @@ class TestTFCUnencryptedDatabase(unittest.TestCase):
         cleanup(self.unit_test_dir)
 
     @mock.patch("os.fsync", return_value=MagicMock)
-    def test_write_to_file(self, mock_os_fsync):
+    def test_write_to_file(self, mock_os_fsync) -> None:
         # Setup
         data = os.urandom(MASTERKEY_DB_SIZE)
 
@@ -208,7 +210,7 @@ class TestTFCUnencryptedDatabase(unittest.TestCase):
 
         mock_os_fsync.assert_called()
 
-    def test_verify_file(self):
+    def test_verify_file(self) -> None:
         # Setup
         data = os.urandom(MASTERKEY_DB_SIZE)
         checksummed_data = data + blake2b(data)
@@ -222,7 +224,9 @@ class TestTFCUnencryptedDatabase(unittest.TestCase):
         tamper_file(self.database_name, tamper_size=1)
         self.assertFalse(self.database.verify_file(self.database_name))
 
-    def test_ensure_temp_write_raises_critical_error_after_exceeding_retry_limit(self):
+    def test_ensure_temp_write_raises_critical_error_after_exceeding_retry_limit(
+        self,
+    ) -> None:
         # Setup
         orig_verify_file = self.database.verify_file
         self.database.verify_file = MagicMock(
@@ -236,7 +240,7 @@ class TestTFCUnencryptedDatabase(unittest.TestCase):
         # Teardown
         self.database.verify_file = orig_verify_file
 
-    def test_ensure_temp_write_succeeds_just_before_limit(self):
+    def test_ensure_temp_write_succeeds_just_before_limit(self) -> None:
         # Setup
         orig_verify_file = self.database.verify_file
         self.database.verify_file = MagicMock(
@@ -251,7 +255,9 @@ class TestTFCUnencryptedDatabase(unittest.TestCase):
         # Teardown
         self.database.verify_file = orig_verify_file
 
-    def test_store_unencrypted_database_replaces_temp_file_and_original_file(self):
+    def test_store_unencrypted_database_replaces_temp_file_and_original_file(
+        self,
+    ) -> None:
         # Setup
         data_old = os.urandom(MASTERKEY_DB_SIZE)
         with open(self.database_name, "wb") as f:
@@ -273,7 +279,7 @@ class TestTFCUnencryptedDatabase(unittest.TestCase):
 
         self.assertEqual(purp_data, data_new + blake2b(data_new))
 
-    def test_replace_database(self):
+    def test_replace_database(self) -> None:
         # Setup
         self.assertFalse(os.path.isfile(self.database.database_name))
         self.assertFalse(os.path.isfile(self.database.database_temp))
@@ -290,7 +296,7 @@ class TestTFCUnencryptedDatabase(unittest.TestCase):
         self.assertFalse(os.path.isfile(self.database.database_temp))
         self.assertTrue(os.path.isfile(self.database.database_name))
 
-    def test_loading_invalid_database_data_raises_critical_error(self):
+    def test_loading_invalid_database_data_raises_critical_error(self) -> None:
         data_old = os.urandom(MASTERKEY_DB_SIZE)
         checksummed = data_old + blake2b(data_old)
 
@@ -302,7 +308,7 @@ class TestTFCUnencryptedDatabase(unittest.TestCase):
         with self.assertRaises(SystemExit):
             self.database.load_database()
 
-    def test_load_database_ignores_invalid_temp_database(self):
+    def test_load_database_ignores_invalid_temp_database(self) -> None:
         # Setup
         data_old = os.urandom(MASTERKEY_DB_SIZE)
         checksummed = data_old + blake2b(data_old)
@@ -318,7 +324,7 @@ class TestTFCUnencryptedDatabase(unittest.TestCase):
         self.assertEqual(self.database.load_database(), data_old)
         self.assertFalse(os.path.isfile(self.database.database_temp))
 
-    def test_load_database_prefers_valid_temp_database(self):
+    def test_load_database_prefers_valid_temp_database(self) -> None:
         # Setup
         data_old = os.urandom(MASTERKEY_DB_SIZE)
         checksummed_old = data_old + blake2b(data_old)
@@ -351,10 +357,10 @@ class TestTFCLogDatabase(unittest.TestCase):
         """Post-test actions."""
         cleanup(self.unit_test_dir)
 
-    def test_empty_log_database_is_verified(self):
+    def test_empty_log_database_is_verified(self) -> None:
         self.assertTrue(self.tfc_log_database.verify_file(self.file_name))
 
-    def test_database_with_one_entry_is_verified(self):
+    def test_database_with_one_entry_is_verified(self) -> None:
         # Setup
         test_entry = b"test_log_entry"
         self.tfc_log_database.insert_log_entry(test_entry)
@@ -362,7 +368,7 @@ class TestTFCLogDatabase(unittest.TestCase):
         # Test
         self.assertTrue(self.tfc_log_database.verify_file(self.file_name))
 
-    def test_invalid_entry_returns_false(self):
+    def test_invalid_entry_returns_false(self) -> None:
         # Setup
         params = (os.urandom(LOG_ENTRY_LENGTH),)
         self.tfc_log_database.c.execute(
@@ -373,15 +379,15 @@ class TestTFCLogDatabase(unittest.TestCase):
         # Test
         self.assertFalse(self.tfc_log_database.verify_file(self.file_name))
 
-    def test_table_creation(self):
+    def test_table_creation(self) -> None:
         self.assertIsInstance(self.tfc_log_database, MessageLog)
         self.assertTrue(os.path.isfile(self.file_name))
 
-    def test_writing_to_log_database(self):
+    def test_writing_to_log_database(self) -> None:
         data = os.urandom(LOG_ENTRY_LENGTH)
         self.assertIsNone(self.tfc_log_database.insert_log_entry(data))
 
-    def test_iterating_over_log_database(self):
+    def test_iterating_over_log_database(self) -> None:
         data = [os.urandom(LOG_ENTRY_LENGTH), os.urandom(LOG_ENTRY_LENGTH)]
         for entry in data:
             self.assertIsNone(self.tfc_log_database.insert_log_entry(entry))
@@ -389,7 +395,7 @@ class TestTFCLogDatabase(unittest.TestCase):
         for index, stored_entry in enumerate(self.tfc_log_database):
             self.assertEqual(stored_entry, data[index])
 
-    def test_invalid_temp_database_is_not_loaded(self):
+    def test_invalid_temp_database_is_not_loaded(self) -> None:
         log_file = MessageLog(self.file_name, database_key=self.database_key)
         tmp_file = MessageLog(self.temp_name, database_key=self.database_key)
 
@@ -413,7 +419,7 @@ class TestTFCLogDatabase(unittest.TestCase):
         self.assertEqual(list(log_file), [b"a", b"b", b"c", b"d", b"e"])
         self.assertFalse(os.path.isfile(self.temp_name))
 
-    def test_valid_temp_database_is_loaded(self):
+    def test_valid_temp_database_is_loaded(self) -> None:
         log_file = MessageLog(self.file_name, database_key=self.database_key)
         tmp_file = MessageLog(self.temp_name, database_key=self.database_key)
 
@@ -434,7 +440,7 @@ class TestTFCLogDatabase(unittest.TestCase):
         self.assertEqual(list(log_file), [b"f", b"g", b"h", b"i", b"j"])
         self.assertFalse(os.path.isfile(self.temp_name))
 
-    def test_database_closing(self):
+    def test_database_closing(self) -> None:
         self.tfc_log_database.close_database()
 
         # Test insertion would fail at this point

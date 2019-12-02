@@ -54,18 +54,18 @@ from tests.utils import (
 
 
 class TestStoreUnique(unittest.TestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         """Pre-test actions."""
         self.unit_test_dir = cd_unit_test()
         self.file_data = os.urandom(100)
         self.file_dir = "test_dir/"
         self.file_name = "test_file"
 
-    def tearDown(self):
+    def tearDown(self) -> None:
         """Post-test actions."""
         cleanup(self.unit_test_dir)
 
-    def test_each_file_is_store_with_unique_name(self):
+    def test_each_file_is_store_with_unique_name(self) -> None:
         self.assertEqual(
             store_unique(self.file_data, self.file_dir, self.file_name), "test_file"
         )
@@ -78,7 +78,7 @@ class TestStoreUnique(unittest.TestCase):
 
 
 class ProcessAssembledFile(TFCTestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         """Pre-test actions."""
         self.unit_test_dir = cd_unit_test()
         self.ts = datetime.now()
@@ -89,16 +89,16 @@ class ProcessAssembledFile(TFCTestCase):
         self.key = os.urandom(SYMMETRIC_KEY_LENGTH)
         self.args = self.onion_pub_key, self.nick, self.settings, self.window_list
 
-    def tearDown(self):
+    def tearDown(self) -> None:
         """Post-test actions."""
         cleanup(self.unit_test_dir)
 
-    def test_invalid_structure_raises_fr(self):
+    def test_invalid_structure_raises_fr(self) -> None:
         # Setup
         payload = b"testfile.txt"
 
         # Test
-        self.assert_fr(
+        self.assert_se(
             "Error: Received file had an invalid structure.",
             process_assembled_file,
             self.ts,
@@ -106,12 +106,12 @@ class ProcessAssembledFile(TFCTestCase):
             *self.args,
         )
 
-    def test_invalid_encoding_raises_fr(self):
+    def test_invalid_encoding_raises_fr(self) -> None:
         # Setup
         payload = UNDECODABLE_UNICODE + US_BYTE + b"file_data"
 
         # Test
-        self.assert_fr(
+        self.assert_se(
             "Error: Received file name had an invalid encoding.",
             process_assembled_file,
             self.ts,
@@ -119,12 +119,12 @@ class ProcessAssembledFile(TFCTestCase):
             *self.args,
         )
 
-    def test_invalid_name_raises_fr(self):
+    def test_invalid_name_raises_fr(self) -> None:
         # Setup
         payload = b"\x01filename" + US_BYTE + b"file_data"
 
         # Test
-        self.assert_fr(
+        self.assert_se(
             "Error: Received file had an invalid name.",
             process_assembled_file,
             self.ts,
@@ -132,12 +132,12 @@ class ProcessAssembledFile(TFCTestCase):
             *self.args,
         )
 
-    def test_slash_in_file_name_raises_fr(self):
+    def test_slash_in_file_name_raises_fr(self) -> None:
         # Setup
         payload = b"file/name" + US_BYTE + b"file_data"
 
         # Test
-        self.assert_fr(
+        self.assert_se(
             "Error: Received file had an invalid name.",
             process_assembled_file,
             self.ts,
@@ -145,12 +145,12 @@ class ProcessAssembledFile(TFCTestCase):
             *self.args,
         )
 
-    def test_invalid_key_raises_fr(self):
+    def test_invalid_key_raises_fr(self) -> None:
         # Setup
         payload = b"testfile.txt" + US_BYTE + b"file_data"
 
         # Test
-        self.assert_fr(
+        self.assert_se(
             "Error: Received file had an invalid key.",
             process_assembled_file,
             self.ts,
@@ -158,13 +158,13 @@ class ProcessAssembledFile(TFCTestCase):
             *self.args,
         )
 
-    def test_decryption_fail_raises_fr(self):
+    def test_decryption_fail_raises_fr(self) -> None:
         # Setup
         file_data = encrypt_and_sign(b"file_data", self.key)[::-1]
         payload = b"testfile.txt" + US_BYTE + file_data
 
         # Test
-        self.assert_fr(
+        self.assert_se(
             "Error: Decryption of file data failed.",
             process_assembled_file,
             self.ts,
@@ -172,14 +172,14 @@ class ProcessAssembledFile(TFCTestCase):
             *self.args,
         )
 
-    def test_invalid_compression_raises_fr(self):
+    def test_invalid_compression_raises_fr(self) -> None:
         # Setup
         compressed = zlib.compress(b"file_data", level=COMPRESSION_LEVEL)[::-1]
         file_data = encrypt_and_sign(compressed, self.key) + self.key
         payload = b"testfile.txt" + US_BYTE + file_data
 
         # Test
-        self.assert_fr(
+        self.assert_se(
             "Error: Decompression of file data failed.",
             process_assembled_file,
             self.ts,
@@ -187,7 +187,7 @@ class ProcessAssembledFile(TFCTestCase):
             *self.args,
         )
 
-    def test_successful_reception(self):
+    def test_successful_reception(self) -> None:
         # Setup
         compressed = zlib.compress(b"file_data", level=COMPRESSION_LEVEL)
         file_data = encrypt_and_sign(compressed, self.key) + self.key
@@ -197,7 +197,7 @@ class ProcessAssembledFile(TFCTestCase):
         self.assertIsNone(process_assembled_file(self.ts, payload, *self.args))
         self.assertTrue(os.path.isfile(f"{DIR_RECV_FILES}Alice/testfile.txt"))
 
-    def test_successful_reception_during_traffic_masking(self):
+    def test_successful_reception_during_traffic_masking(self) -> None:
         # Setup
         self.settings.traffic_masking = True
         self.window_list.active_win = self.window_list.get_window(
@@ -218,7 +218,7 @@ class ProcessAssembledFile(TFCTestCase):
 
 
 class TestNewFile(TFCTestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         """Pre-test actions."""
         self.unit_test_dir = cd_unit_test()
         self.ts = datetime.now()
@@ -240,28 +240,28 @@ class TestNewFile(TFCTestCase):
             self.settings,
         )
 
-    def tearDown(self):
+    def tearDown(self) -> None:
         """Post-test actions."""
         cleanup(self.unit_test_dir)
 
-    def test_unknown_account_raises_fr(self):
+    def test_unknown_account_raises_fr(self) -> None:
         # Setup
         file_ct = encrypt_and_sign(self.compressed, self.file_key)
         packet = nick_to_pub_key("Bob") + ORIGIN_CONTACT_HEADER + file_ct
 
         # Test
-        self.assert_fr(
+        self.assert_se(
             "File from an unknown account.", new_file, self.ts, packet, *self.args
         )
 
-    def test_disabled_file_reception_raises_fr(self):
+    def test_disabled_file_reception_raises_fr(self) -> None:
         # Setup
         file_ct = encrypt_and_sign(self.compressed, self.file_key)
         packet = nick_to_pub_key("Alice") + ORIGIN_CONTACT_HEADER + file_ct
         self.contact_list.get_contact_by_address_or_nick("Alice").file_reception = False
 
         # Test
-        self.assert_fr(
+        self.assert_se(
             "Alert! Discarded file from Alice as file reception for them is disabled.",
             new_file,
             self.ts,
@@ -269,7 +269,7 @@ class TestNewFile(TFCTestCase):
             *self.args,
         )
 
-    def test_valid_file_without_key_is_cached(self):
+    def test_valid_file_without_key_is_cached(self) -> None:
         # Setup
         file_ct = encrypt_and_sign(self.compressed, self.file_key)
         file_hash = blake2b(file_ct)
@@ -282,7 +282,7 @@ class TestNewFile(TFCTestCase):
         )
 
     @mock.patch("time.sleep", return_value=None)
-    def test_valid_file_with_key_is_processed(self, _):
+    def test_valid_file_with_key_is_processed(self, _) -> None:
         # Setup
         file_ct = encrypt_and_sign(self.compressed, self.file_key)
         file_hash = blake2b(file_ct)
@@ -301,7 +301,7 @@ class TestNewFile(TFCTestCase):
 
 
 class TestProcessFile(TFCTestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         """Pre-test actions."""
         self.unit_test_dir = cd_unit_test()
         self.ts = datetime.now()
@@ -313,14 +313,14 @@ class TestProcessFile(TFCTestCase):
         self.settings = Settings()
         self.args = self.file_key, self.contact_list, self.window_list, self.settings
 
-    def tearDown(self):
+    def tearDown(self) -> None:
         """Post-test actions."""
         cleanup(self.unit_test_dir)
 
-    def test_invalid_key_raises_fr(self):
+    def test_invalid_key_raises_fr(self) -> None:
         self.file_key = SYMMETRIC_KEY_LENGTH * b"f"
         self.args = self.file_key, self.contact_list, self.window_list, self.settings
-        self.assert_fr(
+        self.assert_se(
             "Error: Decryption key for file from Alice was invalid.",
             process_file,
             self.ts,
@@ -329,11 +329,11 @@ class TestProcessFile(TFCTestCase):
             *self.args,
         )
 
-    def test_invalid_compression_raises_fr(self):
+    def test_invalid_compression_raises_fr(self) -> None:
         compressed = zlib.compress(b"file_data", level=COMPRESSION_LEVEL)[::-1]
         file_data = encrypt_and_sign(compressed, self.file_key)
 
-        self.assert_fr(
+        self.assert_se(
             "Error: Failed to decompress file from Alice.",
             process_file,
             self.ts,
@@ -343,13 +343,13 @@ class TestProcessFile(TFCTestCase):
         )
 
     @mock.patch("time.sleep", return_value=None)
-    def test_invalid_file_name_raises_fr(self, _):
+    def test_invalid_file_name_raises_fr(self, _) -> None:
         compressed = zlib.compress(
             UNDECODABLE_UNICODE + b"file_data", level=COMPRESSION_LEVEL
         )
         file_data = encrypt_and_sign(compressed, self.file_key)
 
-        self.assert_fr(
+        self.assert_se(
             "Error: Name of file from Alice had an invalid encoding.",
             process_file,
             self.ts,
@@ -359,13 +359,13 @@ class TestProcessFile(TFCTestCase):
         )
 
     @mock.patch("time.sleep", return_value=None)
-    def test_non_printable_name_raises_fr(self, _):
+    def test_non_printable_name_raises_fr(self, _) -> None:
         compressed = zlib.compress(
             str_to_bytes("file\x01") + b"file_data", level=COMPRESSION_LEVEL
         )
         file_data = encrypt_and_sign(compressed, self.file_key)
 
-        self.assert_fr(
+        self.assert_se(
             "Error: Name of file from Alice was invalid.",
             process_file,
             self.ts,
@@ -375,13 +375,13 @@ class TestProcessFile(TFCTestCase):
         )
 
     @mock.patch("time.sleep", return_value=None)
-    def test_slash_in_name_raises_fr(self, _):
+    def test_slash_in_name_raises_fr(self, _) -> None:
         compressed = zlib.compress(
             str_to_bytes("Alice/file.txt") + b"file_data", level=COMPRESSION_LEVEL
         )
         file_data = encrypt_and_sign(compressed, self.file_key)
 
-        self.assert_fr(
+        self.assert_se(
             "Error: Name of file from Alice was invalid.",
             process_file,
             self.ts,
@@ -391,7 +391,7 @@ class TestProcessFile(TFCTestCase):
         )
 
     @mock.patch("time.sleep", return_value=None)
-    def test_successful_storage_of_file(self, _):
+    def test_successful_storage_of_file(self, _) -> None:
         compressed = zlib.compress(
             str_to_bytes("test_file.txt") + b"file_data", level=COMPRESSION_LEVEL
         )
@@ -400,7 +400,7 @@ class TestProcessFile(TFCTestCase):
         self.assertIsNone(process_file(self.ts, self.account, file_data, *self.args))
 
     @mock.patch("time.sleep", return_value=None)
-    def test_successful_storage_during_traffic_masking(self, _):
+    def test_successful_storage_during_traffic_masking(self, _) -> None:
         # Setup
         self.settings.traffic_masking = True
         self.window_list.active_win = self.window_list.get_window(

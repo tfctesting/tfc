@@ -59,7 +59,7 @@ from tests.utils import cd_unit_test, cleanup, gen_queue_dict, tear_queues
 
 
 class TestSRCIncoming(unittest.TestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         """Pre-test actions."""
         self.settings = Settings()
         self.unit_test_dir = cd_unit_test()
@@ -69,7 +69,7 @@ class TestSRCIncoming(unittest.TestCase):
         self.queues = gen_queue_dict()
         self.args = self.queues, self.gateway
 
-    def tearDown(self):
+    def tearDown(self) -> None:
         """Post-test actions."""
         tear_queues(self.queues)
         cleanup(self.unit_test_dir)
@@ -78,7 +78,7 @@ class TestSRCIncoming(unittest.TestCase):
         """Create Reed-Solomon encoded packet"""
         return self.rs.encode(packet)
 
-    def test_unencrypted_datagram(self):
+    def test_unencrypted_datagram(self) -> None:
         # Setup
         packet = self.create_packet(UNENCRYPTED_DATAGRAM_HEADER + b"test")
         self.queues[GATEWAY_QUEUE].put((self.ts, 640 * b"a"))
@@ -88,11 +88,11 @@ class TestSRCIncoming(unittest.TestCase):
         self.assertIsNone(src_incoming(*self.args, unit_test=True))
         self.assertEqual(self.queues[SRC_TO_RELAY_QUEUE].qsize(), 1)
 
-    def test_local_key_datagram(self):
+    def test_local_key_datagram(self) -> None:
         # Setup
         packet = self.create_packet(LOCAL_KEY_DATAGRAM_HEADER + b"test")
 
-        def queue_delayer():
+        def queue_delayer() -> None:
             """Place packet into queue after delay."""
             time.sleep(0.01)
             self.queues[GATEWAY_QUEUE].put((self.ts, packet))
@@ -103,7 +103,7 @@ class TestSRCIncoming(unittest.TestCase):
         self.assertIsNone(src_incoming(*self.args, unit_test=True))
         self.assertEqual(self.queues[DST_COMMAND_QUEUE].qsize(), 1)
 
-    def test_command_datagram(self):
+    def test_command_datagram(self) -> None:
         # Setup
         packet = self.create_packet(COMMAND_DATAGRAM_HEADER + b"test")
         self.queues[GATEWAY_QUEUE].put((self.ts, packet))
@@ -112,7 +112,7 @@ class TestSRCIncoming(unittest.TestCase):
         self.assertIsNone(src_incoming(*self.args, unit_test=True))
         self.assertEqual(self.queues[DST_COMMAND_QUEUE].qsize(), 1)
 
-    def test_message_datagram(self):
+    def test_message_datagram(self) -> None:
         # Setup
         packet = self.create_packet(
             MESSAGE_DATAGRAM_HEADER + 344 * b"a" + nick_to_pub_key("bob")
@@ -124,7 +124,7 @@ class TestSRCIncoming(unittest.TestCase):
         self.assertEqual(self.queues[M_TO_FLASK_QUEUE].qsize(), 1)
         self.assertEqual(self.queues[DST_MESSAGE_QUEUE].qsize(), 1)
 
-    def test_public_key_datagram(self):
+    def test_public_key_datagram(self) -> None:
         # Setup
         packet = self.create_packet(
             PUBLIC_KEY_DATAGRAM_HEADER
@@ -137,7 +137,7 @@ class TestSRCIncoming(unittest.TestCase):
         self.assertIsNone(src_incoming(*self.args, unit_test=True))
         self.assertEqual(self.queues[M_TO_FLASK_QUEUE].qsize(), 1)
 
-    def test_file_datagram(self):
+    def test_file_datagram(self) -> None:
         # Setup
         packet = self.create_packet(
             FILE_DATAGRAM_HEADER
@@ -153,7 +153,7 @@ class TestSRCIncoming(unittest.TestCase):
         self.assertEqual(self.queues[DST_MESSAGE_QUEUE].qsize(), 0)
         self.assertEqual(self.queues[F_TO_FLASK_QUEUE].qsize(), 2)
 
-    def test_group_invitation_datagram(self):
+    def test_group_invitation_datagram(self) -> None:
         # Setup
         packet = self.create_packet(
             GROUP_MSG_INVITE_HEADER
@@ -168,7 +168,7 @@ class TestSRCIncoming(unittest.TestCase):
         self.assertEqual(self.queues[DST_MESSAGE_QUEUE].qsize(), 0)
         self.assertEqual(self.queues[M_TO_FLASK_QUEUE].qsize(), 2)
 
-    def test_group_join_datagram(self):
+    def test_group_join_datagram(self) -> None:
         # Setup
         packet = self.create_packet(
             GROUP_MSG_JOIN_HEADER
@@ -183,7 +183,7 @@ class TestSRCIncoming(unittest.TestCase):
         self.assertEqual(self.queues[DST_MESSAGE_QUEUE].qsize(), 0)
         self.assertEqual(self.queues[M_TO_FLASK_QUEUE].qsize(), 2)
 
-    def test_group_add_datagram(self):
+    def test_group_add_datagram(self) -> None:
         # Setup
         packet = self.create_packet(
             GROUP_MSG_MEMBER_ADD_HEADER
@@ -199,7 +199,7 @@ class TestSRCIncoming(unittest.TestCase):
         self.assertEqual(self.queues[DST_MESSAGE_QUEUE].qsize(), 0)
         self.assertEqual(self.queues[M_TO_FLASK_QUEUE].qsize(), 2)
 
-    def test_group_remove_datagram(self):
+    def test_group_remove_datagram(self) -> None:
         # Setup
         packet = self.create_packet(
             GROUP_MSG_MEMBER_REM_HEADER
@@ -215,7 +215,7 @@ class TestSRCIncoming(unittest.TestCase):
         self.assertEqual(self.queues[DST_MESSAGE_QUEUE].qsize(), 0)
         self.assertEqual(self.queues[M_TO_FLASK_QUEUE].qsize(), 2)
 
-    def test_group_exit_datagram(self):
+    def test_group_exit_datagram(self) -> None:
         # Setup
         packet = self.create_packet(
             GROUP_MSG_EXIT_GROUP_HEADER
@@ -232,13 +232,13 @@ class TestSRCIncoming(unittest.TestCase):
 
 
 class TestDSTOutGoing(unittest.TestCase):
-    def test_loop(self):
+    def test_loop(self) -> None:
         # Setup
         packet = b"test_packet"
         queues = gen_queue_dict()
         gateway = Gateway()
 
-        def queue_delayer():
+        def queue_delayer() -> None:
             """Place packets into queue after delay."""
             time.sleep(0.015)
             queues[DST_COMMAND_QUEUE].put(packet)

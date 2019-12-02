@@ -66,25 +66,25 @@ from src.common.statics import (
 
 
 class TestBase58EncodeAndDecode(unittest.TestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         """Pre-test actions."""
         self.key = SYMMETRIC_KEY_LENGTH * b"\x01"
 
-    def test_encoding_and_decoding_of_random_local_keys(self):
+    def test_encoding_and_decoding_of_random_local_keys(self) -> None:
         for _ in range(100):
             key = os.urandom(SYMMETRIC_KEY_LENGTH)
             encoded = b58encode(key)
             decoded = b58decode(encoded)
             self.assertEqual(key, decoded)
 
-    def test_encoding_and_decoding_of_random_public_keys(self):
+    def test_encoding_and_decoding_of_random_public_keys(self) -> None:
         for _ in range(100):
             key = os.urandom(TFC_PUBLIC_KEY_LENGTH)
             encoded = b58encode(key, public_key=True)
             decoded = b58decode(encoded, public_key=True)
             self.assertEqual(key, decoded)
 
-    def test_invalid_decoding(self):
+    def test_invalid_decoding(self) -> None:
         encoded = b58encode(
             self.key
         )  # 5HpjE2Hs7vjU4SN3YyPQCdhzCu92WoEeuE6PWNuiPyTu3ESGnzn
@@ -92,17 +92,17 @@ class TestBase58EncodeAndDecode(unittest.TestCase):
         with self.assertRaises(ValueError):
             b58decode(changed)
 
-    def test_public_keys_raise_value_error_when_expecting_local_key(self):
+    def test_public_keys_raise_value_error_when_expecting_local_key(self) -> None:
         b58_pub_key = b58encode(self.key)
         with self.assertRaises(ValueError):
             b58decode(b58_pub_key, public_key=True)
 
-    def test_local_keys_raise_value_error_when_expecting_public_key(self):
+    def test_local_keys_raise_value_error_when_expecting_public_key(self) -> None:
         b58_file_key = b58encode(self.key, public_key=True)
         with self.assertRaises(ValueError):
             b58decode(b58_file_key)
 
-    def test_bitcoin_wif_test_vectors(self):
+    def test_bitcoin_wif_test_vectors(self) -> None:
         """Test vectors are available at
             https://en.bitcoin.it/wiki/Wallet_import_format
         """
@@ -117,13 +117,13 @@ class TestBase58EncodeAndDecode(unittest.TestCase):
 
 
 class TestBase85Encode(unittest.TestCase):
-    def test_b85encode(self):
+    def test_b85encode(self) -> None:
         message = os.urandom(100)
         self.assertEqual(b85encode(message), base64.b85encode(message).decode())
 
 
 class TestBase10Encode(unittest.TestCase):
-    def test_b10encode(self):
+    def test_b10encode(self) -> None:
         self.assertEqual(
             b10encode(FINGERPRINT_LENGTH * b"a"),
             "44046402572626160612103472728795008085361523578694645928734845681441465000289",
@@ -131,7 +131,7 @@ class TestBase10Encode(unittest.TestCase):
 
 
 class TestUnicodePadding(unittest.TestCase):
-    def test_padding(self):
+    def test_padding(self) -> None:
         for s in range(0, PADDING_LENGTH):
             string = s * "m"
             padded = unicode_padding(string)
@@ -140,14 +140,14 @@ class TestUnicodePadding(unittest.TestCase):
             # Verify removal of padding doesn't alter the string
             self.assertEqual(string, padded[: -ord(padded[-1:])])
 
-    def test_oversize_msg_raises_critical_error(self):
+    def test_oversize_msg_raises_critical_error(self) -> None:
         for s in range(PADDING_LENGTH, PADDING_LENGTH + 1):
             with self.assertRaises(SystemExit):
                 unicode_padding(s * "m")
 
 
 class TestRmPaddingStr(unittest.TestCase):
-    def test_padding_removal(self):
+    def test_padding_removal(self) -> None:
         for i in range(0, 1000):
             string = i * "m"
             length = PADDING_LENGTH - (len(string) % PADDING_LENGTH)
@@ -156,13 +156,13 @@ class TestRmPaddingStr(unittest.TestCase):
 
 
 class TestConversions(unittest.TestCase):
-    def test_conversion_back_and_forth(self):
+    def test_conversion_back_and_forth(self) -> None:
         pub_key = os.urandom(SYMMETRIC_KEY_LENGTH)
         self.assertEqual(
             onion_address_to_pub_key(pub_key_to_onion_address(pub_key)), pub_key
         )
 
-    def test_pub_key_to_short_addr(self):
+    def test_pub_key_to_short_addr(self) -> None:
         self.assertEqual(
             len(pub_key_to_short_address(bytes(ONION_SERVICE_PUBLIC_KEY_LENGTH))),
             TRUNC_ADDRESS_LENGTH,
@@ -172,41 +172,41 @@ class TestConversions(unittest.TestCase):
             pub_key_to_short_address(bytes(ONION_SERVICE_PUBLIC_KEY_LENGTH)), str
         )
 
-    def test_bool_to_bytes(self):
+    def test_bool_to_bytes(self) -> None:
         self.assertEqual(bool_to_bytes(False), b"\x00")
         self.assertEqual(bool_to_bytes(True), b"\x01")
         self.assertEqual(len(bool_to_bytes(True)), ENCODED_BOOLEAN_LENGTH)
 
-    def test_bytes_to_bool(self):
+    def test_bytes_to_bool(self) -> None:
         self.assertEqual(bytes_to_bool(b"\x00"), False)
         self.assertEqual(bytes_to_bool(b"\x01"), True)
 
-    def test_int_to_bytes(self):
+    def test_int_to_bytes(self) -> None:
         self.assertEqual(int_to_bytes(1), b"\x00\x00\x00\x00\x00\x00\x00\x01")
         self.assertEqual(len(int_to_bytes(1)), ENCODED_INTEGER_LENGTH)
 
-    def test_bytes_to_int(self):
+    def test_bytes_to_int(self) -> None:
         self.assertEqual(bytes_to_int(b"\x00\x00\x00\x00\x00\x00\x00\x01"), 1)
 
-    def test_double_to_bytes(self):
+    def test_double_to_bytes(self) -> None:
         self.assertEqual(double_to_bytes(1.0), bytes.fromhex("000000000000f03f"))
         self.assertEqual(double_to_bytes(1.1), bytes.fromhex("9a9999999999f13f"))
         self.assertEqual(len(double_to_bytes(1.1)), ENCODED_FLOAT_LENGTH)
 
-    def test_bytes_to_double(self):
+    def test_bytes_to_double(self) -> None:
         self.assertEqual(bytes_to_double(bytes.fromhex("000000000000f03f")), 1.0)
         self.assertEqual(bytes_to_double(bytes.fromhex("9a9999999999f13f")), 1.1)
 
-    def test_str_to_bytes(self):
+    def test_str_to_bytes(self) -> None:
         encoded = str_to_bytes("test")
         self.assertIsInstance(encoded, bytes)
         self.assertEqual(len(encoded), PADDED_UTF32_STR_LENGTH)
 
-    def test_bytes_to_str(self):
+    def test_bytes_to_str(self) -> None:
         encoded = str_to_bytes("test")
         self.assertEqual(bytes_to_str(encoded), "test")
 
-    def test_bytes_to_timestamp(self):
+    def test_bytes_to_timestamp(self) -> None:
         encoded = bytes.fromhex("00000000")
         self.assertIsInstance(bytes_to_timestamp(encoded), datetime)
 

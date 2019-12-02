@@ -30,7 +30,7 @@ from typing import List, Optional, Tuple
 from src.common.crypto import argon2_kdf, blake2b, csprng
 from src.common.database import TFCUnencryptedDatabase
 from src.common.encoding import bytes_to_int, int_to_bytes
-from src.common.exceptions import CriticalError, FunctionReturn, graceful_exit
+from src.common.exceptions import CriticalError, graceful_exit, SoftError
 from src.common.input import pwd_prompt
 from src.common.misc import ensure_dir, reset_terminal, separate_headers
 from src.common.output import clear_screen, m_print, phase, print_on_previous_line
@@ -366,7 +366,7 @@ class MasterKey(object):
         try:
             authenticated = self.load_master_key() == self.master_key
         except (EOFError, KeyboardInterrupt):
-            raise FunctionReturn(
+            raise SoftError(
                 f"Authentication aborted.", tail_clear=True, head=2, delay=1
             )
 

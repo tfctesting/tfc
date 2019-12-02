@@ -44,7 +44,7 @@ from tests.utils import tear_queue
 
 
 class TestReceiverLoop(unittest.TestCase):
-    def test_receiver_loop(self):
+    def test_receiver_loop(self) -> None:
         # Setup
         gateway = Gateway(local_test=False)
         rs = RSCodec(2 * gateway.settings.serial_error_correction)
@@ -71,7 +71,7 @@ class TestReceiverLoop(unittest.TestCase):
             )
             broken_p += rs.encode(b"a")
 
-            def queue_delayer():
+            def queue_delayer() -> None:
                 """Place datagrams into queue after delay."""
                 time.sleep(0.01)
                 all_q[GATEWAY_QUEUE].put(

@@ -25,7 +25,7 @@ from typing import Any, Dict
 
 from src.common.db_logs import remove_logs
 from src.common.encoding import onion_address_to_pub_key
-from src.common.exceptions import FunctionReturn
+from src.common.exceptions import SoftError
 from src.common.input import box_input, yes
 from src.common.misc import (
     ignored,
@@ -103,12 +103,12 @@ def add_new_contact(
     """
     try:
         if settings.traffic_masking:
-            raise FunctionReturn(
+            raise SoftError(
                 "Error: Command is disabled during traffic masking.", head_clear=True
             )
 
         if len(contact_list) >= settings.max_number_of_contacts:
-            raise FunctionReturn(
+            raise SoftError(
                 f"Error: TFC settings only allow {settings.max_number_of_contacts} accounts.",
                 head_clear=True,
             )
@@ -170,9 +170,7 @@ def add_new_contact(
             )
 
     except (EOFError, KeyboardInterrupt):
-        raise FunctionReturn(
-            "Contact creation aborted.", head=2, delay=1, tail_clear=True
-        )
+        raise SoftError("Contact creation aborted.", head=2, delay=1, tail_clear=True)
 
 
 def remove_contact(
@@ -186,19 +184,17 @@ def remove_contact(
 ) -> None:
     """Remove contact from TFC."""
     if settings.traffic_masking:
-        raise FunctionReturn(
+        raise SoftError(
             "Error: Command is disabled during traffic masking.", head_clear=True
         )
 
     try:
         selection = user_input.plaintext.split()[1]
     except IndexError:
-        raise FunctionReturn("Error: No account specified.", head_clear=True)
+        raise SoftError("Error: No account specified.", head_clear=True)
 
     if not yes(f"Remove contact '{selection}'?", abort=False, head=1):
-        raise FunctionReturn(
-            "Removal of contact aborted.", head=0, delay=1, tail_clear=True
-        )
+        raise SoftError("Removal of contact aborted.", head=0, delay=1, tail_clear=True)
 
     if selection in contact_list.contact_selectors():
         onion_pub_key = contact_list.get_contact_by_address_or_nick(
@@ -207,7 +203,7 @@ def remove_contact(
 
     else:
         if validate_onion_addr(selection):
-            raise FunctionReturn(
+            raise SoftError(
                 "Error: Invalid selection.", head=0, delay=1, tail_clear=True
             )
         onion_pub_key = onion_address_to_pub_key(selection)
@@ -215,7 +211,7 @@ def remove_contact(
     receiver_command = CONTACT_REM + onion_pub_key
     queue_command(receiver_command, settings, queues)
 
-    with ignored(FunctionReturn):
+    with ignored(SoftError):
         remove_logs(contact_list, group_list, settings, master_key, onion_pub_key)
 
     queues[KEY_MANAGEMENT_QUEUE].put((KDB_REMOVE_ENTRY_HEADER, onion_pub_key))
@@ -284,18 +280,18 @@ def change_nick(
     try:
         nick = user_input.plaintext.split()[1]
     except IndexError:
-        raise FunctionReturn("Error: No nick specified.", head_clear=True)
+        raise SoftError("Error: No nick specified.", head_clear=True)
 
     if window.type == WIN_TYPE_GROUP:
         group_rename(nick, window, contact_list, group_list, settings, queues)
 
     if window.contact is None:
-        raise FunctionReturn("Error: Window does not have contact.")
+        raise SoftError("Error: Window does not have contact.")
 
     onion_pub_key = window.contact.onion_pub_key
     error_msg = validate_nick(nick, (contact_list, group_list, onion_pub_key))
     if error_msg:
-        raise FunctionReturn(error_msg, head_clear=True)
+        raise SoftError(error_msg, head_clear=True)
 
     window.contact.nick = nick
     window.name = nick
@@ -327,7 +323,7 @@ def contact_setting(
         setting, b_value = dict(on=(ENABLE, True), off=(DISABLE, False))[parameters[1]]
 
     except (IndexError, KeyError):
-        raise FunctionReturn("Error: Invalid command.", head_clear=True)
+        raise SoftError("Error: Invalid command.", head_clear=True)
 
     # If second parameter 'all' is included, apply setting for all contacts and groups
     try:
@@ -335,7 +331,7 @@ def contact_setting(
         if parameters[2] == ALL:
             cmd_value = setting.upper()
         else:
-            raise FunctionReturn("Error: Invalid command.", head_clear=True)
+            raise SoftError("Error: Invalid command.", head_clear=True)
     except IndexError:
         win_uid = window.uid
         cmd_value = setting + win_uid

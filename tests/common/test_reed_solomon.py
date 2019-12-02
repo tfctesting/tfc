@@ -14,7 +14,7 @@ https://github.com/tomerfiliba/reedsolomon/blob/master/LICENSE
 
 import unittest
 
-from typing import Iterator
+from typing import Any, Generator, Iterator
 from random import sample
 
 from src.common.reed_solomon import (
@@ -62,7 +62,7 @@ class RandomSample(object):
 
 
 class TestReedSolomon(unittest.TestCase):
-    def test_simple(self):
+    def test_simple(self) -> None:
         rs = RSCodec()
         msg = bytearray("hello world " * 10, "latin1")
         enc = rs.encode(msg)
@@ -70,7 +70,7 @@ class TestReedSolomon(unittest.TestCase):
         self.assertEqual(dec, msg)
         self.assertEqual(dec_enc, enc)
 
-    def test_correction(self):
+    def test_correction(self) -> None:
         rs = RSCodec()
         msg = bytearray("hello world " * 10, "latin1")
         enc = rs.encode(msg)
@@ -79,12 +79,12 @@ class TestReedSolomon(unittest.TestCase):
         self.assertEqual(renc, enc)
         for i in [27, -3, -9, 7, 0]:
             enc[i] = 99
-            rmsg, renc = rs.decode(enc)
+            rmsg, _ = rs.decode(enc)
             self.assertEqual(rmsg, msg)
         enc[82] = 99
         self.assertRaises(ReedSolomonError, rs.decode, enc)
 
-    def test_check(self):
+    def test_check(self) -> None:
         rs = RSCodec()
         msg = bytearray("hello world " * 10, "latin1")
         enc = rs.encode(msg)
@@ -97,7 +97,7 @@ class TestReedSolomon(unittest.TestCase):
             self.assertEqual(rs.check(enc), [False])
             self.assertEqual(rs.check(renc), [True])
 
-    def test_long(self):
+    def test_long(self) -> None:
         rs = RSCodec()
         msg = bytearray("a" * 10000, "latin1")
         enc = rs.encode(msg)
@@ -111,7 +111,7 @@ class TestReedSolomon(unittest.TestCase):
         self.assertEqual(dec2, msg)
         self.assertEqual(dec_enc2, enc)
 
-    def test_prim_fcr_basic(self):
+    def test_prim_fcr_basic(self) -> None:
         nn = 30
         kk = 18
         tt = nn - kk
@@ -145,7 +145,7 @@ class TestReedSolomon(unittest.TestCase):
         # If this fails, it means excessive errors not detected
         self.assertRaises(ReedSolomonError, rs.decode, tem1)
 
-    def test_prim_fcr_long(self):
+    def test_prim_fcr_long(self) -> None:
         nn = 48
         kk = 34
         tt = nn - kk
@@ -182,7 +182,7 @@ class TestReedSolomon(unittest.TestCase):
             tem1[i] ^= 0xFF  # flip all 8 bits
         self.assertRaises(ReedSolomonError, rs.decode, tem1)
 
-    def test_generator_poly(self):
+    def test_generator_poly(self) -> None:
         """\
         Test if generator poly finder is working correctly and if
         the all generators poly finder does output the same result
@@ -212,7 +212,7 @@ class TestReedSolomon(unittest.TestCase):
         )
         self.assertEqual(list(g[n - k]), [1, 128, 13, 69, 36, 145, 199, 165, 30])
 
-    def test_prime_poly_build(self):
+    def test_prime_poly_build(self) -> None:
         """\
         Try if the prime polynomials finder works correctly for
         different GFs (ie, GF(2^6) to GF(2^10)) and with different
@@ -423,7 +423,7 @@ class TestReedSolomon(unittest.TestCase):
                 params["expected"][i],
             )
 
-    def test_init_tables(self):
+    def test_init_tables(self) -> None:
         """\
         Try if the look up table generator (galois field generator)
         works correctly for different parameters.
@@ -2379,7 +2379,7 @@ class TestReedSolomon(unittest.TestCase):
 
 
 class TestBigReedSolomon(unittest.TestCase):
-    def test_find_prime_polys(self):
+    def test_find_prime_polys(self) -> None:
         self.assertEqual(find_prime_polys(c_exp=4), [19, 25])
         self.assertEqual(
             find_prime_polys(),
@@ -2406,7 +2406,7 @@ class TestBigReedSolomon(unittest.TestCase):
         self.assertEqual(find_prime_polys(fast_primes=True), [397, 463, 487])
         self.assertEqual(find_prime_polys(c_exp=9, fast_primes=True, single=True), 557)
 
-    def test_c_exp_9(self):
+    def test_c_exp_9(self) -> None:
         rsc = RSCodec(12, c_exp=9)
         rsc2 = RSCodec(12, nsize=511)
         self.assertEqual(rsc.c_exp, rsc2.c_exp)
@@ -2421,7 +2421,7 @@ class TestBigReedSolomon(unittest.TestCase):
         self.assertEqual(rsc.check(rmesecc), [True, True])
         self.assertEqual([x for x in rmes], [ord(x) for x in mes])
 
-    def test_c_exp_12(self):
+    def test_c_exp_12(self) -> None:
         rsc = RSCodec(12, c_exp=12)
         rsc2 = RSCodec(12, nsize=4095)
         self.assertEqual(rsc.c_exp, rsc2.c_exp)
@@ -2437,7 +2437,7 @@ class TestBigReedSolomon(unittest.TestCase):
         self.assertEqual([x for x in rmes], [ord(x) for x in mes])
 
     @staticmethod
-    def test_multiple_rs_codec():
+    def test_multiple_rs_codec() -> None:
         """Test multiple RSCodec instances with different parameters."""
         mes = "A" * 30
         rs_256 = RSCodec(102)
@@ -2452,7 +2452,7 @@ class TestBigReedSolomon(unittest.TestCase):
 class TestGFArithmetics(unittest.TestCase):
     """Test Galois Field arithmetics."""
 
-    def test_multiply_nolut(self):
+    def test_multiply_nolut(self) -> None:
         """\
         Try to multiply without look-up tables
         (necessary to build the look-up tables!)
@@ -2483,7 +2483,7 @@ class TestGFArithmetics(unittest.TestCase):
         # The second method, just to check that everything's alright
         self.assertEqual(gf_mult_nolut_slow(4, 125), 500)
 
-    def test_gf_operations(self):
+    def test_gf_operations(self) -> None:
         """Try various Galois Field 2 operations"""
         init_tables()
 
@@ -2530,16 +2530,16 @@ class TestSimpleFuncs(unittest.TestCase):
     are equivalent with optimized functions
     """
 
-    def test_gf_poly_mul_simple(self):
+    def test_gf_poly_mul_simple(self) -> None:
         a = [1, 12, 14, 9]
         b = [0, 23, 2, 15]
         self.assertEqual(gf_poly_mul(a, b), gf_poly_mul_simple(a, b))
 
-    def test_gf_poly_neg(self):
+    def test_gf_poly_neg(self) -> None:
         a = [1, 12, 14, 9]
         self.assertEqual(gf_poly_neg(a), a)
 
-    def test_rs_simple_encode_msg(self):
+    def test_rs_simple_encode_msg(self) -> None:
         a = bytearray("hello world", "latin1")
         nsym = 10
         init_tables()
@@ -2553,8 +2553,8 @@ class TestRSCodecUniversalCrossValidation(unittest.TestCase):
     can correctly interface with any other RS codec!
     """
 
-    def test_main(self):
-        def cartesian_product_dict_items(dicts):
+    def test_main(self) -> None:
+        def cartesian_product_dict_items(dicts) -> Generator[dict, Any, None]:
             """Return dictionary of cartesian products."""
             return (dict(zip(dicts, x)) for x in itertools.product(*dicts.values()))
 

@@ -78,7 +78,7 @@ from tests.utils import (
 
 
 class TestOnionService(TFCTestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         """Pre-test actions."""
         self.contact_list = ContactList()
         self.settings = Settings()
@@ -89,7 +89,7 @@ class TestOnionService(TFCTestCase):
     @mock.patch("os.urandom", side_effect=[b"a"])
     @mock.patch("time.sleep", return_value=None)
     @mock.patch("builtins.input", side_effect=["invalid_cc", "", "61"])
-    def test_onion_service_delivery(self, *_):
+    def test_onion_service_delivery(self, *_) -> None:
         self.assertIsNone(
             export_onion_service_data(
                 self.contact_list, self.settings, self.onion_service, self.gateway
@@ -99,21 +99,21 @@ class TestOnionService(TFCTestCase):
 
 
 class TestLocalKey(TFCTestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         """Pre-test actions."""
         self.contact_list = ContactList()
         self.settings = Settings()
         self.queues = gen_queue_dict()
         self.args = self.contact_list, self.settings, self.queues
 
-    def tearDown(self):
+    def tearDown(self) -> None:
         """Post-test actions."""
         tear_queues(self.queues)
 
-    def test_new_local_key_when_traffic_masking_is_enabled_raises_fr(self):
+    def test_new_local_key_when_traffic_masking_is_enabled_raises_fr(self) -> None:
         self.settings.traffic_masking = True
         self.contact_list.contacts = [create_contact(LOCAL_ID)]
-        self.assert_fr(
+        self.assert_se(
             "Error: Command is disabled during traffic masking.",
             new_local_key,
             *self.args,
@@ -134,7 +134,7 @@ class TestLocalKey(TFCTestCase):
         ],
     )
     @mock.patch("os.urandom", return_value=CONFIRM_CODE_LENGTH * b"a")
-    def test_new_local_key(self, *_):
+    def test_new_local_key(self, *_) -> None:
         # Setup
         self.settings.nc_bypass_messages = False
         self.settings.traffic_masking = False
@@ -166,33 +166,33 @@ class TestLocalKey(TFCTestCase):
     @mock.patch("time.sleep", return_value=None)
     @mock.patch("builtins.input", side_effect=KeyboardInterrupt)
     @mock.patch("os.getrandom", lambda x, flags: x * b"a")
-    def test_keyboard_interrupt_raises_fr(self, *_):
-        self.assert_fr("Local key setup aborted.", new_local_key, *self.args)
+    def test_keyboard_interrupt_raises_fr(self, *_) -> None:
+        self.assert_se("Local key setup aborted.", new_local_key, *self.args)
 
 
 class TestVerifyFingerprints(unittest.TestCase):
     @mock.patch("builtins.input", return_value="Yes")
-    def test_correct_fingerprint(self, _):
+    def test_correct_fingerprint(self, _) -> None:
         self.assertTrue(
             verify_fingerprints(bytes(FINGERPRINT_LENGTH), bytes(FINGERPRINT_LENGTH))
         )
 
     @mock.patch("builtins.input", return_value="No")
-    def test_incorrect_fingerprint(self, _):
+    def test_incorrect_fingerprint(self, _) -> None:
         self.assertFalse(
             verify_fingerprints(bytes(FINGERPRINT_LENGTH), bytes(FINGERPRINT_LENGTH))
         )
 
 
 class TestKeyExchange(TFCTestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         """Pre-test actions."""
         self.contact_list = ContactList()
         self.settings = Settings()
         self.queues = gen_queue_dict()
         self.args = self.contact_list, self.settings, self.queues
 
-    def tearDown(self):
+    def tearDown(self) -> None:
         """Post-test actions."""
         tear_queues(self.queues)
 
@@ -201,8 +201,8 @@ class TestKeyExchange(TFCTestCase):
         "builtins.input",
         return_value=b58encode(bytes(TFC_PUBLIC_KEY_LENGTH), public_key=True),
     )
-    def test_zero_public_key_raises_fr(self, *_):
-        self.assert_fr(
+    def test_zero_public_key_raises_fr(self, *_) -> None:
+        self.assert_se(
             "Error: Zero public key",
             start_key_exchange,
             nick_to_pub_key("Alice"),
@@ -215,8 +215,8 @@ class TestKeyExchange(TFCTestCase):
         "builtins.input",
         return_value=b58encode((TFC_PUBLIC_KEY_LENGTH - 1) * b"a", public_key=True),
     )
-    def test_invalid_public_key_length_raises_fr(self, *_):
-        self.assert_fr(
+    def test_invalid_public_key_length_raises_fr(self, *_) -> None:
+        self.assert_se(
             "Error: Invalid public key length",
             start_key_exchange,
             nick_to_pub_key("Alice"),
@@ -237,8 +237,8 @@ class TestKeyExchange(TFCTestCase):
     )  # Fingerprint mismatch)
     @mock.patch("time.sleep", return_value=None)
     @mock.patch("shutil.get_terminal_size", return_value=[200, 200])
-    def test_fingerprint_mismatch_raises_fr(self, *_):
-        self.assert_fr(
+    def test_fingerprint_mismatch_raises_fr(self, *_) -> None:
+        self.assert_se(
             "Error: Fingerprint mismatch",
             start_key_exchange,
             nick_to_pub_key("Alice"),
@@ -259,7 +259,7 @@ class TestKeyExchange(TFCTestCase):
     )
     @mock.patch("shutil.get_terminal_size", return_value=[200, 200])
     @mock.patch("time.sleep", return_value=None)
-    def test_successful_exchange(self, *_):
+    def test_successful_exchange(self, *_) -> None:
         self.assertIsNone(
             start_key_exchange(nick_to_pub_key("Alice"), "Alice", *self.args)
         )
@@ -303,7 +303,7 @@ class TestKeyExchange(TFCTestCase):
     )
     @mock.patch("time.sleep", return_value=None)
     @mock.patch("shutil.get_terminal_size", return_value=[200, 200])
-    def test_successful_exchange_skip_fingerprint_verification(self, *_):
+    def test_successful_exchange_skip_fingerprint_verification(self, *_) -> None:
         self.assertIsNone(
             start_key_exchange(nick_to_pub_key("Alice"), "Alice", *self.args)
         )
@@ -328,9 +328,9 @@ class TestKeyExchange(TFCTestCase):
     )
     @mock.patch("time.sleep", return_value=None)
     @mock.patch("shutil.get_terminal_size", return_value=[200, 200])
-    def test_successful_exchange_with_previous_key(self, *_):
+    def test_successful_exchange_with_previous_key(self, *_) -> None:
         # Test caching of private key
-        self.assert_fr(
+        self.assert_se(
             "Key exchange interrupted.",
             start_key_exchange,
             nick_to_pub_key("Alice"),
@@ -350,7 +350,7 @@ class TestKeyExchange(TFCTestCase):
 
 
 class TestPSK(TFCTestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         """Pre-test actions."""
         self.unit_test_dir = cd_unit_test()
         self.contact_list = ContactList()
@@ -359,7 +359,7 @@ class TestPSK(TFCTestCase):
         self.onion_service = OnionService()
         self.args = self.contact_list, self.settings, self.onion_service, self.queues
 
-    def tearDown(self):
+    def tearDown(self) -> None:
         """Post-test actions."""
         cleanup(self.unit_test_dir)
 
@@ -375,7 +375,7 @@ class TestPSK(TFCTestCase):
     @mock.patch("getpass.getpass", return_value="test_password")
     @mock.patch("src.transmitter.key_exchanges.ARGON2_PSK_MEMORY_COST", 1000)
     @mock.patch("src.transmitter.key_exchanges.ARGON2_PSK_TIME_COST", 1)
-    def test_psk_creation(self, *_):
+    def test_psk_creation(self, *_) -> None:
         self.assertIsNone(
             create_pre_shared_key(nick_to_pub_key("Alice"), "Alice", *self.args)
         )
@@ -412,8 +412,8 @@ class TestPSK(TFCTestCase):
 
     @mock.patch("time.sleep", return_value=None)
     @mock.patch("getpass.getpass", side_effect=KeyboardInterrupt)
-    def test_keyboard_interrupt_raises_fr(self, *_):
-        self.assert_fr(
+    def test_keyboard_interrupt_raises_fr(self, *_) -> None:
+        self.assert_se(
             "PSK generation aborted.",
             create_pre_shared_key,
             nick_to_pub_key("Alice"),
@@ -423,22 +423,22 @@ class TestPSK(TFCTestCase):
 
 
 class TestReceiverLoadPSK(TFCTestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         """Pre-test actions."""
         self.settings = Settings()
         self.queues = gen_queue_dict()
         self.args = self.settings, self.queues
 
-    def tearDown(self):
+    def tearDown(self) -> None:
         """Post-test actions."""
         tear_queues(self.queues)
 
-    def test_raises_fr_when_traffic_masking_is_enabled(self):
+    def test_raises_fr_when_traffic_masking_is_enabled(self) -> None:
         # Setup
         self.settings.traffic_masking = True
 
         # Test
-        self.assert_fr(
+        self.assert_se(
             "Error: Command is disabled during traffic masking.",
             rxp_load_psk,
             None,
@@ -446,16 +446,16 @@ class TestReceiverLoadPSK(TFCTestCase):
             *self.args,
         )
 
-    def test_active_group_raises_fr(self):
+    def test_active_group_raises_fr(self) -> None:
         # Setup
         window = TxWindow(type=WIN_TYPE_GROUP)
 
         # Test
-        self.assert_fr(
+        self.assert_se(
             "Error: Group is selected.", rxp_load_psk, window, None, *self.args
         )
 
-    def test_ecdhe_key_raises_fr(self):
+    def test_ecdhe_key_raises_fr(self) -> None:
         # Setup
         contact = create_contact("Alice")
         contact_list = ContactList(contacts=[contact])
@@ -464,7 +464,7 @@ class TestReceiverLoadPSK(TFCTestCase):
         )
 
         # Test
-        self.assert_fr(
+        self.assert_se(
             f"Error: The current key was exchanged with {ECDHE}.",
             rxp_load_psk,
             window,
@@ -482,7 +482,7 @@ class TestReceiverLoadPSK(TFCTestCase):
             blake2b(nick_to_pub_key("Alice"), digest_size=CONFIRM_CODE_LENGTH).hex(),
         ],
     )
-    def test_successful_command(self, *_):
+    def test_successful_command(self, *_) -> None:
         # Setup
         contact = create_contact("Alice", kex_status=KEX_STATUS_NO_RX_PSK)
         contact_list = ContactList(contacts=[contact])
@@ -494,7 +494,7 @@ class TestReceiverLoadPSK(TFCTestCase):
         )
 
         # Test
-        self.assert_fr(
+        self.assert_se(
             "Removed PSK reminder for Alice.",
             rxp_load_psk,
             window,
@@ -506,7 +506,7 @@ class TestReceiverLoadPSK(TFCTestCase):
 
     @mock.patch("time.sleep", return_value=None)
     @mock.patch("builtins.input", side_effect=KeyboardInterrupt)
-    def test_keyboard_interrupt_raises_fr(self, *_):
+    def test_keyboard_interrupt_raises_fr(self, *_) -> None:
         # Setup
         contact = create_contact("Alice", kex_status=KEX_STATUS_NO_RX_PSK)
         contact_list = ContactList(contacts=[contact])
@@ -515,7 +515,7 @@ class TestReceiverLoadPSK(TFCTestCase):
         )
 
         # Test
-        self.assert_fr(
+        self.assert_se(
             "PSK verification aborted.", rxp_load_psk, window, contact_list, *self.args
         )
 

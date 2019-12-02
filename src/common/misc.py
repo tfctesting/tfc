@@ -112,12 +112,12 @@ def decompress(
     The decompressed data has a maximum size, designed to prevent zip
     bombs from filling the drive of an unsuspecting user.
     """
-    from src.common.exceptions import FunctionReturn  # Avoid circular import
+    from src.common.exceptions import SoftError  # Avoid circular import
 
     dec = zlib.decompressobj()
     data = dec.decompress(data, max_size)
     if dec.unconsumed_tail:
-        raise FunctionReturn("Error: Decompression aborted due to possible zip bomb.")
+        raise SoftError("Error: Decompression aborted due to possible zip bomb.")
     del dec
 
     return data

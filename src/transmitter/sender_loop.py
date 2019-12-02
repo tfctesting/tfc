@@ -24,7 +24,7 @@ import typing
 
 from typing import Any, Dict, List, Optional, Tuple
 
-from src.common.exceptions import FunctionReturn
+from src.common.exceptions import SoftError
 from src.common.misc import HideRunTime, ignored
 from src.common.statics import (
     COMMAND_PACKET_QUEUE,
@@ -133,12 +133,12 @@ def traffic_masking_loop(
 
     while True:
         with ignored(EOFError, KeyboardInterrupt):
-            while ws_queue.qsize() == 0:
+            while not ws_queue.qsize():
                 time.sleep(0.01)
             window_contacts = ws_queue.get()
 
             # Window selection command to Receiver Program.
-            while c_queue.qsize() == 0:
+            while not c_queue.qsize():
                 time.sleep(0.01)
             send_packet(key_list, gateway, log_queue, c_queue.get())
             break
@@ -150,22 +150,25 @@ def traffic_masking_loop(
 
                 # Choosing element from list is constant time.
                 #
-                #         First queue we evaluate: if m_queue has data                  Second to evaluate. If m_queue
-                #         in it, False is evaluated as 0, and we load                   has no data but f_queue has, the
-                #         the first nested list. At that point we load                  False is evaluated as 0 meaning
-                #         from m_queue regardless of f_queue state.                     f_queue (True as 1 and np_queue)
-                #                                                 |                     |
-                #                                                 v                     v
+                #         First queue we evaluate: if m_queue has data
+                #         in it, False is evaluated as 0, and we load
+                #         the first nested list. At that point we load
+                #         from m_queue regardless of f_queue state.
+                #                                                 |
+                #                                                 v
                 queue = [[m_queue, m_queue], [f_queue, np_queue]][m_queue.qsize() == 0][
                     f_queue.qsize() == 0
-                ]
+                ]  # ^
+                #    |
+                #   Second queue to evaluate. If m_queue has no data but f_queue has,
+                #   the False is evaluated as 0 meaning f_queue (True as 1 and np_queue)
 
                 # Regardless of queue, each .get() returns a tuple with identical
                 # amount of data: 256 bytes long bytestring and two booleans.
                 (
                     assembly_packet,
                     log_messages,
-                    log_as_ph,
+                    _,
                 ) = queue.get()  # type: bytes, bool, bool
 
             for c in window_contacts:
@@ -210,7 +213,7 @@ def exit_packet_check(queues: "QueueDict", gateway: "Gateway") -> None:
     """
     rp_queue = queues[RELAY_PACKET_QUEUE]
 
-    if rp_queue.qsize() != 0:
+    if rp_queue.qsize():
         packet = rp_queue.get()
         command = packet[DATAGRAM_HEADER_LENGTH:]
         if command in [UNENCRYPTED_EXIT_COMMAND, UNENCRYPTED_WIPE_COMMAND]:
@@ -293,7 +296,7 @@ def standard_sender_loop(
 
             time.sleep(0.01)
 
-        except (EOFError, FunctionReturn, KeyboardInterrupt):
+        except (EOFError, KeyboardInterrupt, SoftError):
             pass
 
 
@@ -301,9 +304,9 @@ def process_key_management_command(queues: "QueueDict", key_list: "KeyList") -> 
     """Process key management command."""
     km_queue = queues[KEY_MANAGEMENT_QUEUE]
 
-    if km_queue.qsize() != 0:
+    if km_queue.qsize():
         key_list.manage(queues, *km_queue.get())
-        FunctionReturn("Key management command processing complete.", output=False)
+        SoftError("Key management command processing complete.", output=False)
 
 
 def process_command(
@@ -313,17 +316,17 @@ def process_command(
     c_queue = queues[COMMAND_PACKET_QUEUE]
     log_queue = queues[LOG_PACKET_QUEUE]
 
-    if c_queue.qsize() != 0:
+    if c_queue.qsize():
         if key_list.has_local_keyset():
             send_packet(key_list, gateway, log_queue, c_queue.get())
-        FunctionReturn("Command processing complete.", output=False)
+        SoftError("Command processing complete.", output=False)
 
 
 def process_relay_packets(queues: "QueueDict", gateway: "Gateway") -> None:
     """Process packet to Relay Program on Networked Computer."""
     rp_queue = queues[RELAY_PACKET_QUEUE]
 
-    if rp_queue.qsize() != 0:
+    if rp_queue.qsize():
         packet = rp_queue.get()
         gateway.write(packet)
 
@@ -333,7 +336,7 @@ def process_relay_packets(queues: "QueueDict", gateway: "Gateway") -> None:
             time.sleep(gateway.settings.data_diode_sockets * 1.5)
             signal = WIPE if command == UNENCRYPTED_WIPE_COMMAND else EXIT
             queues[EXIT_QUEUE].put(signal)
-        FunctionReturn("Relay packet processing complete.", output=False)
+        SoftError("Relay packet processing complete.", output=False)
 
 
 def process_buffered_messages(
@@ -350,7 +353,7 @@ def process_buffered_messages(
             send_packet(
                 key_list, gateway, log_queue, *m_buffer[onion_pub_key].pop(0)[:-1]
             )
-            raise FunctionReturn("Buffered message processing complete.", output=False)
+            raise SoftError("Buffered message processing complete.", output=False)
 
 
 def process_new_message(
@@ -363,7 +366,7 @@ def process_new_message(
     m_queue = queues[MESSAGE_PACKET_QUEUE]
     log_queue = queues[LOG_PACKET_QUEUE]
 
-    if m_queue.qsize() != 0:
+    if m_queue.qsize():
         queue_data = m_queue.get()  # type: Tuple[bytes, bytes, bool, bool, bytes]
         onion_pub_key = queue_data[1]
 
@@ -372,4 +375,4 @@ def process_new_message(
         else:
             m_buffer.setdefault(onion_pub_key, []).append(queue_data)
 
-        raise FunctionReturn("New message processing complete.", output=False)
+        raise SoftError("New message processing complete.", output=False)

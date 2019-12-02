@@ -27,7 +27,7 @@ import typing
 from typing import Any, Dict, List, Tuple
 
 from src.common.database import MessageLog
-from src.common.exceptions import FunctionReturn
+from src.common.exceptions import SoftError
 from src.common.output import clear_screen
 from src.common.statics import (
     COMMAND_DATAGRAM_HEADER,
@@ -157,7 +157,7 @@ def output_loop(
             if unit_test and queues[UNIT_TEST_QUEUE].qsize() != 0:
                 break
 
-        except (FunctionReturn, KeyError, KeyboardInterrupt):
+        except (KeyError, KeyboardInterrupt, SoftError):
             pass
 
 
@@ -176,7 +176,7 @@ def process_local_key_queue(
     """
     local_key_queue = queues[LOCAL_KEY_DATAGRAM_HEADER]
 
-    if local_key_queue.qsize() != 0:
+    if local_key_queue.qsize():
         ts, packet = local_key_queue.get()
         process_local_key(
             ts,
@@ -192,7 +192,7 @@ def process_local_key_queue(
 
     if not contact_list.has_local_contact():
         time.sleep(0.1)
-        raise FunctionReturn("No local key", output=False)
+        raise SoftError("No local key", output=False)
 
 
 def process_command_queue(
@@ -210,7 +210,7 @@ def process_command_queue(
     command_queue = queues[COMMAND_DATAGRAM_HEADER]
     exit_queue = queues[EXIT_QUEUE]
 
-    if command_queue.qsize() != 0:
+    if command_queue.qsize():
         ts, packet = command_queue.get()
         process_command(
             ts,
@@ -258,7 +258,7 @@ def process_cached_messages(
                 file_keys,
                 message_log,
             )
-            raise FunctionReturn("Cached message processing complete.", output=False)
+            raise SoftError("Cached message processing complete.", output=False)
 
 
 def process_message_queue(
@@ -276,7 +276,7 @@ def process_message_queue(
     """Check message queue for packets."""
     message_queue = queues[MESSAGE_DATAGRAM_HEADER]
 
-    if message_queue.qsize() != 0:
+    if message_queue.qsize():
         ts, packet = message_queue.get()
         onion_pub_key = packet[:ONION_SERVICE_PUBLIC_KEY_LENGTH]
 
@@ -298,7 +298,7 @@ def process_message_queue(
         else:
             packet_buffer.setdefault(onion_pub_key, []).append((ts, packet))
 
-        raise FunctionReturn("Message processing complete.", output=False)
+        raise SoftError("Message processing complete.", output=False)
 
 
 def process_cached_files(
@@ -331,9 +331,7 @@ def process_cached_files(
                 if key_to_remove:
                     file_buffer.pop(k)
                     file_keys.pop(k)
-                    raise FunctionReturn(
-                        "Cached file processing complete.", output=False
-                    )
+                    raise SoftError("Cached file processing complete.", output=False)
 
 
 def process_file_queue(
@@ -347,10 +345,10 @@ def process_file_queue(
     """Check file queue for packets."""
     file_queue = queues[FILE_DATAGRAM_HEADER]
 
-    if file_queue.qsize() != 0:
+    if file_queue.qsize():
         ts, packet = file_queue.get()
         new_file(
             ts, packet, file_keys, file_buffer, contact_list, window_list, settings
         )
 
-        raise FunctionReturn("File processing complete.", output=False)
+        raise SoftError("File processing complete.", output=False)

@@ -28,7 +28,7 @@ from src.common.misc import validate_onion_addr
 
 
 class TestStatics(unittest.TestCase):
-    def test_uniqueness(self):
+    def test_uniqueness(self) -> None:
         variable_list = [
             getattr(src.common.statics, i)
             for i in dir(src.common.statics)
@@ -58,7 +58,7 @@ class TestStatics(unittest.TestCase):
 
         self.assertEqual(len(list(set(variable_list))), len(variable_list))
 
-    def test_group_id_length_is_not_same_as_onion_service_pub_key_length(self):
+    def test_group_id_length_is_not_same_as_onion_service_pub_key_length(self) -> None:
         """\
         In current implementation, `src.common.db_logs.remove_logs`
         determines the type of data to be removed from the length of
@@ -72,7 +72,7 @@ class TestStatics(unittest.TestCase):
             src.common.statics.GROUP_ID_LENGTH,
         )
 
-    def test_reserved_accounts_are_valid(self):
+    def test_reserved_accounts_are_valid(self) -> None:
         """\
         Each used account placeholder should be a valid, but reserved
         account.
@@ -91,14 +91,16 @@ class TestStatics(unittest.TestCase):
         # Test each account is unique.
         self.assertEqual(len(reserved_accounts), len(set(reserved_accounts)))
 
-    def test_local_pubkey(self):
+    def test_local_pubkey(self) -> None:
         """Test that local key's reserved public key is valid."""
         self.assertEqual(
             src.common.statics.LOCAL_PUBKEY,
             onion_address_to_pub_key(src.common.statics.LOCAL_ID),
         )
 
-    def test_group_management_header_length_matches_datagram_header_length(self):
+    def test_group_management_header_length_matches_datagram_header_length(
+        self,
+    ) -> None:
         """
         As group management messages are handled as messages available
         to Relay Program, the header should be the same as any datagrams
@@ -109,7 +111,7 @@ class TestStatics(unittest.TestCase):
             src.common.statics.DATAGRAM_HEADER_LENGTH,
         )
 
-    def test_key_exchanges_start_with_different_letter(self):
+    def test_key_exchanges_start_with_different_letter(self) -> None:
         """
         Key exchange can be selected by entering just X to represent
         X448 or P to represent X448. This test detects if selection

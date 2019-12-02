@@ -52,12 +52,12 @@ from tests.utils import gen_queue_dict, tear_queues
 
 class TestGetAvailablePort(unittest.TestCase):
     @mock.patch("random.SystemRandom.randint", side_effect=[OSError, 1234])
-    def test_get_available_port(self, _):
+    def test_get_available_port(self, _) -> None:
         port = get_available_port(1000, 65535)
         self.assertEqual(port, 1234)
 
     @mock.patch("builtins.open", mock.mock_open(read_data='TAILS_PRODUCT_NAME="Tails"'))
-    def test_port_is_tor_socket_port_when_running_on_tails(self):
+    def test_port_is_tor_socket_port_when_running_on_tails(self) -> None:
         port = get_available_port(1000, 65535)
         self.assertEqual(port, TOR_SOCKS_PORT)
 
@@ -65,7 +65,7 @@ class TestGetAvailablePort(unittest.TestCase):
 class TestTor(unittest.TestCase):
     @mock.patch("time.sleep", return_value=None)
     @mock.patch("os.path.isfile", return_value=False)
-    def test_missing_binary_raises_critical_error(self, *_):
+    def test_missing_binary_raises_critical_error(self, *_) -> None:
         tor = Tor()
         with self.assertRaises(SystemExit):
             tor.connect(1234)
@@ -86,7 +86,7 @@ class TestTor(unittest.TestCase):
             )
         ),
     )
-    def test_closed_socket_raises_critical_error(self, *_):
+    def test_closed_socket_raises_critical_error(self, *_) -> None:
         tor = Tor()
         self.assertIsNone(tor.connect(1234))
         with self.assertRaises(SystemExit):
@@ -109,19 +109,19 @@ class TestTor(unittest.TestCase):
         "stem.process.launch_tor_with_config",
         return_value=MagicMock(poll=lambda: False),
     )
-    def test_timeout_restarts_tor(self, *_):
+    def test_timeout_restarts_tor(self, *_) -> None:
         tor = Tor()
         self.assertIsNone(tor.connect(1234))
         tor.stop()
 
 
 class TestTorKeyExpansion(unittest.TestCase):
-    def test_invalid_key_size_raises_critical_error(self):
+    def test_invalid_key_size_raises_critical_error(self) -> None:
         for ks in [ks for ks in range(64) if ks != ONION_SERVICE_PRIVATE_KEY_LENGTH]:
             with self.assertRaises(SystemExit):
                 stem_compatible_ed25519_key_from_private_key(os.urandom(ks))
 
-    def test_valid_key_size(self):
+    def test_valid_key_size(self) -> None:
         self.assertEqual(
             stem_compatible_ed25519_key_from_private_key(
                 bytes(ONION_SERVICE_PRIVATE_KEY_LENGTH)
@@ -143,7 +143,7 @@ class TestOnionService(unittest.TestCase):
     )
     @mock.patch("stem.control.Controller.from_socket_file", return_value=MagicMock())
     @mock.patch("src.relay.onion.get_available_port", side_effect=KeyboardInterrupt)
-    def test_returns_with_keyboard_interrupt(self, *_):
+    def test_returns_with_keyboard_interrupt(self, *_) -> None:
         # Setup
         queues = gen_queue_dict()
         queues[ONION_KEY_QUEUE].put((bytes(ONION_SERVICE_PRIVATE_KEY_LENGTH), b"\x01"))
@@ -166,11 +166,11 @@ class TestOnionService(unittest.TestCase):
     )
     @mock.patch("stem.control.Controller.from_socket_file", return_value=MagicMock())
     @mock.patch("stem.process.launch_tor_with_config", return_value=MagicMock())
-    def test_onion_service(self, *_):
+    def test_onion_service(self, *_) -> None:
         # Setup
         queues = gen_queue_dict()
 
-        def queue_delayer():
+        def queue_delayer() -> None:
             """Place Onion Service data into queue after delay."""
             time.sleep(0.5)
             queues[ONION_KEY_QUEUE].put(
@@ -210,7 +210,7 @@ class TestOnionService(unittest.TestCase):
     @mock.patch("shutil.get_terminal_size", side_effect=[stem.SocketClosed])
     @mock.patch("stem.control.Controller.from_socket_file", return_value=MagicMock())
     @mock.patch("stem.process.launch_tor_with_config", return_value=MagicMock())
-    def test_exception_during_onion_service_setup_returns(self, *_):
+    def test_exception_during_onion_service_setup_returns(self, *_) -> None:
         # Setup
         queues = gen_queue_dict()
         queues[ONION_KEY_QUEUE].put((bytes(ONION_SERVICE_PRIVATE_KEY_LENGTH), b"\x01"))
@@ -237,7 +237,7 @@ class TestOnionService(unittest.TestCase):
     )
     @mock.patch("stem.control.Controller.from_socket_file", return_value=MagicMock())
     @mock.patch("stem.process.launch_tor_with_config", return_value=MagicMock())
-    def test_socket_closed_returns(self, *_):
+    def test_socket_closed_returns(self, *_) -> None:
         # Setup
         queues = gen_queue_dict()
 
@@ -254,13 +254,13 @@ class TestOnionService(unittest.TestCase):
 
     @mock.patch("stem.control.Controller.from_port", MagicMock())
     @mock.patch("builtins.open", mock.mock_open(read_data='TAILS_PRODUCT_NAME="Tails"'))
-    def test_no_tor_process_is_created_when_tails_is_used(self, *_):
+    def test_no_tor_process_is_created_when_tails_is_used(self, *_) -> None:
         tor = Tor()
         self.assertIsNone(tor.connect(1234))
         self.assertIsNone(tor.tor_process)
 
     @mock.patch("time.sleep", return_value=None)
-    def test_missing_tor_controller_raises_critical_error(self, *_):
+    def test_missing_tor_controller_raises_critical_error(self, *_) -> None:
         # Setup
         queues = gen_queue_dict()
         orig_tor_connect = Tor.connect

@@ -29,7 +29,7 @@ from tests.mock_classes import create_contact, create_group, Settings, TxWindow
 
 
 class TestProcessAliases(unittest.TestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         """Pre-test actions."""
         self.settings = Settings()
         self.window = TxWindow(
@@ -39,25 +39,25 @@ class TestProcessAliases(unittest.TestCase):
             window_contacts=[create_contact("Alice")],
         )
 
-    def test_unread_shortcut(self):
+    def test_unread_shortcut(self) -> None:
         self.assertEqual(process_aliases(" ", self.settings, self.window), "/unread")
 
-    def test_clear_shortcut(self):
+    def test_clear_shortcut(self) -> None:
         self.assertEqual(process_aliases("  ", self.settings, self.window), "/clear")
 
-    def test_exit_shortcut(self):
+    def test_exit_shortcut(self) -> None:
         # Setup
         self.settings.double_space_exits = True
 
         # Test
         self.assertEqual(process_aliases("  ", self.settings, self.window), "/exit")
 
-    def test_cmd_shortcut(self):
+    def test_cmd_shortcut(self) -> None:
         self.assertEqual(process_aliases("//", self.settings, self.window), "/cmd")
 
 
 class TestGetInput(unittest.TestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         """Pre-test actions."""
         self.settings = Settings()
         self.window = TxWindow(
@@ -70,14 +70,14 @@ class TestGetInput(unittest.TestCase):
 
     @mock.patch("time.sleep", return_value=None)
     @mock.patch("builtins.input", side_effect=["/", "", "test_message"])
-    def test_message(self, *_):
+    def test_message(self, *_) -> None:
         user_input = get_input(self.window, self.settings)
         self.assertEqual(user_input.plaintext, "test_message")
         self.assertEqual(user_input.type, MESSAGE)
 
     @mock.patch("time.sleep", return_value=None)
     @mock.patch("builtins.input", side_effect=["/", "", "test_message", "/clear"])
-    def test_message_and_command_to_empty_group(self, *_):
+    def test_message_and_command_to_empty_group(self, *_) -> None:
         self.window.type = WIN_TYPE_GROUP
         self.window.window_contacts = []
         self.window.group.members = []
@@ -87,21 +87,21 @@ class TestGetInput(unittest.TestCase):
 
     @mock.patch("time.sleep", return_value=None)
     @mock.patch("builtins.input", return_value="/file")
-    def test_file(self, *_):
+    def test_file(self, *_) -> None:
         user_input = get_input(self.window, self.settings)
         self.assertEqual(user_input.plaintext, "/file")
         self.assertEqual(user_input.type, FILE)
 
     @mock.patch("time.sleep", return_value=None)
     @mock.patch("builtins.input", return_value="/clear")
-    def test_command(self, *_):
+    def test_command(self, *_) -> None:
         user_input = get_input(self.window, self.settings)
         self.assertEqual(user_input.plaintext, "clear")
         self.assertEqual(user_input.type, COMMAND)
 
 
 class TestUserInput(unittest.TestCase):
-    def test_user_input(self):
+    def test_user_input(self) -> None:
         user_input = UserInput("test_plaintext", FILE)
         self.assertEqual(user_input.plaintext, "test_plaintext")
         self.assertEqual(user_input.type, FILE)

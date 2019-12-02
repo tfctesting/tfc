@@ -69,7 +69,7 @@ from tests.utils import UNDECODABLE_UNICODE
 
 
 class TestDecryptAssemblyPacket(TFCTestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         """Pre-test actions."""
         self.onion_pub_key = nick_to_pub_key("Alice")
         self.origin = ORIGIN_CONTACT_HEADER
@@ -85,7 +85,7 @@ class TestDecryptAssemblyPacket(TFCTestCase):
             self.key_list,
         )
 
-    def test_decryption_with_zero_rx_key_raises_fr(self):
+    def test_decryption_with_zero_rx_key_raises_fr(self) -> None:
         # Setup
         keyset = self.key_list.get_keyset(nick_to_pub_key("Alice"))
         keyset.rx_mk = bytes(SYMMETRIC_KEY_LENGTH)
@@ -94,25 +94,25 @@ class TestDecryptAssemblyPacket(TFCTestCase):
         )[0]
 
         # Test
-        self.assert_fr(
+        self.assert_se(
             "Warning! Loaded zero-key for packet decryption.",
             decrypt_assembly_packet,
             packet,
             *self.args,
         )
 
-    def test_invalid_harac_ct_raises_fr(self):
+    def test_invalid_harac_ct_raises_fr(self) -> None:
         packet = assembly_packet_creator(
             MESSAGE, payload="Test message", encrypt_packet=True, tamper_harac=True
         )[0]
-        self.assert_fr(
+        self.assert_se(
             "Warning! Received packet from Alice had an invalid hash ratchet MAC.",
             decrypt_assembly_packet,
             packet,
             *self.args,
         )
 
-    def test_decryption_with_zero_rx_hek_raises_fr(self):
+    def test_decryption_with_zero_rx_hek_raises_fr(self) -> None:
         # Setup
         keyset = self.key_list.get_keyset(nick_to_pub_key("Alice"))
         keyset.rx_hk = bytes(SYMMETRIC_KEY_LENGTH)
@@ -121,14 +121,14 @@ class TestDecryptAssemblyPacket(TFCTestCase):
         )[0]
 
         # Test
-        self.assert_fr(
+        self.assert_se(
             "Warning! Loaded zero-key for packet decryption.",
             decrypt_assembly_packet,
             packet,
             *self.args,
         )
 
-    def test_expired_harac_raises_fr(self):
+    def test_expired_harac_raises_fr(self) -> None:
         # Setup
         self.keyset.rx_harac = 1
 
@@ -136,7 +136,7 @@ class TestDecryptAssemblyPacket(TFCTestCase):
         packet = assembly_packet_creator(
             MESSAGE, payload="Test message", encrypt_packet=True, harac=0
         )[0]
-        self.assert_fr(
+        self.assert_se(
             "Warning! Received packet from Alice had an expired hash ratchet counter.",
             decrypt_assembly_packet,
             packet,
@@ -144,26 +144,26 @@ class TestDecryptAssemblyPacket(TFCTestCase):
         )
 
     @mock.patch("builtins.input", return_value="No")
-    def test_harac_dos_can_be_interrupted(self, _):
+    def test_harac_dos_can_be_interrupted(self, _) -> None:
         packet = assembly_packet_creator(
             MESSAGE, payload="Test message", encrypt_packet=True, harac=100_001
         )[0]
-        self.assert_fr(
+        self.assert_se(
             "Dropped packet from Alice.", decrypt_assembly_packet, packet, *self.args
         )
 
-    def test_invalid_packet_ct_raises_fr(self):
+    def test_invalid_packet_ct_raises_fr(self) -> None:
         packet = assembly_packet_creator(
             MESSAGE, payload="Test message", encrypt_packet=True, tamper_message=True
         )[0]
-        self.assert_fr(
+        self.assert_se(
             "Warning! Received packet from Alice had an invalid MAC.",
             decrypt_assembly_packet,
             packet,
             *self.args,
         )
 
-    def test_successful_packet_decryption(self):
+    def test_successful_packet_decryption(self) -> None:
         packet = assembly_packet_creator(
             MESSAGE, payload="Test message", encrypt_packet=True
         )[0]
@@ -172,7 +172,7 @@ class TestDecryptAssemblyPacket(TFCTestCase):
             assembly_packet_creator(MESSAGE, payload="Test message")[0],
         )
 
-    def test_successful_packet_decryption_with_offset(self):
+    def test_successful_packet_decryption_with_offset(self) -> None:
         packet = assembly_packet_creator(
             MESSAGE, payload="Test message", encrypt_packet=True, message_number=3
         )[0]
@@ -183,7 +183,7 @@ class TestDecryptAssemblyPacket(TFCTestCase):
             ],
         )
 
-    def test_successful_command_decryption(self):
+    def test_successful_command_decryption(self) -> None:
         packet = assembly_packet_creator(
             COMMAND, payload=b"command_data", encrypt_packet=True
         )[0]
@@ -194,7 +194,7 @@ class TestDecryptAssemblyPacket(TFCTestCase):
 
 
 class TestPacket(TFCTestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         """Pre-test actions."""
         self.short_msg = "Lorem ipsum dolor sit amet, consectetur adipiscing elit"
         self.msg = (
@@ -226,11 +226,11 @@ class TestPacket(TFCTestCase):
             int_to_bytes(1) + int_to_bytes(2) + b"testfile.txt" + US_BYTE + encrypted
         )
 
-    def tearDown(self):
+    def tearDown(self) -> None:
         """Post-test actions."""
         cleanup(self.unit_test_dir)
 
-    def test_invalid_assembly_packet_header_raises_fr(self):
+    def test_invalid_assembly_packet_header_raises_fr(self) -> None:
         # Setup
         packet = Packet(
             self.onion_pub_key,
@@ -244,14 +244,14 @@ class TestPacket(TFCTestCase):
         )[0]
 
         # Test
-        self.assert_fr(
+        self.assert_se(
             "Error: Received packet had an invalid assembly packet header.",
             packet.add_packet,
             a_packet,
         )
         self.assertEqual(packet.log_masking_ctr, 1)
 
-    def test_missing_start_packet_raises_fr(self):
+    def test_missing_start_packet_raises_fr(self) -> None:
         # Setup
         packet = Packet(
             self.onion_pub_key, ORIGIN_USER_HEADER, MESSAGE, self.contact, self.settings
@@ -259,14 +259,14 @@ class TestPacket(TFCTestCase):
 
         # Test
         for header in [M_A_HEADER, M_E_HEADER]:
-            self.assert_fr(
+            self.assert_se(
                 "Missing start packet.",
                 packet.add_packet,
                 header + bytes(PADDING_LENGTH),
             )
         self.assertEqual(packet.log_masking_ctr, 2)
 
-    def test_short_message(self):
+    def test_short_message(self) -> None:
         # Setup
         packet = Packet(
             self.onion_pub_key, ORIGIN_USER_HEADER, MESSAGE, self.contact, self.settings
@@ -283,7 +283,7 @@ class TestPacket(TFCTestCase):
         )
         self.assertEqual(packet.log_ct_list, [b"test_ct"])
 
-    def test_compression_error_raises_fr(self):
+    def test_compression_error_raises_fr(self) -> None:
         # Setup
         packet = Packet(
             self.onion_pub_key, ORIGIN_USER_HEADER, MESSAGE, self.contact, self.settings
@@ -296,11 +296,11 @@ class TestPacket(TFCTestCase):
             packet.add_packet(p)
 
         # Test
-        self.assert_fr(
+        self.assert_se(
             "Error: Decompression of message failed.", packet.assemble_message_packet
         )
 
-    def test_long_message(self):
+    def test_long_message(self) -> None:
         # Setup
         packet = Packet(
             self.onion_pub_key, ORIGIN_USER_HEADER, MESSAGE, self.contact, self.settings
@@ -317,7 +317,7 @@ class TestPacket(TFCTestCase):
         )
         self.assertEqual(packet.log_ct_list, 3 * [b"test_ct"])
 
-    def test_decryption_error_raises_fr(self):
+    def test_decryption_error_raises_fr(self) -> None:
         # Setup
         packet = Packet(
             self.onion_pub_key, ORIGIN_USER_HEADER, MESSAGE, self.contact, self.settings
@@ -328,11 +328,11 @@ class TestPacket(TFCTestCase):
             packet.add_packet(p)
 
         # Test
-        self.assert_fr(
+        self.assert_se(
             "Error: Decryption of message failed.", packet.assemble_message_packet
         )
 
-    def test_short_file(self):
+    def test_short_file(self) -> None:
         # Setup
         packets = split_to_assembly_packets(self.short_f_data, FILE)
 
@@ -363,7 +363,7 @@ class TestPacket(TFCTestCase):
         )
         self.assertTrue(os.path.isfile(f"{DIR_RECV_FILES}Alice/testfile.txt.1"))
 
-    def test_short_file_from_user_raises_fr(self):
+    def test_short_file_from_user_raises_fr(self) -> None:
         # Setup
         packet = Packet(
             self.onion_pub_key, ORIGIN_USER_HEADER, FILE, self.contact, self.settings
@@ -372,10 +372,10 @@ class TestPacket(TFCTestCase):
 
         # Test
         for p in packets:
-            self.assert_fr("Ignored file from the user.", packet.add_packet, p)
+            self.assert_se("Ignored file from the user.", packet.add_packet, p)
         self.assertEqual(packet.log_masking_ctr, 1)
 
-    def test_unauthorized_file_from_contact_raises_fr(self):
+    def test_unauthorized_file_from_contact_raises_fr(self) -> None:
         # Setup
         self.contact.file_reception = False
 
@@ -386,14 +386,14 @@ class TestPacket(TFCTestCase):
 
         # Test
         for p in packets:
-            self.assert_fr(
+            self.assert_se(
                 "Alert! File transmission from Alice but reception is disabled.",
                 packet.add_packet,
                 p,
             )
         self.assertEqual(packet.log_masking_ctr, 1)
 
-    def test_long_file(self):
+    def test_long_file(self) -> None:
         # Setup
         packet = Packet(
             self.onion_pub_key, ORIGIN_CONTACT_HEADER, FILE, self.contact, self.settings
@@ -412,7 +412,7 @@ class TestPacket(TFCTestCase):
         )
         self.assertEqual(os.path.getsize(f"{DIR_RECV_FILES}Alice/test_file.txt"), 10000)
 
-    def test_disabled_file_reception_raises_fr_with_append_packet(self):
+    def test_disabled_file_reception_raises_fr_with_append_packet(self) -> None:
         # Setup
         packet = Packet(
             self.onion_pub_key, ORIGIN_CONTACT_HEADER, FILE, self.contact, self.settings
@@ -426,18 +426,18 @@ class TestPacket(TFCTestCase):
         packet.contact.file_reception = False
 
         # Test
-        self.assert_fr(
+        self.assert_se(
             "Alert! File reception disabled mid-transfer.",
             packet.add_packet,
             packet_list[2],
         )
 
         for p in packet_list[3:]:
-            self.assert_fr("Missing start packet.", packet.add_packet, p)
+            self.assert_se("Missing start packet.", packet.add_packet, p)
 
         self.assertEqual(packet.log_masking_ctr, len(packet_list))
 
-    def test_disabled_file_reception_raises_fr_with_end_packet(self):
+    def test_disabled_file_reception_raises_fr_with_end_packet(self) -> None:
         # Setup
         packet = Packet(
             self.onion_pub_key, ORIGIN_CONTACT_HEADER, FILE, self.contact, self.settings
@@ -452,12 +452,12 @@ class TestPacket(TFCTestCase):
 
         # Test
         for p in packet_list[-1:]:
-            self.assert_fr(
+            self.assert_se(
                 "Alert! File reception disabled mid-transfer.", packet.add_packet, p
             )
         self.assertEqual(packet.log_masking_ctr, len(packet_list))
 
-    def test_long_file_from_user_raises_fr(self):
+    def test_long_file_from_user_raises_fr(self) -> None:
         # Setup
         packet = Packet(
             self.onion_pub_key, ORIGIN_USER_HEADER, FILE, self.contact, self.settings
@@ -465,10 +465,10 @@ class TestPacket(TFCTestCase):
         packet_list = assembly_packet_creator(FILE)
 
         # Test
-        self.assert_fr("Ignored file from the user.", packet.add_packet, packet_list[0])
+        self.assert_se("Ignored file from the user.", packet.add_packet, packet_list[0])
         self.assertEqual(packet.log_masking_ctr, 1)
 
-    def test_unauthorized_long_file_raises_fr(self):
+    def test_unauthorized_long_file_raises_fr(self) -> None:
         # Setup
         self.contact.file_reception = False
 
@@ -478,14 +478,14 @@ class TestPacket(TFCTestCase):
         packet_list = assembly_packet_creator(FILE)
 
         # Test
-        self.assert_fr(
+        self.assert_se(
             "Alert! File transmission from Alice but reception is disabled.",
             packet.add_packet,
             packet_list[0],
         )
         self.assertEqual(packet.log_masking_ctr, 1)
 
-    def test_invalid_long_file_header_raises_fr(self):
+    def test_invalid_long_file_header_raises_fr(self) -> None:
         # Setup
         packet = Packet(
             self.onion_pub_key, ORIGIN_CONTACT_HEADER, FILE, self.contact, self.settings
@@ -493,14 +493,14 @@ class TestPacket(TFCTestCase):
         packet_list = assembly_packet_creator(FILE, file_name=UNDECODABLE_UNICODE)
 
         # Test
-        self.assert_fr(
+        self.assert_se(
             "Error: Received file packet had an invalid header.",
             packet.add_packet,
             packet_list[0],
         )
         self.assertEqual(packet.log_masking_ctr, 1)
 
-    def test_contact_canceled_file(self):
+    def test_contact_canceled_file(self) -> None:
         # Setup
         packet = Packet(
             self.onion_pub_key, ORIGIN_CONTACT_HEADER, FILE, self.contact, self.settings
@@ -519,7 +519,7 @@ class TestPacket(TFCTestCase):
         self.assertFalse(packet.is_complete)
         self.assertEqual(packet.log_masking_ctr, len(packet_list))
 
-    def test_noise_packet_interrupts_file(self):
+    def test_noise_packet_interrupts_file(self) -> None:
         # Setup
         packet = Packet(
             self.onion_pub_key, ORIGIN_CONTACT_HEADER, FILE, self.contact, self.settings
@@ -538,7 +538,7 @@ class TestPacket(TFCTestCase):
         self.assertFalse(packet.is_complete)
         self.assertEqual(packet.log_masking_ctr, len(packet_list))
 
-    def test_short_command(self):
+    def test_short_command(self) -> None:
         # Setup
         packet = Packet(
             LOCAL_ID, ORIGIN_CONTACT_HEADER, COMMAND, self.contact, self.settings
@@ -552,7 +552,7 @@ class TestPacket(TFCTestCase):
         self.assertEqual(packet.assemble_command_packet(), b"test_command")
         self.assertEqual(packet.log_masking_ctr, 0)
 
-    def test_long_command(self):
+    def test_long_command(self) -> None:
         # Setup
         packet = Packet(
             LOCAL_ID, ORIGIN_CONTACT_HEADER, COMMAND, self.contact, self.settings
@@ -567,7 +567,7 @@ class TestPacket(TFCTestCase):
         self.assertEqual(packet.assemble_command_packet(), command)
         self.assertEqual(packet.log_masking_ctr, 0)
 
-    def test_long_command_hash_mismatch_raises_fr(self):
+    def test_long_command_hash_mismatch_raises_fr(self) -> None:
         # Setup
         packet = Packet(
             LOCAL_ID, ORIGIN_CONTACT_HEADER, COMMAND, self.contact, self.settings
@@ -580,12 +580,12 @@ class TestPacket(TFCTestCase):
             packet.add_packet(p)
 
         # Test
-        self.assert_fr(
+        self.assert_se(
             "Error: Received an invalid command.", packet.assemble_command_packet
         )
         self.assertEqual(packet.log_masking_ctr, 0)
 
-    def test_long_command_compression_error_raises_fr(self):
+    def test_long_command_compression_error_raises_fr(self) -> None:
         # Setup
         packet = Packet(
             LOCAL_ID, ORIGIN_CONTACT_HEADER, COMMAND, self.contact, self.settings
@@ -598,14 +598,14 @@ class TestPacket(TFCTestCase):
             packet.add_packet(p)
 
         # Test
-        self.assert_fr(
+        self.assert_se(
             "Error: Decompression of command failed.", packet.assemble_command_packet
         )
         self.assertEqual(packet.log_masking_ctr, 0)
 
 
 class TestPacketList(unittest.TestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         """Pre-test actions."""
         self.contact_list = ContactList(nicks=["Alice", "Bob"])
         self.settings = Settings()
@@ -621,14 +621,14 @@ class TestPacketList(unittest.TestCase):
         self.packet_list = PacketList(self.settings, self.contact_list)
         self.packet_list.packets = [packet]
 
-    def test_packet_list_iterates_over_contact_objects(self):
+    def test_packet_list_iterates_over_contact_objects(self) -> None:
         for p in self.packet_list:
             self.assertIsInstance(p, Packet)
 
-    def test_len_returns_number_of_contacts(self):
+    def test_len_returns_number_of_contacts(self) -> None:
         self.assertEqual(len(self.packet_list), 1)
 
-    def test_has_packet(self):
+    def test_has_packet(self) -> None:
         self.assertTrue(
             self.packet_list.has_packet(
                 self.onion_pub_key, ORIGIN_CONTACT_HEADER, MESSAGE
@@ -638,7 +638,7 @@ class TestPacketList(unittest.TestCase):
             self.packet_list.has_packet(self.onion_pub_key, ORIGIN_USER_HEADER, MESSAGE)
         )
 
-    def test_get_packet(self):
+    def test_get_packet(self) -> None:
         packet = self.packet_list.get_packet(
             self.onion_pub_key, ORIGIN_CONTACT_HEADER, MESSAGE
         )

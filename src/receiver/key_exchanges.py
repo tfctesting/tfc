@@ -35,7 +35,7 @@ import nacl.exceptions
 from src.common.crypto import argon2_kdf, auth_and_decrypt, blake2b, csprng
 from src.common.db_masterkey import MasterKey
 from src.common.encoding import b58encode, bytes_to_str, pub_key_to_short_address
-from src.common.exceptions import FunctionReturn
+from src.common.exceptions import SoftError
 from src.common.input import get_b58_key
 from src.common.misc import reset_terminal, separate_header, separate_headers
 from src.common.output import m_print, phase, print_on_previous_line
@@ -118,7 +118,7 @@ def process_local_key_buffer(
 
     # Finished the buffer without finding local key CT
     # for the kdk. Maybe the kdk is from another session.
-    raise FunctionReturn("Error: Incorrect key decryption key.", delay=1)
+    raise SoftError("Error: Incorrect key decryption key.", delay=1)
 
 
 def decrypt_local_key(
@@ -169,7 +169,7 @@ def process_local_key(
 
     try:
         if blake2b(packet) in packet_hashes:
-            raise FunctionReturn("Error: Received old local key packet.", output=False)
+            raise SoftError("Error: Received old local key packet.", output=False)
 
         m_print("Local key setup", bold=True, head_clear=True, head=1, tail=1)
 
@@ -214,9 +214,7 @@ def process_local_key(
         if first_local_key:
             window_list.active_win = cmd_win
 
-        raise FunctionReturn(
-            "Added new local key.", window=cmd_win, ts=ts, output=False
-        )
+        raise SoftError("Added new local key.", window=cmd_win, ts=ts, output=False)
 
     except (EOFError, KeyboardInterrupt):
         m_print("Local key setup aborted.", bold=True, tail_clear=True, delay=1, head=2)
@@ -224,7 +222,7 @@ def process_local_key(
         if window_list.active_win is not None and not first_local_key:
             window_list.active_win.redraw()
 
-        raise FunctionReturn("Local key setup aborted.", output=False)
+        raise SoftError("Local key setup aborted.", output=False)
 
 
 def local_key_rdy(
@@ -267,7 +265,7 @@ def key_ex_ecdhe(
     try:
         nick = bytes_to_str(nick_bytes)
     except (struct.error, UnicodeError):
-        raise FunctionReturn("Error: Received invalid contact data")
+        raise SoftError("Error: Received invalid contact data")
 
     contact_list.add_contact(
         onion_pub_key,
@@ -309,7 +307,7 @@ def key_ex_psk_tx(
     try:
         nick = bytes_to_str(nick_bytes)
     except (struct.error, UnicodeError):
-        raise FunctionReturn("Error: Received invalid contact data")
+        raise SoftError("Error: Received invalid contact data")
 
     contact_list.add_contact(
         onion_pub_key,
@@ -365,9 +363,7 @@ def decrypt_rx_psk(ct_tag: bytes, salt: bytes) -> bytes:
             m_print("Invalid password. Try again.", head=1)
             print_on_previous_line(reps=5, delay=1)
         except (EOFError, KeyboardInterrupt):
-            raise FunctionReturn(
-                "PSK import aborted.", head=2, delay=1, tail_clear=True
-            )
+            raise SoftError("PSK import aborted.", head=2, delay=1, tail_clear=True)
 
 
 def key_ex_psk_rx(
@@ -383,7 +379,7 @@ def key_ex_psk_rx(
     short_addr = pub_key_to_short_address(onion_pub_key)
 
     if not contact_list.has_pub_key(onion_pub_key):
-        raise FunctionReturn(f"Error: Unknown account '{short_addr}'.", head_clear=True)
+        raise SoftError(f"Error: Unknown account '{short_addr}'.", head_clear=True)
 
     contact = contact_list.get_contact_by_pub_key(onion_pub_key)
     psk_file = ask_path_gui(
@@ -394,12 +390,10 @@ def key_ex_psk_rx(
         with open(psk_file, "rb") as f:
             psk_data = f.read()
     except PermissionError:
-        raise FunctionReturn("Error: No read permission for the PSK file.")
+        raise SoftError("Error: No read permission for the PSK file.")
 
     if len(psk_data) != PSK_FILE_SIZE:
-        raise FunctionReturn(
-            "Error: The PSK data in the file was invalid.", head_clear=True
-        )
+        raise SoftError("Error: The PSK data in the file was invalid.", head_clear=True)
 
     salt, ct_tag = separate_header(psk_data, ARGON2_SALT_LENGTH)
 
@@ -407,9 +401,7 @@ def key_ex_psk_rx(
     rx_mk, rx_hk = separate_header(psk, SYMMETRIC_KEY_LENGTH)
 
     if any(k == bytes(SYMMETRIC_KEY_LENGTH) for k in [rx_mk, rx_hk]):
-        raise FunctionReturn(
-            "Error: Received invalid keys from contact.", head_clear=True
-        )
+        raise SoftError("Error: Received invalid keys from contact.", head_clear=True)
 
     keyset = key_list.get_keyset(onion_pub_key)
     keyset.rx_mk = rx_mk

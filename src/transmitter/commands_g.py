@@ -26,7 +26,7 @@ from typing import Callable, Dict, List, Optional, Tuple
 
 from src.common.db_logs import remove_logs
 from src.common.encoding import b58decode, int_to_bytes
-from src.common.exceptions import FunctionReturn
+from src.common.exceptions import SoftError
 from src.common.input import yes
 from src.common.misc import ignored, validate_group_name
 from src.common.output import group_management_print, m_print
@@ -94,7 +94,7 @@ def process_group_command(
 ) -> None:
     """Parse a group command and process it accordingly."""
     if settings.traffic_masking:
-        raise FunctionReturn(
+        raise SoftError(
             "Error: Command is disabled during traffic masking.", head_clear=True
         )
 
@@ -138,10 +138,10 @@ def parse_group_command_parameters(
     try:
         command_type = input_parameters[1]
     except IndexError:
-        raise FunctionReturn("Error: Invalid group command.", head_clear=True)
+        raise SoftError("Error: Invalid group command.", head_clear=True)
 
     if command_type not in ["create", "join", "add", "rm"]:
-        raise FunctionReturn("Error: Invalid group command.")
+        raise SoftError("Error: Invalid group command.")
 
     group_id = validate_group_id(input_parameters, command_type, group_list)
 
@@ -149,7 +149,7 @@ def parse_group_command_parameters(
         name_index = 3 if command_type == "join" else 2
         group_name = input_parameters[name_index]
     except IndexError:
-        raise FunctionReturn("Error: No group name specified.", head_clear=True)
+        raise SoftError("Error: No group name specified.", head_clear=True)
 
     member_index = 4 if command_type == "join" else 3
     purp_members = input_parameters[member_index:]
@@ -167,14 +167,14 @@ def validate_group_id(
         try:
             group_id_s = input_parameters[2]
         except IndexError:
-            raise FunctionReturn("Error: No group ID specified.", head_clear=True)
+            raise SoftError("Error: No group ID specified.", head_clear=True)
         try:
             group_id = b58decode(group_id_s)
         except ValueError:
-            raise FunctionReturn("Error: Invalid group ID.", head_clear=True)
+            raise SoftError("Error: Invalid group ID.", head_clear=True)
 
         if group_id in group_list.get_list_of_group_ids():
-            raise FunctionReturn(
+            raise SoftError(
                 "Error: Group with matching ID already exists.", head_clear=True
             )
 
@@ -197,7 +197,7 @@ def group_create(
     """
     error_msg = validate_group_name(group_name, contact_list, group_list)
     if error_msg:
-        raise FunctionReturn(error_msg, head_clear=True)
+        raise SoftError(error_msg, head_clear=True)
 
     public_keys = set(contact_list.get_list_of_pub_keys())
     purp_pub_keys = set(purp_members)
@@ -205,14 +205,14 @@ def group_create(
     rejected = list(purp_pub_keys - public_keys)
 
     if len(accepted) > settings.max_number_of_group_members:
-        raise FunctionReturn(
+        raise SoftError(
             f"Error: TFC settings only allow {settings.max_number_of_group_members} "
             f"members per group.",
             head_clear=True,
         )
 
     if len(group_list) == settings.max_number_of_groups:
-        raise FunctionReturn(
+        raise SoftError(
             f"Error: TFC settings only allow {settings.max_number_of_groups} groups.",
             head_clear=True,
         )
@@ -275,9 +275,7 @@ def group_add_member(
                 master_key,
             )
             return None
-        raise FunctionReturn(
-            "Group creation aborted.", head=0, delay=1, tail_clear=True
-        )
+        raise SoftError("Group creation aborted.", head=0, delay=1, tail_clear=True)
 
     purp_pub_keys = set(purp_members)
     pub_keys = set(contact_list.get_list_of_pub_keys())
@@ -292,7 +290,7 @@ def group_add_member(
     ok_pub_keys = list(ok_pub_keys_set)
 
     if len(end_assembly) > settings.max_number_of_group_members:
-        raise FunctionReturn(
+        raise SoftError(
             f"Error: TFC settings only allow {settings.max_number_of_group_members} "
             f"members per group.",
             head_clear=True,
@@ -337,7 +335,7 @@ def group_rm_member(
         )
 
     if group_name not in group_list.get_list_of_group_names():
-        raise FunctionReturn(f"Group '{group_name}' does not exist.", head_clear=True)
+        raise SoftError(f"Group '{group_name}' does not exist.", head_clear=True)
 
     purp_pub_keys = set(purp_members)
     pub_keys = set(contact_list.get_list_of_pub_keys())
@@ -389,7 +387,7 @@ def group_rm_group(
 ) -> None:
     """Remove the group with its members."""
     if not yes(f"Remove group '{group_name}'?", abort=False):
-        raise FunctionReturn("Group removal aborted.", head=0, delay=1, tail_clear=True)
+        raise SoftError("Group removal aborted.", head=0, delay=1, tail_clear=True)
 
     if group_name in group_list.get_list_of_group_names():
         group_id = group_list.get_group(group_name).group_id
@@ -397,7 +395,7 @@ def group_rm_group(
         try:
             group_id = b58decode(group_name)
         except ValueError:
-            raise FunctionReturn("Error: Invalid group name/ID.", head_clear=True)
+            raise SoftError("Error: Invalid group name/ID.", head_clear=True)
 
     command = LOG_REMOVE + group_id
     queue_command(command, settings, queues)
@@ -406,10 +404,10 @@ def group_rm_group(
     queue_command(command, settings, queues)
 
     if group_list.has_group(group_name):
-        with ignored(FunctionReturn):
+        with ignored(SoftError):
             remove_logs(contact_list, group_list, settings, master_key, group_id)
     else:
-        raise FunctionReturn(f"Transmitter has no group '{group_name}' to remove.")
+        raise SoftError(f"Transmitter has no group '{group_name}' to remove.")
 
     group = group_list.get_group(group_name)
     if not group.empty() and yes(
@@ -423,7 +421,7 @@ def group_rm_group(
         queue_to_nc(exit_packet, queues[RELAY_PACKET_QUEUE])
 
     group_list.remove_group_by_name(group_name)
-    raise FunctionReturn(
+    raise SoftError(
         f"Removed group '{group_name}'.", head=0, delay=1, tail_clear=True, bold=True
     )
 
@@ -438,13 +436,13 @@ def group_rename(
 ) -> None:
     """Rename the active group."""
     if window.type == WIN_TYPE_CONTACT or window.group is None:
-        raise FunctionReturn(
+        raise SoftError(
             "Error: Selected window is not a group window.", head_clear=True
         )
 
     error_msg = validate_group_name(new_name, contact_list, group_list)
     if error_msg:
-        raise FunctionReturn(error_msg, head_clear=True)
+        raise SoftError(error_msg, head_clear=True)
 
     command = GROUP_RENAME + window.uid + new_name.encode()
     queue_command(command, settings, queues)
@@ -453,6 +451,6 @@ def group_rename(
     window.group.name = new_name
     group_list.store_groups()
 
-    raise FunctionReturn(
+    raise SoftError(
         f"Renamed group '{old_name}' to '{new_name}'.", delay=1, tail_clear=True
     )

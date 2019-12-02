@@ -26,7 +26,7 @@ import typing
 
 from typing import Dict, NoReturn
 
-from src.common.exceptions import FunctionReturn
+from src.common.exceptions import SoftError
 from src.common.misc import get_tab_completer, ignored
 from src.common.statics import COMMAND, FILE, MESSAGE
 
@@ -67,7 +67,7 @@ def input_loop(
     window = TxWindow(contact_list, group_list)
 
     while True:
-        with ignored(EOFError, FunctionReturn, KeyboardInterrupt):
+        with ignored(EOFError, SoftError, KeyboardInterrupt):
             readline.set_completer(
                 get_tab_completer(contact_list, group_list, settings, gateway)
             )

@@ -29,7 +29,7 @@ import nacl.exceptions
 
 from src.common.crypto import auth_and_decrypt, blake2b
 from src.common.encoding import bytes_to_str
-from src.common.exceptions import FunctionReturn
+from src.common.exceptions import SoftError
 from src.common.misc import decompress, ensure_dir, separate_headers, separate_trailer
 from src.common.output import phase, print_on_previous_line
 from src.common.statics import (
@@ -87,20 +87,20 @@ def process_assembled_file(
     try:
         file_name_b, file_data = payload.split(US_BYTE, 1)  # type: bytes, bytes
     except ValueError:
-        raise FunctionReturn("Error: Received file had an invalid structure.")
+        raise SoftError("Error: Received file had an invalid structure.")
 
     try:
         file_name = file_name_b.decode()
     except UnicodeError:
-        raise FunctionReturn("Error: Received file name had an invalid encoding.")
+        raise SoftError("Error: Received file name had an invalid encoding.")
 
     if not file_name.isprintable() or not file_name or "/" in file_name:
-        raise FunctionReturn("Error: Received file had an invalid name.")
+        raise SoftError("Error: Received file had an invalid name.")
 
     file_ct, file_key = separate_trailer(file_data, SYMMETRIC_KEY_LENGTH)
 
     if len(file_key) != SYMMETRIC_KEY_LENGTH:
-        raise FunctionReturn("Error: Received file had an invalid key.")
+        raise SoftError("Error: Received file had an invalid key.")
 
     decrypt_and_store_file(
         ts, file_ct, file_key, file_name, onion_pub_key, nick, window_list, settings
@@ -121,12 +121,12 @@ def decrypt_and_store_file(
     try:
         file_pt = auth_and_decrypt(file_ct, file_key)
     except nacl.exceptions.CryptoError:
-        raise FunctionReturn("Error: Decryption of file data failed.")
+        raise SoftError("Error: Decryption of file data failed.")
 
     try:
         file_dc = decompress(file_pt, settings.max_decompress_size)
     except zlib.error:
-        raise FunctionReturn("Error: Decompression of file data failed.")
+        raise SoftError("Error: Decompression of file data failed.")
 
     file_dir = f"{DIR_RECV_FILES}{nick}/"
     final_name = store_unique(file_dc, file_dir, file_name)
@@ -157,12 +157,12 @@ def new_file(
     )
 
     if not contact_list.has_pub_key(onion_pub_key):
-        raise FunctionReturn("File from an unknown account.", output=False)
+        raise SoftError("File from an unknown account.", output=False)
 
     contact = contact_list.get_contact_by_pub_key(onion_pub_key)
 
     if not contact.file_reception:
-        raise FunctionReturn(
+        raise SoftError(
             f"Alert! Discarded file from {contact.nick} as file reception for them is disabled.",
             bold=True,
         )
@@ -201,24 +201,22 @@ def process_file(
     try:
         file_pt = auth_and_decrypt(file_ct, file_key)
     except nacl.exceptions.CryptoError:
-        raise FunctionReturn(f"Error: Decryption key for file from {nick} was invalid.")
+        raise SoftError(f"Error: Decryption key for file from {nick} was invalid.")
 
     try:
         file_dc = decompress(file_pt, settings.max_decompress_size)
     except zlib.error:
-        raise FunctionReturn(f"Error: Failed to decompress file from {nick}.")
+        raise SoftError(f"Error: Failed to decompress file from {nick}.")
     phase(DONE)
     print_on_previous_line(reps=2)
 
     try:
         file_name = bytes_to_str(file_dc[:PADDED_UTF32_STR_LENGTH])
     except UnicodeError:
-        raise FunctionReturn(
-            f"Error: Name of file from {nick} had an invalid encoding."
-        )
+        raise SoftError(f"Error: Name of file from {nick} had an invalid encoding.")
 
     if not file_name.isprintable() or not file_name or "/" in file_name:
-        raise FunctionReturn(f"Error: Name of file from {nick} was invalid.")
+        raise SoftError(f"Error: Name of file from {nick} was invalid.")
 
     file_data = file_dc[PADDED_UTF32_STR_LENGTH:]
     file_dir = f"{DIR_RECV_FILES}{nick}/"

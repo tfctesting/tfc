@@ -37,13 +37,13 @@ class TestAskPathGui(TFCTestCase):
     file_path = "/home/user/file.txt"
     path = "/home/user/"
 
-    def setUp(self):
+    def setUp(self) -> None:
         """Pre-test actions."""
         self.settings = Settings()
 
     @mock.patch("os.path.isfile", return_value=True)
     @mock.patch("builtins.input", return_value=file_path)
-    def test_disabled_gui_uses_cli(self, *_):
+    def test_disabled_gui_uses_cli(self, *_) -> None:
         self.settings.disable_gui_dialog = True
         self.assertEqual(
             ask_path_gui("prompt_msg", self.settings, get_file=True), self.file_path
@@ -52,7 +52,7 @@ class TestAskPathGui(TFCTestCase):
     @mock.patch("os.path.isfile", return_value=True)
     @mock.patch("builtins.input", return_value=file_path)
     @mock.patch("tkinter.filedialog.askopenfilename", side_effect=_tkinter.TclError)
-    def test_tcl_error_falls_back_to_cli(self, *_):
+    def test_tcl_error_falls_back_to_cli(self, *_) -> None:
         self.assertEqual(
             ask_path_gui("prompt_msg", self.settings, get_file=True), self.file_path
         )
@@ -60,7 +60,7 @@ class TestAskPathGui(TFCTestCase):
     @mock.patch("tkinter.Tk", return_value=MagicMock())
     @mock.patch("os.path.isfile", return_value=True)
     @mock.patch("tkinter.filedialog.askopenfilename", return_value=file_path)
-    def test_get_path_to_file_gui(self, *_):
+    def test_get_path_to_file_gui(self, *_) -> None:
         self.assertEqual(
             ask_path_gui("path to file:", self.settings, get_file=True), self.file_path
         )
@@ -70,8 +70,8 @@ class TestAskPathGui(TFCTestCase):
         "Skip as Travis has no $DISPLAY.",
     )
     @mock.patch("tkinter.filedialog.askopenfilename", return_value="")
-    def test_no_path_to_file_raises_fr(self, _):
-        self.assert_fr(
+    def test_no_path_to_file_raises_fr(self, _) -> None:
+        self.assert_se(
             "File selection aborted.", ask_path_gui, "test message", self.settings, True
         )
 
@@ -80,7 +80,7 @@ class TestAskPathGui(TFCTestCase):
         "Skip as Travis has no $DISPLAY.",
     )
     @mock.patch("tkinter.filedialog.askdirectory", return_value=path)
-    def test_get_path_gui(self, _):
+    def test_get_path_gui(self, _) -> None:
         self.assertEqual(
             ask_path_gui("select path for file:", self.settings), self.path
         )
@@ -90,8 +90,8 @@ class TestAskPathGui(TFCTestCase):
         "Skip as Travis has no $DISPLAY.",
     )
     @mock.patch("tkinter.filedialog.askdirectory", return_value="")
-    def test_no_path_raises_fr(self, _):
-        self.assert_fr(
+    def test_no_path_raises_fr(self, _) -> None:
+        self.assert_se(
             "Path selection aborted.",
             ask_path_gui,
             "test message",
@@ -101,7 +101,7 @@ class TestAskPathGui(TFCTestCase):
 
 
 class TestCompleter(unittest.TestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         """Pre-test actions."""
         self.cwd = os.getcwd()
         self.unit_test_dir = cd_unit_test()
@@ -117,12 +117,12 @@ class TestCompleter(unittest.TestCase):
         os.chdir("..")
         os.chdir("..")
 
-    def tearDown(self):
+    def tearDown(self) -> None:
         """Post-test actions."""
         cleanup(self.unit_test_dir)
         os.chdir(self.cwd)
 
-    def test_completer(self):
+    def test_completer(self) -> None:
         # Test path
         completer = Completer(get_file=False)
         self.assertEqual(completer.complete_path("outer/"), ["outer/middle/"])
@@ -142,12 +142,12 @@ class TestCompleter(unittest.TestCase):
 
 
 class TestPath(TFCTestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         """Pre-test actions."""
         with ignored(OSError):
             os.mkdir("test_dir/")
 
-    def tearDown(self):
+    def tearDown(self) -> None:
         """Post-test actions."""
         with ignored(OSError):
             os.remove("testfile")
@@ -170,19 +170,19 @@ class TestPath(TFCTestCase):
             KeyboardInterrupt,
         ],
     )
-    def test_ask_path_cli(self, *_):
+    def test_ask_path_cli(self, *_) -> None:
         self.assertEqual(ask_path_cli("path to file:", get_file=True), "file2")
         self.assertEqual(ask_path_cli("prompt_msg"), "test_dir/")
 
         open("testfile", "a+").close()
         self.assertEqual(ask_path_cli("prompt_msg", get_file=True), "testfile")
 
-        self.assert_fr("File selection aborted.", ask_path_cli, "prompt_msg", True)
+        self.assert_se("File selection aborted.", ask_path_cli, "prompt_msg", True)
 
         self.assertEqual(ask_path_cli("prompt_msg"), "/home/")
         self.assertEqual(ask_path_cli("prompt_msg"), "/bin/")
 
-        self.assert_fr(
+        self.assert_se(
             "File path selection aborted.", ask_path_cli, "prompt_msg", False
         )
 

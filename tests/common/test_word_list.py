@@ -25,10 +25,10 @@ from src.common.word_list import eff_wordlist
 
 
 class TestWordList(unittest.TestCase):
-    def test_each_word_is_unique(self):
+    def test_each_word_is_unique(self) -> None:
         self.assertEqual(len(eff_wordlist), len(set(eff_wordlist)))
 
-    def test_word_list_length(self):
+    def test_word_list_length(self) -> None:
         self.assertEqual(len(eff_wordlist), 7776)
 
 

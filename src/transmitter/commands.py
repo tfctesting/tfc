@@ -42,7 +42,7 @@ from src.common.encoding import (
     int_to_bytes,
     onion_address_to_pub_key,
 )
-from src.common.exceptions import CriticalError, FunctionReturn
+from src.common.exceptions import CriticalError, SoftError
 from src.common.input import yes
 from src.common.misc import (
     get_terminal_width,
@@ -301,12 +301,12 @@ def process_command(
     try:
         cmd_key = user_input.plaintext.split()[0]
     except (IndexError, UnboundLocalError):
-        raise FunctionReturn("Error: Invalid command.", head_clear=True)
+        raise SoftError("Error: Invalid command.", head_clear=True)
 
     try:
         from_dict = d[cmd_key]
     except KeyError:
-        raise FunctionReturn(f"Error: Invalid command '{cmd_key}'.", head_clear=True)
+        raise SoftError(f"Error: Invalid command '{cmd_key}'.", head_clear=True)
 
     func = from_dict[0]
     parameters = from_dict[1:]
@@ -455,28 +455,26 @@ def log_command(
     access to the system can the export logs from the database.
     """
     cmd = user_input.plaintext.split()[0]
-    export, header, action = dict(
+    export, header, _ = dict(
         export=(True, LOG_EXPORT, "export"), history=(False, LOG_DISPLAY, "view")
     )[cmd]
 
     try:
         msg_to_load = int(user_input.plaintext.split()[1])
     except ValueError:
-        raise FunctionReturn("Error: Invalid number of messages.", head_clear=True)
+        raise SoftError("Error: Invalid number of messages.", head_clear=True)
     except IndexError:
         msg_to_load = 0
 
     try:
         command = header + int_to_bytes(msg_to_load) + window.uid
     except struct.error:
-        raise FunctionReturn("Error: Invalid number of messages.", head_clear=True)
+        raise SoftError("Error: Invalid number of messages.", head_clear=True)
 
     if export and not yes(
         f"Export logs for '{window.name}' in plaintext?", abort=False
     ):
-        raise FunctionReturn(
-            "Log file export aborted.", tail_clear=True, head=0, delay=1
-        )
+        raise SoftError("Log file export aborted.", tail_clear=True, head=0, delay=1)
 
     if settings.ask_password_for_log_access:
         authenticated = master_key.authenticate_action()
@@ -496,7 +494,7 @@ def log_command(
         )
 
         if export:
-            raise FunctionReturn(
+            raise SoftError(
                 f"Exported log file of {window.type} '{window.name}'.", head_clear=True
             )
 
@@ -527,7 +525,7 @@ def send_onion_service_key(
                 tail=1,
             )
             if not yes("Proceed with the Onion Service data export?", abort=False):
-                raise FunctionReturn(
+                raise SoftError(
                     "Onion Service data export canceled.",
                     tail_clear=True,
                     delay=1,
@@ -536,7 +534,7 @@ def send_onion_service_key(
 
         export_onion_service_data(contact_list, settings, onion_service, gateway)
     except (EOFError, KeyboardInterrupt):
-        raise FunctionReturn(
+        raise SoftError(
             "Onion Service data export canceled.", tail_clear=True, delay=1, head=2
         )
 
@@ -669,21 +667,19 @@ def change_master_key(
 ) -> None:
     """Change the master key on Transmitter/Receiver Program."""
     if settings.traffic_masking:
-        raise FunctionReturn(
+        raise SoftError(
             "Error: Command is disabled during traffic masking.", head_clear=True
         )
 
     try:
         device = user_input.plaintext.split()[1].lower()
     except IndexError:
-        raise FunctionReturn(
+        raise SoftError(
             f"Error: No target-system ('{TX}' or '{RX}') specified.", head_clear=True
         )
 
     if device not in [TX, RX]:
-        raise FunctionReturn(
-            f"Error: Invalid target system '{device}'.", head_clear=True
-        )
+        raise SoftError(f"Error: Invalid target system '{device}'.", head_clear=True)
 
     if device == RX:
         queue_command(CH_MASTER_KEY, settings, queues)
@@ -716,7 +712,7 @@ def change_master_key(
         onion_service.database.database_key = new_master_key
 
         # Create temp databases for each database, do not replace original.
-        with ignored(FunctionReturn):
+        with ignored(SoftError):
             change_log_db_key(old_master_key, new_master_key, settings)
         contact_list.store_contacts(replace=False)
         key_list.store_keys(replace=False)
@@ -756,15 +752,15 @@ def change_master_key(
 
 def wait_for_key_db_halt(queues: "QueueDict") -> None:
     """Wait for the key database to acknowledge it has halted output of packets."""
-    while queues[KEY_MGMT_ACK_QUEUE].qsize() == 0:
+    while not queues[KEY_MGMT_ACK_QUEUE].qsize():
         time.sleep(0.001)
     if queues[KEY_MGMT_ACK_QUEUE].get() != KDB_HALT_ACK_HEADER:
-        raise FunctionReturn("Error: Key database returned wrong signal.")
+        raise SoftError("Error: Key database returned wrong signal.")
 
 
 def wait_for_key_db_ack(new_master_key: bytes, queues: "QueueDict") -> None:
     """Wait for the key database to acknowledge it has replaced the master key."""
-    while queues[KEY_MGMT_ACK_QUEUE].qsize() == 0:
+    while not queues[KEY_MGMT_ACK_QUEUE].qsize():
         time.sleep(0.001)
     if queues[KEY_MGMT_ACK_QUEUE].get() != new_master_key:
         raise CriticalError("Key database failed to install new master key.")
@@ -782,12 +778,10 @@ def remove_log(
     try:
         selection = user_input.plaintext.split()[1]
     except IndexError:
-        raise FunctionReturn("Error: No contact/group specified.", head_clear=True)
+        raise SoftError("Error: No contact/group specified.", head_clear=True)
 
     if not yes(f"Remove logs for {selection}?", abort=False, head=1):
-        raise FunctionReturn(
-            "Log file removal aborted.", tail_clear=True, delay=1, head=0
-        )
+        raise SoftError("Log file removal aborted.", tail_clear=True, delay=1, head=0)
 
     selector = determine_selector(selection, contact_list, group_list)
 
@@ -810,17 +804,17 @@ def determine_selector(
 
     elif len(selection) == ONION_ADDRESS_LENGTH:
         if validate_onion_addr(selection):
-            raise FunctionReturn("Error: Invalid account.", head_clear=True)
+            raise SoftError("Error: Invalid account.", head_clear=True)
         selector = onion_address_to_pub_key(selection)
 
     elif len(selection) == GROUP_ID_ENC_LENGTH:
         try:
             selector = b58decode(selection)
         except ValueError:
-            raise FunctionReturn("Error: Invalid group ID.", head_clear=True)
+            raise SoftError("Error: Invalid group ID.", head_clear=True)
 
     else:
-        raise FunctionReturn("Error: Unknown selector.", head_clear=True)
+        raise SoftError("Error: Unknown selector.", head_clear=True)
 
     return selector
 
@@ -840,15 +834,15 @@ def change_setting(
     try:
         setting = user_input.plaintext.split()[1]
     except IndexError:
-        raise FunctionReturn("Error: No setting specified.", head_clear=True)
+        raise SoftError("Error: No setting specified.", head_clear=True)
 
     if setting not in (settings.key_list + gateway.settings.key_list):
-        raise FunctionReturn(f"Error: Invalid setting '{setting}'.", head_clear=True)
+        raise SoftError(f"Error: Invalid setting '{setting}'.", head_clear=True)
 
     try:
         value = user_input.plaintext.split()[2]
     except IndexError:
-        raise FunctionReturn("Error: No value for setting specified.", head_clear=True)
+        raise SoftError("Error: No value for setting specified.", head_clear=True)
 
     relay_settings = dict(
         serial_error_correction=UNENCRYPTED_EC_RATIO,
@@ -884,21 +878,19 @@ def check_setting_change_conditions(
     if settings.traffic_masking and (
         setting in relay_settings or setting == "max_number_of_contacts"
     ):
-        raise FunctionReturn(
+        raise SoftError(
             "Error: Can't change this setting during traffic masking.", head_clear=True
         )
 
     if setting in ["use_serial_usb_adapter", "built_in_serial_interface"]:
-        raise FunctionReturn(
+        raise SoftError(
             "Error: Serial interface setting can only be changed manually.",
             head_clear=True,
         )
 
     if setting == "ask_password_for_log_access":
         if not master_key.authenticate_action():
-            raise FunctionReturn(
-                "Error: No permission to change setting.", head_clear=True
-            )
+            raise SoftError("Error: No permission to change setting.", head_clear=True)
 
 
 def change_setting_value(
@@ -972,17 +964,17 @@ def rxp_display_unread(settings: "Settings", queues: "QueueDict") -> None:
 def verify(window: "TxWindow", contact_list: "ContactList") -> None:
     """Verify fingerprints with contact."""
     if window.type == WIN_TYPE_GROUP or window.contact is None:
-        raise FunctionReturn("Error: A group is selected.", head_clear=True)
+        raise SoftError("Error: A group is selected.", head_clear=True)
 
     if window.contact.uses_psk():
-        raise FunctionReturn("Pre-shared keys have no fingerprints.", head_clear=True)
+        raise SoftError("Pre-shared keys have no fingerprints.", head_clear=True)
 
     try:
         verified = verify_fingerprints(
             window.contact.tx_fingerprint, window.contact.rx_fingerprint
         )
     except (EOFError, KeyboardInterrupt):
-        raise FunctionReturn(
+        raise SoftError(
             "Fingerprint verification aborted.", delay=1, head=2, tail_clear=True
         )
 
@@ -1019,7 +1011,7 @@ def whisper(
     try:
         message = user_input.plaintext.strip().split(" ", 1)[1]
     except IndexError:
-        raise FunctionReturn("Error: No whisper message specified.", head_clear=True)
+        raise SoftError("Error: No whisper message specified.", head_clear=True)
 
     queue_message(
         user_input=UserInput(message, MESSAGE),
@@ -1038,7 +1030,7 @@ def whois(
     try:
         selector = user_input.plaintext.split()[1]
     except IndexError:
-        raise FunctionReturn("Error: No account or nick specified.", head_clear=True)
+        raise SoftError("Error: No account or nick specified.", head_clear=True)
 
     # Contacts
     if selector in contact_list.get_list_of_addresses():
@@ -1079,7 +1071,7 @@ def whois(
         )
 
     else:
-        raise FunctionReturn("Error: Unknown selector.", head_clear=True)
+        raise SoftError("Error: Unknown selector.", head_clear=True)
 
 
 def wipe(settings: "Settings", queues: "QueueDict", gateway: "Gateway") -> None:
@@ -1099,12 +1091,12 @@ def wipe(settings: "Settings", queues: "QueueDict", gateway: "Gateway") -> None:
         https://www1.cs.fau.de/filepool/projects/coldboot/fares_coldboot.pdf
     """
     if not yes("Wipe all user data and power off systems?", abort=False):
-        raise FunctionReturn("Wipe command aborted.", head_clear=True)
+        raise SoftError("Wipe command aborted.", head_clear=True)
 
     clear_screen()
 
     for q in [COMMAND_PACKET_QUEUE, RELAY_PACKET_QUEUE]:
-        while queues[q].qsize() != 0:
+        while queues[q].qsize():
             queues[q].get()
 
     queue_command(WIPE_USR_DATA, settings, queues)

@@ -47,7 +47,7 @@ from tests.utils import tear_queue, TFCTestCase
 
 
 class TestDrawFrame(TFCTestCase):
-    def test_left_to_right_oriented_data_diode_frames(self):
+    def test_left_to_right_oriented_data_diode_frames(self) -> None:
 
         for argv in [SCNCLR, NCDCRL]:
 
@@ -95,7 +95,7 @@ class TestDrawFrame(TFCTestCase):
                 IDLE,
             )
 
-    def test_right_to_left_oriented_data_diode_frames(self):
+    def test_right_to_left_oriented_data_diode_frames(self) -> None:
 
         for argv in [SCNCRL, NCDCLR]:
 
@@ -146,7 +146,7 @@ class TestDrawFrame(TFCTestCase):
 
 class TestAnimate(unittest.TestCase):
     @mock.patch("time.sleep", return_value=MagicMock)
-    def test_animate(self, _):
+    def test_animate(self, _) -> None:
         for arg in [SCNCLR, NCDCLR, SCNCRL, NCDCRL]:
             self.assertIsNone(animate(arg))
 
@@ -177,13 +177,13 @@ class TestRxLoop(unittest.TestCase):
             )
         ),
     )
-    def test_rx_loop(self, _):
+    def test_rx_loop(self, _) -> None:
 
         with self.assertRaises(SystemExit):
             rx_loop(self.queue, RP_LISTEN_SOCKET)
 
         self.assertEqual(self.queue.qsize(), 2)
-        while self.queue.qsize() != 0:
+        while self.queue.qsize():
             self.assertEqual(self.queue.get(), b"test_data")
 
 
@@ -201,11 +201,11 @@ class TestTxLoop(unittest.TestCase):
         "multiprocessing.connection.Client",
         side_effect=[socket.error, MagicMock(send=MagicMock)],
     )
-    def test_tx_loop(self, *_):
+    def test_tx_loop(self, *_) -> None:
         # Setup
         queue = Queue()
 
-        def queue_delayer():
+        def queue_delayer() -> None:
             """Place packet to queue after timer runs out."""
             self.o_sleep(0.1)
             queue.put(b"test_packet")
@@ -220,13 +220,13 @@ class TestTxLoop(unittest.TestCase):
 
 
 class TestProcessArguments(unittest.TestCase):
-    def test_invalid_arguments_exit(self, *_):
+    def test_invalid_arguments_exit(self, *_) -> None:
         for argument in ["", "invalid"]:
             with mock.patch("sys.argv", ["dd.py", argument]):
                 with self.assertRaises(SystemExit):
                     process_arguments()
 
-    def test_valid_arguments(self, *_):
+    def test_valid_arguments(self, *_) -> None:
         for argument in [SCNCLR, SCNCRL, NCDCLR, NCDCRL]:
             with mock.patch("sys.argv", ["dd.py", argument]):
                 arg, input_socket, output_socket = process_arguments()
@@ -246,11 +246,11 @@ class TestMain(unittest.TestCase):
 
     @mock.patch("time.sleep", lambda _: None)
     @mock.patch("sys.argv", ["dd.py", SCNCLR])
-    def test_main(self, *_):
+    def test_main(self, *_) -> None:
         # Setup
         queues = {EXIT_QUEUE: self.queue}
 
-        def queue_delayer():
+        def queue_delayer() -> None:
             """Place packet to queue after timer runs out."""
             time.sleep(0.1)
             queues[EXIT_QUEUE].put(EXIT)

@@ -29,7 +29,7 @@ from typing import Any, List, Optional
 import tkinter
 from tkinter import filedialog
 
-from src.common.exceptions import FunctionReturn
+from src.common.exceptions import SoftError
 from src.common.output import m_print, print_on_previous_line
 
 if typing.TYPE_CHECKING:
@@ -57,7 +57,7 @@ def ask_path_gui(
         root.destroy()
 
         if not file_path:
-            raise FunctionReturn(
+            raise SoftError(
                 ("File" if get_file else "Path") + " selection aborted.",
                 head_clear=True,
             )
@@ -163,7 +163,7 @@ def cli_get_file(prompt_msg: str) -> str:
 
         except (EOFError, KeyboardInterrupt):
             print_on_previous_line()
-            raise FunctionReturn("File selection aborted.", head_clear=True)
+            raise SoftError("File selection aborted.", head_clear=True)
 
 
 def cli_get_path(prompt_msg: str) -> str:
@@ -187,4 +187,4 @@ def cli_get_path(prompt_msg: str) -> str:
 
         except (EOFError, KeyboardInterrupt):
             print_on_previous_line()
-            raise FunctionReturn("File path selection aborted.", head_clear=True)
+            raise SoftError("File path selection aborted.", head_clear=True)

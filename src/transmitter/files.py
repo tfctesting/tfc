@@ -28,7 +28,7 @@ from typing import Tuple
 
 from src.common.crypto import byte_padding, csprng, encrypt_and_sign
 from src.common.encoding import int_to_bytes
-from src.common.exceptions import FunctionReturn
+from src.common.exceptions import SoftError
 from src.common.misc import readable_size, split_byte_string
 from src.common.statics import (
     COMPRESSION_LEVEL,
@@ -82,13 +82,13 @@ class File(object):
         )
 
         if full_header_length >= PADDING_LENGTH:
-            raise FunctionReturn("Error: File name is too long.", head_clear=True)
+            raise SoftError("Error: File name is too long.", head_clear=True)
 
     @staticmethod
     def load_file_data(path: str) -> bytes:
         """Load file name, size, and data from the specified path."""
         if not os.path.isfile(path):
-            raise FunctionReturn("Error: File not found.", head_clear=True)
+            raise SoftError("Error: File not found.", head_clear=True)
         with open(path, "rb") as f:
             data = f.read()
         return data
@@ -97,8 +97,8 @@ class File(object):
     def get_size(path: str) -> Tuple[bytes, str]:
         """Get size of file in bytes and in human readable form."""
         byte_size = os.path.getsize(path)
-        if byte_size == 0:
-            raise FunctionReturn("Error: Target file is empty.", head_clear=True)
+        if not byte_size:
+            raise SoftError("Error: Target file is empty.", head_clear=True)
         size = int_to_bytes(byte_size)
         size_hr = readable_size(byte_size)
 

@@ -39,7 +39,7 @@ from src.common.encoding import (
     pub_key_to_onion_address,
 )
 from src.common.encoding import pub_key_to_short_address
-from src.common.exceptions import FunctionReturn
+from src.common.exceptions import SoftError
 from src.common.misc import (
     ignored,
     separate_header,
@@ -98,7 +98,7 @@ def client_scheduler(
     # Wait for Tor port from `onion_service` process.
     while True:
         with ignored(EOFError, KeyboardInterrupt):
-            while queues[TOR_DATA_QUEUE].qsize() == 0:
+            while not queues[TOR_DATA_QUEUE].qsize():
                 time.sleep(0.1)
             tor_port, onion_addr_user = queues[TOR_DATA_QUEUE].get()
             break
@@ -106,7 +106,7 @@ def client_scheduler(
     while True:
         with ignored(EOFError, KeyboardInterrupt):
 
-            while queues[CONTACT_MGMT_QUEUE].qsize() == 0:
+            while not queues[CONTACT_MGMT_QUEUE].qsize():
                 time.sleep(0.1)
 
             command, ser_public_keys, is_existing_contact = queues[
@@ -206,7 +206,7 @@ def client(
         send_contact_request(onion_addr, onion_addr_user, session)
 
     while True:
-        with ignored(EOFError, FunctionReturn, KeyboardInterrupt):
+        with ignored(EOFError, KeyboardInterrupt, SoftError):
             time.sleep(check_delay)
 
             url_token_public_key_hex = load_url_token(onion_addr, session)
@@ -251,7 +251,7 @@ def update_url_token(
     When contact's URL token public key changes, update URL token.
     """
     if ut_pubkey_hex == cached_pk:
-        raise FunctionReturn("URL token public key has not changed.", output=False)
+        raise SoftError("URL token public key has not changed.", output=False)
 
     try:
         public_key = bytes.fromhex(ut_pubkey_hex)
@@ -275,7 +275,7 @@ def update_url_token(
         return url_token, ut_pubkey_hex
 
     except (TypeError, ValueError):
-        raise FunctionReturn("Error: URL token derivation failed.")
+        raise SoftError("Error: URL token derivation failed.")
 
 
 def manage_contact_status(
@@ -456,7 +456,7 @@ def g_msg_manager(queues: "QueueDict", unit_test: bool = False) -> None:
 
     while True:
         with ignored(EOFError, KeyboardInterrupt):
-            while queues[GROUP_MSG_QUEUE].qsize() == 0:
+            while not queues[GROUP_MSG_QUEUE].qsize():
                 time.sleep(0.01)
 
             header, payload, trunc_addr = queues[GROUP_MSG_QUEUE].get()
@@ -563,11 +563,11 @@ def c_req_manager(queues: "QueueDict", unit_test: bool = False) -> None:
 
     while True:
         with ignored(EOFError, KeyboardInterrupt):
-            while request_queue.qsize() == 0:
+            while not request_queue.qsize():
                 time.sleep(0.1)
             purp_onion_address = request_queue.get()
 
-            while setting_queue.qsize() != 0:
+            while setting_queue.qsize():
                 show_requests = setting_queue.get()
 
             # Update list of existing contacts

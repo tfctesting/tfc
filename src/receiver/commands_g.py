@@ -22,7 +22,7 @@ along with TFC. If not, see <https://www.gnu.org/licenses/>.
 import typing
 
 from src.common.encoding import b58encode
-from src.common.exceptions import FunctionReturn
+from src.common.exceptions import SoftError
 from src.common.misc import separate_header, split_byte_string, validate_group_name
 from src.common.output import group_management_print, m_print
 from src.common.statics import (
@@ -65,13 +65,13 @@ def group_create(
     rejected = list(purp_pub_keys - pub_keys)
 
     if len(accepted) > settings.max_number_of_group_members:
-        raise FunctionReturn(
+        raise SoftError(
             f"Error: TFC settings only allow {settings.max_number_of_group_members} "
             f"members per group."
         )
 
     if len(group_list) == settings.max_number_of_groups:
-        raise FunctionReturn(
+        raise SoftError(
             f"Error: TFC settings only allow {settings.max_number_of_groups} groups."
         )
 
@@ -113,7 +113,7 @@ def group_add(
     try:
         group_name = group_list.get_group_by_id(group_id).name
     except StopIteration:
-        raise FunctionReturn(f"Error: No group with ID '{b58encode(group_id)}' found.")
+        raise SoftError(f"Error: No group with ID '{b58encode(group_id)}' found.")
 
     pub_keys = set(contact_list.get_list_of_pub_keys())
     before_adding = set(group_list.get_group(group_name).get_list_of_member_pub_keys())
@@ -126,7 +126,7 @@ def group_add(
     new_in_group = list(new_in_group_set)
 
     if len(end_assembly) > settings.max_number_of_group_members:
-        raise FunctionReturn(
+        raise SoftError(
             f"Error: TFC settings only allow {settings.max_number_of_group_members} "
             f"members per group."
         )
@@ -160,7 +160,7 @@ def group_remove(
     try:
         group_name = group_list.get_group_by_id(group_id).name
     except StopIteration:
-        raise FunctionReturn(f"Error: No group with ID '{b58encode(group_id)}' found.")
+        raise SoftError(f"Error: No group with ID '{b58encode(group_id)}' found.")
 
     pub_keys = set(contact_list.get_list_of_pub_keys())
     before_removal = set(group_list.get_group(group_name).get_list_of_member_pub_keys())
@@ -190,7 +190,7 @@ def group_delete(
 ) -> None:
     """Remove the group."""
     if not group_list.has_group_id(group_id):
-        raise FunctionReturn(f"Error: No group with ID '{b58encode(group_id)}' found.")
+        raise SoftError(f"Error: No group with ID '{b58encode(group_id)}' found.")
 
     name = group_list.get_group_by_id(group_id).name
     window_list.remove_window(group_id)
@@ -216,16 +216,16 @@ def group_rename(
     try:
         group = group_list.get_group_by_id(group_id)
     except StopIteration:
-        raise FunctionReturn(f"Error: No group with ID '{b58encode(group_id)}' found.")
+        raise SoftError(f"Error: No group with ID '{b58encode(group_id)}' found.")
 
     try:
         new_name = new_name_bytes.decode()
     except UnicodeError:
-        raise FunctionReturn(f"Error: New name for group '{group.name}' was invalid.")
+        raise SoftError(f"Error: New name for group '{group.name}' was invalid.")
 
     error_msg = validate_group_name(new_name, contact_list, group_list)
     if error_msg:
-        raise FunctionReturn(error_msg)
+        raise SoftError(error_msg)
 
     old_name = group.name
     group.name = new_name

@@ -33,7 +33,7 @@ from src.common.encoding import (
     pub_key_to_short_address,
     str_to_bytes,
 )
-from src.common.exceptions import FunctionReturn
+from src.common.exceptions import SoftError
 from src.common.input import ask_confirmation_code, get_b58_key, nc_bypass_msg, yes
 from src.common.misc import reset_terminal
 from src.common.output import (
@@ -230,7 +230,7 @@ def new_local_key(
     """
     try:
         if settings.traffic_masking and contact_list.has_local_contact():
-            raise FunctionReturn(
+            raise SoftError(
                 "Error: Command is disabled during traffic masking.", head_clear=True
             )
 
@@ -280,9 +280,7 @@ def new_local_key(
         reset_terminal()
 
     except (EOFError, KeyboardInterrupt):
-        raise FunctionReturn(
-            "Local key setup aborted.", tail_clear=True, delay=1, head=2
-        )
+        raise SoftError("Local key setup aborted.", tail_clear=True, delay=1, head=2)
 
 
 def deliver_local_key(
@@ -432,9 +430,7 @@ def start_key_exchange(
 
     except (EOFError, KeyboardInterrupt):
         contact.tfc_private_key = tfc_private_key_user
-        raise FunctionReturn(
-            "Key exchange interrupted.", tail_clear=True, delay=1, head=2
-        )
+        raise SoftError("Key exchange interrupted.", tail_clear=True, delay=1, head=2)
 
 
 def exchange_public_keys(
@@ -484,7 +480,7 @@ def validate_contact_public_key(tfc_public_key_contact: bytes) -> None:
             bold=True,
             tail=1,
         )
-        raise FunctionReturn("Error: Invalid public key length", output=False)
+        raise SoftError("Error: Invalid public key length", output=False)
 
     if tfc_public_key_contact == bytes(TFC_PUBLIC_KEY_LENGTH):
         # The public key of contact is zero with negligible probability,
@@ -499,7 +495,7 @@ def validate_contact_public_key(tfc_public_key_contact: bytes) -> None:
             bold=True,
             tail=1,
         )
-        raise FunctionReturn("Error: Zero public key", output=False)
+        raise SoftError("Error: Zero public key", output=False)
 
 
 def fingerprint_validation(tx_fp: bytes, rx_fp: bytes) -> bytes:
@@ -520,7 +516,7 @@ def fingerprint_validation(tx_fp: bytes, rx_fp: bytes) -> bytes:
                 bold=True,
                 tail=1,
             )
-            raise FunctionReturn("Error: Fingerprint mismatch", delay=2.5, output=False)
+            raise SoftError("Error: Fingerprint mismatch", delay=2.5, output=False)
         kex_status = KEX_STATUS_VERIFIED
 
     except (EOFError, KeyboardInterrupt):
@@ -708,9 +704,7 @@ def create_pre_shared_key(
         )
 
     except (EOFError, KeyboardInterrupt):
-        raise FunctionReturn(
-            "PSK generation aborted.", tail_clear=True, delay=1, head=2
-        )
+        raise SoftError("PSK generation aborted.", tail_clear=True, delay=1, head=2)
 
 
 def store_keys_on_removable_drive(
@@ -750,15 +744,15 @@ def rxp_load_psk(
 ) -> None:
     """Send command to Receiver Program to load PSK for active contact."""
     if settings.traffic_masking:
-        raise FunctionReturn(
+        raise SoftError(
             "Error: Command is disabled during traffic masking.", head_clear=True
         )
 
     if window.type == WIN_TYPE_GROUP or window.contact is None:
-        raise FunctionReturn("Error: Group is selected.", head_clear=True)
+        raise SoftError("Error: Group is selected.", head_clear=True)
 
     if not contact_list.get_contact_by_pub_key(window.uid).uses_psk():
-        raise FunctionReturn(
+        raise SoftError(
             f"Error: The current key was exchanged with {ECDHE}.", head_clear=True
         )
 
@@ -772,7 +766,7 @@ def rxp_load_psk(
             if purp_code == c_code.hex():
                 window.contact.kex_status = KEX_STATUS_HAS_RX_PSK
                 contact_list.store_contacts()
-                raise FunctionReturn(
+                raise SoftError(
                     f"Removed PSK reminder for {window.name}.", tail_clear=True, delay=1
                 )
 
@@ -780,6 +774,6 @@ def rxp_load_psk(
             print_on_previous_line(reps=4, delay=2)
 
         except (EOFError, KeyboardInterrupt):
-            raise FunctionReturn(
+            raise SoftError(
                 "PSK verification aborted.", tail_clear=True, delay=1, head=2
             )

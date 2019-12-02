@@ -64,18 +64,18 @@ from tests.utils import TFCTestCase
 
 
 class TestClearScreen(TFCTestCase):
-    def test_clear_screen(self):
+    def test_clear_screen(self) -> None:
         self.assert_prints(CLEAR_ENTIRE_SCREEN + CURSOR_LEFT_UP_CORNER, clear_screen)
 
 
 class TestGroupManagementPrint(TFCTestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         """Pre-test actions."""
         self.contact_list = ContactList(nicks=["Alice"])
         self.lines = [nick_to_pub_key("Alice"), nick_to_pub_key("Bob")]
         self.group_name = "test_group"
 
-    def test_group_management_print(self):
+    def test_group_management_print(self) -> None:
         group_management_print(
             NEW_GROUP, self.lines, self.contact_list, self.group_name
         )
@@ -186,11 +186,11 @@ class TestMPrint(TFCTestCase):
     )
 
     @mock.patch("builtins.input", return_value="")
-    def test_m_print(self, _):
+    def test_m_print(self, _) -> None:
         self.assert_prints("Test message\n", m_print, ["Test message"], center=False)
         self.assert_prints("Test message\n", m_print, "Test message", center=False)
 
-    def test_long_message(self):
+    def test_long_message(self) -> None:
         self.assert_prints(
             """\
 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean condimentum
@@ -261,7 +261,7 @@ placerat, aliquam dolor ac, venenatis arcu.
             bold=True,
         )
 
-    def test_multi_line(self):
+    def test_multi_line(self) -> None:
         self.assert_prints(
             """\
                                   ┌─────────┐                                   
@@ -275,7 +275,7 @@ placerat, aliquam dolor ac, venenatis arcu.
             box=True,
         )
 
-    def test_head_and_tail(self):
+    def test_head_and_tail(self) -> None:
         self.assert_prints(
             """\
 [2J[H
@@ -294,7 +294,7 @@ placerat, aliquam dolor ac, venenatis arcu.
             tail=1,
         )
 
-    def test_wrapping(self):
+    def test_wrapping(self) -> None:
         self.assert_prints(
             """\
 ┌──────────────────────────────────────────────────────────────────────────────┐
@@ -320,13 +320,13 @@ placerat, aliquam dolor ac, venenatis arcu.
         )
 
     @mock.patch("builtins.input", return_value="")
-    def test_manual_proceed(self, _):
+    def test_manual_proceed(self, _) -> None:
         self.assertIsNone(m_print("test", manual_proceed=True))
 
 
 class TestPhase(unittest.TestCase):
     @mock.patch("time.sleep", return_value=None)
-    def test_phase(self, _):
+    def test_phase(self, _) -> None:
         self.assertIsNone(phase("Entering phase"))
         self.assertIsNone(phase(DONE))
         self.assertIsNone(phase("Starting phase", head=1, offset=len("Finished")))
@@ -334,7 +334,7 @@ class TestPhase(unittest.TestCase):
 
 
 class TestPrintFingerprint(TFCTestCase):
-    def test_print_fingerprints(self):
+    def test_print_fingerprints(self) -> None:
         self.assert_prints(
             """\
                        ┌───────────────────────────────┐                        
@@ -351,11 +351,11 @@ class TestPrintFingerprint(TFCTestCase):
 
 
 class TestPrintKey(TFCTestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         """Pre-test actions."""
         self.settings = Settings()
 
-    def test_print_kdk(self):
+    def test_print_kdk(self) -> None:
         self.assert_prints(
             """\
     ┌─────────────────────────────────────────────────────────────────────┐     
@@ -369,7 +369,7 @@ class TestPrintKey(TFCTestCase):
             self.settings,
         )
 
-    def test_print_kdk_local_testing(self):
+    def test_print_kdk_local_testing(self) -> None:
         self.settings.local_testing_mode = True
         self.assert_prints(
             """\
@@ -385,7 +385,7 @@ class TestPrintKey(TFCTestCase):
 
 
 class TestPrintTitle(TFCTestCase):
-    def test_print_tx_title(self):
+    def test_print_tx_title(self) -> None:
         self.assert_prints(
             f"""\
 {CLEAR_ENTIRE_SCREEN+CURSOR_LEFT_UP_CORNER}
@@ -395,7 +395,7 @@ class TestPrintTitle(TFCTestCase):
             TX,
         )
 
-    def test_print_rx_title(self):
+    def test_print_rx_title(self) -> None:
         self.assert_prints(
             f"""\
 {CLEAR_ENTIRE_SCREEN+CURSOR_LEFT_UP_CORNER}
@@ -407,7 +407,7 @@ class TestPrintTitle(TFCTestCase):
 
 
 class TestPrintOnPreviousLine(TFCTestCase):
-    def test_print_on_previous_line(self):
+    def test_print_on_previous_line(self) -> None:
         self.assert_prints(
             CURSOR_UP_ONE_LINE + CLEAR_ENTIRE_LINE, print_on_previous_line
         )
@@ -423,18 +423,18 @@ class TestPrintOnPreviousLine(TFCTestCase):
 
 
 class TestPrintSpacing(TFCTestCase):
-    def test_print_spacing(self):
+    def test_print_spacing(self) -> None:
         for i in range(20):
             self.assert_prints(i * "\n", print_spacing, i)
 
 
 class TestRPPrint(TFCTestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         """Pre-test actions."""
         self.ts = datetime.now()
         self.timestamp = self.ts.strftime("%b %d - %H:%M:%S.%f")[:-4]
 
-    def test_bold_print(self):
+    def test_bold_print(self) -> None:
         self.assert_prints(
             f"{BOLD_ON}{self.timestamp} - testMessage{NORMAL_TEXT}\n",
             rp_print,
@@ -443,7 +443,7 @@ class TestRPPrint(TFCTestCase):
             bold=True,
         )
 
-    def test_normal_print(self):
+    def test_normal_print(self) -> None:
         self.assert_prints(
             f"{self.timestamp} - testMessage\n",
             rp_print,
@@ -452,7 +452,7 @@ class TestRPPrint(TFCTestCase):
             bold=False,
         )
 
-    def test_works_without_timestamp(self):
+    def test_works_without_timestamp(self) -> None:
         self.assertIsNone(rp_print("testMessage"))
 
 

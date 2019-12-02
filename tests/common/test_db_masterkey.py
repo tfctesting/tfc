@@ -53,17 +53,17 @@ class TestMasterKey(unittest.TestCase):
         "password",
     ]  # Valid   login password
 
-    def setUp(self):
+    def setUp(self) -> None:
         """Pre-test actions."""
         self.unit_test_dir = cd_unit_test()
         self.operation = TX
         self.file_name = f"{DIR_USER_DATA}{self.operation}_login_data"
 
-    def tearDown(self):
+    def tearDown(self) -> None:
         """Post-test actions."""
         cleanup(self.unit_test_dir)
 
-    def test_password_generation(self):
+    def test_password_generation(self) -> None:
         bit_strength, password = MasterKey.generate_master_password()
         self.assertIsInstance(bit_strength, int)
         self.assertIsInstance(password, str)
@@ -71,7 +71,7 @@ class TestMasterKey(unittest.TestCase):
         self.assertEqual(len(password.split(" ")), 10)
 
     @mock.patch("time.sleep", return_value=None)
-    def test_invalid_data_in_db_raises_critical_error(self, _):
+    def test_invalid_data_in_db_raises_critical_error(self, _) -> None:
         for delta in [-1, 1]:
             # Setup
             ensure_dir(DIR_USER_DATA)
@@ -85,7 +85,7 @@ class TestMasterKey(unittest.TestCase):
                 _ = MasterKey(self.operation, local_test=False)
 
     @mock.patch("time.sleep", return_value=None)
-    def test_load_master_key_with_invalid_data_raises_critical_error(self, _):
+    def test_load_master_key_with_invalid_data_raises_critical_error(self, _) -> None:
         # Setup
         ensure_dir(DIR_USER_DATA)
         data = os.urandom(MASTERKEY_DB_SIZE + BLAKE2_DIGEST_LENGTH)
@@ -111,7 +111,7 @@ class TestMasterKey(unittest.TestCase):
     @mock.patch("os.path.isfile", side_effect=[KeyboardInterrupt, False, True, False])
     @mock.patch("getpass.getpass", side_effect=input_list)
     @mock.patch("time.sleep", return_value=None)
-    def test_master_key_generation_and_load(self, *_):
+    def test_master_key_generation_and_load(self, *_) -> None:
         with self.assertRaises(SystemExit):
             MasterKey(self.operation, local_test=True)
 
@@ -141,7 +141,7 @@ class TestMasterKey(unittest.TestCase):
     @mock.patch("getpass.getpass", side_effect=["generate"])
     @mock.patch("builtins.input", side_effect=[""])
     @mock.patch("time.sleep", return_value=None)
-    def test_new_masterkey_key_type(self, *_):
+    def test_new_masterkey_key_type(self, *_) -> None:
         master_key = MasterKey(self.operation, local_test=True)
         self.assertIsInstance(master_key.master_key, bytes)
 
@@ -157,7 +157,7 @@ class TestMasterKey(unittest.TestCase):
     @mock.patch("os.path.isfile", side_effect=[False, True])
     @mock.patch("getpass.getpass", side_effect=input_list)
     @mock.patch("time.sleep", return_value=None)
-    def test_kd_binary_search(self, *_):
+    def test_kd_binary_search(self, *_) -> None:
         MasterKey(self.operation, local_test=True)
 
 

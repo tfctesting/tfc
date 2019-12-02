@@ -28,7 +28,7 @@ from typing import Any, Dict, List, Optional, Tuple, Union
 
 from src.common.crypto import blake2b, byte_padding, csprng, encrypt_and_sign
 from src.common.encoding import bool_to_bytes, int_to_bytes, str_to_bytes
-from src.common.exceptions import CriticalError, FunctionReturn
+from src.common.exceptions import CriticalError, SoftError
 from src.common.input import yes
 from src.common.misc import split_byte_string
 from src.common.output import m_print, phase, print_on_previous_line
@@ -211,7 +211,7 @@ def queue_file(window: "TxWindow", settings: "Settings", queues: "QueueDict") ->
             "tx_onion_db",
         )
     ):
-        raise FunctionReturn("Error: Can't send TFC database.", head_clear=True)
+        raise SoftError("Error: Can't send TFC database.", head_clear=True)
 
     if not settings.traffic_masking:
         send_file(path, settings, queues, window)
@@ -226,9 +226,9 @@ def queue_file(window: "TxWindow", settings: "Settings", queues: "QueueDict") ->
                 f"Send {file.name.decode()} ({file.size_hr}) to {window.type_print} {window.name} "
                 f"({len(assembly_packets)} packets, time: {file.time_hr})?"
             ):
-                raise FunctionReturn("File selection aborted.", head_clear=True)
+                raise SoftError("File selection aborted.", head_clear=True)
         except (EOFError, KeyboardInterrupt):
-            raise FunctionReturn("File selection aborted.", head_clear=True)
+            raise SoftError("File selection aborted.", head_clear=True)
 
     queue_assembly_packets(
         assembly_packets, FILE, settings, queues, window, log_as_ph=True
@@ -301,7 +301,7 @@ def send_file(
     another file instead.
     """
     if settings.traffic_masking:
-        raise FunctionReturn(
+        raise SoftError(
             "Error: Command is disabled during traffic masking.", head_clear=True
         )
 
@@ -310,10 +310,10 @@ def send_file(
     data.extend(str_to_bytes(name))
 
     if not os.path.isfile(path):
-        raise FunctionReturn("Error: File not found.", head_clear=True)
+        raise SoftError("Error: File not found.", head_clear=True)
 
-    if os.path.getsize(path) == 0:
-        raise FunctionReturn("Error: Target file is empty.", head_clear=True)
+    if not os.path.getsize(path):
+        raise SoftError("Error: Target file is empty.", head_clear=True)
 
     phase("Reading data")
     with open(path, "rb") as f:
@@ -563,7 +563,7 @@ def cancel_packet(
         )
     else:
         if header == F_C_HEADER:
-            raise FunctionReturn(
+            raise SoftError(
                 "Files are only queued during traffic masking.", head_clear=True
             )
         queue = queues[MESSAGE_PACKET_QUEUE]
@@ -589,7 +589,7 @@ def cancel_standard_packet(
 ) -> None:
     """Cancel standard packet."""
     p_buffer = []
-    while queue.qsize() != 0:
+    while queue.qsize():
         queue_data = queue.get()
         window_uid = queue_data[4]
 
@@ -613,19 +613,19 @@ def cancel_standard_packet(
         message = f"Cancelled queued {p_type} to {window.type_print} {window.name}."
     else:
         message = f"No {p_type} queued for {window.type_print} {window.name}."
-    raise FunctionReturn(message, head_clear=True)
+    raise SoftError(message, head_clear=True)
 
 
 def cancel_traffic_masking_packet(
     cancel: bool, cancel_pt: bytes, log_as_ph: bool, p_type: str, queue: "Queue[Any]"
 ) -> None:
     """Cancel traffic masking packet."""
-    if queue.qsize() != 0:
+    if queue.qsize():
         cancel = True
 
         # Get most recent log_messages setting status in queue
         log_messages = False
-        while queue.qsize() != 0:
+        while queue.qsize():
             log_messages = queue.get()[1]
 
         queue.put((cancel_pt, log_messages, log_as_ph))

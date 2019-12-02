@@ -26,7 +26,7 @@ from typing import Dict
 
 from src.common.db_logs import write_log_entry
 from src.common.encoding import bytes_to_bool
-from src.common.exceptions import FunctionReturn
+from src.common.exceptions import SoftError
 from src.common.misc import separate_header, separate_headers
 from src.common.statics import (
     ASSEMBLY_PACKET_HEADER_LENGTH,
@@ -107,11 +107,11 @@ def process_message_packet(
     )
 
     if onion_pub_key == LOCAL_PUBKEY:
-        raise FunctionReturn(
+        raise SoftError(
             "Warning! Received packet masqueraded as a command.", window=command_window
         )
     if origin not in [ORIGIN_USER_HEADER, ORIGIN_CONTACT_HEADER]:
-        raise FunctionReturn(
+        raise SoftError(
             "Error: Received packet had an invalid origin-header.",
             window=command_window,
         )
@@ -128,7 +128,7 @@ def process_message_packet(
 
     try:
         packet.add_packet(assembly_packet)
-    except FunctionReturn:
+    except SoftError:
         log_masking_packets(
             onion_pub_key, origin, logging, settings, packet, message_log
         )
@@ -174,7 +174,7 @@ def process_complete_message_packet(
     try:
         if p_type == FILE:
             packet.assemble_and_store_file(ts, onion_pub_key, window_list)
-            raise FunctionReturn(
+            raise SoftError(
                 "File storage complete.", output=False
             )  # Raising allows calling log_masking_packets
 
@@ -192,7 +192,7 @@ def process_complete_message_packet(
                 file_keys,
             )
 
-    except (FunctionReturn, UnicodeError):
+    except (SoftError, UnicodeError):
         log_masking_packets(
             onion_pub_key,
             origin,
@@ -235,9 +235,7 @@ def process_message(
         packet.assemble_message_packet(), [WHISPER_FIELD_LENGTH, MESSAGE_HEADER_LENGTH]
     )
     if len(whisper_byte) != WHISPER_FIELD_LENGTH:
-        raise FunctionReturn(
-            "Error: Message from contact had an invalid whisper header."
-        )
+        raise SoftError("Error: Message from contact had an invalid whisper header.")
 
     whisper = bytes_to_bool(whisper_byte)
 
@@ -256,17 +254,17 @@ def process_message(
         nick = process_file_key_message(
             assembled, onion_pub_key, origin, contact_list, file_keys
         )
-        raise FunctionReturn(
+        raise SoftError(
             f"Received file decryption key from {nick}",
             window=window_list.get_command_window(),
         )
 
     else:
-        raise FunctionReturn("Error: Message from contact had an invalid header.")
+        raise SoftError("Error: Message from contact had an invalid header.")
 
     # Logging
     if whisper:
-        raise FunctionReturn("Whisper message complete.", output=False)
+        raise SoftError("Whisper message complete.", output=False)
     if logging:
         for p in packet.assembly_pt_list:
             write_log_entry(p, onion_pub_key, message_log, origin)
@@ -284,22 +282,18 @@ def process_group_message(
     """Process a group message."""
     group_id, assembled = separate_header(assembled, GROUP_ID_LENGTH)
     if not group_list.has_group_id(group_id):
-        raise FunctionReturn(
-            "Error: Received message to an unknown group.", output=False
-        )
+        raise SoftError("Error: Received message to an unknown group.", output=False)
 
     group = group_list.get_group_by_id(group_id)
     if not group.has_member(onion_pub_key):
-        raise FunctionReturn(
-            "Error: Account is not a member of the group.", output=False
-        )
+        raise SoftError("Error: Account is not a member of the group.", output=False)
 
     group_msg_id, group_message = separate_header(assembled, GROUP_MSG_ID_LENGTH)
 
     try:
         group_message_str = group_message.decode()
     except UnicodeError:
-        raise FunctionReturn("Error: Received an invalid group message.")
+        raise SoftError("Error: Received an invalid group message.")
 
     window = window_list.get_window(group.group_id)
 
@@ -337,17 +331,17 @@ def process_file_key_message(
 ) -> str:
     """Process received file key delivery message."""
     if origin == ORIGIN_USER_HEADER:
-        raise FunctionReturn("File key message from the user.", output=False)
+        raise SoftError("File key message from the user.", output=False)
 
     try:
         decoded = base64.b85decode(assembled)
     except ValueError:
-        raise FunctionReturn("Error: Received an invalid file key message.")
+        raise SoftError("Error: Received an invalid file key message.")
 
     ct_hash, file_key = separate_header(decoded, BLAKE2_DIGEST_LENGTH)
 
     if len(ct_hash) != BLAKE2_DIGEST_LENGTH or len(file_key) != SYMMETRIC_KEY_LENGTH:
-        raise FunctionReturn("Error: Received an invalid file key message.")
+        raise SoftError("Error: Received an invalid file key message.")
 
     file_keys[onion_pub_key + ct_hash] = file_key
     nick = contact_list.get_nick_by_pub_key(onion_pub_key)

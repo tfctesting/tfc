@@ -144,7 +144,7 @@ class TestBLAKE2b(unittest.TestCase):
         """Post-test actions."""
         cleanup(self.unit_test_dir)
 
-    def test_blake2b_using_the_official_known_answer_tests(self):
+    def test_blake2b_using_the_official_known_answer_tests(self) -> None:
         for message, key, digest in self.test_vectors:
             purported_digest = blake2b(
                 message, key, digest_size=BLAKE2_DIGEST_LENGTH_MAX
@@ -158,22 +158,22 @@ class TestBLAKE2bWrapper(unittest.TestCase):
     parameters.
     """
 
-    def test_invalid_size_key_raises_critical_error(self):
+    def test_invalid_size_key_raises_critical_error(self) -> None:
         for invalid_key_length in [BLAKE2_KEY_LENGTH_MAX + 1, 1000]:
             with self.assertRaises(SystemExit):
                 blake2b(b"test_string", key=os.urandom(invalid_key_length))
 
-    def test_invalid_size_salt_raises_critical_error(self):
+    def test_invalid_size_salt_raises_critical_error(self) -> None:
         for invalid_salt_length in [BLAKE2_SALT_LENGTH_MAX + 1, 1000]:
             with self.assertRaises(SystemExit):
                 blake2b(b"test_string", salt=os.urandom(invalid_salt_length))
 
-    def test_invalid_size_personalization_string_raises_critical_error(self):
+    def test_invalid_size_personalization_string_raises_critical_error(self) -> None:
         for invalid_person_length in [BLAKE2_PERSON_LENGTH_MAX + 1, 1000]:
             with self.assertRaises(SystemExit):
                 blake2b(b"test_string", person=os.urandom(invalid_person_length))
 
-    def test_invalid_digest_size_raises_critical_error(self):
+    def test_invalid_digest_size_raises_critical_error(self) -> None:
         for invalid_digest_size in [
             -1,
             BLAKE2_DIGEST_LENGTH_MIN - 1,
@@ -189,7 +189,9 @@ class TestBLAKE2bWrapper(unittest.TestCase):
             digest=(MagicMock(side_effect=[BLAKE2_DIGEST_LENGTH * "a"]))
         ),
     )
-    def test_invalid_blake2b_digest_type_raises_critical_error(self, mock_blake2b):
+    def test_invalid_blake2b_digest_type_raises_critical_error(
+        self, mock_blake2b
+    ) -> None:
         with self.assertRaises(SystemExit):
             blake2b(b"test_string")
         mock_blake2b.assert_called()
@@ -207,7 +209,9 @@ class TestBLAKE2bWrapper(unittest.TestCase):
             )
         ),
     )
-    def test_invalid_size_blake2b_digest_raises_critical_error(self, mock_blake2b):
+    def test_invalid_size_blake2b_digest_raises_critical_error(
+        self, mock_blake2b
+    ) -> None:
         with self.assertRaises(SystemExit):
             blake2b(b"test_string")
         with self.assertRaises(SystemExit):
@@ -265,7 +269,7 @@ class TestArgon2KDF(unittest.TestCase):
         os.chdir("..")
         cleanup(self.unit_test_dir)
 
-    def test_argon2_cffi_using_the_official_command_line_utility(self):
+    def test_argon2_cffi_using_the_official_command_line_utility(self) -> None:
 
         # Command-line utility's parameter limits.
         min_password_length = 1
@@ -334,7 +338,7 @@ class TestArgon2Wrapper(unittest.TestCase):
         """Pre-test actions."""
         self.salt = os.urandom(ARGON2_SALT_LENGTH)
 
-    def test_invalid_length_salt_raises_critical_error(self):
+    def test_invalid_length_salt_raises_critical_error(self) -> None:
         invalid_salts = [
             salt_length * b"a"
             for salt_length in [0, ARGON2_SALT_LENGTH - 1, ARGON2_SALT_LENGTH + 1, 1000]
@@ -353,7 +357,7 @@ class TestArgon2Wrapper(unittest.TestCase):
         "argon2.low_level.hash_secret_raw",
         MagicMock(side_effect=[SYMMETRIC_KEY_LENGTH * "a"]),
     )
-    def test_invalid_type_key_from_argon2_raises_critical_error(self):
+    def test_invalid_type_key_from_argon2_raises_critical_error(self) -> None:
         with self.assertRaises(SystemExit):
             argon2_kdf(
                 "password",
@@ -372,7 +376,7 @@ class TestArgon2Wrapper(unittest.TestCase):
             ]
         ),
     )
-    def test_invalid_size_key_from_argon2_raises_critical_error(self):
+    def test_invalid_size_key_from_argon2_raises_critical_error(self) -> None:
         with self.assertRaises(SystemExit):
             argon2_kdf(
                 "password",
@@ -390,7 +394,7 @@ class TestArgon2Wrapper(unittest.TestCase):
                 ARGON2_MIN_PARALLELISM,
             )
 
-    def test_too_small_time_cost_raises_critical_error(self):
+    def test_too_small_time_cost_raises_critical_error(self) -> None:
         with self.assertRaises(SystemExit):
             argon2_kdf(
                 "password",
@@ -400,7 +404,7 @@ class TestArgon2Wrapper(unittest.TestCase):
                 ARGON2_MIN_PARALLELISM,
             )
 
-    def test_too_small_memory_cost_raises_critical_error(self):
+    def test_too_small_memory_cost_raises_critical_error(self) -> None:
         with self.assertRaises(SystemExit):
             argon2_kdf(
                 "password",
@@ -410,7 +414,7 @@ class TestArgon2Wrapper(unittest.TestCase):
                 ARGON2_MIN_PARALLELISM,
             )
 
-    def test_too_small_parallelism_raises_critical_error(self):
+    def test_too_small_parallelism_raises_critical_error(self) -> None:
         with self.assertRaises(SystemExit):
             argon2_kdf(
                 "password",
@@ -420,7 +424,7 @@ class TestArgon2Wrapper(unittest.TestCase):
                 ARGON2_MIN_PARALLELISM - 1,
             )
 
-    def test_argon2_kdf_key_type_and_length(self):
+    def test_argon2_kdf_key_type_and_length(self) -> None:
         key = argon2_kdf(
             "password",
             self.salt,
@@ -481,10 +485,10 @@ class TestX448(unittest.TestCase):
         "b60c0b56fd2464c335543936521c24403085d59a449a5037514a879d"
     )
 
-    def test_generate_private_key_function_returns_private_key_object(self):
+    def test_generate_private_key_function_returns_private_key_object(self) -> None:
         self.assertIsInstance(X448.generate_private_key(), X448PrivateKey)
 
-    def test_x448_private_key_size(self):
+    def test_x448_private_key_size(self) -> None:
         private_key_bytes = X448.generate_private_key().private_bytes(
             encoding=Encoding.Raw,
             format=PrivateFormat.Raw,
@@ -492,13 +496,15 @@ class TestX448(unittest.TestCase):
         )
         self.assertEqual(len(private_key_bytes), TFC_PRIVATE_KEY_LENGTH)
 
-    def test_derive_public_key_returns_public_key_with_correct_type_and_size(self):
+    def test_derive_public_key_returns_public_key_with_correct_type_and_size(
+        self,
+    ) -> None:
         private_key = X448.generate_private_key()
         public_key = X448.derive_public_key(private_key)
         self.assertIsInstance(public_key, bytes)
         self.assertEqual(len(public_key), TFC_PUBLIC_KEY_LENGTH)
 
-    def test_deriving_invalid_type_public_key_raises_critical_error(self):
+    def test_deriving_invalid_type_public_key_raises_critical_error(self) -> None:
         private_key = MagicMock(
             public_key=MagicMock(
                 return_value=MagicMock(
@@ -510,7 +516,7 @@ class TestX448(unittest.TestCase):
         with self.assertRaises(SystemExit):
             X448.derive_public_key(private_key)
 
-    def test_deriving_invalid_size_public_key_raises_critical_error(self):
+    def test_deriving_invalid_size_public_key_raises_critical_error(self) -> None:
         """
         The public key is already validated by the pyca/cryptography
         library[1], but assertive programming is a good practice, so
@@ -538,7 +544,7 @@ class TestX448(unittest.TestCase):
 
     def test_deriving_shared_secret_with_an_invalid_size_public_key_raises_critical_error(
         self,
-    ):
+    ) -> None:
         private_key = X448.generate_private_key()
         invalid_public_keys = [
             key_length * b"a"
@@ -553,7 +559,7 @@ class TestX448(unittest.TestCase):
             with self.assertRaises(SystemExit):
                 X448.shared_key(private_key, invalid_public_key)
 
-    def test_deriving_zero_shared_secret_raises_critical_error(self):
+    def test_deriving_zero_shared_secret_raises_critical_error(self) -> None:
         """\
         Some experts such as JP Aumasson[1] and Thai Duong[2] have
         argued that X25519 public keys should be validated before use to
@@ -577,7 +583,7 @@ class TestX448(unittest.TestCase):
         with self.assertRaises(SystemExit):
             X448.shared_key(X448.generate_private_key(), bytes(TFC_PUBLIC_KEY_LENGTH))
 
-    def test_x448_with_the_official_test_vectors(self):
+    def test_x448_with_the_official_test_vectors(self) -> None:
         sk_alice_ = X448PrivateKey.from_private_bytes(TestX448.sk_alice)
         sk_bob_ = X448PrivateKey.from_private_bytes(TestX448.sk_bob)
 
@@ -590,7 +596,7 @@ class TestX448(unittest.TestCase):
         self.assertEqual(shared_secret1, blake2b(TestX448.shared_secret))
         self.assertEqual(shared_secret2, blake2b(TestX448.shared_secret))
 
-    def test_non_unique_keys_raise_critical_error(self):
+    def test_non_unique_keys_raise_critical_error(self) -> None:
         # Setup
         shared_key = os.urandom(SYMMETRIC_KEY_LENGTH)
         tx_public_key = os.urandom(TFC_PUBLIC_KEY_LENGTH)
@@ -599,7 +605,7 @@ class TestX448(unittest.TestCase):
         with self.assertRaises(SystemExit):
             X448.derive_keys(shared_key, tx_public_key, tx_public_key)
 
-    def test_x448_key_derivation(self):
+    def test_x448_key_derivation(self) -> None:
         # Setup
         shared_key = os.urandom(SYMMETRIC_KEY_LENGTH)
         tx_public_key = os.urandom(TFC_PUBLIC_KEY_LENGTH)
@@ -910,7 +916,7 @@ class TestXChaCha20Poly1305(unittest.TestCase):
         self.key = self.ietf_key
 
     @mock.patch("src.common.crypto.csprng", side_effect=[ietf_nonce, libsodium_nonce])
-    def test_encrypt_and_sign_with_the_official_test_vectors(self, mock_csprng):
+    def test_encrypt_and_sign_with_the_official_test_vectors(self, mock_csprng) -> None:
         self.assertEqual(
             encrypt_and_sign(self.plaintext, self.key, self.ad), self.nonce_ct_tag_ietf
         )
@@ -920,7 +926,7 @@ class TestXChaCha20Poly1305(unittest.TestCase):
         )
         mock_csprng.assert_called_with(XCHACHA20_NONCE_LENGTH)
 
-    def test_auth_and_decrypt_with_the_official_test_vectors(self):
+    def test_auth_and_decrypt_with_the_official_test_vectors(self) -> None:
         self.assertEqual(
             auth_and_decrypt(self.nonce_ct_tag_ietf, self.key, ad=self.ad),
             self.plaintext,
@@ -930,7 +936,7 @@ class TestXChaCha20Poly1305(unittest.TestCase):
             self.plaintext,
         )
 
-    def test_invalid_size_key_raises_critical_error(self):
+    def test_invalid_size_key_raises_critical_error(self) -> None:
         invalid_keys = [
             key_length * b"a"
             for key_length in [
@@ -949,12 +955,14 @@ class TestXChaCha20Poly1305(unittest.TestCase):
     @mock.patch(
         "src.common.crypto.csprng", return_value=(XCHACHA20_NONCE_LENGTH - 1) * b"a"
     )
-    def test_invalid_nonce_when_encrypting_raises_critical_error(self, mock_csprng):
+    def test_invalid_nonce_when_encrypting_raises_critical_error(
+        self, mock_csprng
+    ) -> None:
         with self.assertRaises(SystemExit):
             encrypt_and_sign(self.plaintext, self.key)
         mock_csprng.assert_called_with(XCHACHA20_NONCE_LENGTH)
 
-    def test_invalid_tag_in_data_from_database_raises_critical_error(self):
+    def test_invalid_tag_in_data_from_database_raises_critical_error(self) -> None:
         with self.assertRaises(SystemExit):
             auth_and_decrypt(
                 self.nonce_ct_tag_ietf,
@@ -962,7 +970,7 @@ class TestXChaCha20Poly1305(unittest.TestCase):
                 database="path/database_filename",
             )
 
-    def test_invalid_tag_in_data_from_contact_raises_nacl_crypto_error(self):
+    def test_invalid_tag_in_data_from_contact_raises_nacl_crypto_error(self) -> None:
         with self.assertRaises(nacl.exceptions.CryptoError):
             auth_and_decrypt(self.nonce_ct_tag_ietf, key=bytes(SYMMETRIC_KEY_LENGTH))
 
@@ -981,7 +989,7 @@ class TestBytePadding(unittest.TestCase):
         https://github.com/pyca/cryptography/blob/master/tests/hazmat/primitives/test_padding.py
     """
 
-    def test_length_of_the_padded_message_is_divisible_by_padding_size(self):
+    def test_length_of_the_padded_message_is_divisible_by_padding_size(self) -> None:
         padded_bytestring_lengths = set()
 
         for message_length in range(4 * PADDING_LENGTH):
@@ -1016,7 +1024,7 @@ class TestBytePadding(unittest.TestCase):
             )
         ),
     )
-    def test_invalid_padding_type_raises_critical_error(self, mock_padder):
+    def test_invalid_padding_type_raises_critical_error(self, mock_padder) -> None:
         with self.assertRaises(SystemExit):
             byte_padding(b"test_string")
         mock_padder.assert_called()
@@ -1032,7 +1040,7 @@ class TestBytePadding(unittest.TestCase):
             )
         ),
     )
-    def test_invalid_padding_size_raises_critical_error(self, mock_padder):
+    def test_invalid_padding_size_raises_critical_error(self, mock_padder) -> None:
         """\
         This test makes sure TFC detects if the length of the message
         padded by pyca/cryptography library is not correct.
@@ -1043,17 +1051,19 @@ class TestBytePadding(unittest.TestCase):
             byte_padding(b"test_string")
         mock_padder.assert_called()
 
-    def test_message_length_one_less_than_padding_size_does_not_add_a_dummy_block(self):
+    def test_message_length_one_less_than_padding_size_does_not_add_a_dummy_block(
+        self,
+    ) -> None:
         message = os.urandom(PADDING_LENGTH - 1)
         padded = byte_padding(message)
         self.assertEqual(len(padded), PADDING_LENGTH)
 
-    def test_message_length_equal_to_padding_size_adds_a_dummy_block(self):
+    def test_message_length_equal_to_padding_size_adds_a_dummy_block(self) -> None:
         message = os.urandom(PADDING_LENGTH)
         padded = byte_padding(message)
         self.assertEqual(len(padded), 2 * PADDING_LENGTH)
 
-    def test_removal_of_padding_does_not_alter_the_original_message(self):
+    def test_removal_of_padding_does_not_alter_the_original_message(self) -> None:
         for message_length in range(4 * PADDING_LENGTH):
             message = os.urandom(message_length)
             padded = byte_padding(message)
@@ -1081,12 +1091,12 @@ class TestCSPRNG(unittest.TestCase):
 
     Further analysis of the LRNG can be found from Chapters 4-8
     (pp.72-126) of the BSI report:
-        https://www.bsi.bund.de/SharedDocs/Downloads/EN/BSI/Publications/Studies/LinuxRNG/LinuxRNG_EN.pdf?__blob=publicationFile&v=16
+        https://www.bsi.bund.de/SharedDocs/Downloads/EN/BSI/Publications/Studies/LinuxRNG/LinuxRNG_EN.pdf
     """
 
     mock_entropy = XCHACHA20_NONCE_LENGTH * b"a"
 
-    def test_default_key_type_and_size(self):
+    def test_default_key_type_and_size(self) -> None:
         key = csprng()
         self.assertIsInstance(key, bytes)
         self.assertEqual(len(key), SYMMETRIC_KEY_LENGTH)
@@ -1094,28 +1104,32 @@ class TestCSPRNG(unittest.TestCase):
     @mock.patch("os.getrandom", return_value=mock_entropy)
     def test_function_calls_getrandom_with_correct_parameters_and_hashes_entropy_with_blake2b(
         self, mock_getrandom
-    ):
+    ) -> None:
         key = csprng(XCHACHA20_NONCE_LENGTH)
         self.assertEqual(
             key, blake2b(self.mock_entropy, digest_size=XCHACHA20_NONCE_LENGTH)
         )
         mock_getrandom.assert_called_with(XCHACHA20_NONCE_LENGTH, flags=0)
 
-    def test_function_returns_key_of_specified_size(self):
+    def test_function_returns_key_of_specified_size(self) -> None:
         for key_size in range(BLAKE2_DIGEST_LENGTH_MIN, BLAKE2_DIGEST_LENGTH_MAX + 1):
             key = csprng(key_size)
             self.assertEqual(len(key), key_size)
 
     @mock.patch("os.getrandom", return_value=SYMMETRIC_KEY_LENGTH * "a")
-    def test_invalid_entropy_type_from_getrandom_raises_critical_error(self, _):
+    def test_invalid_entropy_type_from_getrandom_raises_critical_error(self, _) -> None:
         with self.assertRaises(SystemExit):
             csprng()
 
-    def test_subceeding_hash_function_min_digest_size_raises_critical_error(self):
+    def test_subceeding_hash_function_min_digest_size_raises_critical_error(
+        self,
+    ) -> None:
         with self.assertRaises(SystemExit):
             csprng(BLAKE2_DIGEST_LENGTH_MIN - 1)
 
-    def test_exceeding_hash_function_max_digest_size_raises_critical_error(self):
+    def test_exceeding_hash_function_max_digest_size_raises_critical_error(
+        self,
+    ) -> None:
         with self.assertRaises(SystemExit):
             csprng(BLAKE2_DIGEST_LENGTH_MAX + 1)
 
@@ -1129,7 +1143,7 @@ class TestCSPRNG(unittest.TestCase):
     )
     def test_invalid_size_entropy_from_getrandom_raises_critical_error(
         self, mock_getrandom, mock_blake2b
-    ):
+    ) -> None:
         with self.assertRaises(SystemExit):
             csprng()
         with self.assertRaises(SystemExit):
@@ -1148,7 +1162,7 @@ class TestCheckKernelVersion(unittest.TestCase):
         "os.uname",
         side_effect=[["", "", f"{version}-0-generic"] for version in invalid_versions],
     )
-    def test_invalid_kernel_versions_raise_critical_error(self, mock_uname):
+    def test_invalid_kernel_versions_raise_critical_error(self, mock_uname) -> None:
         for _ in self.invalid_versions:
             with self.assertRaises(SystemExit):
                 check_kernel_version()
@@ -1158,7 +1172,7 @@ class TestCheckKernelVersion(unittest.TestCase):
         "os.uname",
         side_effect=[["", "", f"{version}-0-generic"] for version in valid_versions],
     )
-    def test_valid_kernel_versions_return_none(self, mock_uname):
+    def test_valid_kernel_versions_return_none(self, mock_uname) -> None:
         for _ in self.valid_versions:
             self.assertIsNone(check_kernel_version())
         mock_uname.assert_called()

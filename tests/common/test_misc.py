@@ -28,6 +28,7 @@ import unittest
 import zlib
 
 from multiprocessing import Process
+from typing import Any
 from unittest import mock
 
 from src.common.misc import (
@@ -82,21 +83,21 @@ from tests.utils import nick_to_pub_key, tear_queues, TFCTestCase
 
 
 class TestCalculateRaceConditionDelay(unittest.TestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         """Pre-test actions."""
         self.settings = Settings()
 
-    def test_race_condition_delay_calculation(self):
+    def test_race_condition_delay_calculation(self) -> None:
         self.assertIsInstance(calculate_race_condition_delay(5, 9600), float)
 
 
 class TestDecompress(TFCTestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         """Pre-test actions."""
         self.settings = Settings()
         self.settings.max_decompress_size = 1000
 
-    def test_successful_decompression(self):
+    def test_successful_decompression(self) -> None:
         # Setup
         data = os.urandom(self.settings.max_decompress_size)
         compressed = zlib.compress(data)
@@ -106,13 +107,13 @@ class TestDecompress(TFCTestCase):
             decompress(compressed, self.settings.max_decompress_size), data
         )
 
-    def test_oversize_decompression_raises_fr(self):
+    def test_oversize_decompression_raises_fr(self) -> None:
         # Setup
         data = os.urandom(self.settings.max_decompress_size + 1)
         compressed = zlib.compress(data)
 
         # Test
-        self.assert_fr(
+        self.assert_se(
             "Error: Decompression aborted due to possible zip bomb.",
             decompress,
             compressed,
@@ -121,26 +122,26 @@ class TestDecompress(TFCTestCase):
 
 
 class TestEnsureDir(unittest.TestCase):
-    def tearDown(self):
+    def tearDown(self) -> None:
         """Post-test actions."""
         with ignored(OSError):
             os.rmdir("test_dir/")
 
-    def test_ensure_dir(self):
+    def test_ensure_dir(self) -> None:
         self.assertIsNone(ensure_dir("test_dir/"))
         self.assertIsNone(ensure_dir("test_dir/"))
         self.assertTrue(os.path.isdir("test_dir/"))
 
 
 class TestTabCompleteList(unittest.TestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         """Pre-test actions."""
         self.contact_list = ContactList(nicks=["Alice", "Bob"])
         self.group_list = GroupList(groups=["test_group"])
         self.settings = Settings(key_list=["key1", "key2"])
         self.gateway = Gateway()
 
-    def test_get_tab_complete_list(self):
+    def test_get_tab_complete_list(self) -> None:
         tab_complete_list = [a + " " for a in self.contact_list.get_list_of_addresses()]
         tab_complete_list += [
             i + " " for i in self.group_list.get_list_of_hr_group_ids()
@@ -169,22 +170,22 @@ class TestTabCompleteList(unittest.TestCase):
 
 
 class TestGetTerminalHeight(unittest.TestCase):
-    def test_get_terminal_height(self):
+    def test_get_terminal_height(self) -> None:
         self.assertIsInstance(get_terminal_height(), int)
 
 
 class TestGetTerminalWidth(unittest.TestCase):
-    def test_get_terminal_width(self):
+    def test_get_terminal_width(self) -> None:
         self.assertIsInstance(get_terminal_width(), int)
 
 
 class TestIgnored(unittest.TestCase):
     @staticmethod
-    def func():
+    def func() -> None:
         """Mock function that raises exception."""
         raise KeyboardInterrupt
 
-    def test_ignored_contextmanager(self):
+    def test_ignored_contextmanager(self) -> None:
         raised = False
         try:
             with ignored(KeyboardInterrupt):
@@ -195,30 +196,30 @@ class TestIgnored(unittest.TestCase):
 
 
 class TestMonitorProcesses(TFCTestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         """Pre-test actions."""
         self.unit_test_dir = cd_unit_test()
         self.settings = Settings()
 
-    def tearDown(self):
+    def tearDown(self) -> None:
         """Post-test actions."""
         cleanup(self.unit_test_dir)
 
     @staticmethod
-    def mock_process():
+    def mock_process() -> None:
         """Mock process that does not return."""
         while True:
             time.sleep(0.01)
 
     @mock.patch("time.sleep", return_value=None)
-    def test_exit(self, *_):
+    def test_exit(self, *_) -> None:
         queues = gen_queue_dict()
         process_list = [Process(target=self.mock_process)]
 
         for p in process_list:
             p.start()
 
-        def queue_delayer():
+        def queue_delayer() -> None:
             """Place EXIT packet into queue after delay."""
             time.sleep(0.01)
             queues[EXIT_QUEUE].put(EXIT)
@@ -231,8 +232,8 @@ class TestMonitorProcesses(TFCTestCase):
         tear_queues(queues)
 
     @mock.patch("time.sleep", return_value=None)
-    def test_dying_process(self, *_):
-        def mock_process():
+    def test_dying_process(self, *_) -> None:
+        def mock_process() -> None:
             """Function that returns after a moment."""
             time.sleep(0.01)
 
@@ -249,7 +250,7 @@ class TestMonitorProcesses(TFCTestCase):
 
     @mock.patch("time.sleep", return_value=None)
     @mock.patch("os.system", return_value=None)
-    def test_wipe(self, mock_os_system, *_):
+    def test_wipe(self, mock_os_system, *_) -> None:
         queues = gen_queue_dict()
         process_list = [Process(target=self.mock_process)]
 
@@ -261,7 +262,7 @@ class TestMonitorProcesses(TFCTestCase):
         for p in process_list:
             p.start()
 
-        def queue_delayer():
+        def queue_delayer() -> None:
             """Place WIPE packet to queue after delay."""
             time.sleep(0.01)
             queues[EXIT_QUEUE].put(WIPE)
@@ -279,7 +280,7 @@ class TestMonitorProcesses(TFCTestCase):
     @mock.patch("time.sleep", return_value=None)
     @mock.patch("os.system", return_value=None)
     @mock.patch("builtins.open", mock.mock_open(read_data=TAILS))
-    def test_wipe_tails(self, mock_os_system, *_):
+    def test_wipe_tails(self, mock_os_system, *_) -> None:
         queues = gen_queue_dict()
         process_list = [Process(target=self.mock_process)]
 
@@ -289,7 +290,7 @@ class TestMonitorProcesses(TFCTestCase):
         for p in process_list:
             p.start()
 
-        def queue_delayer():
+        def queue_delayer() -> None:
             """Place WIPE packet to queue after delay."""
             time.sleep(0.01)
             queues[EXIT_QUEUE].put(WIPE)
@@ -307,22 +308,22 @@ class TestMonitorProcesses(TFCTestCase):
 
 
 class TestProcessArguments(unittest.TestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         """Pre-test actions."""
 
         class MockParser(object):
             """MockParse object."""
 
-            def __init__(self, *_, **__):
+            def __init__(self, *_, **__) -> None:
                 pass
 
-            def parse_args(self):
+            def parse_args(self) -> Any:
                 """Return Args mock object."""
 
                 class Args(object):
                     """Mock object for command line arguments."""
 
-                    def __init__(self):
+                    def __init__(self) -> None:
                         """Create new Args mock object."""
                         self.operation = True
                         self.local_test = True
@@ -331,22 +332,22 @@ class TestProcessArguments(unittest.TestCase):
                 args = Args()
                 return args
 
-            def add_argument(self, *_, **__):
+            def add_argument(self, *_, **__) -> None:
                 """Mock function for adding argument."""
 
         self.o_argparse = argparse.ArgumentParser
         argparse.ArgumentParser = MockParser
 
-    def tearDown(self):
+    def tearDown(self) -> None:
         """Post-test actions."""
         argparse.ArgumentParser = self.o_argparse
 
-    def test_process_arguments(self):
+    def test_process_arguments(self) -> None:
         self.assertEqual(process_arguments(), (RX, True, True))
 
 
 class TestReadableSize(unittest.TestCase):
-    def test_readable_size(self):
+    def test_readable_size(self) -> None:
         sizes = ["", "K", "M", "G", "T", "P", "E", "Z", "Y"]
         for i in range(0, 9):
             size = readable_size(1024 ** i)
@@ -354,7 +355,7 @@ class TestReadableSize(unittest.TestCase):
 
 
 class TestRoundUp(unittest.TestCase):
-    def test_round_up(self):
+    def test_round_up(self) -> None:
         self.assertEqual(round_up(1), 10)
         self.assertEqual(round_up(5), 10)
         self.assertEqual(round_up(8), 10)
@@ -367,7 +368,7 @@ class TestRoundUp(unittest.TestCase):
 
 
 class TestSplitString(unittest.TestCase):
-    def test_split_string(self):
+    def test_split_string(self) -> None:
         self.assertEqual(
             split_string("cypherpunk", 1),
             ["c", "y", "p", "h", "e", "r", "p", "u", "n", "k"],
@@ -384,7 +385,7 @@ class TestSplitString(unittest.TestCase):
 
 
 class TestSplitByteString(unittest.TestCase):
-    def test_split_byte_string(self):
+    def test_split_byte_string(self) -> None:
         self.assertEqual(
             split_byte_string(b"cypherpunk", 1),
             [b"c", b"y", b"p", b"h", b"e", b"r", b"p", b"u", b"n", b"k"],
@@ -405,7 +406,7 @@ class TestSplitByteString(unittest.TestCase):
 
 
 class TestSeparateHeader(unittest.TestCase):
-    def test_separate_header(self):
+    def test_separate_header(self) -> None:
         self.assertEqual(
             separate_header(b"cypherpunk", header_length=len(b"cypher")),
             (b"cypher", b"punk"),
@@ -413,13 +414,13 @@ class TestSeparateHeader(unittest.TestCase):
 
 
 class TestSeparateHeaders(unittest.TestCase):
-    def test_separate_headers(self):
+    def test_separate_headers(self) -> None:
         self.assertEqual(
             separate_headers(b"cypherpunk", header_length_list=[1, 2, 3]),
             [b"c", b"yp", b"her", b"punk"],
         )
 
-    def test_too_small_string(self):
+    def test_too_small_string(self) -> None:
         self.assertEqual(
             separate_headers(b"cypherpunk", header_length_list=[1, 2, 10]),
             [b"c", b"yp", b"herpunk", b""],
@@ -427,7 +428,7 @@ class TestSeparateHeaders(unittest.TestCase):
 
 
 class TestSeparateTrailer(unittest.TestCase):
-    def test_separate_header(self):
+    def test_separate_header(self) -> None:
         self.assertEqual(
             separate_trailer(b"cypherpunk", trailer_length=len(b"punk")),
             (b"cypher", b"punk"),
@@ -439,12 +440,12 @@ class TestTerminalWidthCheck(unittest.TestCase):
     @mock.patch(
         "shutil.get_terminal_size", side_effect=[[50, 50], [50, 50], [100, 100]]
     )
-    def test_width_check(self, *_):
+    def test_width_check(self, *_) -> None:
         self.assertIsNone(terminal_width_check(80))
 
 
 class TestValidateOnionAddr(unittest.TestCase):
-    def test_validate_account(self):
+    def test_validate_account(self) -> None:
         user_account = nick_to_onion_address("Bob")
         self.assertEqual(
             validate_onion_addr(nick_to_onion_address("Alice"), user_account), ""
@@ -482,12 +483,12 @@ class TestValidateOnionAddr(unittest.TestCase):
 
 
 class TestValidateGroupName(unittest.TestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         """Pre-test actions."""
         self.contact_list = ContactList(nicks=["Alice"])
         self.group_list = GroupList(groups=["test_group"])
 
-    def test_validate_group_name(self):
+    def test_validate_group_name(self) -> None:
         self.assertEqual(
             validate_group_name("test_group\x1f", self.contact_list, self.group_list),
             "Error: Group name must be printable.",
@@ -522,7 +523,7 @@ class TestValidateGroupName(unittest.TestCase):
 
 
 class TestValidateKeyExchange(unittest.TestCase):
-    def test_validate_key_exchange(self):
+    def test_validate_key_exchange(self) -> None:
         self.assertEqual(validate_key_exchange(""), "Invalid key exchange selection.")
         self.assertEqual(validate_key_exchange("x2"), "Invalid key exchange selection.")
         self.assertEqual(validate_key_exchange("x"), "")
@@ -536,12 +537,12 @@ class TestValidateKeyExchange(unittest.TestCase):
 
 
 class TestValidateNick(unittest.TestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         """Pre-test actions."""
         self.contact_list = ContactList(nicks=["Alice", "Bob"])
         self.group_list = GroupList(groups=["test_group"])
 
-    def test_validate_nick(self):
+    def test_validate_nick(self) -> None:
         self.assertEqual(
             validate_nick(
                 "Alice_", (self.contact_list, self.group_list, nick_to_pub_key("Alice"))

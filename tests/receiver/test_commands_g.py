@@ -49,14 +49,14 @@ from tests.utils import (
 
 
 class TestGroupCreate(TFCTestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         """Pre-test actions."""
         self.ts = datetime.datetime.now()
         self.settings = Settings()
         self.window_list = WindowList()
         self.group_id = group_name_to_group_id("test_group")
 
-    def test_too_many_purp_accounts_raises_fr(self):
+    def test_too_many_purp_accounts_raises_fr(self) -> None:
         # Setup
         create_list = [nick_to_pub_key(str(n)) for n in range(51)]
         cmd_data = self.group_id + b"test_group" + US_BYTE + b"".join(create_list)
@@ -66,7 +66,7 @@ class TestGroupCreate(TFCTestCase):
         group.members = contact_list.contacts
 
         # Test
-        self.assert_fr(
+        self.assert_se(
             "Error: TFC settings only allow 50 members per group.",
             group_create,
             cmd_data,
@@ -77,14 +77,14 @@ class TestGroupCreate(TFCTestCase):
             self.settings,
         )
 
-    def test_full_group_list_raises_fr(self):
+    def test_full_group_list_raises_fr(self) -> None:
         # Setup
         cmd_data = self.group_id + b"test_group" + US_BYTE + nick_to_pub_key("51")
         group_list = GroupList(groups=[f"test_group_{n}" for n in range(50)])
         contact_list = ContactList(nicks=["Alice"])
 
         # Test
-        self.assert_fr(
+        self.assert_se(
             "Error: TFC settings only allow 50 groups.",
             group_create,
             cmd_data,
@@ -95,7 +95,7 @@ class TestGroupCreate(TFCTestCase):
             self.settings,
         )
 
-    def test_successful_group_creation(self):
+    def test_successful_group_creation(self) -> None:
         # Setup
         group_list = GroupList(groups=["test_group"])
         cmd_data = (
@@ -122,13 +122,13 @@ class TestGroupCreate(TFCTestCase):
 
 
 class TestGroupAdd(TFCTestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         """Pre-test actions."""
         self.ts = datetime.datetime.now()
         self.settings = Settings()
         self.window_list = WindowList()
 
-    def test_too_large_final_member_list_raises_fr(self):
+    def test_too_large_final_member_list_raises_fr(self) -> None:
         # Setup
         group_list = GroupList(groups=["test_group"])
         contact_list = ContactList(nicks=[str(n) for n in range(51)])
@@ -137,7 +137,7 @@ class TestGroupAdd(TFCTestCase):
         cmd_data = group_name_to_group_id("test_group") + nick_to_pub_key("50")
 
         # Test
-        self.assert_fr(
+        self.assert_se(
             "Error: TFC settings only allow 50 members per group.",
             group_add,
             cmd_data,
@@ -148,14 +148,14 @@ class TestGroupAdd(TFCTestCase):
             self.settings,
         )
 
-    def test_unknown_group_id_raises_fr(self):
+    def test_unknown_group_id_raises_fr(self) -> None:
         # Setup
         group_list = GroupList(groups=["test_group"])
         contact_list = ContactList(nicks=[str(n) for n in range(21)])
         cmd_data = group_name_to_group_id("test_group2") + nick_to_pub_key("50")
 
         # Test
-        self.assert_fr(
+        self.assert_se(
             "Error: No group with ID '2e7mHQznTMsP6' found.",
             group_add,
             cmd_data,
@@ -166,7 +166,7 @@ class TestGroupAdd(TFCTestCase):
             self.settings,
         )
 
-    def test_successful_group_add(self):
+    def test_successful_group_add(self) -> None:
         # Setup
         contact_list = ContactList(nicks=[str(n) for n in range(21)])
         group_lst = GroupList(groups=["test_group"])
@@ -194,7 +194,7 @@ class TestGroupAdd(TFCTestCase):
 
 
 class TestGroupRemove(TFCTestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         """Pre-test actions."""
         self.ts = datetime.datetime.now()
         self.window_list = WindowList()
@@ -204,14 +204,14 @@ class TestGroupRemove(TFCTestCase):
         self.group.members = self.contact_list.contacts[:19]
         self.settings = Settings()
 
-    def test_unknown_group_id_raises_fr(self):
+    def test_unknown_group_id_raises_fr(self) -> None:
         # Setup
         group_list = GroupList(groups=["test_group"])
         contact_list = ContactList(nicks=[str(n) for n in range(21)])
         cmd_data = group_name_to_group_id("test_group2") + nick_to_pub_key("20")
 
         # Test
-        self.assert_fr(
+        self.assert_se(
             "Error: No group with ID '2e7mHQznTMsP6' found.",
             group_remove,
             cmd_data,
@@ -221,7 +221,7 @@ class TestGroupRemove(TFCTestCase):
             group_list,
         )
 
-    def test_successful_member_removal(self):
+    def test_successful_member_removal(self) -> None:
         self.cmd_data = group_name_to_group_id("test_group") + b"".join(
             [nick_to_pub_key("contact_18"), nick_to_pub_key("contact_20")]
         )
@@ -237,15 +237,15 @@ class TestGroupRemove(TFCTestCase):
 
 
 class TestGroupDelete(TFCTestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         """Pre-test actions."""
         self.ts = datetime.datetime.now()
         self.window_list = WindowList()
         self.group_list = GroupList(groups=["test_group"])
 
-    def test_missing_group_raises_fr(self):
+    def test_missing_group_raises_fr(self) -> None:
         cmd_data = group_name_to_group_id("test_group2")
-        self.assert_fr(
+        self.assert_se(
             "Error: No group with ID '2e7mHQznTMsP6' found.",
             group_delete,
             cmd_data,
@@ -254,13 +254,13 @@ class TestGroupDelete(TFCTestCase):
             self.group_list,
         )
 
-    def test_unknown_group_id_raises_fr(self):
+    def test_unknown_group_id_raises_fr(self) -> None:
         # Setup
         group_list = GroupList(groups=["test_group"])
         cmd_data = group_name_to_group_id("test_group2")
 
         # Test
-        self.assert_fr(
+        self.assert_se(
             "Error: No group with ID '2e7mHQznTMsP6' found.",
             group_delete,
             cmd_data,
@@ -269,7 +269,7 @@ class TestGroupDelete(TFCTestCase):
             group_list,
         )
 
-    def test_successful_remove(self):
+    def test_successful_remove(self) -> None:
         cmd_data = group_name_to_group_id("test_group")
         self.assertIsNone(
             group_delete(cmd_data, self.ts, self.window_list, self.group_list)
@@ -278,7 +278,7 @@ class TestGroupDelete(TFCTestCase):
 
 
 class TestGroupRename(TFCTestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         """Pre-test actions."""
         self.ts = datetime.datetime.now()
         self.group_list = GroupList(groups=["test_group"])
@@ -288,42 +288,42 @@ class TestGroupRename(TFCTestCase):
         self.contact_list = ContactList(nicks=["alice"])
         self.args = self.ts, self.window_list, self.contact_list, self.group_list
 
-    def test_missing_group_id_raises_fr(self):
+    def test_missing_group_id_raises_fr(self) -> None:
         # Setup
         cmd_data = group_name_to_group_id("test_group2") + b"new_name"
 
         # Test
-        self.assert_fr(
+        self.assert_se(
             "Error: No group with ID '2e7mHQznTMsP6' found.",
             group_rename,
             cmd_data,
             *self.args,
         )
 
-    def test_invalid_group_name_encoding_raises_fr(self):
+    def test_invalid_group_name_encoding_raises_fr(self) -> None:
         # Setup
         cmd_data = (
             group_name_to_group_id("test_group") + b"new_name" + UNDECODABLE_UNICODE
         )
 
         # Test
-        self.assert_fr(
+        self.assert_se(
             "Error: New name for group 'test_group' was invalid.",
             group_rename,
             cmd_data,
             *self.args,
         )
 
-    def test_invalid_group_name_raises_fr(self):
+    def test_invalid_group_name_raises_fr(self) -> None:
         # Setup
         cmd_data = group_name_to_group_id("test_group") + b"new_name\x1f"
 
         # Test
-        self.assert_fr(
+        self.assert_se(
             "Error: Group name must be printable.", group_rename, cmd_data, *self.args
         )
 
-    def test_valid_group_name_change(self):
+    def test_valid_group_name_change(self) -> None:
         # Setup
         cmd_data = group_name_to_group_id("test_group") + b"new_name"
 

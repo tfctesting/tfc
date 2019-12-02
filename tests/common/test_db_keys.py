@@ -55,7 +55,7 @@ from tests.utils import cd_unit_test, cleanup, tamper_file, gen_queue_dict
 
 
 class TestKeySet(unittest.TestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         """Pre-test actions."""
         self.keyset = KeySet(
             onion_pub_key=nick_to_pub_key("Alice"),
@@ -68,12 +68,12 @@ class TestKeySet(unittest.TestCase):
             store_keys=lambda: None,
         )
 
-    def test_keyset_serialization_length_and_type(self):
+    def test_keyset_serialization_length_and_type(self) -> None:
         serialized = self.keyset.serialize_k()
         self.assertEqual(len(serialized), KEYSET_LENGTH)
         self.assertIsInstance(serialized, bytes)
 
-    def test_rotate_tx_mk(self):
+    def test_rotate_tx_mk(self) -> None:
         self.assertIsNone(self.keyset.rotate_tx_mk())
         self.assertEqual(
             self.keyset.tx_mk,
@@ -88,7 +88,7 @@ class TestKeySet(unittest.TestCase):
         self.assertEqual(self.keyset.tx_harac, 1)
         self.assertEqual(self.keyset.rx_harac, INITIAL_HARAC)
 
-    def test_update_tx_mk(self):
+    def test_update_tx_mk(self) -> None:
         self.keyset.update_mk(TX, SYMMETRIC_KEY_LENGTH * b"\x01", 2)
         self.assertEqual(self.keyset.tx_mk, SYMMETRIC_KEY_LENGTH * b"\x01")
         self.assertEqual(self.keyset.rx_mk, bytes(SYMMETRIC_KEY_LENGTH))
@@ -97,7 +97,7 @@ class TestKeySet(unittest.TestCase):
         self.assertEqual(self.keyset.tx_harac, 2)
         self.assertEqual(self.keyset.rx_harac, INITIAL_HARAC)
 
-    def test_update_rx_mk(self):
+    def test_update_rx_mk(self) -> None:
         self.keyset.update_mk(RX, SYMMETRIC_KEY_LENGTH * b"\x01", 2)
         self.assertEqual(self.keyset.tx_mk, bytes(SYMMETRIC_KEY_LENGTH))
         self.assertEqual(self.keyset.rx_mk, SYMMETRIC_KEY_LENGTH * b"\x01")
@@ -106,14 +106,14 @@ class TestKeySet(unittest.TestCase):
         self.assertEqual(self.keyset.tx_harac, INITIAL_HARAC)
         self.assertEqual(self.keyset.rx_harac, 2)
 
-    def test_invalid_direction_raises_critical_error(self):
+    def test_invalid_direction_raises_critical_error(self) -> None:
         invalid_direction = "sx"
         with self.assertRaises(SystemExit):
             self.keyset.update_mk(invalid_direction, SYMMETRIC_KEY_LENGTH * b"\x01", 2)
 
 
 class TestKeyList(unittest.TestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         """Pre-test actions."""
         self.unit_test_dir = cd_unit_test()
         self.master_key = MasterKey()
@@ -126,11 +126,11 @@ class TestKeyList(unittest.TestCase):
             for n in self.full_contact_list
         ]
 
-    def tearDown(self):
+    def tearDown(self) -> None:
         """Post-test actions."""
         cleanup(self.unit_test_dir)
 
-    def test_storing_and_loading_of_keysets(self):
+    def test_storing_and_loading_of_keysets(self) -> None:
         # Test store
         self.keylist.store_keys()
         self.assertEqual(
@@ -144,7 +144,7 @@ class TestKeyList(unittest.TestCase):
         key_list2 = KeyList(MasterKey(), Settings())
         self.assertEqual(len(key_list2.keysets), len(self.full_contact_list))
 
-    def test_load_of_modified_database_raises_critical_error(self):
+    def test_load_of_modified_database_raises_critical_error(self) -> None:
         self.keylist.store_keys()
 
         # Test reading works normally
@@ -155,7 +155,7 @@ class TestKeyList(unittest.TestCase):
         with self.assertRaises(SystemExit):
             KeyList(self.master_key, self.settings)
 
-    def test_invalid_content_raises_critical_error(self):
+    def test_invalid_content_raises_critical_error(self) -> None:
         # Setup
         invalid_data = b"a"
         pt_bytes = b"".join(
@@ -174,12 +174,12 @@ class TestKeyList(unittest.TestCase):
         with self.assertRaises(SystemExit):
             KeyList(self.master_key, self.settings)
 
-    def test_generate_dummy_keyset(self):
+    def test_generate_dummy_keyset(self) -> None:
         dummy_keyset = self.keylist.generate_dummy_keyset()
         self.assertEqual(len(dummy_keyset.serialize_k()), KEYSET_LENGTH)
         self.assertIsInstance(dummy_keyset, KeySet)
 
-    def test_dummy_keysets(self):
+    def test_dummy_keysets(self) -> None:
         dummies = self.keylist._dummy_keysets()
         self.assertEqual(
             len(dummies),
@@ -188,7 +188,7 @@ class TestKeyList(unittest.TestCase):
         for c in dummies:
             self.assertIsInstance(c, KeySet)
 
-    def test_add_keyset(self):
+    def test_add_keyset(self) -> None:
         new_key = bytes(SYMMETRIC_KEY_LENGTH)
         self.keylist.keysets = [create_keyset(LOCAL_ID)]
 
@@ -204,7 +204,7 @@ class TestKeyList(unittest.TestCase):
         self.assertEqual(self.keylist.keysets[0].onion_pub_key, LOCAL_PUBKEY)
         self.assertEqual(self.keylist.keysets[0].rx_hk, new_key)
 
-    def test_remove_keyset(self):
+    def test_remove_keyset(self) -> None:
         # Test KeySet for Bob exists
         self.assertTrue(self.keylist.has_keyset(nick_to_pub_key("Bob")))
 
@@ -215,13 +215,13 @@ class TestKeyList(unittest.TestCase):
         self.assertFalse(self.keylist.has_keyset(nick_to_pub_key("Bob")))
 
     @mock.patch("builtins.input", side_effect=["test_password"])
-    def test_change_master_key(self, _):
+    def test_change_master_key(self, _) -> None:
         # Setup
         key = SYMMETRIC_KEY_LENGTH * b"\x01"
         master_key2 = MasterKey(master_key=key)
         queues = gen_queue_dict()
 
-        def queue_delayer():
+        def queue_delayer() -> None:
             """Place packet to queue after timer runs out."""
             time.sleep(0.1)
             queues[KEY_MANAGEMENT_QUEUE].put(master_key2.master_key)
@@ -241,7 +241,7 @@ class TestKeyList(unittest.TestCase):
         self.assertEqual(queues[KEY_MGMT_ACK_QUEUE].get(), KDB_HALT_ACK_HEADER)
         self.assertEqual(queues[KEY_MGMT_ACK_QUEUE].get(), key)
 
-    def test_update_database(self):
+    def test_update_database(self) -> None:
         # Setup
         queues = gen_queue_dict()
 
@@ -255,11 +255,11 @@ class TestKeyList(unittest.TestCase):
         self.assertEqual(os.path.getsize(self.file_name), 17816)
         self.assertEqual(self.keylist.settings.max_number_of_contacts, 100)
 
-    def test_get_keyset(self):
+    def test_get_keyset(self) -> None:
         keyset = self.keylist.get_keyset(nick_to_pub_key("Alice"))
         self.assertIsInstance(keyset, KeySet)
 
-    def test_get_list_of_pub_keys(self):
+    def test_get_list_of_pub_keys(self) -> None:
         self.assertEqual(
             self.keylist.get_list_of_pub_keys(),
             [
@@ -269,14 +269,14 @@ class TestKeyList(unittest.TestCase):
             ],
         )
 
-    def test_has_keyset(self):
+    def test_has_keyset(self) -> None:
         self.keylist.keysets = []
         self.assertFalse(self.keylist.has_keyset(nick_to_pub_key("Alice")))
 
         self.keylist.keysets = [create_keyset("Alice")]
         self.assertTrue(self.keylist.has_keyset(nick_to_pub_key("Alice")))
 
-    def test_has_rx_mk(self):
+    def test_has_rx_mk(self) -> None:
         self.assertTrue(self.keylist.has_rx_mk(nick_to_pub_key("Bob")))
         self.keylist.get_keyset(nick_to_pub_key("Bob")).rx_mk = bytes(
             SYMMETRIC_KEY_LENGTH
@@ -286,7 +286,7 @@ class TestKeyList(unittest.TestCase):
         )
         self.assertFalse(self.keylist.has_rx_mk(nick_to_pub_key("Bob")))
 
-    def test_has_local_keyset(self):
+    def test_has_local_keyset(self) -> None:
         self.keylist.keysets = []
         self.assertFalse(self.keylist.has_local_keyset())
 
@@ -301,7 +301,7 @@ class TestKeyList(unittest.TestCase):
         )
         self.assertTrue(self.keylist.has_local_keyset())
 
-    def test_manage(self):
+    def test_manage(self) -> None:
         # Setup
         queues = gen_queue_dict()
 

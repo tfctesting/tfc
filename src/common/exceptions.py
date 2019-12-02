@@ -45,8 +45,12 @@ class CriticalError(Exception):
         )
 
 
-class FunctionReturn(Exception):
-    """Print return message and return to exception handler function."""
+class SoftError(Exception):
+    """A soft exception from which TFC can automatically recover from.
+
+    When a SoftError is raised, TFC prints a message
+    and returns to the exception handler function.
+    """
 
     def __init__(
         self,

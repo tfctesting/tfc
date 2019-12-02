@@ -29,40 +29,40 @@ from tests.utils import cd_unit_test, cleanup, TFCTestCase
 
 
 class TestFile(TFCTestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         """Pre-test actions."""
         self.unit_test_dir = cd_unit_test()
         self.window = TxWindow()
         self.settings = Settings()
         self.args = self.window, self.settings
 
-    def tearDown(self):
+    def tearDown(self) -> None:
         """Post-test actions."""
         cleanup(self.unit_test_dir)
 
-    def test_missing_file_raises_fr(self):
-        self.assert_fr("Error: File not found.", File, "./testfile.txt", *self.args)
+    def test_missing_file_raises_fr(self) -> None:
+        self.assert_se("Error: File not found.", File, "./testfile.txt", *self.args)
 
-    def test_empty_file_raises_fr(self):
+    def test_empty_file_raises_fr(self) -> None:
         # Setup
         with open("testfile.txt", "wb+") as f:
             f.write(b"")
 
         # Test
-        self.assert_fr(
+        self.assert_se(
             "Error: Target file is empty.", File, "./testfile.txt", *self.args
         )
 
-    def test_oversize_filename_raises_fr(self):
+    def test_oversize_filename_raises_fr(self) -> None:
         # Setup
         f_name = 250 * "a" + ".txt"
         with open(f_name, "wb+") as f:
             f.write(b"a")
 
         # Test
-        self.assert_fr("Error: File name is too long.", File, f"./{f_name}", *self.args)
+        self.assert_se("Error: File name is too long.", File, f"./{f_name}", *self.args)
 
-    def test_small_file(self):
+    def test_small_file(self) -> None:
         # Setup
         input_data = os.urandom(5)
         with open("testfile.txt", "wb+") as f:
@@ -79,7 +79,7 @@ class TestFile(TFCTestCase):
         self.assertEqual(len(file.plaintext), 114)
         self.assertIsInstance(file.plaintext, bytes)
 
-    def test_large_file_and_local_testing(self):
+    def test_large_file_and_local_testing(self) -> None:
         # Setup
         input_data = os.urandom(2000)
         with open("testfile.txt", "wb+") as f:

@@ -26,7 +26,7 @@ from typing import Any, Dict, List, Tuple, Union
 
 from src.common.encoding import bytes_to_int, pub_key_to_short_address
 from src.common.encoding import int_to_bytes, b85encode
-from src.common.exceptions import FunctionReturn
+from src.common.exceptions import SoftError
 from src.common.misc import ignored, separate_header, split_byte_string
 from src.common.output import rp_print
 from src.common.statics import (
@@ -96,7 +96,7 @@ def src_incoming(
     messages_to_flask = queues[M_TO_FLASK_QUEUE]
 
     while True:
-        with ignored(EOFError, FunctionReturn, KeyboardInterrupt):
+        with ignored(EOFError, KeyboardInterrupt, SoftError):
             ts, packet = load_packet_from_queue(queues, gateway)
             header, packet = separate_header(packet, DATAGRAM_HEADER_LENGTH)
 
@@ -134,7 +134,7 @@ def load_packet_from_queue(
     """
     packets_from_source_computer = queues[GATEWAY_QUEUE]
 
-    while packets_from_source_computer.qsize() == 0:
+    while not packets_from_source_computer.qsize():
         time.sleep(0.01)
     ts, packet = packets_from_source_computer.get()  # type: datetime, bytes
 
@@ -299,10 +299,10 @@ def dst_outgoing(
             if c_queue.qsize() == 0 and m_queue.qsize() == 0:
                 time.sleep(0.01)
 
-            while c_queue.qsize() != 0:
+            while c_queue.qsize():
                 gateway.write(c_queue.get())
 
-            if m_queue.qsize() != 0:
+            if m_queue.qsize():
                 gateway.write(m_queue.get())
 
             if unit_test and queues[UNIT_TEST_QUEUE].qsize() > 0:

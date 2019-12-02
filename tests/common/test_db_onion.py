@@ -40,18 +40,18 @@ from tests.utils import cd_unit_test, cleanup, tamper_file
 
 
 class TestOnionService(unittest.TestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         """Pre-test actions."""
         self.unit_test_dir = cd_unit_test()
         self.master_key = MasterKey()
         self.file_name = f"{DIR_USER_DATA}{TX}_onion_db"
 
-    def tearDown(self):
+    def tearDown(self) -> None:
         """Post-test actions."""
         cleanup(self.unit_test_dir)
 
     @mock.patch("time.sleep", return_value=None)
-    def test_onion_service_key_generation_and_load(self, _):
+    def test_onion_service_key_generation_and_load(self, _) -> None:
         onion_service = OnionService(self.master_key)
 
         # Test new OnionService has valid attributes
@@ -78,7 +78,7 @@ class TestOnionService(unittest.TestCase):
         )
 
     @mock.patch("time.sleep", return_value=None)
-    def test_loading_invalid_onion_key_raises_critical_error(self, _):
+    def test_loading_invalid_onion_key_raises_critical_error(self, _) -> None:
         # Setup
         ct_bytes = encrypt_and_sign(
             (ONION_SERVICE_PRIVATE_KEY_LENGTH + 1) * b"a", self.master_key.master_key
@@ -93,7 +93,7 @@ class TestOnionService(unittest.TestCase):
             OnionService(self.master_key)
 
     @mock.patch("time.sleep", return_value=None)
-    def test_load_of_modified_database_raises_critical_error(self, _):
+    def test_load_of_modified_database_raises_critical_error(self, _) -> None:
         # Write data to file
         OnionService(self.master_key)
 
@@ -115,7 +115,7 @@ class TestOnionService(unittest.TestCase):
         ],
     )  # New confirmation code (different)
     @mock.patch("time.sleep", return_value=None)
-    def test_confirmation_code_generation(self, *_):
+    def test_confirmation_code_generation(self, *_) -> None:
         onion_service = OnionService(self.master_key)
         conf_code = onion_service.conf_code
         onion_service.new_confirmation_code()

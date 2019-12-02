@@ -361,7 +361,7 @@ class KeyList(object):
         # Halt sender loop here until keys have been replaced by the
         # `input_loop` process, and new master key is delivered.
         ack_queue.put(KDB_HALT_ACK_HEADER)
-        while key_queue.qsize() == 0:
+        while not key_queue.qsize():
             time.sleep(0.001)
         new_master_key = key_queue.get()
 

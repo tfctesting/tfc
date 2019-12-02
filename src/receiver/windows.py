@@ -32,7 +32,7 @@ from src.common.encoding import (
     pub_key_to_onion_address,
     pub_key_to_short_address,
 )
-from src.common.exceptions import FunctionReturn
+from src.common.exceptions import SoftError
 from src.common.misc import get_terminal_width
 from src.common.output import clear_screen, m_print, print_on_previous_line
 from src.common.statics import (
@@ -126,7 +126,7 @@ class RxWindow(Iterable[MsgTuple]):
             else:
                 hr_uid = "<unable to encode>"
 
-            raise FunctionReturn(f"Invalid window '{hr_uid}'.")
+            raise SoftError(f"Invalid window '{hr_uid}'.")
 
     def __iter__(self) -> Iterator[MsgTuple]:
         """Iterate over window's message log."""

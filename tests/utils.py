@@ -33,7 +33,7 @@ from typing import Any, Callable, Dict, List, Union
 from src.common.crypto import blake2b, byte_padding, csprng, encrypt_and_sign
 from src.common.encoding import int_to_bytes, pub_key_to_onion_address
 from src.common.misc import split_byte_string
-from src.common.exceptions import FunctionReturn
+from src.common.exceptions import SoftError
 from src.common.statics import (
     COMMAND,
     COMMAND_DATAGRAM_HEADER,
@@ -129,21 +129,21 @@ def group_name_to_group_id(name: str) -> bytes:
 
 
 class TFCTestCase(unittest.TestCase):
-    def assert_fr(self, msg, func, *args, **kwargs):
+    def assert_se(self, msg, func, *args, **kwargs) -> None:
         """\
-        Check that FunctionReturn error is raised
+        Check that SoftError error is raised
         and that a specific message is displayed.
         """
         e_raised = False
         try:
             func(*args, **kwargs)
-        except FunctionReturn as inst:
+        except SoftError as inst:
             e_raised = True
             self.assertEqual(msg, inst.message)
 
         self.assertTrue(e_raised)
 
-    def assert_prints(self, msg, func, *args, **kwargs):
+    def assert_prints(self, msg, func, *args, **kwargs) -> None:
         """Check that specific message is printed by function."""
         f = io.StringIO()
         with redirect_stdout(f):
@@ -152,7 +152,7 @@ class TFCTestCase(unittest.TestCase):
 
 
 @contextmanager
-def ignored(*exceptions):
+def ignored(*exceptions) -> None:
     """Ignore an exception."""
     try:
         yield
@@ -160,7 +160,7 @@ def ignored(*exceptions):
         pass
 
 
-def cd_unit_test():
+def cd_unit_test() -> str:
     """Create a directory for the unit test and change to it.
 
     Separate working directory for unit test protects existing user data
@@ -175,7 +175,7 @@ def cd_unit_test():
     return name
 
 
-def cleanup(name):
+def cleanup(name) -> None:
     """Remove unit test related directory."""
     os.chdir("..")
     shutil.rmtree(f"{name}/")
@@ -204,7 +204,7 @@ def tamper_file(file_name: str, tamper_size: int) -> None:
 
 def tear_queue(queue: "Queue"):
     """Empty and close multiprocessing queue."""
-    while queue.qsize() != 0:
+    while queue.qsize():
         queue.get()
     queue.close()
 

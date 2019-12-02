@@ -113,7 +113,7 @@ from tests.utils import (
 
 
 class TestProcessCommand(TFCTestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         """Pre-test actions."""
         self.window = TxWindow()
         self.contact_list = ContactList()
@@ -134,29 +134,29 @@ class TestProcessCommand(TFCTestCase):
             self.gateway,
         )
 
-    def tearDown(self):
+    def tearDown(self) -> None:
         """Post-test actions."""
         tear_queues(self.queues)
 
-    def test_valid_command(self):
+    def test_valid_command(self) -> None:
         self.assertIsNone(process_command(UserInput("about"), *self.args))
 
-    def test_invalid_command(self):
-        self.assert_fr(
+    def test_invalid_command(self) -> None:
+        self.assert_se(
             "Error: Invalid command 'abou'.",
             process_command,
             UserInput("abou"),
             *self.args,
         )
 
-    def test_empty_command(self):
-        self.assert_fr(
+    def test_empty_command(self) -> None:
+        self.assert_se(
             "Error: Invalid command.", process_command, UserInput(" "), *self.args
         )
 
 
 class TestPrintAbout(TFCTestCase):
-    def test_print_about(self):
+    def test_print_about(self) -> None:
         self.assert_prints(
             CLEAR_ENTIRE_SCREEN
             + CURSOR_LEFT_UP_CORNER
@@ -173,25 +173,25 @@ class TestPrintAbout(TFCTestCase):
 
 
 class TestClearScreens(unittest.TestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         """Pre-test actions."""
         self.window = TxWindow(uid=nick_to_pub_key("Alice"))
         self.settings = Settings()
         self.queues = gen_queue_dict()
         self.args = self.window, self.settings, self.queues
 
-    def tearDown(self):
+    def tearDown(self) -> None:
         """Post-test actions."""
         tear_queues(self.queues)
 
     @mock.patch("os.system", return_value=None)
-    def test_clear_screens(self, _):
+    def test_clear_screens(self, _) -> None:
         self.assertIsNone(clear_screens(UserInput("clear"), *self.args))
         self.assertEqual(self.queues[COMMAND_PACKET_QUEUE].qsize(), 1)
         self.assertEqual(self.queues[RELAY_PACKET_QUEUE].qsize(), 1)
 
     @mock.patch("os.system", return_value=None)
-    def test_no_relay_clear_cmd_when_traffic_masking_is_enabled(self, _):
+    def test_no_relay_clear_cmd_when_traffic_masking_is_enabled(self, _) -> None:
         # Setup
         self.settings.traffic_masking = True
 
@@ -201,14 +201,16 @@ class TestClearScreens(unittest.TestCase):
         self.assertEqual(self.queues[RELAY_PACKET_QUEUE].qsize(), 0)
 
     @mock.patch("src.common.misc.reset_terminal", return_value=None)
-    def test_reset_screens(self, mock_reset):
+    def test_reset_screens(self, mock_reset) -> None:
         self.assertIsNone(clear_screens(UserInput("reset"), *self.args))
         self.assertEqual(self.queues[COMMAND_PACKET_QUEUE].qsize(), 1)
         self.assertEqual(self.queues[RELAY_PACKET_QUEUE].qsize(), 1)
         mock_reset.assert_called()
 
     @mock.patch("src.common.misc.reset_terminal", return_value=None)
-    def test_no_relay_reset_cmd_when_traffic_masking_is_enabled(self, mock_reset):
+    def test_no_relay_reset_cmd_when_traffic_masking_is_enabled(
+        self, mock_reset
+    ) -> None:
         # Setup
         self.settings.traffic_masking = True
 
@@ -220,19 +222,19 @@ class TestClearScreens(unittest.TestCase):
 
 
 class TestRXPShowSysWin(unittest.TestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         """Pre-test actions."""
         self.window = TxWindow(name="Alice", uid=nick_to_pub_key("Alice"))
         self.settings = Settings()
         self.queues = gen_queue_dict()
         self.args = self.window, self.settings, self.queues
 
-    def tearDown(self):
+    def tearDown(self) -> None:
         """Post-test actions."""
         tear_queues(self.queues)
 
     @mock.patch("builtins.input", side_effect=["", EOFError, KeyboardInterrupt])
-    def test_cmd_window(self, _):
+    def test_cmd_window(self, _) -> None:
         self.assertIsNone(rxp_show_sys_win(UserInput(plaintext="cmd"), *self.args))
         self.assertEqual(self.queues[COMMAND_PACKET_QUEUE].qsize(), 2)
         self.assertIsNone(rxp_show_sys_win(UserInput(plaintext="cmd"), *self.args))
@@ -241,7 +243,7 @@ class TestRXPShowSysWin(unittest.TestCase):
         self.assertEqual(self.queues[COMMAND_PACKET_QUEUE].qsize(), 6)
 
     @mock.patch("builtins.input", side_effect=["", EOFError, KeyboardInterrupt])
-    def test_file_window(self, _):
+    def test_file_window(self, _) -> None:
         self.assertIsNone(rxp_show_sys_win(UserInput(plaintext="fw"), *self.args))
         self.assertEqual(self.queues[COMMAND_PACKET_QUEUE].qsize(), 2)
         self.assertIsNone(rxp_show_sys_win(UserInput(plaintext="fw"), *self.args))
@@ -251,19 +253,19 @@ class TestRXPShowSysWin(unittest.TestCase):
 
 
 class TestExitTFC(unittest.TestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         """Pre-test actions."""
         self.settings = Settings(local_testing_mode=True)
         self.queues = gen_queue_dict()
         self.gateway = Gateway(data_diode_sockets=True)
         self.args = self.settings, self.queues, self.gateway
 
-    def tearDown(self):
+    def tearDown(self) -> None:
         """Post-test actions."""
         tear_queues(self.queues)
 
     @mock.patch("time.sleep", return_value=None)
-    def test_exit_tfc_local_test(self, _):
+    def test_exit_tfc_local_test(self, _) -> None:
         # Setup
         for _ in range(2):
             self.queues[COMMAND_PACKET_QUEUE].put("dummy command")
@@ -274,7 +276,7 @@ class TestExitTFC(unittest.TestCase):
         self.assertEqual(self.queues[RELAY_PACKET_QUEUE].qsize(), 1)
 
     @mock.patch("time.sleep", return_value=None)
-    def test_exit_tfc(self, _):
+    def test_exit_tfc(self, _) -> None:
         # Setup
         self.settings.local_testing_mode = False
         for _ in range(2):
@@ -287,7 +289,7 @@ class TestExitTFC(unittest.TestCase):
 
 
 class TestLogCommand(TFCTestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         """Pre-test actions."""
         self.unit_test_dir = cd_unit_test()
         self.window = TxWindow(name="Alice", uid=nick_to_pub_key("Alice"))
@@ -307,13 +309,13 @@ class TestLogCommand(TFCTestCase):
         self.log_file = f"{DIR_USER_DATA}{self.settings.software_operation}_logs"
         self.tfc_log_database = MessageLog(self.log_file, self.master_key.master_key)
 
-    def tearDown(self):
+    def tearDown(self) -> None:
         """Post-test actions."""
         cleanup(self.unit_test_dir)
         tear_queues(self.queues)
 
-    def test_invalid_export(self):
-        self.assert_fr(
+    def test_invalid_export(self) -> None:
+        self.assert_se(
             "Error: Invalid number of messages.",
             log_command,
             UserInput("history a"),
@@ -321,12 +323,12 @@ class TestLogCommand(TFCTestCase):
         )
 
     @mock.patch("getpass.getpass", return_value="test_password")
-    def test_log_printing(self, _):
+    def test_log_printing(self, _) -> None:
         # Setup
         os.remove(self.log_file)
 
         # Test
-        self.assert_fr(
+        self.assert_se(
             f"No log database available.",
             log_command,
             UserInput("history 4"),
@@ -334,13 +336,13 @@ class TestLogCommand(TFCTestCase):
         )
         self.assertEqual(self.queues[COMMAND_PACKET_QUEUE].qsize(), 1)
 
-    def test_log_printing_when_no_password_is_asked(self):
+    def test_log_printing_when_no_password_is_asked(self) -> None:
         # Setup
         self.settings.ask_password_for_log_access = False
         os.remove(self.log_file)
 
         # Test
-        self.assert_fr(
+        self.assert_se(
             f"No log database available.",
             log_command,
             UserInput("history 4"),
@@ -349,26 +351,26 @@ class TestLogCommand(TFCTestCase):
         self.assertEqual(self.queues[COMMAND_PACKET_QUEUE].qsize(), 1)
 
     @mock.patch("getpass.getpass", return_value="test_password")
-    def test_log_printing_all(self, _):
+    def test_log_printing_all(self, _) -> None:
         # Setup
         os.remove(self.log_file)
 
         # Test
-        self.assert_fr(
+        self.assert_se(
             f"No log database available.", log_command, UserInput("history"), *self.args
         )
         self.assertEqual(self.queues[COMMAND_PACKET_QUEUE].qsize(), 1)
 
-    def test_invalid_number_raises_fr(self):
-        self.assert_fr(
+    def test_invalid_number_raises_fr(self) -> None:
+        self.assert_se(
             "Error: Invalid number of messages.",
             log_command,
             UserInput("history a"),
             *self.args,
         )
 
-    def test_too_high_number_raises_fr(self):
-        self.assert_fr(
+    def test_too_high_number_raises_fr(self) -> None:
+        self.assert_se(
             "Error: Invalid number of messages.",
             log_command,
             UserInput("history 94857634985763454345"),
@@ -377,8 +379,8 @@ class TestLogCommand(TFCTestCase):
 
     @mock.patch("time.sleep", return_value=None)
     @mock.patch("builtins.input", return_value="No")
-    def test_user_abort_raises_fr(self, *_):
-        self.assert_fr(
+    def test_user_abort_raises_fr(self, *_) -> None:
+        self.assert_se(
             "Log file export aborted.", log_command, UserInput("export"), *self.args
         )
 
@@ -401,9 +403,9 @@ class TestLogCommand(TFCTestCase):
         "getpass.getpass",
         side_effect=["test_password", "test_password", KeyboardInterrupt],
     )
-    def test_keyboard_interrupt_raises_fr(self, *_):
+    def test_keyboard_interrupt_raises_fr(self, *_) -> None:
         self.master_key = OriginalMasterKey(operation=TX, local_test=True)
-        self.assert_fr(
+        self.assert_se(
             "Authentication aborted.", log_command, UserInput("export"), *self.args
         )
 
@@ -426,7 +428,7 @@ class TestLogCommand(TFCTestCase):
     )
     @mock.patch("time.sleep", return_value=None)
     @mock.patch("builtins.input", return_value="Yes")
-    def test_successful_export_command(self, *_):
+    def test_successful_export_command(self, *_) -> None:
         # Setup
         self.master_key = OriginalMasterKey(operation=TX, local_test=True)
         self.window.type = WIN_TYPE_CONTACT
@@ -442,7 +444,7 @@ class TestLogCommand(TFCTestCase):
 
         # Test
         for command in ["export", "export 1"]:
-            self.assert_fr(
+            self.assert_se(
                 f"Exported log file of contact 'Alice'.",
                 log_command,
                 UserInput(command),
@@ -459,7 +461,7 @@ class TestSendOnionServiceKey(TFCTestCase):
 
     confirmation_code = b"a"
 
-    def setUp(self):
+    def setUp(self) -> None:
         """Pre-test actions."""
         self.contact_list = ContactList()
         self.settings = Settings()
@@ -470,20 +472,20 @@ class TestSendOnionServiceKey(TFCTestCase):
     @mock.patch("time.sleep", return_value=None)
     @mock.patch("os.urandom", return_value=confirmation_code)
     @mock.patch("builtins.input", side_effect=["Yes", confirmation_code.hex()])
-    def test_onion_service_key_delivery_traffic_masking(self, *_):
+    def test_onion_service_key_delivery_traffic_masking(self, *_) -> None:
         self.assertIsNone(send_onion_service_key(*self.args))
         self.assertEqual(len(self.gateway.packets), 1)
 
     @mock.patch("time.sleep", return_value=None)
     @mock.patch("os.urandom", return_value=confirmation_code)
     @mock.patch("builtins.input", side_effect=[KeyboardInterrupt, "No"])
-    def test_onion_service_key_delivery_traffic_masking_abort(self, *_):
+    def test_onion_service_key_delivery_traffic_masking_abort(self, *_) -> None:
         # Setup
         self.settings.traffic_masking = True
 
         # Test
         for _ in range(2):
-            self.assert_fr(
+            self.assert_se(
                 "Onion Service data export canceled.",
                 send_onion_service_key,
                 *self.args,
@@ -491,16 +493,16 @@ class TestSendOnionServiceKey(TFCTestCase):
 
     @mock.patch("os.urandom", return_value=confirmation_code)
     @mock.patch("builtins.input", return_value=confirmation_code.hex())
-    def test_onion_service_key_delivery(self, *_):
+    def test_onion_service_key_delivery(self, *_) -> None:
         self.assertIsNone(send_onion_service_key(*self.args))
         self.assertEqual(len(self.gateway.packets), 1)
 
     @mock.patch("time.sleep", return_value=None)
     @mock.patch("os.urandom", return_value=confirmation_code)
     @mock.patch("builtins.input", side_effect=[EOFError, KeyboardInterrupt])
-    def test_onion_service_key_delivery_cancel(self, *_):
+    def test_onion_service_key_delivery_cancel(self, *_) -> None:
         for _ in range(2):
-            self.assert_fr(
+            self.assert_se(
                 "Onion Service data export canceled.",
                 send_onion_service_key,
                 *self.args,
@@ -508,13 +510,13 @@ class TestSendOnionServiceKey(TFCTestCase):
 
 
 class TestPrintHelp(TFCTestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         """Pre-test actions."""
         self.settings = Settings()
         self.settings.traffic_masking = False
 
     @mock.patch("shutil.get_terminal_size", return_value=[60, 60])
-    def test_print_normal(self, _):
+    def test_print_normal(self, _) -> None:
         self.assert_prints(
             CLEAR_ENTIRE_SCREEN
             + CURSOR_LEFT_UP_CORNER
@@ -608,7 +610,7 @@ Group management:
         )
 
     @mock.patch("shutil.get_terminal_size", return_value=[80, 80])
-    def test_print_during_traffic_masking(self, _):
+    def test_print_during_traffic_masking(self, _) -> None:
         self.settings.traffic_masking = True
         self.assert_prints(
             CLEAR_ENTIRE_SCREEN
@@ -652,18 +654,18 @@ Shift + PgUp/PgDn         Scroll terminal up/down
 
 
 class TestPrintRecipients(TFCTestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         """Pre-test actions."""
         self.contact_list = ContactList(nicks=["Alice", "Bob"])
         self.group_list = GroupList(groups=["test_group", "test_group_2"])
         self.args = self.contact_list, self.group_list
 
-    def test_printing(self):
+    def test_printing(self) -> None:
         self.assertIsNone(print_recipients(*self.args))
 
 
 class TestChangeMasterKey(TFCTestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         """Pre-test actions."""
         self.unit_test_dir = cd_unit_test()
         self.contact_list = ContactList()
@@ -688,25 +690,25 @@ class TestChangeMasterKey(TFCTestCase):
             self.onion_service,
         )
 
-    def tearDown(self):
+    def tearDown(self) -> None:
         """Post-test actions."""
         cleanup(self.unit_test_dir)
         tear_queues(self.queues)
 
-    def test_raises_fr_during_traffic_masking(self):
+    def test_raises_fr_during_traffic_masking(self) -> None:
         # Setup
         self.settings.traffic_masking = True
 
         # Test
-        self.assert_fr(
+        self.assert_se(
             "Error: Command is disabled during traffic masking.",
             change_master_key,
             UserInput(),
             *self.args,
         )
 
-    def test_missing_target_sys_raises_fr(self):
-        self.assert_fr(
+    def test_missing_target_sys_raises_fr(self) -> None:
+        self.assert_se(
             "Error: No target-system ('tx' or 'rx') specified.",
             change_master_key,
             UserInput("passwd "),
@@ -714,8 +716,8 @@ class TestChangeMasterKey(TFCTestCase):
         )
 
     @mock.patch("getpass.getpass", return_value="test_password")
-    def test_invalid_target_sys_raises_fr(self, _):
-        self.assert_fr(
+    def test_invalid_target_sys_raises_fr(self, _) -> None:
+        self.assert_se(
             "Error: Invalid target system 't'.",
             change_master_key,
             UserInput("passwd t"),
@@ -730,9 +732,9 @@ class TestChangeMasterKey(TFCTestCase):
     @mock.patch("getpass.getpass", side_effect=["test_password", "a", "a"])
     @mock.patch("time.sleep", return_value=None)
     @mock.patch("src.common.db_masterkey.MIN_KEY_DERIVATION_TIME", 0.01)
-    def test_invalid_response_from_key_db_raises_fr(self, *_):
+    def test_invalid_response_from_key_db_raises_fr(self, *_) -> None:
         # Setup
-        def mock_sender_loop():
+        def mock_sender_loop() -> None:
             """Mock sender loop key management functionality."""
             while self.queues[KEY_MANAGEMENT_QUEUE].empty():
                 time.sleep(0.1)
@@ -746,7 +748,7 @@ class TestChangeMasterKey(TFCTestCase):
         p.start()
 
         # Test
-        self.assert_fr(
+        self.assert_se(
             "Error: Key database returned wrong signal.",
             change_master_key,
             UserInput("passwd tx"),
@@ -766,9 +768,9 @@ class TestChangeMasterKey(TFCTestCase):
     @mock.patch("src.common.db_masterkey.MIN_KEY_DERIVATION_TIME", 0.01)
     def test_transmitter_command_raises_system_exit_if_key_database_returns_invalid_master_key(
         self, *_
-    ):
+    ) -> None:
         # Setup
-        def mock_sender_loop():
+        def mock_sender_loop() -> None:
             """Mock sender loop key management functionality."""
             while self.queues[KEY_MANAGEMENT_QUEUE].empty():
                 time.sleep(0.1)
@@ -840,9 +842,9 @@ class TestChangeMasterKey(TFCTestCase):
     @mock.patch("getpass.getpass", side_effect=["test_password", "a", "a"])
     @mock.patch("time.sleep", return_value=None)
     @mock.patch("src.common.db_masterkey.MIN_KEY_DERIVATION_TIME", 0.01)
-    def test_transmitter_command(self, *_):
+    def test_transmitter_command(self, *_) -> None:
         # Setup
-        def mock_sender_loop():
+        def mock_sender_loop() -> None:
             """Mock sender loop key management functionality."""
             while self.queues[KEY_MANAGEMENT_QUEUE].empty():
                 time.sleep(0.1)
@@ -904,15 +906,15 @@ class TestChangeMasterKey(TFCTestCase):
         self.settings.database.replace_database = orig_st_rd
         self.onion_service.database.replace_database = orig_os_rd
 
-    def test_receiver_command(self):
+    def test_receiver_command(self) -> None:
         self.assertIsNone(change_master_key(UserInput("passwd rx"), *self.args))
         self.assertEqual(self.queues[COMMAND_PACKET_QUEUE].qsize(), 1)
         self.assertEqual(self.queues[KEY_MANAGEMENT_QUEUE].qsize(), 0)
 
     @mock.patch("time.sleep", return_value=None)
     @mock.patch("getpass.getpass", side_effect=KeyboardInterrupt)
-    def test_keyboard_interrupt_raises_fr(self, *_):
-        self.assert_fr(
+    def test_keyboard_interrupt_raises_fr(self, *_) -> None:
+        self.assert_se(
             "Authentication aborted.",
             change_master_key,
             UserInput("passwd tx"),
@@ -921,7 +923,7 @@ class TestChangeMasterKey(TFCTestCase):
 
 
 class TestRemoveLog(TFCTestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         """Pre-test actions."""
         self.unit_test_dir = cd_unit_test()
         self.contact_list = ContactList(nicks=["Alice"])
@@ -940,19 +942,19 @@ class TestRemoveLog(TFCTestCase):
         self.log_file = f"{DIR_USER_DATA}{self.settings.software_operation}_logs"
         self.tfc_log_database = MessageLog(self.log_file, self.master_key.master_key)
 
-    def tearDown(self):
+    def tearDown(self) -> None:
         """Post-test actions."""
         tear_queues(self.queues)
         cleanup(self.unit_test_dir)
 
-    def test_missing_contact_raises_fr(self):
-        self.assert_fr(
+    def test_missing_contact_raises_fr(self) -> None:
+        self.assert_se(
             "Error: No contact/group specified.", remove_log, UserInput(""), *self.args
         )
 
     @mock.patch("time.sleep", return_value=None)
     @mock.patch("builtins.input", return_value="No")
-    def test_no_aborts_removal(self, *_):
+    def test_no_aborts_removal(self, *_) -> None:
         # Setup
         self.assertIsNone(
             write_log_entry(
@@ -963,7 +965,7 @@ class TestRemoveLog(TFCTestCase):
         )
 
         # Test
-        self.assert_fr(
+        self.assert_se(
             "Log file removal aborted.",
             remove_log,
             UserInput("/rmlogs Alice"),
@@ -972,8 +974,8 @@ class TestRemoveLog(TFCTestCase):
 
     @mock.patch("shutil.get_terminal_size", return_value=[150, 150])
     @mock.patch("builtins.input", return_value="Yes")
-    def test_removal_with_invalid_account_raises_fr(self, *_):
-        self.assert_fr(
+    def test_removal_with_invalid_account_raises_fr(self, *_) -> None:
+        self.assert_se(
             "Error: Invalid account.",
             remove_log,
             UserInput(f'/rmlogs {nick_to_onion_address("Alice")[:-1] + "a"}'),
@@ -981,8 +983,8 @@ class TestRemoveLog(TFCTestCase):
         )
 
     @mock.patch("builtins.input", return_value="Yes")
-    def test_invalid_group_id_raises_fr(self, _):
-        self.assert_fr(
+    def test_invalid_group_id_raises_fr(self, _) -> None:
+        self.assert_se(
             "Error: Invalid group ID.",
             remove_log,
             UserInput(f'/rmlogs {group_name_to_group_id("test_group")[:-1] + b"a"}'),
@@ -990,7 +992,7 @@ class TestRemoveLog(TFCTestCase):
         )
 
     @mock.patch("builtins.input", return_value="Yes")
-    def test_log_remove_with_nick(self, _):
+    def test_log_remove_with_nick(self, _) -> None:
         # Setup
         write_log_entry(
             M_S_HEADER + PADDING_LENGTH * b"a",
@@ -999,7 +1001,7 @@ class TestRemoveLog(TFCTestCase):
         )
 
         # Test
-        self.assert_fr(
+        self.assert_se(
             "Removed log entries for contact 'Alice'.",
             remove_log,
             UserInput("/rmlogs Alice"),
@@ -1009,7 +1011,7 @@ class TestRemoveLog(TFCTestCase):
 
     @mock.patch("shutil.get_terminal_size", return_value=[150, 150])
     @mock.patch("builtins.input", return_value="Yes")
-    def test_log_remove_with_onion_address(self, *_):
+    def test_log_remove_with_onion_address(self, *_) -> None:
         # Setup
         write_log_entry(
             M_S_HEADER + PADDING_LENGTH * b"a",
@@ -1018,7 +1020,7 @@ class TestRemoveLog(TFCTestCase):
         )
 
         # Test
-        self.assert_fr(
+        self.assert_se(
             "Removed log entries for contact 'Alice'.",
             remove_log,
             UserInput(f'/rmlogs {nick_to_onion_address("Alice")}'),
@@ -1028,7 +1030,7 @@ class TestRemoveLog(TFCTestCase):
 
     @mock.patch("shutil.get_terminal_size", return_value=[150, 150])
     @mock.patch("builtins.input", return_value="Yes")
-    def test_log_remove_with_unknown_onion_address(self, *_):
+    def test_log_remove_with_unknown_onion_address(self, *_) -> None:
         # Setup
         write_log_entry(
             M_S_HEADER + PADDING_LENGTH * b"a",
@@ -1037,7 +1039,7 @@ class TestRemoveLog(TFCTestCase):
         )
 
         # Test
-        self.assert_fr(
+        self.assert_se(
             "Found no log entries for contact 'w5sm3'.",
             remove_log,
             UserInput(f'/rmlogs {nick_to_onion_address("Unknown")}'),
@@ -1046,7 +1048,7 @@ class TestRemoveLog(TFCTestCase):
         self.assertEqual(self.queues[COMMAND_PACKET_QUEUE].qsize(), 1)
 
     @mock.patch("builtins.input", return_value="Yes")
-    def test_log_remove_with_group_name(self, _):
+    def test_log_remove_with_group_name(self, _) -> None:
         # Setup
         for p in assembly_packet_creator(
             MESSAGE,
@@ -1056,7 +1058,7 @@ class TestRemoveLog(TFCTestCase):
             write_log_entry(p, nick_to_pub_key("Alice"), self.tfc_log_database)
 
         # Test
-        self.assert_fr(
+        self.assert_se(
             "Removed log entries for group 'test_group'.",
             remove_log,
             UserInput(f"/rmlogs test_group"),
@@ -1065,7 +1067,7 @@ class TestRemoveLog(TFCTestCase):
         self.assertEqual(self.queues[COMMAND_PACKET_QUEUE].qsize(), 1)
 
     @mock.patch("builtins.input", return_value="Yes")
-    def test_unknown_selector_raises_fr(self, _):
+    def test_unknown_selector_raises_fr(self, _) -> None:
         # Setup
         write_log_entry(
             M_S_HEADER + PADDING_LENGTH * b"a",
@@ -1074,7 +1076,7 @@ class TestRemoveLog(TFCTestCase):
         )
 
         # Test
-        self.assert_fr(
+        self.assert_se(
             "Error: Unknown selector.",
             remove_log,
             UserInput(f"/rmlogs unknown"),
@@ -1083,7 +1085,7 @@ class TestRemoveLog(TFCTestCase):
 
 
 class TestChangeSetting(TFCTestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         """Pre-test actions."""
         self.window = TxWindow()
         self.contact_list = ContactList()
@@ -1102,40 +1104,40 @@ class TestChangeSetting(TFCTestCase):
             self.gateway,
         )
 
-    def tearDown(self):
+    def tearDown(self) -> None:
         """Post-test actions."""
         tear_queues(self.queues)
 
-    def test_missing_setting_raises_fr(self):
-        self.assert_fr(
+    def test_missing_setting_raises_fr(self) -> None:
+        self.assert_se(
             "Error: No setting specified.", change_setting, UserInput("set"), *self.args
         )
 
-    def test_invalid_setting_raises_fr(self):
-        self.assert_fr(
+    def test_invalid_setting_raises_fr(self) -> None:
+        self.assert_se(
             "Error: Invalid setting 'e_correction_ratia'.",
             change_setting,
             UserInput("set e_correction_ratia true"),
             *self.args,
         )
 
-    def test_missing_value_raises_fr(self):
-        self.assert_fr(
+    def test_missing_value_raises_fr(self) -> None:
+        self.assert_se(
             "Error: No value for setting specified.",
             change_setting,
             UserInput("set serial_error_correction"),
             *self.args,
         )
 
-    def test_serial_settings_raise_fr(self):
-        self.assert_fr(
+    def test_serial_settings_raise_fr(self) -> None:
+        self.assert_se(
             "Error: Serial interface setting can only be changed manually.",
             change_setting,
             UserInput("set use_serial_usb_adapter True"),
             *self.args,
         )
 
-        self.assert_fr(
+        self.assert_se(
             "Error: Serial interface setting can only be changed manually.",
             change_setting,
             UserInput("set built_in_serial_interface Truej"),
@@ -1144,8 +1146,8 @@ class TestChangeSetting(TFCTestCase):
 
     @mock.patch("time.sleep", return_value=None)
     @mock.patch("getpass.getpass", side_effect=[KeyboardInterrupt])
-    def test_changing_ask_password_for_log_access_asks_for_password(self, *_):
-        self.assert_fr(
+    def test_changing_ask_password_for_log_access_asks_for_password(self, *_) -> None:
+        self.assert_se(
             "Authentication aborted.",
             change_setting,
             UserInput("set ask_password_for_log_access False"),
@@ -1154,15 +1156,15 @@ class TestChangeSetting(TFCTestCase):
 
     @mock.patch("time.sleep", return_value=None)
     @mock.patch("getpass.getpass", return_value="invalid_password")
-    def test_invalid_password_raises_function_return(self, *_):
-        self.assert_fr(
+    def test_invalid_password_raises_function_return(self, *_) -> None:
+        self.assert_se(
             "Error: No permission to change setting.",
             change_setting,
             UserInput("set ask_password_for_log_access False"),
             *self.args,
         )
 
-    def test_relay_commands_raise_fr_when_traffic_masking_is_enabled(self):
+    def test_relay_commands_raise_fr_when_traffic_masking_is_enabled(self) -> None:
         # Setup
         self.settings.traffic_masking = True
 
@@ -1173,14 +1175,14 @@ class TestChangeSetting(TFCTestCase):
             "allow_contact_requests",
         ]
         for key, value in zip(key_list, ["5", "5", "True"]):
-            self.assert_fr(
+            self.assert_se(
                 "Error: Can't change this setting during traffic masking.",
                 change_setting,
                 UserInput(f"set {key} {value}"),
                 *self.args,
             )
 
-    def test_individual_settings(self):
+    def test_individual_settings(self) -> None:
 
         self.assertIsNone(
             change_setting(UserInput("set serial_error_correction 5"), *self.args)
@@ -1228,7 +1230,7 @@ class TestChangeSetting(TFCTestCase):
 
 
 class TestPrintSettings(TFCTestCase):
-    def test_print_settings(self):
+    def test_print_settings(self) -> None:
         self.assert_prints(
             f"""\
 {CLEAR_ENTIRE_SCREEN}{CURSOR_LEFT_UP_CORNER}
@@ -1344,21 +1346,21 @@ serial_error_correction         5               5               Number of byte
 
 
 class TestRxPDisplayUnread(unittest.TestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         """Pre-test actions."""
         self.queues = gen_queue_dict()
 
-    def tearDown(self):
+    def tearDown(self) -> None:
         """Post-test actions."""
         tear_queues(self.queues)
 
-    def test_command(self):
+    def test_command(self) -> None:
         self.assertIsNone(rxp_display_unread(Settings(), self.queues))
         self.assertEqual(self.queues[COMMAND_PACKET_QUEUE].qsize(), 1)
 
 
 class TestVerify(TFCTestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         """Pre-test actions."""
         self.window = TxWindow(
             uid=nick_to_pub_key("Alice"),
@@ -1372,17 +1374,17 @@ class TestVerify(TFCTestCase):
         self.window.contact = self.contact
         self.args = self.window, self.contact_list
 
-    def test_active_group_raises_fr(self):
+    def test_active_group_raises_fr(self) -> None:
         self.window.type = WIN_TYPE_GROUP
-        self.assert_fr("Error: A group is selected.", verify, *self.args)
+        self.assert_se("Error: A group is selected.", verify, *self.args)
 
-    def test_psk_raises_fr(self):
+    def test_psk_raises_fr(self) -> None:
         self.contact.kex_status = KEX_STATUS_NO_RX_PSK
-        self.assert_fr("Pre-shared keys have no fingerprints.", verify, *self.args)
+        self.assert_se("Pre-shared keys have no fingerprints.", verify, *self.args)
 
     @mock.patch("time.sleep", return_value=None)
     @mock.patch("builtins.input", side_effect=["No", "Yes"])
-    def test_fingerprint_check(self, *_):
+    def test_fingerprint_check(self, *_) -> None:
         self.contact.kex_status = KEX_STATUS_VERIFIED
 
         self.assertIsNone(verify(*self.args))
@@ -1393,14 +1395,14 @@ class TestVerify(TFCTestCase):
 
     @mock.patch("time.sleep", return_value=None)
     @mock.patch("builtins.input", side_effect=KeyboardInterrupt)
-    def test_keyboard_interrupt_raises_fr(self, *_):
+    def test_keyboard_interrupt_raises_fr(self, *_) -> None:
         self.contact.kex_status = KEX_STATUS_VERIFIED
-        self.assert_fr("Fingerprint verification aborted.", verify, *self.args)
+        self.assert_se("Fingerprint verification aborted.", verify, *self.args)
         self.assertEqual(self.contact.kex_status, KEX_STATUS_VERIFIED)
 
 
 class TestWhisper(TFCTestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         """Pre-test actions."""
         self.window = TxWindow(
             uid=nick_to_pub_key("Alice"),
@@ -1412,15 +1414,15 @@ class TestWhisper(TFCTestCase):
         self.queues = gen_queue_dict()
         self.args = self.window, self.settings, self.queues
 
-    def test_empty_input_raises_fr(self):
-        self.assert_fr(
+    def test_empty_input_raises_fr(self) -> None:
+        self.assert_se(
             "Error: No whisper message specified.",
             whisper,
             UserInput("whisper"),
             *self.args,
         )
 
-    def test_whisper(self):
+    def test_whisper(self) -> None:
         self.assertIsNone(
             whisper(
                 UserInput("whisper This message ought not to be logged."), *self.args
@@ -1430,32 +1432,34 @@ class TestWhisper(TFCTestCase):
         message, pub_key, logging, log_as_ph, win_uid = self.queues[
             MESSAGE_PACKET_QUEUE
         ].get()
+        self.assertIsInstance(message, bytes)
         self.assertEqual(pub_key, nick_to_pub_key("Alice"))
         self.assertTrue(logging)
         self.assertTrue(log_as_ph)
+        self.assertEqual(win_uid, nick_to_pub_key("Alice"))
 
 
 class TestWhois(TFCTestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         """Pre-test actions."""
         self.contact_list = ContactList(nicks=["Alice"])
         self.group_list = GroupList(groups=["test_group"])
         self.args = self.contact_list, self.group_list
 
-    def test_missing_selector_raises_fr(self):
-        self.assert_fr(
+    def test_missing_selector_raises_fr(self) -> None:
+        self.assert_se(
             "Error: No account or nick specified.",
             whois,
             UserInput("whois"),
             *self.args,
         )
 
-    def test_unknown_account_raises_fr(self):
-        self.assert_fr(
+    def test_unknown_account_raises_fr(self) -> None:
+        self.assert_se(
             "Error: Unknown selector.", whois, UserInput("whois alice"), *self.args
         )
 
-    def test_nick_from_account(self):
+    def test_nick_from_account(self) -> None:
         self.assert_prints(
             f"""\
 {BOLD_ON}     Nick of 'hpcrayuxhrcy2wtpfwgwjibderrvjll6azfr4tqat3eka2m2gbb55bid' is      {NORMAL_TEXT}
@@ -1465,7 +1469,7 @@ class TestWhois(TFCTestCase):
             *self.args,
         )
 
-    def test_account_from_nick(self):
+    def test_account_from_nick(self) -> None:
         self.assert_prints(
             f"""\
 {BOLD_ON}                             Account of 'Alice' is                              {NORMAL_TEXT}
@@ -1475,7 +1479,7 @@ class TestWhois(TFCTestCase):
             *self.args,
         )
 
-    def test_group_id_from_group_name(self):
+    def test_group_id_from_group_name(self) -> None:
         self.assert_prints(
             f"""\
 {BOLD_ON}                       Group ID of group 'test_group' is                        {NORMAL_TEXT}
@@ -1485,7 +1489,7 @@ class TestWhois(TFCTestCase):
             *self.args,
         )
 
-    def test_group_name_from_group_id(self):
+    def test_group_name_from_group_id(self) -> None:
         self.assert_prints(
             f"""\
 {BOLD_ON}                    Name of group with ID '2dbCCptB9UGo9' is                    {NORMAL_TEXT}
@@ -1497,7 +1501,7 @@ class TestWhois(TFCTestCase):
 
 
 class TestWipe(TFCTestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         """Pre-test actions."""
         self.settings = Settings()
         self.queues = gen_queue_dict()
@@ -1505,13 +1509,13 @@ class TestWipe(TFCTestCase):
         self.args = self.settings, self.queues, self.gateway
 
     @mock.patch("builtins.input", return_value="No")
-    def test_no_raises_fr(self, _):
-        self.assert_fr("Wipe command aborted.", wipe, *self.args)
+    def test_no_raises_fr(self, _) -> None:
+        self.assert_se("Wipe command aborted.", wipe, *self.args)
 
     @mock.patch("src.common.misc.reset_terminal", return_value=None)
     @mock.patch("builtins.input", return_value="Yes")
     @mock.patch("time.sleep", return_value=None)
-    def test_wipe_local_testing(self, *_):
+    def test_wipe_local_testing(self, *_) -> None:
         # Setup
         self.settings.local_testing_mode = True
         self.gateway.settings.data_diode_sockets = True
@@ -1527,7 +1531,7 @@ class TestWipe(TFCTestCase):
     @mock.patch("src.common.misc.reset_terminal", return_value=None)
     @mock.patch("builtins.input", return_value="Yes")
     @mock.patch("time.sleep", return_value=None)
-    def test_wipe(self, *_):
+    def test_wipe(self, *_) -> None:
         # Setup
         for _ in range(2):
             self.queues[COMMAND_PACKET_QUEUE].put("dummy command")

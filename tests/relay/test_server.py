@@ -40,7 +40,7 @@ from tests.utils import (
 
 
 class TestFlaskServer(unittest.TestCase):
-    def test_flask_server(self):
+    def test_flask_server(self) -> None:
         # Setup
         queues = gen_queue_dict()
         url_token_private_key = X448.generate_private_key()

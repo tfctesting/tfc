@@ -30,7 +30,7 @@ from src.common.db_logs import (
     replace_log_db,
 )
 from src.common.encoding import bytes_to_int, pub_key_to_short_address
-from src.common.exceptions import FunctionReturn
+from src.common.exceptions import SoftError
 from src.common.misc import ignored, reset_terminal, separate_header
 from src.common.output import clear_screen, m_print, phase, print_on_previous_line
 from src.common.statics import (
@@ -133,7 +133,7 @@ def process_command(
     cmd_packet.add_packet(assembly_packet)
 
     if not cmd_packet.is_complete:
-        raise FunctionReturn("Incomplete command.", output=False)
+        raise SoftError("Incomplete command.", output=False)
 
     header, cmd = separate_header(
         cmd_packet.assemble_command_packet(), ENCRYPTED_COMMAND_HEADER_LENGTH
@@ -284,13 +284,13 @@ def process_command(
     try:
         from_dict = d[header]
     except KeyError:
-        raise FunctionReturn("Error: Received an invalid command.")
+        raise SoftError("Error: Received an invalid command.")
 
     func = from_dict[0]
     parameters = from_dict[1:]
     func(*parameters)
 
-    raise FunctionReturn("Command completed.", output=False)
+    raise SoftError("Command completed.", output=False)
 
 
 def win_activity(window_list: "WindowList") -> None:
@@ -388,9 +388,7 @@ def ch_master_key(
 ) -> None:
     """Prompt the user for a new master password and derive a new master key from that."""
     if not master_key.authenticate_action():
-        raise FunctionReturn(
-            "Error: Invalid password.", tail_clear=True, delay=1, head=2
-        )
+        raise SoftError("Error: Invalid password.", tail_clear=True, delay=1, head=2)
 
     # Cache old master key to allow log file re-encryption.
     old_master_key = master_key.master_key[:]
@@ -406,7 +404,7 @@ def ch_master_key(
     settings.database.database_key = new_master_key
 
     # Create temp databases for each database, do not replace original.
-    with ignored(FunctionReturn):
+    with ignored(SoftError):
         change_log_db_key(old_master_key, new_master_key, settings)
     contact_list.store_contacts(replace=False)
     key_list.store_keys(replace=False)
@@ -455,9 +453,7 @@ def ch_nick(
     try:
         contact = contact_list.get_contact_by_pub_key(onion_pub_key)
     except StopIteration:
-        raise FunctionReturn(
-            f"Error: Receiver has no contact '{short_addr}' to rename."
-        )
+        raise SoftError(f"Error: Receiver has no contact '{short_addr}' to rename.")
 
     contact.nick = nick
     contact_list.store_contacts()
@@ -487,14 +483,14 @@ def ch_setting(
     try:
         setting, value = [f.decode() for f in cmd_data.split(US_BYTE)]
     except ValueError:
-        raise FunctionReturn("Error: Received invalid setting data.")
+        raise SoftError("Error: Received invalid setting data.")
 
     if setting in settings.key_list:
         settings.change_setting(setting, value, contact_list, group_list)
     elif setting in gateway.settings.key_list:
         gateway.settings.change_setting(setting, value)
     else:
-        raise FunctionReturn(f"Error: Invalid setting '{setting}'.")
+        raise SoftError(f"Error: Invalid setting '{setting}'.")
 
     cmd_win = window_list.get_command_window()
     cmd_win.add_new(ts, f"Changed setting '{setting}' to '{value}'.", output=True)
@@ -551,7 +547,7 @@ def change_setting_for_one_contact(
 ) -> Tuple[str, str, str, str]:
     """Change setting for contacts in specified window."""
     if not window_list.has_window(win_uid):
-        raise FunctionReturn(
+        raise SoftError(
             f"Error: Found no window for '{pub_key_to_short_address(win_uid)}'."
         )
 
@@ -642,7 +638,7 @@ def contact_rem(
     try:
         contact = contact_list.get_contact_by_pub_key(onion_pub_key)
     except StopIteration:
-        raise FunctionReturn(f"Receiver has no account '{short_addr}' to remove.")
+        raise SoftError(f"Receiver has no account '{short_addr}' to remove.")
 
     nick = contact.nick
     in_group = any([g.remove_members([onion_pub_key]) for g in group_list])

@@ -500,9 +500,9 @@ def gf_mul(x: int, y: int) -> int:
 
 def gf_div(x: int, y: int) -> int:
     """Perform division in the binary Galois Field."""
-    if y == 0:
+    if not y:
         raise ZeroDivisionError()
-    if x == 0:
+    if not x:
         return 0
     ret_val = gf_exp[(gf_log[x] + field_charac - gf_log[y]) % field_charac]  # type: int
     return ret_val
@@ -648,13 +648,13 @@ def gf_poly_mul(p: Any, q: List[Any]) -> Any:
         # Optimization: load the coefficient once
         qj = q[j]
         # log(0) is undefined, we need to check that
-        if qj != 0:
+        if qj:
             # Optimization: precache the logarithm
             # of the current coefficient of q
             lq = gf_log[qj]
             for i, _ in enumerate(p):
                 # log(0) is undefined, need to check that...
-                if p[i] != 0:
+                if p[i]:
                     # Equivalent to:
                     # r[i + j] = gf_add(r[i+j], gf_mul(p[i], q[j]))
                     r[i + j] ^= gf_exp[lp[i] + lq]
@@ -722,13 +722,13 @@ def gf_poly_div(
         # it should still work because gf_mul() will take care of the
         # condition. But it's still a good practice to put the condition
         # here.
-        if coef != 0:
+        if coef:
             # In synthetic division, we always skip the first coefficient
             # of the divisor, because it's only used to normalize the
             # dividend coefficient
             for j in range(1, len(divisor)):
                 # log(0) is undefined
-                if divisor[j] != 0:
+                if divisor[j]:
                     # Equivalent to the more mathematically correct (but
                     # XORing directly is faster):
                     # msg_out[i + j] += -divisor[j] * coef
@@ -866,7 +866,7 @@ def rs_encode_msg(
         # log(0) is undefined, so we need to manually check for this
         # case. There's no need to check the divisor here because we
         # know it can't be 0 since we generated it.
-        if coef != 0:
+        if coef:
             lcoef = gf_log[coef]  # precaching
 
             # In synthetic division, we always skip the first
@@ -1143,7 +1143,7 @@ def rs_find_error_locator(
         old_loc += _bytearray([0])
 
         # Iteratively estimate the errata locator and evaluator polynomials
-        if delta != 0:  # Update only if there's a discrepancy
+        if delta:  # Update only if there's a discrepancy
             # Rule B (rule A is implicitly defined because rule A just
             # says that we skip any modification for this iteration)
             if len(old_loc) > len(err_loc):
@@ -1283,7 +1283,7 @@ def rs_find_errors(
     # Normally we should try all 2^8 possible values, but here
     # we optimize to just check the interesting symbols
     for i in range(nmess):
-        if gf_poly_eval(err_loc, gf_pow(generator, i)) == 0:
+        if not gf_poly_eval(err_loc, gf_pow(generator, i)):
             # It's a 0? Bingo, it's a root of the error locator
             # polynomial, in other terms this is the location of an error
             err_pos.append(nmess - 1 - i)
@@ -1412,7 +1412,7 @@ def rs_correct_msg(
     # Check if there's any error/erasure in the input codeword. If not
     # (all syndromes coefficients are 0), then just return the codeword
     # as-is.
-    if max(synd) == 0:
+    if not max(synd):
         return msg_out[:-nsym], msg_out[-nsym:]  # no errors
 
     # Find errors locations
@@ -1493,7 +1493,7 @@ def rs_correct_msg_nofsynd(
     # Check if there's any error/erasure in the input codeword. If not
     # (all syndromes coefficients are 0), then just return the codeword
     # as-is.
-    if max(synd) == 0:
+    if not max(synd):
         return msg_out[:-nsym], msg_out[-nsym:]  # no errors
 
     # Prepare erasures locator and evaluator polynomials.

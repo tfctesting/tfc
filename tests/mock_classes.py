@@ -23,7 +23,7 @@ import getpass
 import time
 
 from datetime import datetime
-from typing import Generator, Iterable, List, Sized
+from typing import Generator, Iterable, List, Optional, Sized
 
 import nacl.signing
 
@@ -66,14 +66,14 @@ from tests.utils import nick_to_pub_key, group_name_to_group_id
 
 
 def create_contact(
-    nick,
-    tx_fingerprint=FINGERPRINT_LENGTH * b"\x01",
-    rx_fingerprint=FINGERPRINT_LENGTH * b"\x02",
-    kex_status=KEX_STATUS_VERIFIED,
-    log_messages=True,
-    file_reception=True,
-    notifications=True,
-):
+    nick: str,
+    tx_fingerprint: bytes = FINGERPRINT_LENGTH * b"\x01",
+    rx_fingerprint: bytes = FINGERPRINT_LENGTH * b"\x02",
+    kex_status: bytes = KEX_STATUS_VERIFIED,
+    log_messages: bool = True,
+    file_reception: bool = True,
+    notifications: bool = True,
+) -> Contact:
     """Create a mock contact object."""
     if nick == LOCAL_ID:
         pub_key = LOCAL_PUBKEY
@@ -93,7 +93,7 @@ def create_contact(
     )
 
 
-def create_group(name, nick_list=None):
+def create_group(name: str, nick_list: Optional[List[str]] = None):
     """Create a mock group object."""
     if nick_list is None:
         nick_list = ["Alice", "Bob"]
@@ -119,7 +119,7 @@ def create_keyset(
     tx_harac=INITIAL_HARAC,
     rx_harac=INITIAL_HARAC,
     store_f=None,
-):
+) -> KeySet:
     """Create a mock keyset object."""
     pub_key = LOCAL_PUBKEY if nick == LOCAL_ID else nick_to_pub_key(nick)
     return KeySet(
@@ -134,7 +134,7 @@ def create_keyset(
     )
 
 
-def create_rx_window(nick="Alice"):
+def create_rx_window(nick="Alice") -> OrigRxWindow:
     """Create a mock Rx-window object."""
     pub_key = LOCAL_PUBKEY if nick == LOCAL_ID else nick_to_pub_key(nick)
     return RxWindow(uid=pub_key)
@@ -144,7 +144,7 @@ def create_rx_window(nick="Alice"):
 class ContactList(OrigContactList, Iterable, Sized):
     """Mock the object for unit testing."""
 
-    def __init__(self, nicks=None, **kwargs):
+    def __init__(self, nicks=None, **kwargs) -> None:
         self.master_key = MasterKey()
         self.settings = Settings()
         self.contacts = [] if nicks is None else [create_contact(n) for n in nicks]
@@ -168,7 +168,7 @@ class ContactList(OrigContactList, Iterable, Sized):
 class Gateway(OrigGateway):
     """Mock the object for unit testing."""
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs) -> None:
         self.packets = []
         self.settings = GatewaySettings(**kwargs)
         self.rs = RSCodec(2 * self.settings.serial_error_correction)
@@ -181,7 +181,7 @@ class Gateway(OrigGateway):
 class GroupList(OrigGroupList, Iterable, Sized):
     """Mock the object for unit testing."""
 
-    def __init__(self, groups=None, **kwargs):
+    def __init__(self, groups=None, **kwargs) -> None:
         self.master_key = MasterKey()
         self.settings = Settings()
         self.contact_list = ContactList()
@@ -205,17 +205,17 @@ class GroupList(OrigGroupList, Iterable, Sized):
         """Mock method."""
         self.store_groups_called = True
 
-    def load_groups(self):
+    def load_groups(self) -> None:
         """Mock method."""
 
-    def print_groups(self):
+    def print_groups(self) -> None:
         """Mock method."""
 
 
 class KeyList(OrigKeyList):
     """Mock the object for unit testing."""
 
-    def __init__(self, nicks=None, **kwargs):
+    def __init__(self, nicks=None, **kwargs) -> None:
         self.master_key = MasterKey()
         self.settings = Settings()
         self.keysets = [] if nicks is None else [create_keyset(n) for n in nicks]
@@ -229,14 +229,14 @@ class KeyList(OrigKeyList):
         """Mock method."""
         self.store_keys_called = True
 
-    def load_keys(self):
+    def load_keys(self) -> None:
         """Mock method."""
 
 
 class MasterKey(OrigMasterKey):
     """Mock the object for unit testing."""
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs) -> None:
         """Create new MasterKey mock object."""
         self.local_test = False
         self.master_key = bytes(SYMMETRIC_KEY_LENGTH)
@@ -256,7 +256,7 @@ class MasterKey(OrigMasterKey):
 class OnionService(OrigOnionService):
     """Mock the object for unit testing."""
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs) -> None:
         """Create new OnionService mock object."""
         self.onion_private_key = ONION_SERVICE_PRIVATE_KEY_LENGTH * b"a"
         self.conf_code = b"a"
@@ -275,7 +275,7 @@ class OnionService(OrigOnionService):
 class Settings(OrigSettings):
     """Mock the object for unit testing."""
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs) -> None:
         """Create new Settings mock object."""
         self.disable_gui_dialog = False
         self.max_number_of_group_members = 50
@@ -318,11 +318,11 @@ class Settings(OrigSettings):
     def store_settings(self, replace: bool = True):
         """Mock method."""
 
-    def load_settings(self):
+    def load_settings(self) -> None:
         """Mock method."""
 
     @staticmethod
-    def validate_key_value_pair(key, value, contact_list, group_list):
+    def validate_key_value_pair(key, value, contact_list, group_list) -> None:
         """Mock method."""
 
 
@@ -330,7 +330,7 @@ class Settings(OrigSettings):
 class GatewaySettings(OrigGatewaySettings):
     """Mock the object for unit testing."""
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs) -> None:
         """Create new GatewaySettings mock object."""
         self.serial_baudrate = 19200
         self.serial_error_correction = 5
@@ -360,17 +360,17 @@ class GatewaySettings(OrigGatewaySettings):
         for key, value in kwargs.items():
             setattr(self, key, value)
 
-    def store_settings(self):
+    def store_settings(self) -> None:
         """Mock method."""
 
-    def load_settings(self):
+    def load_settings(self) -> None:
         """Mock method."""
 
 
 class TxWindow(OrigTxWindow):
     """Mock the object for unit testing."""
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs) -> None:
         """Create new TxWindow mock object."""
         self.contact_list = ContactList()
         self.group_list = GroupList()
@@ -389,7 +389,7 @@ class TxWindow(OrigTxWindow):
 class UserInput(object):
     """Mock the object for unit testing."""
 
-    def __init__(self, plaintext=None, **kwargs):
+    def __init__(self, plaintext=None, **kwargs) -> None:
         """Create new UserInput mock object."""
         self.plaintext = plaintext
         self.type = None
@@ -401,7 +401,7 @@ class UserInput(object):
 class Packet(object):
     """Mock the object for unit testing."""
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs) -> None:
         """Create new Pack mock object."""
         self.account = None
         self.contact = None
@@ -419,18 +419,18 @@ class Packet(object):
         for key, value in kwargs.items():
             setattr(self, key, value)
 
-    def add_packet(self, packet):
+    def add_packet(self, packet) -> None:
         """Mock method."""
 
-    def assemble_message_packet(self):
-        """Mock method."""
-        return self.payload
-
-    def assemble_and_store_file(self):
+    def assemble_message_packet(self) -> None:
         """Mock method."""
         return self.payload
 
-    def assemble_command_packet(self):
+    def assemble_and_store_file(self) -> None:
+        """Mock method."""
+        return self.payload
+
+    def assemble_command_packet(self) -> None:
         """Mock method."""
         return self.payload
 
@@ -438,7 +438,7 @@ class Packet(object):
 class PacketList(OrigPacketList):
     """Mock the object for unit testing."""
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs) -> None:
         self.settings = Settings()
         self.contact_list = ContactList()
         self.packets = []
@@ -450,7 +450,7 @@ class PacketList(OrigPacketList):
 class RxWindow(OrigRxWindow):
     """Mock the object for unit testing."""
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs) -> None:
         self.uid = None
         self.contact_list = ContactList()
         self.group_list = GroupList()
@@ -478,7 +478,7 @@ class RxWindow(OrigRxWindow):
 class WindowList(object):
     """Mock the object for unit testing."""
 
-    def __init__(self, nicks=None, **kwargs):
+    def __init__(self, nicks=None, **kwargs) -> None:
         """Create new WindowList mock object."""
         self.contact_list = ContactList()
         self.group_list = GroupList()
@@ -490,32 +490,32 @@ class WindowList(object):
         for key, value in kwargs.items():
             setattr(self, key, value)
 
-    def __len__(self):
+    def __len__(self) -> int:
         return len(self.windows)
 
-    def __iter__(self):
+    def __iter__(self) -> None:
         yield from self.windows
 
-    def group_windows(self):
+    def group_windows(self) -> List[RxWindow]:
         """Mock method."""
         return [w for w in self.windows if w.type == WIN_TYPE_GROUP]
 
-    def set_active_rx_window(self, name):
+    def set_active_rx_window(self, name) -> None:
         """Mock method."""
         if self.active_win is not None:
             self.active_win.is_active = False
         self.active_win = self.get_window(name)
         self.active_win.is_active = True
 
-    def has_window(self, name):
+    def has_window(self, name) -> bool:
         """Mock method."""
         return name in self.get_list_of_window_names()
 
-    def get_list_of_window_names(self):
+    def get_list_of_window_names(self) -> List[bytes]:
         """Mock method."""
         return [w.uid for w in self.windows]
 
-    def get_command_window(self):
+    def get_command_window(self) -> RxWindow:
         """Mock method."""
         return self.get_window(WIN_UID_COMMAND)
 
@@ -526,7 +526,7 @@ class WindowList(object):
                 del self.windows[i]
                 break
 
-    def get_window(self, uid):
+    def get_window(self, uid) -> RxWindow:
         """Mock method."""
         if not self.has_window(uid):
             self.windows.append(

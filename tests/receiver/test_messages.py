@@ -58,7 +58,7 @@ from tests.utils import nick_to_pub_key, TFCTestCase
 
 
 class TestProcessMessage(TFCTestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         """Pre-test actions."""
         self.unit_test_dir = cd_unit_test()
 
@@ -112,13 +112,13 @@ class TestProcessMessage(TFCTestCase):
 
         ensure_dir(DIR_USER_DATA)
 
-    def tearDown(self):
+    def tearDown(self) -> None:
         """Post-test actions."""
         cleanup(self.unit_test_dir)
 
     # Invalid packets
     @mock.patch("time.sleep", return_value=None)
-    def test_invalid_origin_header_raises_fr(self, _):
+    def test_invalid_origin_header_raises_fr(self, _) -> None:
         # Setup
         invalid_origin_header = b"e"
         packet = (
@@ -126,7 +126,7 @@ class TestProcessMessage(TFCTestCase):
         )
 
         # Test
-        self.assert_fr(
+        self.assert_se(
             "Error: Received packet had an invalid origin-header.",
             process_message_packet,
             self.ts,
@@ -135,13 +135,13 @@ class TestProcessMessage(TFCTestCase):
         )
 
     @mock.patch("time.sleep", return_value=None)
-    def test_masqueraded_command_raises_fr(self, _):
+    def test_masqueraded_command_raises_fr(self, _) -> None:
         for origin_header in [ORIGIN_USER_HEADER, ORIGIN_CONTACT_HEADER]:
             # Setup
             packet = LOCAL_PUBKEY + origin_header + MESSAGE_LENGTH * b"m"
 
             # Test
-            self.assert_fr(
+            self.assert_se(
                 "Warning! Received packet masqueraded as a command.",
                 process_message_packet,
                 self.ts,
@@ -151,7 +151,7 @@ class TestProcessMessage(TFCTestCase):
 
     # Private messages
     @mock.patch("time.sleep", return_value=None)
-    def test_private_msg_from_contact(self, _):
+    def test_private_msg_from_contact(self, _) -> None:
         # Setup
         assembly_ct_list = assembly_packet_creator(
             MESSAGE,
@@ -166,7 +166,7 @@ class TestProcessMessage(TFCTestCase):
             self.assertIsNone(process_message_packet(self.ts, p, *self.args))
 
     @mock.patch("time.sleep", return_value=None)
-    def test_private_msg_from_user(self, _):
+    def test_private_msg_from_user(self, _) -> None:
         # Setup
         assembly_ct_list = assembly_packet_creator(
             MESSAGE,
@@ -182,7 +182,7 @@ class TestProcessMessage(TFCTestCase):
 
     # Whispered messages
     @mock.patch("time.sleep", return_value=None)
-    def test_whisper_msg_from_contact(self, _):
+    def test_whisper_msg_from_contact(self, _) -> None:
         # Setup
         assembly_ct_list = assembly_packet_creator(
             MESSAGE,
@@ -198,7 +198,7 @@ class TestProcessMessage(TFCTestCase):
             self.assertIsNone(process_message_packet(self.ts, p, *self.args))
 
         for p in assembly_ct_list[-1:]:
-            self.assert_fr(
+            self.assert_se(
                 "Whisper message complete.",
                 process_message_packet,
                 self.ts,
@@ -207,7 +207,7 @@ class TestProcessMessage(TFCTestCase):
             )
 
     @mock.patch("time.sleep", return_value=None)
-    def test_whisper_msg_from_user(self, _):
+    def test_whisper_msg_from_user(self, _) -> None:
         # Setup
         assembly_ct_list = assembly_packet_creator(
             MESSAGE,
@@ -222,7 +222,7 @@ class TestProcessMessage(TFCTestCase):
             self.assertIsNone(process_message_packet(self.ts, p, *self.args))
 
         for p in assembly_ct_list[-1:]:
-            self.assert_fr(
+            self.assert_se(
                 "Whisper message complete.",
                 process_message_packet,
                 self.ts,
@@ -231,7 +231,7 @@ class TestProcessMessage(TFCTestCase):
             )
 
     @mock.patch("time.sleep", return_value=None)
-    def test_empty_whisper_msg_from_user(self, _):
+    def test_empty_whisper_msg_from_user(self, _) -> None:
         # Setup
         assembly_ct_list = assembly_packet_creator(
             MESSAGE,
@@ -246,7 +246,7 @@ class TestProcessMessage(TFCTestCase):
             self.assertIsNone(process_message_packet(self.ts, p, *self.args))
 
         for p in assembly_ct_list[-1:]:
-            self.assert_fr(
+            self.assert_se(
                 "Whisper message complete.",
                 process_message_packet,
                 self.ts,
@@ -256,7 +256,7 @@ class TestProcessMessage(TFCTestCase):
 
     # File key messages
     @mock.patch("time.sleep", return_value=None)
-    def test_user_origin_raises_fr(self, _):
+    def test_user_origin_raises_fr(self, _) -> None:
         assembly_ct_list = assembly_packet_creator(
             MESSAGE,
             " ",
@@ -267,7 +267,7 @@ class TestProcessMessage(TFCTestCase):
         )
 
         for p in assembly_ct_list[-1:]:
-            self.assert_fr(
+            self.assert_se(
                 "File key message from the user.",
                 process_message_packet,
                 self.ts,
@@ -276,7 +276,7 @@ class TestProcessMessage(TFCTestCase):
             )
 
     @mock.patch("time.sleep", return_value=None)
-    def test_invalid_file_key_data_raises_fr(self, _):
+    def test_invalid_file_key_data_raises_fr(self, _) -> None:
         assembly_ct_list = assembly_packet_creator(
             MESSAGE,
             " ",
@@ -287,7 +287,7 @@ class TestProcessMessage(TFCTestCase):
         )
 
         for p in assembly_ct_list[-1:]:
-            self.assert_fr(
+            self.assert_se(
                 "Error: Received an invalid file key message.",
                 process_message_packet,
                 self.ts,
@@ -296,7 +296,7 @@ class TestProcessMessage(TFCTestCase):
             )
 
     @mock.patch("time.sleep", return_value=None)
-    def test_too_large_file_key_data_raises_fr(self, _):
+    def test_too_large_file_key_data_raises_fr(self, _) -> None:
         assembly_ct_list = assembly_packet_creator(
             MESSAGE,
             base64.b85encode(
@@ -309,7 +309,7 @@ class TestProcessMessage(TFCTestCase):
         )
 
         for p in assembly_ct_list[-1:]:
-            self.assert_fr(
+            self.assert_se(
                 "Error: Received an invalid file key message.",
                 process_message_packet,
                 self.ts,
@@ -318,7 +318,7 @@ class TestProcessMessage(TFCTestCase):
             )
 
     @mock.patch("time.sleep", return_value=None)
-    def test_valid_file_key_message(self, _):
+    def test_valid_file_key_message(self, _) -> None:
         assembly_ct_list = assembly_packet_creator(
             MESSAGE,
             base64.b85encode(
@@ -330,7 +330,7 @@ class TestProcessMessage(TFCTestCase):
             message_header=FILE_KEY_HEADER,
         )
         for p in assembly_ct_list[-1:]:
-            self.assert_fr(
+            self.assert_se(
                 "Received file decryption key from Alice",
                 process_message_packet,
                 self.ts,
@@ -340,7 +340,7 @@ class TestProcessMessage(TFCTestCase):
 
     # Group messages
     @mock.patch("time.sleep", return_value=None)
-    def test_invalid_message_header_raises_fr(self, _):
+    def test_invalid_message_header_raises_fr(self, _) -> None:
         # Setup
         assembly_ct_list = assembly_packet_creator(
             MESSAGE,
@@ -352,7 +352,7 @@ class TestProcessMessage(TFCTestCase):
         )
 
         # Test
-        self.assert_fr(
+        self.assert_se(
             "Error: Message from contact had an invalid header.",
             process_message_packet,
             self.ts,
@@ -361,7 +361,7 @@ class TestProcessMessage(TFCTestCase):
         )
 
     @mock.patch("time.sleep", return_value=None)
-    def test_invalid_window_raises_fr(self, _):
+    def test_invalid_window_raises_fr(self, _) -> None:
         # Setup
         assembly_ct_list = assembly_packet_creator(
             MESSAGE,
@@ -375,7 +375,7 @@ class TestProcessMessage(TFCTestCase):
         self.group_list.get_group("test_group").group_id = GROUP_ID_LENGTH * b"a"
 
         # Test
-        self.assert_fr(
+        self.assert_se(
             "Error: Received message to an unknown group.",
             process_message_packet,
             self.ts,
@@ -384,7 +384,7 @@ class TestProcessMessage(TFCTestCase):
         )
 
     @mock.patch("time.sleep", return_value=None)
-    def test_invalid_message_raises_fr(self, _):
+    def test_invalid_message_raises_fr(self, _) -> None:
         # Setup
         assembly_ct_list = assembly_packet_creator(
             MESSAGE,
@@ -397,7 +397,7 @@ class TestProcessMessage(TFCTestCase):
         )
 
         # Test
-        self.assert_fr(
+        self.assert_se(
             "Error: Received an invalid group message.",
             process_message_packet,
             self.ts,
@@ -406,7 +406,7 @@ class TestProcessMessage(TFCTestCase):
         )
 
     @mock.patch("time.sleep", return_value=None)
-    def test_invalid_whisper_header_raises_fr(self, _):
+    def test_invalid_whisper_header_raises_fr(self, _) -> None:
         # Setup
         assembly_ct_list = assembly_packet_creator(
             MESSAGE,
@@ -419,7 +419,7 @@ class TestProcessMessage(TFCTestCase):
         )
 
         # Test
-        self.assert_fr(
+        self.assert_se(
             "Error: Message from contact had an invalid whisper header.",
             process_message_packet,
             self.ts,
@@ -428,7 +428,7 @@ class TestProcessMessage(TFCTestCase):
         )
 
     @mock.patch("time.sleep", return_value=None)
-    def test_contact_not_in_group_raises_fr(self, _):
+    def test_contact_not_in_group_raises_fr(self, _) -> None:
         # Setup
 
         assembly_ct_list = assembly_packet_creator(
@@ -441,7 +441,7 @@ class TestProcessMessage(TFCTestCase):
         )
 
         # Test
-        self.assert_fr(
+        self.assert_se(
             "Error: Account is not a member of the group.",
             process_message_packet,
             self.ts,
@@ -450,7 +450,7 @@ class TestProcessMessage(TFCTestCase):
         )
 
     @mock.patch("time.sleep", return_value=None)
-    def test_normal_group_msg_from_contact(self, _):
+    def test_normal_group_msg_from_contact(self, _) -> None:
         # Setup
         assembly_ct_list = assembly_packet_creator(
             MESSAGE,
@@ -465,7 +465,7 @@ class TestProcessMessage(TFCTestCase):
             self.assertIsNone(process_message_packet(self.ts, p, *self.args))
 
     @mock.patch("time.sleep", return_value=None)
-    def test_normal_group_msg_from_user(self, _):
+    def test_normal_group_msg_from_user(self, _) -> None:
         # Setup
         assembly_ct_list = assembly_packet_creator(
             MESSAGE,
@@ -481,7 +481,7 @@ class TestProcessMessage(TFCTestCase):
 
     # Files
     @mock.patch("time.sleep", return_value=None)
-    def test_file(self, _):
+    def test_file(self, _) -> None:
         # Setup
         assembly_ct_list = assembly_packet_creator(
             FILE,
@@ -495,12 +495,12 @@ class TestProcessMessage(TFCTestCase):
             self.assertIsNone(process_message_packet(self.ts, p, *self.args))
 
         for p in assembly_ct_list[-1:]:
-            self.assert_fr(
+            self.assert_se(
                 "File storage complete.", process_message_packet, self.ts, p, *self.args
             )
 
     @mock.patch("time.sleep", return_value=None)
-    def test_file_when_reception_is_disabled(self, _):
+    def test_file_when_reception_is_disabled(self, _) -> None:
         # Setup
         assembly_ct_list = assembly_packet_creator(
             FILE,
@@ -514,7 +514,7 @@ class TestProcessMessage(TFCTestCase):
         ).file_reception = False
 
         # Test
-        self.assert_fr(
+        self.assert_se(
             "Alert! File transmission from Alice but reception is disabled.",
             process_message_packet,
             self.ts,

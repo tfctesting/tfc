@@ -57,20 +57,20 @@ from tests.utils import tear_queues, TFCTestCase, VALID_ECDHE_PUB_KEY
 
 
 class TestMockWindow(unittest.TestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         """Pre-test actions."""
         self.window = MockWindow(
             nick_to_pub_key("Alice"),
             contacts=[create_contact(n) for n in ["Alice", "Bob"]],
         )
 
-    def test_window_iterates_over_contacts(self):
+    def test_window_iterates_over_contacts(self) -> None:
         for c in self.window:
             self.assertIsInstance(c, Contact)
 
 
 class TestTxWindow(TFCTestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         """Pre-test actions."""
         self.contact_list = ContactList(["Alice", "Bob"])
         self.group_list = GroupList(groups=["test_group", "test_group_2"])
@@ -83,11 +83,11 @@ class TestTxWindow(TFCTestCase):
         self.gateway = Gateway()
         self.args = self.settings, self.queues, self.onion_service, self.gateway
 
-    def tearDown(self):
+    def tearDown(self) -> None:
         """Post-test actions."""
         tear_queues(self.queues)
 
-    def test_window_iterates_over_contacts(self):
+    def test_window_iterates_over_contacts(self) -> None:
         # Setup
         self.window.window_contacts = self.contact_list.contacts
 
@@ -95,20 +95,20 @@ class TestTxWindow(TFCTestCase):
         for c in self.window:
             self.assertIsInstance(c, Contact)
 
-    def test_len_returns_number_of_contacts_in_window(self):
+    def test_len_returns_number_of_contacts_in_window(self) -> None:
         # Setup
         self.window.window_contacts = self.contact_list.contacts
 
         # Test
         self.assertEqual(len(self.window), 2)
 
-    def test_group_window_change_during_traffic_masking_raises_fr(self):
+    def test_group_window_change_during_traffic_masking_raises_fr(self) -> None:
         # Setup
         self.settings.traffic_masking = True
         self.window.uid = "test_group"
 
         # Test
-        self.assert_fr(
+        self.assert_se(
             "Error: Can't change window during traffic masking.",
             self.window.select_tx_window,
             *self.args,
@@ -116,13 +116,13 @@ class TestTxWindow(TFCTestCase):
             cmd=True,
         )
 
-    def test_contact_window_change_during_traffic_masking_raises_fr(self):
+    def test_contact_window_change_during_traffic_masking_raises_fr(self) -> None:
         # Setup
         self.settings.traffic_masking = True
         self.window.uid = nick_to_pub_key("Alice")
 
         # Test
-        self.assert_fr(
+        self.assert_se(
             "Error: Can't change window during traffic masking.",
             self.window.select_tx_window,
             *self.args,
@@ -130,7 +130,7 @@ class TestTxWindow(TFCTestCase):
             cmd=True,
         )
 
-    def test_contact_window_reload_during_traffic_masking(self):
+    def test_contact_window_reload_during_traffic_masking(self) -> None:
         # Setup
         self.settings.traffic_masking = True
         self.window.uid = nick_to_pub_key("Alice")
@@ -143,7 +143,7 @@ class TestTxWindow(TFCTestCase):
         )
         self.assertEqual(self.window.uid, nick_to_pub_key("Alice"))
 
-    def test_group_window_reload_during_traffic_masking(self):
+    def test_group_window_reload_during_traffic_masking(self) -> None:
         # Setup
         self.settings.traffic_masking = True
         self.window.name = "test_group"
@@ -155,12 +155,12 @@ class TestTxWindow(TFCTestCase):
         )
         self.assertEqual(self.window.uid, group_name_to_group_id("test_group"))
 
-    def test_invalid_selection_raises_fr(self):
+    def test_invalid_selection_raises_fr(self) -> None:
         # Setup
         self.window.uid = nick_to_pub_key("Alice")
 
         # Test
-        self.assert_fr(
+        self.assert_se(
             "Error: No contact/group was found.",
             self.window.select_tx_window,
             *self.args,
@@ -169,7 +169,7 @@ class TestTxWindow(TFCTestCase):
         )
 
     @mock.patch("builtins.input", return_value=nick_to_onion_address("Bob"))
-    def test_window_selection_during_traffic_masking(self, *_):
+    def test_window_selection_during_traffic_masking(self, *_) -> None:
         # Setup
         self.settings.traffic_masking = True
         self.window.uid = None
@@ -179,7 +179,7 @@ class TestTxWindow(TFCTestCase):
         self.assertEqual(self.queues[WINDOW_SELECT_QUEUE].qsize(), 1)
 
     @mock.patch("builtins.input", return_value=nick_to_onion_address("Bob"))
-    def test_contact_window_selection_from_input(self, *_):
+    def test_contact_window_selection_from_input(self, *_) -> None:
         # Setup
         self.window.uid = None
 
@@ -187,7 +187,7 @@ class TestTxWindow(TFCTestCase):
         self.assertIsNone(self.window.select_tx_window(*self.args))
         self.assertEqual(self.window.uid, nick_to_pub_key("Bob"))
 
-    def test_group_window_selection_from_command(self):
+    def test_group_window_selection_from_command(self) -> None:
         # Setup
         self.window.uid = None
 
@@ -196,7 +196,7 @@ class TestTxWindow(TFCTestCase):
         )
         self.assertEqual(self.window.uid, group_name_to_group_id("test_group"))
 
-    def test_deselect_window(self):
+    def test_deselect_window(self) -> None:
         # Setup
         self.window.window_contacts = self.contact_list.contacts
         self.window.contact = self.contact_list.get_contact_by_address_or_nick("Bob")
@@ -211,14 +211,14 @@ class TestTxWindow(TFCTestCase):
         self.assertEqual(self.window.type, "")
         self.assertEqual(self.window.uid, b"")
 
-    def test_is_selected(self):
+    def test_is_selected(self) -> None:
         self.window.name = ""
         self.assertFalse(self.window.is_selected())
 
         self.window.name = nick_to_pub_key("Bob")
         self.assertTrue(self.window.is_selected())
 
-    def test_update_log_messages_for_contact(self):
+    def test_update_log_messages_for_contact(self) -> None:
         # Setup
         self.window.type = WIN_TYPE_CONTACT
         self.window.log_messages = None
@@ -229,7 +229,7 @@ class TestTxWindow(TFCTestCase):
         self.assertIsNone(self.window.update_log_messages())
         self.assertFalse(self.window.log_messages)
 
-    def test_update_log_messages_for_group(self):
+    def test_update_log_messages_for_group(self) -> None:
         # Setup
         self.window.type = WIN_TYPE_GROUP
         self.window.log_messages = None
@@ -240,7 +240,7 @@ class TestTxWindow(TFCTestCase):
         self.assertIsNone(self.window.update_log_messages())
         self.assertFalse(self.window.log_messages)
 
-    def test_update_group_win_members_if_group_is_available(self):
+    def test_update_group_win_members_if_group_is_available(self) -> None:
         # Setup
         self.window.window_contacts = []
         self.window.group = None
@@ -253,7 +253,7 @@ class TestTxWindow(TFCTestCase):
         self.assertEqual(self.window.group, self.group_list.get_group("test_group"))
         self.assertEqual(self.window.window_contacts, self.window.group.members)
 
-    def test_window_contact_is_reloaded_when_contact_is_active(self):
+    def test_window_contact_is_reloaded_when_contact_is_active(self) -> None:
         # Setup
         self.window.type = WIN_TYPE_CONTACT
         self.window.contact = create_contact("Alice")
@@ -278,7 +278,7 @@ class TestTxWindow(TFCTestCase):
             self.window.contact_list.get_contact_by_pub_key(nick_to_pub_key("Alice")),
         )
 
-    def test_deactivate_window_if_group_is_not_available(self):
+    def test_deactivate_window_if_group_is_not_available(self) -> None:
         # Setup
         self.window.window_contacts = []
         self.window.group = None
@@ -303,7 +303,7 @@ class TestTxWindow(TFCTestCase):
         ],
     )
     @mock.patch("shutil.get_terminal_size", return_value=[200, 200])
-    def test_selecting_pending_contact_starts_key_exchange(self, *_):
+    def test_selecting_pending_contact_starts_key_exchange(self, *_) -> None:
         # Setup
         alice = self.contact_list.get_contact_by_address_or_nick("Alice")
         bob = self.contact_list.get_contact_by_address_or_nick("Bob")
@@ -330,28 +330,28 @@ class TestTxWindow(TFCTestCase):
         ],
     )
     @mock.patch("shutil.get_terminal_size", return_value=[200, 200])
-    def test_adding_new_contact_from_contact_selection(self, *_):
+    def test_adding_new_contact_from_contact_selection(self, *_) -> None:
         # Setup
         alice = self.contact_list.get_contact_by_address_or_nick("Alice")
         alice.kex_status = KEX_STATUS_PENDING
 
         # Test
-        self.assert_fr("New contact added.", self.window.select_tx_window, *self.args)
+        self.assert_se("New contact added.", self.window.select_tx_window, *self.args)
         self.assertEqual(self.queues[COMMAND_PACKET_QUEUE].qsize(), 1)
         self.assertEqual(self.queues[WINDOW_SELECT_QUEUE].qsize(), 0)
         self.assertEqual(alice.kex_status, KEX_STATUS_VERIFIED)
 
     @mock.patch("time.sleep", return_value=None)
     @mock.patch("builtins.input", side_effect=["/rm "])
-    def test_missing_account_when_removing_raises_fr(self, *_):
-        self.assert_fr(
+    def test_missing_account_when_removing_raises_fr(self, *_) -> None:
+        self.assert_se(
             "Error: No account specified.", self.window.select_tx_window, *self.args
         )
 
     @mock.patch("time.sleep", return_value=None)
     @mock.patch("builtins.input", side_effect=["/rm Charlie", "yes"])
-    def test_unknown_account_when_removing_raises_fr(self, *_):
-        self.assert_fr(
+    def test_unknown_account_when_removing_raises_fr(self, *_) -> None:
+        self.assert_se(
             "Error: Unknown contact 'Charlie'.",
             self.window.select_tx_window,
             *self.args,
@@ -359,34 +359,34 @@ class TestTxWindow(TFCTestCase):
 
     @mock.patch("time.sleep", return_value=None)
     @mock.patch("builtins.input", side_effect=["/rm Alice", "no"])
-    def test_abort_removal_of_contact_form_contact_selection(self, *_):
-        self.assert_fr(
+    def test_abort_removal_of_contact_form_contact_selection(self, *_) -> None:
+        self.assert_se(
             "Removal of contact aborted.", self.window.select_tx_window, *self.args
         )
 
     @mock.patch("time.sleep", return_value=None)
     @mock.patch("builtins.input", side_effect=["/rm Alice", "yes"])
-    def test_removing_pending_contact_from_contact_selection(self, *_):
-        self.assert_fr(
+    def test_removing_pending_contact_from_contact_selection(self, *_) -> None:
+        self.assert_se(
             "Removed contact 'Alice'.", self.window.select_tx_window, *self.args
         )
 
     @mock.patch("time.sleep", return_value=None)
     @mock.patch("builtins.input", side_effect=["/connect", b"a".hex()])
-    def test_sending_onion_service_data_from_contact_selection(self, *_):
+    def test_sending_onion_service_data_from_contact_selection(self, *_) -> None:
         self.assertIsNone(self.window.select_tx_window(*self.args))
         self.assertEqual(len(self.gateway.packets), 1)
 
     @mock.patch("time.sleep", return_value=None)
     @mock.patch("builtins.input", side_effect=["/help"])
-    def test_invalid_command_raises_fr(self, *_):
-        self.assert_fr(
+    def test_invalid_command_raises_fr(self, *_) -> None:
+        self.assert_se(
             "Error: Invalid command.", self.window.select_tx_window, *self.args
         )
 
 
 class TestSelectWindow(TFCTestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         """Pre-test actions."""
         self.contact_list = ContactList(nicks=["Alice"])
         self.group_list = GroupList()
@@ -405,20 +405,20 @@ class TestSelectWindow(TFCTestCase):
             self.gateway,
         )
 
-    def tearDown(self):
+    def tearDown(self) -> None:
         """Post-test actions."""
         tear_queues(self.queues)
 
-    def test_invalid_selection_raises_fr(self):
+    def test_invalid_selection_raises_fr(self) -> None:
         # Setup
         self.user_input.plaintext = "msg"
-        self.assert_fr("Error: Invalid recipient.", select_window, *self.args)
+        self.assert_se("Error: Invalid recipient.", select_window, *self.args)
 
         # Test
         self.assertEqual(self.queues[COMMAND_PACKET_QUEUE].qsize(), 0)
         self.assertEqual(self.queues[WINDOW_SELECT_QUEUE].qsize(), 0)
 
-    def test_window_selection(self):
+    def test_window_selection(self) -> None:
         # Setup
         self.user_input.plaintext = f"msg {nick_to_onion_address('Alice')}"
 

@@ -82,13 +82,13 @@ def rotate_key(key: bytes, harac: int) -> Tuple[bytes, int]:
 
 
 class TestOutputLoop(unittest.TestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         """Pre-test actions."""
         self.unit_test_dir = cd_unit_test()
         self.o_sleep = time.sleep
         time.sleep = lambda _: None
 
-    def tearDown(self):
+    def tearDown(self) -> None:
         """Post-test actions."""
         time.sleep = self.o_sleep
         cleanup(self.unit_test_dir)
@@ -103,7 +103,7 @@ class TestOutputLoop(unittest.TestCase):
             b58encode(SYMMETRIC_KEY_LENGTH * b"a", public_key=True),
         ],
     )
-    def test_loop(self, *_):
+    def test_loop(self, *_) -> None:
         # Setup
         queues = gen_queue_dict()
         kek = SYMMETRIC_KEY_LENGTH * b"a"
@@ -112,7 +112,7 @@ class TestOutputLoop(unittest.TestCase):
         o_sleep = self.o_sleep
         test_delay = 0.2
 
-        def queue_packet(mk, hk, tx_harac, packet, onion_pub_key=None):
+        def queue_packet(mk, hk, tx_harac, packet, onion_pub_key=None) -> None:
             """Create encrypted datagram."""
             if onion_pub_key is None:
                 header = b""
@@ -128,7 +128,7 @@ class TestOutputLoop(unittest.TestCase):
             encrypted_packet = header + encrypted_harac + encrypted_message
             queue.put((datetime.datetime.now(), encrypted_packet))
 
-        def queue_delayer():
+        def queue_delayer() -> None:
             """Place datagrams into queue after delay."""
             o_sleep(test_delay)
             local_harac = INITIAL_HARAC

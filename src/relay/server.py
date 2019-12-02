@@ -150,7 +150,7 @@ def get_message(
 
     # Load outgoing messages for all contacts,
     # return the oldest message for contact
-    while queues[M_TO_FLASK_QUEUE].qsize() != 0:
+    while queues[M_TO_FLASK_QUEUE].qsize():
         packet, onion_pub_key = queues[M_TO_FLASK_QUEUE].get()
         message_dict.setdefault(onion_pub_key, []).append(packet)
 
@@ -178,7 +178,7 @@ def get_file(
 
     identified_onion_pub_key = pub_key_dict[purp_url_token]
 
-    while queues[F_TO_FLASK_QUEUE].qsize() != 0:
+    while queues[F_TO_FLASK_QUEUE].qsize():
         packet, onion_pub_key = queues[F_TO_FLASK_QUEUE].get()
         file_dict.setdefault(onion_pub_key, []).append(packet)
 

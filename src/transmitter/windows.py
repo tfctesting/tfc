@@ -24,7 +24,7 @@ import typing
 from typing import Any, Dict, Iterable, Iterator, List, Optional, Sized
 
 from src.common.db_contacts import Contact
-from src.common.exceptions import FunctionReturn
+from src.common.exceptions import SoftError
 from src.common.input import yes
 from src.common.output import clear_screen
 from src.common.statics import (
@@ -104,7 +104,7 @@ class TxWindow(Iterable[Contact], Sized):
             )
 
         else:
-            raise FunctionReturn("Error: No contact/group was found.")
+            raise SoftError("Error: No contact/group was found.")
 
         if settings.traffic_masking:
             queues[WINDOW_SELECT_QUEUE].put(self.window_contacts)
@@ -137,7 +137,7 @@ class TxWindow(Iterable[Contact], Sized):
         if cmd and settings.traffic_masking:
             contact = self.contact_list.get_contact_by_address_or_nick(selection)
             if contact.onion_pub_key != self.uid:
-                raise FunctionReturn(
+                raise SoftError(
                     "Error: Can't change window during traffic masking.",
                     head_clear=True,
                 )
@@ -165,7 +165,7 @@ class TxWindow(Iterable[Contact], Sized):
     def select_group(self, selection: str, cmd: bool, settings: "Settings") -> None:
         """Select group."""
         if cmd and settings.traffic_masking and selection != self.name:
-            raise FunctionReturn(
+            raise SoftError(
                 "Error: Can't change window during traffic masking.", head_clear=True
             )
 
@@ -197,7 +197,7 @@ class TxWindow(Iterable[Contact], Sized):
             add_new_contact(
                 self.contact_list, self.group_list, settings, queues, onion_service
             )
-            raise FunctionReturn("New contact added.", output=False)
+            raise SoftError("New contact added.", output=False)
 
         if selection == "/connect":
             export_onion_service_data(
@@ -208,10 +208,10 @@ class TxWindow(Iterable[Contact], Sized):
             try:
                 selection = selection.split()[1]
             except IndexError:
-                raise FunctionReturn("Error: No account specified.", delay=1)
+                raise SoftError("Error: No account specified.", delay=1)
 
             if not yes(f"Remove contact '{selection}'?", abort=False, head=1):
-                raise FunctionReturn("Removal of contact aborted.", head=0, delay=1)
+                raise SoftError("Removal of contact aborted.", head=0, delay=1)
 
             if selection in self.contact_list.contact_selectors():
                 onion_pub_key = self.contact_list.get_contact_by_address_or_nick(
@@ -219,12 +219,12 @@ class TxWindow(Iterable[Contact], Sized):
                 ).onion_pub_key
                 self.contact_list.remove_contact_by_pub_key(onion_pub_key)
                 self.contact_list.store_contacts()
-                raise FunctionReturn(f"Removed contact '{selection}'.", delay=1)
+                raise SoftError(f"Removed contact '{selection}'.", delay=1)
 
-            raise FunctionReturn(f"Error: Unknown contact '{selection}'.", delay=1)
+            raise SoftError(f"Error: Unknown contact '{selection}'.", delay=1)
 
         else:
-            raise FunctionReturn("Error: Invalid command.", delay=1)
+            raise SoftError("Error: Invalid command.", delay=1)
 
     def deselect(self) -> None:
         """Deselect active window."""
@@ -286,7 +286,7 @@ def select_window(
     try:
         selection = user_input.plaintext.split()[1]
     except (IndexError, TypeError):
-        raise FunctionReturn("Error: Invalid recipient.", head_clear=True)
+        raise SoftError("Error: Invalid recipient.", head_clear=True)
 
     window.select_tx_window(
         settings, queues, onion_service, gateway, selection=selection, cmd=True

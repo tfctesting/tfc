@@ -69,20 +69,20 @@ from tests.utils import gen_queue_dict, tear_queues, TFCTestCase
 
 
 class TestRelayCommand(unittest.TestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         """Pre-test actions."""
         self.gateway = Gateway()
         self.queues = gen_queue_dict()
         self.gateway.settings.race_condition_delay = 0.0
 
-    def tearDown(self):
+    def tearDown(self) -> None:
         """Post-test actions."""
         tear_queues(self.queues)
 
     @mock.patch("sys.stdin", MagicMock())
     @mock.patch("os.fdopen", MagicMock())
-    def test_packet_reading(self, *_):
-        def queue_delayer():
+    def test_packet_reading(self, *_) -> None:
+        def queue_delayer() -> None:
             """Place packet into queue after delay."""
             time.sleep(0.1)
             self.queues[SRC_TO_RELAY_QUEUE].put(UNENCRYPTED_SCREEN_CLEAR)
@@ -94,17 +94,17 @@ class TestRelayCommand(unittest.TestCase):
 
 
 class TestProcessCommand(TFCTestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         """Pre-test actions."""
         self.gateway = Gateway()
         self.queues = gen_queue_dict()
 
-    def tearDown(self):
+    def tearDown(self) -> None:
         """Post-test actions."""
         tear_queues(self.queues)
 
-    def test_invalid_key(self):
-        self.assert_fr(
+    def test_invalid_key(self) -> None:
+        self.assert_se(
             "Error: Received an invalid command.",
             process_command,
             b"INVALID",
@@ -114,12 +114,12 @@ class TestProcessCommand(TFCTestCase):
 
 
 class TestRaceConditionDelay(unittest.TestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         """Pre-test actions."""
         self.gateway = Gateway(local_testing_mode=True, data_diode_sockets=True)
 
     @mock.patch("time.sleep", return_value=None)
-    def test_delay(self, mock_sleep):
+    def test_delay(self, mock_sleep) -> None:
         self.assertIsNone(race_condition_delay(self.gateway))
         self.assertEqual(
             mock_sleep.call_args_list,
@@ -128,11 +128,11 @@ class TestRaceConditionDelay(unittest.TestCase):
 
 
 class TestClearWindows(TFCTestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         """Pre-test actions."""
         self.gateway = Gateway(race_condition_delay=0.0)
 
-    def test_clear_display(self):
+    def test_clear_display(self) -> None:
         self.assert_prints(
             CLEAR_ENTIRE_SCREEN + CURSOR_LEFT_UP_CORNER, clear_windows, self.gateway
         )
@@ -140,104 +140,104 @@ class TestClearWindows(TFCTestCase):
 
 class TestResetWindows(TFCTestCase):
     @mock.patch("src.common.misc.reset_terminal", return_value=None)
-    def test_reset_display(self, _):
+    def test_reset_display(self, _) -> None:
         self.gateway = Gateway(race_condition_delay=0.0)
         self.assertIsNone(reset_windows(self.gateway))
 
 
 class TestExitTFC(unittest.TestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         """Pre-test actions."""
         self.gateway = Gateway(race_condition_delay=0.0)
         self.queues = gen_queue_dict()
 
-    def tearDown(self):
+    def tearDown(self) -> None:
         """Post-test actions."""
         tear_queues(self.queues)
 
-    def test_exit_tfc(self):
+    def test_exit_tfc(self) -> None:
         self.assertIsNone(exit_tfc(self.gateway, self.queues))
         self.assertEqual(self.queues[ONION_CLOSE_QUEUE].get(), EXIT)
 
 
 class TestChangeECRatio(TFCTestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         """Pre-test actions."""
         self.gateway = Gateway()
 
-    def test_non_digit_value_raises_fr(self):
-        self.assert_fr(
+    def test_non_digit_value_raises_fr(self) -> None:
+        self.assert_se(
             "Error: Received invalid EC ratio value from Transmitter Program.",
             change_ec_ratio,
             b"a",
             self.gateway,
         )
 
-    def test_invalid_digit_value_raises_fr(self):
-        self.assert_fr(
+    def test_invalid_digit_value_raises_fr(self) -> None:
+        self.assert_se(
             "Error: Received invalid EC ratio value from Transmitter Program.",
             change_ec_ratio,
             b"-1",
             self.gateway,
         )
 
-    def test_change_value(self):
+    def test_change_value(self) -> None:
         self.assertIsNone(change_ec_ratio(b"3", self.gateway))
         self.assertEqual(self.gateway.settings.serial_error_correction, 3)
 
 
 class TestChangeBaudrate(TFCTestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         """Pre-test actions."""
         self.gateway = Gateway()
 
-    def test_non_digit_value_raises_fr(self):
-        self.assert_fr(
+    def test_non_digit_value_raises_fr(self) -> None:
+        self.assert_se(
             "Error: Received invalid baud rate value from Transmitter Program.",
             change_baudrate,
             b"a",
             self.gateway,
         )
 
-    def test_invalid_digit_value_raises_fr(self):
-        self.assert_fr(
+    def test_invalid_digit_value_raises_fr(self) -> None:
+        self.assert_se(
             "Error: Received invalid baud rate value from Transmitter Program.",
             change_baudrate,
             b"1300",
             self.gateway,
         )
 
-    def test_change_value(self):
+    def test_change_value(self) -> None:
         self.assertIsNone(change_baudrate(b"9600", self.gateway))
         self.assertEqual(self.gateway.settings.serial_baudrate, 9600)
 
 
 class TestWipe(unittest.TestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         """Pre-test actions."""
         self.gateway = Gateway(race_condition_delay=0.0)
         self.queues = gen_queue_dict()
 
-    def tearDown(self):
+    def tearDown(self) -> None:
         """Post-test actions."""
         tear_queues(self.queues)
 
     @mock.patch("src.common.misc.reset_terminal", return_value=None)
-    def test_wipe_command(self, _):
+    def test_wipe_command(self, _) -> None:
         self.assertIsNone(wipe(self.gateway, self.queues))
         self.assertEqual(self.queues[ONION_CLOSE_QUEUE].get(), WIPE)
 
 
 class TestManageContactReq(unittest.TestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         """Pre-test actions."""
         self.queues = gen_queue_dict()
 
-    def tearDown(self):
+    def tearDown(self) -> None:
         """Post-test actions."""
         tear_queues(self.queues)
 
-    def test_setting_management(self):
+    def test_setting_management(self) -> None:
         manage_contact_req(b"\x01", self.queues)
         self.assertTrue(self.queues[C_REQ_STATE_QUEUE].get())
 
@@ -246,15 +246,15 @@ class TestManageContactReq(unittest.TestCase):
 
 
 class TestAddContact(unittest.TestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         """Pre-test actions."""
         self.queues = gen_queue_dict()
 
-    def tearDown(self):
+    def tearDown(self) -> None:
         """Post-test actions."""
         tear_queues(self.queues)
 
-    def test_add_contact(self):
+    def test_add_contact(self) -> None:
         command = b"".join([nick_to_pub_key("Alice"), nick_to_pub_key("Bob")])
 
         self.assertIsNone(add_contact(command, True, self.queues))
@@ -279,15 +279,15 @@ class TestAddContact(unittest.TestCase):
 
 
 class TestRemContact(unittest.TestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         """Pre-test actions."""
         self.queues = gen_queue_dict()
 
-    def tearDown(self):
+    def tearDown(self) -> None:
         """Post-test actions."""
         tear_queues(self.queues)
 
-    def test_add_contact(self):
+    def test_add_contact(self) -> None:
         command = b"".join([nick_to_pub_key("Alice"), nick_to_pub_key("Bob")])
 
         self.assertIsNone(remove_contact(command, self.queues))
@@ -313,15 +313,15 @@ class TestRemContact(unittest.TestCase):
 
 
 class TestAddOnionKey(unittest.TestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         """Pre-test actions."""
         self.queues = gen_queue_dict()
 
-    def tearDown(self):
+    def tearDown(self) -> None:
         """Post-test actions."""
         tear_queues(self.queues)
 
-    def test_add_contact(self):
+    def test_add_contact(self) -> None:
         command = (
             ONION_SERVICE_PRIVATE_KEY_LENGTH * b"a"
             + b"b"

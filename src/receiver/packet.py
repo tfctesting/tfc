@@ -30,7 +30,7 @@ import nacl.exceptions
 
 from src.common.crypto import auth_and_decrypt, blake2b, rm_padding_bytes
 from src.common.encoding import bytes_to_int, int_to_bytes
-from src.common.exceptions import FunctionReturn
+from src.common.exceptions import SoftError
 from src.common.input import yes
 from src.common.misc import (
     decompress,
@@ -109,7 +109,7 @@ def process_offset(
         )
 
         if not yes("Proceed with the decryption?", abort=False, tail=1):
-            raise FunctionReturn(f"Dropped packet from {nick}.", window=window)
+            raise SoftError(f"Dropped packet from {nick}.", window=window)
 
     elif offset:
         m_print(
@@ -162,13 +162,13 @@ def decrypt_assembly_packet(
     message_key = getattr(keyset, f"{key_dir}_mk")  # type: bytes
 
     if any(k == bytes(SYMMETRIC_KEY_LENGTH) for k in [header_key, message_key]):
-        raise FunctionReturn("Warning! Loaded zero-key for packet decryption.")
+        raise SoftError("Warning! Loaded zero-key for packet decryption.")
 
     # Decrypt hash ratchet counter
     try:
         harac_bytes = auth_and_decrypt(ct_harac, header_key)
     except nacl.exceptions.CryptoError:
-        raise FunctionReturn(
+        raise SoftError(
             f"Warning! Received {p_type} {direction} {nick} had an invalid hash ratchet MAC.",
             window=cmd_win,
         )
@@ -178,7 +178,7 @@ def decrypt_assembly_packet(
     stored_harac = getattr(keyset, f"{key_dir}_harac")
     offset = purp_harac - stored_harac
     if offset < 0:
-        raise FunctionReturn(
+        raise SoftError(
             f"Warning! Received {p_type} {direction} {nick} had an expired hash ratchet counter.",
             window=cmd_win,
         )
@@ -193,7 +193,7 @@ def decrypt_assembly_packet(
     try:
         assembly_packet = auth_and_decrypt(ct_assemby_packet, message_key)
     except nacl.exceptions.CryptoError:
-        raise FunctionReturn(
+        raise SoftError(
             f"Warning! Received {p_type} {direction} {nick} had an invalid MAC.",
             window=cmd_win,
         )
@@ -285,11 +285,11 @@ class Packet(object):
 
         if self.origin == ORIGIN_USER_HEADER:
             self.add_masking_packet_to_log_file()
-            raise FunctionReturn("Ignored file from the user.", output=False)
+            raise SoftError("Ignored file from the user.", output=False)
 
         if not self.contact.file_reception:
             self.add_masking_packet_to_log_file()
-            raise FunctionReturn(
+            raise SoftError(
                 f"Alert! File transmission from {self.contact.nick} but reception is disabled."
             )
 
@@ -304,12 +304,12 @@ class Packet(object):
         """Check if the long packet has permission to be extended."""
         if not self.long_active:
             self.add_masking_packet_to_log_file()
-            raise FunctionReturn("Missing start packet.", output=False)
+            raise SoftError("Missing start packet.", output=False)
 
         if self.type == FILE and not self.contact.file_reception:
             self.add_masking_packet_to_log_file(increase=len(self.assembly_pt_list) + 1)
             self.clear_assembly_packets()
-            raise FunctionReturn("Alert! File reception disabled mid-transfer.")
+            raise SoftError("Alert! File reception disabled mid-transfer.")
 
     def process_short_header(
         self, packet: bytes, packet_ct: Optional[bytes] = None
@@ -338,7 +338,7 @@ class Packet(object):
         if self.type == FILE:
             self.new_file_packet()
             try:
-                lh, no_p_bytes, time_bytes, size_bytes, name_us_data = separate_headers(
+                _, no_p_bytes, time_bytes, size_bytes, name_us_data = separate_headers(
                     packet,
                     [ASSEMBLY_PACKET_HEADER_LENGTH] + 3 * [ENCODED_INTEGER_LENGTH],
                 )
@@ -363,9 +363,7 @@ class Packet(object):
 
             except (struct.error, UnicodeError, ValueError):
                 self.add_masking_packet_to_log_file()
-                raise FunctionReturn(
-                    "Error: Received file packet had an invalid header."
-                )
+                raise SoftError("Error: Received file packet had an invalid header.")
 
         self.assembly_pt_list = [packet]
         self.long_active = True
@@ -435,7 +433,7 @@ class Packet(object):
         except KeyError:
             # Erroneous headers are ignored but stored as placeholder data.
             self.add_masking_packet_to_log_file()
-            raise FunctionReturn(
+            raise SoftError(
                 "Error: Received packet had an invalid assembly packet header."
             )
         func(packet, packet_ct)
@@ -452,12 +450,12 @@ class Packet(object):
             try:
                 payload = auth_and_decrypt(msg_ct, msg_key)
             except nacl.exceptions.CryptoError:
-                raise FunctionReturn("Error: Decryption of message failed.")
+                raise SoftError("Error: Decryption of message failed.")
 
         try:
             return decompress(payload, MAX_MESSAGE_SIZE)
         except zlib.error:
-            raise FunctionReturn("Error: Decompression of message failed.")
+            raise SoftError("Error: Decompression of message failed.")
 
     def assemble_and_store_file(
         self, ts: "datetime", onion_pub_key: bytes, window_list: "WindowList"
@@ -485,12 +483,12 @@ class Packet(object):
         if len(self.assembly_pt_list) > 1:
             payload, cmd_hash = separate_trailer(payload, BLAKE2_DIGEST_LENGTH)
             if blake2b(payload) != cmd_hash:
-                raise FunctionReturn("Error: Received an invalid command.")
+                raise SoftError("Error: Received an invalid command.")
 
         try:
             return decompress(payload, self.settings.max_decompress_size)
         except zlib.error:
-            raise FunctionReturn("Error: Decompression of command failed.")
+            raise SoftError("Error: Decompression of command failed.")
 
 
 class PacketList(Iterable[Packet], Sized):

@@ -27,7 +27,7 @@ from datetime import datetime
 from typing import Any, Dict
 
 from src.common.encoding import bytes_to_int
-from src.common.exceptions import FunctionReturn
+from src.common.exceptions import SoftError
 from src.common.misc import ignored, separate_headers
 from src.common.output import m_print
 from src.common.statics import (
@@ -53,14 +53,14 @@ def receiver_loop(
 
     while True:
         with ignored(EOFError, KeyboardInterrupt):
-            if gateway_queue.qsize() == 0:
+            if not gateway_queue.qsize():
                 time.sleep(0.01)
 
             _, packet = gateway_queue.get()
 
             try:
                 packet = gateway.detect_errors(packet)
-            except FunctionReturn:
+            except SoftError:
                 continue
 
             header, ts_bytes, payload = separate_headers(

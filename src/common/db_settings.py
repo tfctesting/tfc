@@ -28,7 +28,7 @@ from typing import Union
 from src.common.database import TFCDatabase
 from src.common.encoding import bool_to_bytes, double_to_bytes, int_to_bytes
 from src.common.encoding import bytes_to_bool, bytes_to_double, bytes_to_int
-from src.common.exceptions import CriticalError, FunctionReturn
+from src.common.exceptions import CriticalError, SoftError
 from src.common.input import yes
 from src.common.misc import ensure_dir, get_terminal_width, round_up
 from src.common.output import clear_screen, m_print
@@ -191,7 +191,7 @@ class Settings(object):
                 raise CriticalError("Invalid attribute type in settings.")
 
         except (KeyError, ValueError):
-            raise FunctionReturn(
+            raise SoftError(
                 f"Error: Invalid setting value '{value_str}'.", head_clear=True
             )
 
@@ -229,7 +229,7 @@ class Settings(object):
             "max_number_of_contacts",
         ]:
             if value % 10 != 0 or value == 0:
-                raise FunctionReturn(
+                raise SoftError(
                     "Error: Database padding settings must be divisible by 10.",
                     head_clear=True,
                 )
@@ -242,7 +242,7 @@ class Settings(object):
         if key == "max_number_of_group_members":
             min_size = round_up(group_list.largest_group())
             if value < min_size:
-                raise FunctionReturn(
+                raise SoftError(
                     f"Error: Can't set the max number of members lower than {min_size}.",
                     head_clear=True,
                 )
@@ -255,7 +255,7 @@ class Settings(object):
         if key == "max_number_of_groups":
             min_size = round_up(len(group_list))
             if value < min_size:
-                raise FunctionReturn(
+                raise SoftError(
                     f"Error: Can't set the max number of groups lower than {min_size}.",
                     head_clear=True,
                 )
@@ -268,7 +268,7 @@ class Settings(object):
         if key == "max_number_of_contacts":
             min_size = round_up(len(contact_list))
             if value < min_size:
-                raise FunctionReturn(
+                raise SoftError(
                     f"Error: Can't set the max number of contacts lower than {min_size}.",
                     head_clear=True,
                 )
@@ -279,7 +279,7 @@ class Settings(object):
     ) -> None:
         """Validate setting value for duration of new message notification."""
         if key == "new_message_notify_duration" and value < 0.05:
-            raise FunctionReturn(
+            raise SoftError(
                 "Error: Too small value for message notify duration.", head_clear=True
             )
 
@@ -295,7 +295,7 @@ class Settings(object):
                 ("tm_random_delay", "random", TRAFFIC_MASKING_MIN_RANDOM_DELAY),
             ]:
                 if key == key_ and value < min_setting:
-                    raise FunctionReturn(
+                    raise SoftError(
                         f"Error: Can't set {name} delay lower than {min_setting}.",
                         head_clear=True,
                     )
@@ -312,7 +312,7 @@ class Settings(object):
                 )
 
                 if not yes("Proceed anyway?"):
-                    raise FunctionReturn(
+                    raise SoftError(
                         "Aborted traffic masking setting change.", head_clear=True
                     )
 
@@ -359,7 +359,7 @@ class Settings(object):
         description_indent = 64
 
         if terminal_width < description_indent + 1:
-            raise FunctionReturn("Error: Screen width is too small.", head_clear=True)
+            raise SoftError("Error: Screen width is too small.", head_clear=True)
 
         # Populate columns with setting data
         for key in self.defaults:

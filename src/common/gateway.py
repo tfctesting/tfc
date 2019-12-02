@@ -35,7 +35,7 @@ from typing import Any, Dict, Optional, Tuple, Union
 
 from serial.serialutil import SerialException
 
-from src.common.exceptions import CriticalError, FunctionReturn, graceful_exit
+from src.common.exceptions import CriticalError, graceful_exit, SoftError
 from src.common.input import yes
 from src.common.misc import (
     calculate_race_condition_delay,
@@ -276,7 +276,7 @@ class Gateway(object):
                 packet, _ = self.rs.decode(packet)
                 return bytes(packet)
             except ReedSolomonError:
-                raise FunctionReturn(
+                raise SoftError(
                     "Error: Reed-Solomon failed to correct errors in the received packet.",
                     bold=True,
                 )
@@ -286,7 +286,7 @@ class Gateway(object):
                 hashlib.blake2b(packet, digest_size=PACKET_CHECKSUM_LENGTH).digest()
                 != checksum
             ):
-                raise FunctionReturn(
+                raise SoftError(
                     "Warning! Received packet had an invalid checksum.", bold=True
                 )
             return packet
@@ -514,7 +514,7 @@ class GatewaySettings(object):
         """Store serial settings in JSON format."""
         serialized = json.dumps(
             self,
-            default=(lambda o: {k: self.__dict__[k] for k in self.key_list}),
+            default=(lambda _: {k: self.__dict__[k] for k in self.key_list}),
             indent=4,
         )
 
@@ -620,7 +620,7 @@ class GatewaySettings(object):
                 raise CriticalError("Invalid attribute type in settings.")
 
         except (KeyError, ValueError):
-            raise FunctionReturn(
+            raise SoftError(
                 f"Error: Invalid setting value '{value_str}'.", delay=1, tail_clear=True
             )
 
@@ -637,12 +637,12 @@ class GatewaySettings(object):
         """
         if key == "serial_baudrate":
             if value not in serial.Serial().BAUDRATES:
-                raise FunctionReturn("Error: The specified baud rate is not supported.")
+                raise SoftError("Error: The specified baud rate is not supported.")
             m_print("Baud rate will change on restart.", head=1, tail=1)
 
         if key == "serial_error_correction":
             if value < 0:
-                raise FunctionReturn("Error: Invalid value for error correction ratio.")
+                raise SoftError("Error: Invalid value for error correction ratio.")
             m_print("Error correction ratio will change on restart.", head=1, tail=1)
 
     def print_settings(self) -> None:
@@ -665,7 +665,7 @@ class GatewaySettings(object):
         description_indent = 64
 
         if terminal_width < description_indent + 1:
-            raise FunctionReturn("Error: Screen width is too small.")
+            raise SoftError("Error: Screen width is too small.")
 
         # Populate columns with setting data
         for key in desc_d:
