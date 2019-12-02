@@ -293,9 +293,9 @@ class MasterKey(object):
                 phase("Password correct", done=True, delay=1)
                 clear_screen()
                 return purp_key
-            else:
-                phase("Invalid password", done=True, delay=1)
-                print_on_previous_line(reps=5)
+
+            phase("Invalid password", done=True, delay=1)
+            print_on_previous_line(reps=5)
 
     @classmethod
     def new_password(cls, purpose: str = "master password") -> str:
