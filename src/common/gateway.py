@@ -214,10 +214,8 @@ class Gateway(object):
 
     def read(self) -> bytes:
         """Read data via socket/serial interface."""
-        if self.settings.local_testing_mode:
-            return self.read_socket()
-        else:
-            return self.read_serial()
+        data = self.read_socket() if self.settings.local_testing_mode else self.read_serial()
+        return data
 
     def add_error_correction(self, packet: bytes) -> bytes:
         """Add error correction to packet that will be output.
