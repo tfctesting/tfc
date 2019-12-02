@@ -191,7 +191,7 @@ function move_tails_dependencies {
     # Move Tails dependencies in batch.
     t_sudo mv "$HOME/${VIRTUALENV}" "/opt/tfc/"
     t_sudo mv "$HOME/${PYSERIAL}"   "/opt/tfc/"
-    t_sudo mv "$HOME/${STEM}"       "/opt/tfc/"
+    # t_sudo mv "$HOME/${STEM}"       "/opt/tfc/"
     t_sudo mv "$HOME/${PYSOCKS}"    "/opt/tfc/"
 
     # Requests
