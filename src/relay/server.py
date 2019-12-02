@@ -153,8 +153,7 @@ def get_message(purp_url_token: str,
         packets = '\n'.join(message_dict[identified_onion_pub_key])  # All messages for contact
         message_dict[identified_onion_pub_key] = []
         return packets
-    else:
-        return ''
+    return ''
 
 
 def get_file(purp_url_token:  str,
