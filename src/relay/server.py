@@ -176,5 +176,4 @@ def get_file(purp_url_token:  str,
         mem.write(file_dict[identified_onion_pub_key].pop(0))
         mem.seek(0)
         return send_file(mem, mimetype='application/octet-stream')
-    else:
-        return ''
+    return ''
