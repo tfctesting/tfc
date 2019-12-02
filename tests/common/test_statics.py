@@ -31,7 +31,7 @@ class TestStatics(unittest.TestCase):
 
     def test_uniqueness(self):
         variable_list = [getattr(src.common.statics, i) for i in dir(src.common.statics) if not i.startswith('__')]
-        variable_list = [v for v in variable_list if (isinstance(v, str) or isinstance(v, bytes))]
+        variable_list = [v for v in variable_list if (isinstance(v, (bytes, str)))]
 
         # Debugger
         for unique_variable in list(set(variable_list)):
