@@ -8,6 +8,8 @@
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/4a3de2a3691f44029d9c779a01b912e1)](https://www.codacy.com/manual/tfctesting/tfc?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=tfctesting/tfc&amp;utm_campaign=Badge_Grade)
 [![CodeFactor](https://www.codefactor.io/repository/github/tfctesting/tfc/badge)](https://www.codefactor.io/repository/github/tfctesting/tfc)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+[![Known Vulnerabilities](https://snyk.io/test/github/tfctesting/tfc/badge.svg)](https://snyk.io/test/github/tfctesting/tfc) 
+
 
 # Do not use this repository
 
