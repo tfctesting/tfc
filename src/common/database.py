@@ -27,10 +27,15 @@ from typing import Iterator
 
 import nacl.exceptions
 
-from src.common.crypto     import auth_and_decrypt, blake2b, encrypt_and_sign
+from src.common.crypto import auth_and_decrypt, blake2b, encrypt_and_sign
 from src.common.exceptions import CriticalError
-from src.common.misc       import ensure_dir, separate_trailer
-from src.common.statics    import BLAKE2_DIGEST_LENGTH, DB_WRITE_RETRY_LIMIT, DIR_USER_DATA, TEMP_POSTFIX
+from src.common.misc import ensure_dir, separate_trailer
+from src.common.statics import (
+    BLAKE2_DIGEST_LENGTH,
+    DB_WRITE_RETRY_LIMIT,
+    DIR_USER_DATA,
+    TEMP_POSTFIX,
+)
 
 if typing.TYPE_CHECKING:
     from src.common.db_masterkey import MasterKey
@@ -42,16 +47,16 @@ class TFCDatabase(object):
     as atomicity to ensure database writing always succeeds or fails.
     """
 
-    def __init__(self, database_name: str, master_key: 'MasterKey') -> None:
+    def __init__(self, database_name: str, master_key: "MasterKey") -> None:
         """Initialize TFC database."""
         self.database_name = database_name
         self.database_temp = database_name + TEMP_POSTFIX
-        self.database_key  = master_key.master_key
+        self.database_key = master_key.master_key
 
     @staticmethod
     def write_to_file(file_name: str, data: bytes) -> None:
         """Write data to file."""
-        with open(file_name, 'wb+') as f:
+        with open(file_name, "wb+") as f:
             f.write(data)
 
             # Write data from program buffer to operating system buffer.
@@ -65,7 +70,7 @@ class TFCDatabase(object):
 
     def verify_file(self, database_name: str) -> bool:
         """Verify integrity of file content."""
-        with open(database_name, 'rb') as f:
+        with open(database_name, "rb") as f:
             purp_data = f.read()
 
         try:
@@ -82,14 +87,13 @@ class TFCDatabase(object):
         while not self.verify_file(self.database_temp):
             retries += 1
             if retries >= DB_WRITE_RETRY_LIMIT:
-                raise CriticalError(f"Writing to database '{self.database_temp}' failed after {retries} retries.")
+                raise CriticalError(
+                    f"Writing to database '{self.database_temp}' failed after {retries} retries."
+                )
 
             self.write_to_file(self.database_temp, ct_bytes)
 
-    def store_database(self,
-                       pt_bytes: bytes,
-                       replace:  bool = True
-                       ) -> None:
+    def store_database(self, pt_bytes: bytes, replace: bool = True) -> None:
         """Encrypt and store data into database."""
         ct_bytes = encrypt_and_sign(pt_bytes, self.database_key)
         ensure_dir(DIR_USER_DATA)
@@ -123,10 +127,12 @@ class TFCDatabase(object):
                 # we delete it and continue using the old file to ensure atomicity.
                 os.remove(self.database_temp)
 
-        with open(self.database_name, 'rb') as f:
+        with open(self.database_name, "rb") as f:
             database_data = f.read()
 
-        return auth_and_decrypt(database_data, self.database_key, database=self.database_name)
+        return auth_and_decrypt(
+            database_data, self.database_key, database=self.database_name
+        )
 
 
 class TFCUnencryptedDatabase(object):
@@ -142,7 +148,7 @@ class TFCUnencryptedDatabase(object):
     @staticmethod
     def write_to_file(file_name: str, data: bytes) -> None:
         """Write data to file."""
-        with open(file_name, 'wb+') as f:
+        with open(file_name, "wb+") as f:
             f.write(data)
             f.flush()
             os.fsync(f.fileno())
@@ -150,7 +156,7 @@ class TFCUnencryptedDatabase(object):
     @staticmethod
     def verify_file(database_name: str) -> bool:
         """Verify integrity of file content."""
-        with open(database_name, 'rb') as f:
+        with open(database_name, "rb") as f:
             file_data = f.read()
 
         purp_data, digest = separate_trailer(file_data, BLAKE2_DIGEST_LENGTH)
@@ -165,7 +171,9 @@ class TFCUnencryptedDatabase(object):
         while not self.verify_file(self.database_temp):
             retries += 1
             if retries >= DB_WRITE_RETRY_LIMIT:
-                raise CriticalError(f"Writing to database '{self.database_temp}' failed after {retries} retries.")
+                raise CriticalError(
+                    f"Writing to database '{self.database_temp}' failed after {retries} retries."
+                )
 
             self.write_to_file(self.database_temp, data)
 
@@ -206,7 +214,7 @@ class TFCUnencryptedDatabase(object):
                 # so we delete it and continue using the old file to ensure atomicity.
                 os.remove(self.database_temp)
 
-        with open(self.database_name, 'rb') as f:
+        with open(self.database_name, "rb") as f:
             database_data = f.read()
 
         database_data, digest = separate_trailer(database_data, BLAKE2_DIGEST_LENGTH)
@@ -218,31 +226,34 @@ class TFCUnencryptedDatabase(object):
 
 
 class MessageLog(object):
+    """MessageLog stores message logs into an SQLite3 database."""
 
     def __init__(self, database_name: str, database_key: bytes) -> None:
         """Create a new MessageLog object."""
         self.database_name = database_name
         self.database_temp = self.database_name + TEMP_POSTFIX
-        self.database_key  = database_key
+        self.database_key = database_key
 
         ensure_dir(DIR_USER_DATA)
         if os.path.isfile(self.database_name):
             self.check_for_temp_database()
 
         self.conn = sqlite3.connect(self.database_name)
-        self.c    = self.conn.cursor()
+        self.c = self.conn.cursor()
         self.create_table()
 
     def __iter__(self) -> Iterator[bytes]:
         """Iterate over encrypted log entries."""
         for log_entry in self.c.execute("SELECT log_entry FROM log_entries"):
-            plaintext = auth_and_decrypt(log_entry[0], self.database_key, database=self.database_name)
+            plaintext = auth_and_decrypt(
+                log_entry[0], self.database_key, database=self.database_name
+            )
             yield plaintext
 
     def verify_file(self, database_name: str) -> bool:
         """Verify integrity of database file content."""
         conn = sqlite3.connect(database_name)
-        c    = conn.cursor()
+        c = conn.cursor()
 
         try:
             log_entries = c.execute("SELECT log_entry FROM log_entries")
@@ -269,19 +280,23 @@ class MessageLog(object):
 
     def create_table(self) -> None:
         """Create new table for logged messages."""
-        self.c.execute("""CREATE TABLE IF NOT EXISTS log_entries (id INTEGER PRIMARY KEY, log_entry BLOB NOT NULL)""")
+        self.c.execute(
+            """CREATE TABLE IF NOT EXISTS log_entries (id INTEGER PRIMARY KEY, log_entry BLOB NOT NULL)"""
+        )
 
     def insert_log_entry(self, pt_log_entry: bytes) -> None:
         """Encrypt log entry and insert the ciphertext into the sqlite3 database."""
         ct_log_entry = encrypt_and_sign(pt_log_entry, self.database_key)
 
         try:
-            self.c.execute(f"""INSERT INTO log_entries (log_entry) VALUES (?)""", (ct_log_entry,))
+            self.c.execute(
+                f"""INSERT INTO log_entries (log_entry) VALUES (?)""", (ct_log_entry,)
+            )
             self.conn.commit()
         except sqlite3.Error:
             # Re-connect to database
             self.conn = sqlite3.connect(self.database_name)
-            self.c    = self.conn.cursor()
+            self.c = self.conn.cursor()
             self.insert_log_entry(pt_log_entry)
 
     def close_database(self) -> None:

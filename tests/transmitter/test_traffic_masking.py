@@ -22,18 +22,23 @@ along with TFC. If not, see <https://www.gnu.org/licenses/>.
 import time
 import unittest
 
-from src.common.misc    import HideRunTime
-from src.common.statics import (C_N_HEADER, PADDING_LENGTH, PLACEHOLDER_DATA, TM_NOISE_COMMAND_QUEUE,
-                                TM_NOISE_PACKET_QUEUE, TRAFFIC_MASKING)
+from src.common.misc import HideRunTime
+from src.common.statics import (
+    C_N_HEADER,
+    PADDING_LENGTH,
+    PLACEHOLDER_DATA,
+    TM_NOISE_COMMAND_QUEUE,
+    TM_NOISE_PACKET_QUEUE,
+    TRAFFIC_MASKING,
+)
 
 from src.transmitter.traffic_masking import noise_loop
 
 from tests.mock_classes import ContactList, Settings
-from tests.utils        import gen_queue_dict, tear_queues
+from tests.utils import gen_queue_dict, tear_queues
 
 
 class TestHideRunTime(unittest.TestCase):
-
     def setUp(self):
         """Pre-test actions."""
         self.settings = Settings()
@@ -56,11 +61,10 @@ class TestHideRunTime(unittest.TestCase):
 
 
 class TestNoiseLoop(unittest.TestCase):
-
     def setUp(self):
         """Pre-test actions."""
-        self.queues       = gen_queue_dict()
-        self.contact_list = ContactList(nicks=['Alice'])
+        self.queues = gen_queue_dict()
+        self.contact_list = ContactList(nicks=["Alice"])
 
     def tearDown(self):
         """Post-test actions."""
@@ -79,5 +83,5 @@ class TestNoiseLoop(unittest.TestCase):
         self.assertTrue(log_as_ph)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main(exit=False)

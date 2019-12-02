@@ -20,135 +20,137 @@ along with TFC. If not, see <https://www.gnu.org/licenses/>.
 """
 
 # Program details
-TFC         = 'TFC'
-VERSION     = '1.19.12'
-TRANSMITTER = 'Transmitter'
-RECEIVER    = 'Receiver'
-RELAY       = 'Relay'
+TFC = "TFC"
+VERSION = "1.19.12"
+TRANSMITTER = "Transmitter"
+RECEIVER = "Receiver"
+RELAY = "Relay"
 
 
 # Identifiers
 #
 # Placeholder accounts for databases need to be valid v3 Onion addresses.
-LOCAL_ID      = 'localidlocalidlocalidlocalidlocalidlocalidlocalidloj7uyd'
-LOCAL_PUBKEY  = b'[\x84\x05\xa0kp\x80\xb4\rn\x10\x16\x81\xad\xc2\x02\xd05\xb8@Z\x06\xb7\x08\x0b@\xd6\xe1\x01h\x1a\xdc'
-LOCAL_NICK    = 'local Source Computer'
-DUMMY_CONTACT = 'dummycontactdummycontactdummycontactdummycontactdumhsiid'
-DUMMY_MEMBER  = 'dummymemberdummymemberdummymemberdummymemberdummymedakad'
-DUMMY_NICK    = 'dummy_nick'
-DUMMY_GROUP   = 'dummy_group'
-TX            = 'tx'
-RX            = 'rx'
-NC            = 'nc'
-TAILS         = 'TAILS_PRODUCT_NAME="Tails"'
+LOCAL_ID = "localidlocalidlocalidlocalidlocalidlocalidlocalidloj7uyd"
+LOCAL_PUBKEY = b"[\x84\x05\xa0kp\x80\xb4\rn\x10\x16\x81\xad\xc2\x02\xd05\xb8@Z\x06\xb7\x08\x0b@\xd6\xe1\x01h\x1a\xdc"
+LOCAL_NICK = "local Source Computer"
+DUMMY_CONTACT = "dummycontactdummycontactdummycontactdummycontactdumhsiid"
+DUMMY_MEMBER = "dummymemberdummymemberdummymemberdummymemberdummymedakad"
+DUMMY_NICK = "dummy_nick"
+DUMMY_GROUP = "dummy_group"
+TX = "tx"
+RX = "rx"
+NC = "nc"
+TAILS = 'TAILS_PRODUCT_NAME="Tails"'
 
 
 # Window identifiers
-WIN_TYPE_COMMAND = 'system messages'
-WIN_TYPE_FILE    = 'incoming files'
-WIN_TYPE_CONTACT = 'contact'
-WIN_TYPE_GROUP   = 'group'
+WIN_TYPE_COMMAND = "system messages"
+WIN_TYPE_FILE = "incoming files"
+WIN_TYPE_CONTACT = "contact"
+WIN_TYPE_GROUP = "group"
 
 
 # Window UIDs
-WIN_UID_COMMAND = b'win_uid_command'
-WIN_UID_FILE    = b'win_uid_file'
+WIN_UID_COMMAND = b"win_uid_command"
+WIN_UID_FILE = b"win_uid_file"
 
 
 # Packet types
-COMMAND = 'command'
-FILE    = 'file'
-MESSAGE = 'message'
+COMMAND = "command"
+FILE = "file"
+MESSAGE = "message"
 
 
 # Group message IDs
-NEW_GROUP        = 'new_group'
-ADDED_MEMBERS    = 'added_members'
-ALREADY_MEMBER   = 'already_member'
-REMOVED_MEMBERS  = 'removed_members'
-NOT_IN_GROUP     = 'not_in_group'
-UNKNOWN_ACCOUNTS = 'unknown_accounts'
+NEW_GROUP = "new_group"
+ADDED_MEMBERS = "added_members"
+ALREADY_MEMBER = "already_member"
+REMOVED_MEMBERS = "removed_members"
+NOT_IN_GROUP = "not_in_group"
+UNKNOWN_ACCOUNTS = "unknown_accounts"
 
 
 # Base58 encoding
-B58_ALPHABET   = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz'
-MAINNET_HEADER = b'\x80'
-TESTNET_HEADER = b'\xef'
+B58_ALPHABET = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz"
+MAINNET_HEADER = b"\x80"
+TESTNET_HEADER = b"\xef"
 
 
 # Base58 key types
-B58_PUBLIC_KEY = 'b58_public_key'
-B58_LOCAL_KEY  = 'b58_local_key'
+B58_PUBLIC_KEY = "b58_public_key"
+B58_LOCAL_KEY = "b58_local_key"
 
 
 # Base58 key input guides
-B58_PUBLIC_KEY_GUIDE = '   A       B       C       D       E       F       G       H       I       J       K       L   '
-B58_LOCAL_KEY_GUIDE  = ' A   B   C   D   E   F   G   H   I   J   K   L   M   N   O   P   Q '
+B58_PUBLIC_KEY_GUIDE = "   A       B       C       D       E       F       G       H       I       J       K       L   "
+B58_LOCAL_KEY_GUIDE = (
+    " A   B   C   D   E   F   G   H   I   J   K   L   M   N   O   P   Q "
+)
 
 
 # Key exchange types
-ECDHE = 'X448'
-PSK   = 'PSK'
+ECDHE = "X448"
+PSK = "PSK"
 
 
 # Contact setting types
-LOGGING = 'logging'
-STORE   = 'store'
-NOTIFY  = 'notify'
+LOGGING = "logging"
+STORE = "store"
+NOTIFY = "notify"
 
 
 # Command identifiers
-CLEAR    = 'clear'
-RESET    = 'reset'
-POWEROFF = 'systemctl poweroff'
-GENERATE = 'generate'
+CLEAR = "clear"
+RESET = "reset"
+POWEROFF = "systemctl poweroff"
+GENERATE = "generate"
 
 
 # Contact setting management
 CONTACT_SETTING_HEADER_LENGTH = 2
-ENABLE                        = b'es'
-DISABLE                       = b'ds'
-ALL                           = 'all'
+ENABLE = b"es"
+DISABLE = b"ds"
+ALL = "all"
 
 
 # Networked Computer bypass states
-NC_BYPASS_START = 'nc_bypass_start'
-NC_BYPASS_STOP  = 'nc_bypass_stop'
+NC_BYPASS_START = "nc_bypass_start"
+NC_BYPASS_STOP = "nc_bypass_stop"
 
 
 # Status messages
-DONE  = 'DONE'
-EVENT = '-!-'
-ME    = 'Me'
+DONE = "DONE"
+EVENT = "-!-"
+ME = "Me"
 
 
 # Data diode simulator identifiers
-IDLE      = 'Idle'
-DATA_FLOW = 'Data flow'
-SCNCLR    = 'scnclr'
-SCNCRL    = 'scncrl'
-NCDCLR    = 'ncdclr'
-NCDCRL    = 'ncdcrl'
+IDLE = "Idle"
+DATA_FLOW = "Data flow"
+SCNCLR = "scnclr"
+SCNCRL = "scncrl"
+NCDCLR = "ncdclr"
+NCDCRL = "ncdcrl"
 
 
 # VT100 codes
 #
 # VT100 codes are used to control printing to the terminal. These make
 # building functions like textbox drawers possible.
-CURSOR_UP_ONE_LINE      = '\x1b[1A'
-CURSOR_RIGHT_ONE_COLUMN = '\x1b[1C'
-CLEAR_ENTIRE_LINE       = '\x1b[2K'
-CLEAR_ENTIRE_SCREEN     = '\x1b[2J'
-CURSOR_LEFT_UP_CORNER   = '\x1b[H'
-BOLD_ON                 = '\033[1m'
-NORMAL_TEXT             = '\033[0m'
+CURSOR_UP_ONE_LINE = "\x1b[1A"
+CURSOR_RIGHT_ONE_COLUMN = "\x1b[1C"
+CLEAR_ENTIRE_LINE = "\x1b[2K"
+CLEAR_ENTIRE_SCREEN = "\x1b[2J"
+CURSOR_LEFT_UP_CORNER = "\x1b[H"
+BOLD_ON = "\033[1m"
+NORMAL_TEXT = "\033[0m"
 
 
 # Separators
 #
 # Separator byte is a non-printable byte used to separate fields in
 # serialized data structures.
-US_BYTE = b'\x1f'
+US_BYTE = b"\x1f"
 
 
 # Datagram headers
@@ -197,14 +199,14 @@ US_BYTE = b'\x1f'
 # not cause security issues because if an adversary can compromise the
 # Networked Computer to the point it can issue commands to the Relay
 # Program, they could DoS the Relay Program, and thus TFC, anyway.
-DATAGRAM_TIMESTAMP_LENGTH   = 8
-DATAGRAM_HEADER_LENGTH      = 1
-LOCAL_KEY_DATAGRAM_HEADER   = b'L'
-PUBLIC_KEY_DATAGRAM_HEADER  = b'P'
-MESSAGE_DATAGRAM_HEADER     = b'M'
-COMMAND_DATAGRAM_HEADER     = b'K'
-FILE_DATAGRAM_HEADER        = b'F'
-UNENCRYPTED_DATAGRAM_HEADER = b'U'
+DATAGRAM_TIMESTAMP_LENGTH = 8
+DATAGRAM_HEADER_LENGTH = 1
+LOCAL_KEY_DATAGRAM_HEADER = b"L"
+PUBLIC_KEY_DATAGRAM_HEADER = b"P"
+MESSAGE_DATAGRAM_HEADER = b"M"
+COMMAND_DATAGRAM_HEADER = b"K"
+FILE_DATAGRAM_HEADER = b"F"
+UNENCRYPTED_DATAGRAM_HEADER = b"U"
 
 
 # Group management headers
@@ -213,15 +215,15 @@ UNENCRYPTED_DATAGRAM_HEADER = b'U'
 # Transmitter Program recommends the user to send when they make changes
 # to the member list of a group, or when they add or remove groups. These
 # messages are displayed by the Relay Program.
-GROUP_ID_LENGTH             = 4
-GROUP_ID_ENC_LENGTH         = 13
-GROUP_MSG_ID_LENGTH         = 16
-GROUP_MGMT_HEADER_LENGTH    = 1
-GROUP_MSG_INVITE_HEADER     = b'I'
-GROUP_MSG_JOIN_HEADER       = b'J'
-GROUP_MSG_MEMBER_ADD_HEADER = b'N'
-GROUP_MSG_MEMBER_REM_HEADER = b'R'
-GROUP_MSG_EXIT_GROUP_HEADER = b'X'
+GROUP_ID_LENGTH = 4
+GROUP_ID_ENC_LENGTH = 13
+GROUP_MSG_ID_LENGTH = 16
+GROUP_MGMT_HEADER_LENGTH = 1
+GROUP_MSG_INVITE_HEADER = b"I"
+GROUP_MSG_JOIN_HEADER = b"J"
+GROUP_MSG_MEMBER_ADD_HEADER = b"N"
+GROUP_MSG_MEMBER_REM_HEADER = b"R"
+GROUP_MSG_EXIT_GROUP_HEADER = b"X"
 
 
 # Assembly packet headers
@@ -232,28 +234,28 @@ GROUP_MSG_EXIT_GROUP_HEADER = b'X'
 # delivered to the recipient/local Destination Computer. The header
 # delivers the information about if and when to assemble the packet,
 # as well as when to drop any previously collected assembly packets.
-FILE_PACKET_CTR_LENGTH        = 8
+FILE_PACKET_CTR_LENGTH = 8
 ASSEMBLY_PACKET_HEADER_LENGTH = 1
 
-M_S_HEADER = b'a'  # Short message packet
-M_L_HEADER = b'b'  # First    packet of multi-packet message
-M_A_HEADER = b'c'  # Appended packet of multi-packet message
-M_E_HEADER = b'd'  # Last     packet of multi-packet message
-M_C_HEADER = b'e'  # Cancelled          multi-packet message
-P_N_HEADER = b'f'  # Noise message packet
+M_S_HEADER = b"a"  # Short message packet
+M_L_HEADER = b"b"  # First    packet of multi-packet message
+M_A_HEADER = b"c"  # Appended packet of multi-packet message
+M_E_HEADER = b"d"  # Last     packet of multi-packet message
+M_C_HEADER = b"e"  # Cancelled          multi-packet message
+P_N_HEADER = b"f"  # Noise message packet
 
-F_S_HEADER = b'A'  # Short file packet
-F_L_HEADER = b'B'  # First    packet of multi-packet file
-F_A_HEADER = b'C'  # Appended packet of multi-packet file
-F_E_HEADER = b'D'  # Last     packet of multi-packet file
-F_C_HEADER = b'E'  # Cancelled          multi-packet file
+F_S_HEADER = b"A"  # Short file packet
+F_L_HEADER = b"B"  # First    packet of multi-packet file
+F_A_HEADER = b"C"  # Appended packet of multi-packet file
+F_E_HEADER = b"D"  # Last     packet of multi-packet file
+F_C_HEADER = b"E"  # Cancelled          multi-packet file
 
-C_S_HEADER = b'0'  # Short command packet
-C_L_HEADER = b'1'  # First    packet of multi-packet command
-C_A_HEADER = b'2'  # Appended packet of multi-packet command
-C_E_HEADER = b'3'  # Last     packet of multi-packet command
-C_C_HEADER = b'4'  # Cancelled          multi-packet command (reserved but not in use)
-C_N_HEADER = b'5'  # Noise command packet
+C_S_HEADER = b"0"  # Short command packet
+C_L_HEADER = b"1"  # First    packet of multi-packet command
+C_A_HEADER = b"2"  # Appended packet of multi-packet command
+C_E_HEADER = b"3"  # Last     packet of multi-packet command
+C_C_HEADER = b"4"  # Cancelled          multi-packet command (reserved but not in use)
+C_N_HEADER = b"5"  # Noise command packet
 
 
 # Unencrypted command headers
@@ -267,17 +269,17 @@ C_N_HEADER = b'5'  # Noise command packet
 # the Relay Program.
 UNENCRYPTED_COMMAND_HEADER_LENGTH = 2
 
-UNENCRYPTED_SCREEN_CLEAR         = b'UC'
-UNENCRYPTED_SCREEN_RESET         = b'UR'
-UNENCRYPTED_EXIT_COMMAND         = b'UX'
-UNENCRYPTED_EC_RATIO             = b'UE'
-UNENCRYPTED_BAUDRATE             = b'UB'
-UNENCRYPTED_WIPE_COMMAND         = b'UW'
-UNENCRYPTED_ADD_NEW_CONTACT      = b'UN'
-UNENCRYPTED_ADD_EXISTING_CONTACT = b'UA'
-UNENCRYPTED_REM_CONTACT          = b'UD'
-UNENCRYPTED_ONION_SERVICE_DATA   = b'UO'
-UNENCRYPTED_MANAGE_CONTACT_REQ   = b'UM'
+UNENCRYPTED_SCREEN_CLEAR = b"UC"
+UNENCRYPTED_SCREEN_RESET = b"UR"
+UNENCRYPTED_EXIT_COMMAND = b"UX"
+UNENCRYPTED_EC_RATIO = b"UE"
+UNENCRYPTED_BAUDRATE = b"UB"
+UNENCRYPTED_WIPE_COMMAND = b"UW"
+UNENCRYPTED_ADD_NEW_CONTACT = b"UN"
+UNENCRYPTED_ADD_EXISTING_CONTACT = b"UA"
+UNENCRYPTED_REM_CONTACT = b"UD"
+UNENCRYPTED_ONION_SERVICE_DATA = b"UO"
+UNENCRYPTED_MANAGE_CONTACT_REQ = b"UM"
 
 
 # Encrypted command headers
@@ -289,31 +291,31 @@ UNENCRYPTED_MANAGE_CONTACT_REQ   = b'UM'
 # provided parameters (if any) must be redirected.
 ENCRYPTED_COMMAND_HEADER_LENGTH = 2
 
-LOCAL_KEY_RDY = b'LI'
-WIN_ACTIVITY  = b'SA'
-WIN_SELECT    = b'WS'
-CLEAR_SCREEN  = b'SC'
-RESET_SCREEN  = b'SR'
-EXIT_PROGRAM  = b'EX'
-LOG_DISPLAY   = b'LD'
-LOG_EXPORT    = b'LE'
-LOG_REMOVE    = b'LR'
-CH_MASTER_KEY = b'MK'
-CH_NICKNAME   = b'NC'
-CH_SETTING    = b'CS'
-CH_LOGGING    = b'CL'
-CH_FILE_RECV  = b'CF'
-CH_NOTIFY     = b'CN'
-GROUP_CREATE  = b'GC'
-GROUP_ADD     = b'GA'
-GROUP_REMOVE  = b'GR'
-GROUP_DELETE  = b'GD'
-GROUP_RENAME  = b'GN'
-KEY_EX_ECDHE  = b'KE'
-KEY_EX_PSK_TX = b'KT'
-KEY_EX_PSK_RX = b'KR'
-CONTACT_REM   = b'CR'
-WIPE_USR_DATA = b'WD'
+LOCAL_KEY_RDY = b"LI"
+WIN_ACTIVITY = b"SA"
+WIN_SELECT = b"WS"
+CLEAR_SCREEN = b"SC"
+RESET_SCREEN = b"SR"
+EXIT_PROGRAM = b"EX"
+LOG_DISPLAY = b"LD"
+LOG_EXPORT = b"LE"
+LOG_REMOVE = b"LR"
+CH_MASTER_KEY = b"MK"
+CH_NICKNAME = b"NC"
+CH_SETTING = b"CS"
+CH_LOGGING = b"CL"
+CH_FILE_RECV = b"CF"
+CH_NOTIFY = b"CN"
+GROUP_CREATE = b"GC"
+GROUP_ADD = b"GA"
+GROUP_REMOVE = b"GR"
+GROUP_DELETE = b"GD"
+GROUP_RENAME = b"GN"
+KEY_EX_ECDHE = b"KE"
+KEY_EX_PSK_TX = b"KT"
+KEY_EX_PSK_RX = b"KR"
+CONTACT_REM = b"CR"
+WIPE_USR_DATA = b"WD"
 
 
 # Origin headers
@@ -329,9 +331,9 @@ WIPE_USR_DATA = b'WD'
 # On Destination Computer, the Receiver Program uses the origin header to
 # determine which unidirectional keys it should load to decrypt the
 # datagram payload.
-ORIGIN_HEADER_LENGTH  = 1
-ORIGIN_USER_HEADER    = b'o'
-ORIGIN_CONTACT_HEADER = b'i'
+ORIGIN_HEADER_LENGTH = 1
+ORIGIN_USER_HEADER = b"o"
+ORIGIN_CONTACT_HEADER = b"i"
 
 
 # Message headers
@@ -355,11 +357,11 @@ ORIGIN_CONTACT_HEADER = b'i'
 # Messages with file key header contain the hash of the file ciphertext
 # that was sent to the user earlier. It also contains the symmetric
 # decryption key for that file.
-MESSAGE_HEADER_LENGTH  = 1
-WHISPER_FIELD_LENGTH   = 1
-PRIVATE_MESSAGE_HEADER = b'p'
-GROUP_MESSAGE_HEADER   = b'g'
-FILE_KEY_HEADER        = b'k'
+MESSAGE_HEADER_LENGTH = 1
+WHISPER_FIELD_LENGTH = 1
+PRIVATE_MESSAGE_HEADER = b"p"
+GROUP_MESSAGE_HEADER = b"g"
+FILE_KEY_HEADER = b"k"
 
 
 # Delays
@@ -374,185 +376,185 @@ FILE_KEY_HEADER        = b'k'
 # checking the online status of the contact (and the state of their
 # ephemeral URL token public key).
 TRAFFIC_MASKING_QUEUE_CHECK_DELAY = 0.1
-TRAFFIC_MASKING_MIN_STATIC_DELAY  = 0.1
-TRAFFIC_MASKING_MIN_RANDOM_DELAY  = 0.1
-LOCAL_TESTING_PACKET_DELAY        = 0.1
-RELAY_CLIENT_MAX_DELAY            = 8
-RELAY_CLIENT_MIN_DELAY            = 0.125
-CLIENT_OFFLINE_THRESHOLD          = 4.0
+TRAFFIC_MASKING_MIN_STATIC_DELAY = 0.1
+TRAFFIC_MASKING_MIN_RANDOM_DELAY = 0.1
+LOCAL_TESTING_PACKET_DELAY = 0.1
+RELAY_CLIENT_MAX_DELAY = 8
+RELAY_CLIENT_MIN_DELAY = 0.125
+CLIENT_OFFLINE_THRESHOLD = 4.0
 
 
 # Constant time delay types
-STATIC          = 'static'
-TRAFFIC_MASKING = 'traffic_masking'
+STATIC = "static"
+TRAFFIC_MASKING = "traffic_masking"
 
 
 # Default directories
-DIR_USER_DATA  = 'user_data/'
-DIR_RECV_FILES = 'received_files/'
-DIR_TFC        = 'tfc/'
-TEMP_POSTFIX   = '_temp'
+DIR_USER_DATA = "user_data/"
+DIR_RECV_FILES = "received_files/"
+DIR_TFC = "tfc/"
+TEMP_POSTFIX = "_temp"
 
 
 # Key exchange status states
-KEX_STATUS_LENGTH     = 1
-KEX_STATUS_NONE       = b'\xa0'
-KEX_STATUS_PENDING    = b'\xa1'
-KEX_STATUS_UNVERIFIED = b'\xa2'
-KEX_STATUS_VERIFIED   = b'\xa3'
-KEX_STATUS_NO_RX_PSK  = b'\xa4'
-KEX_STATUS_HAS_RX_PSK = b'\xa5'
-KEX_STATUS_LOCAL_KEY  = b'\xa6'
+KEX_STATUS_LENGTH = 1
+KEX_STATUS_NONE = b"\xa0"
+KEX_STATUS_PENDING = b"\xa1"
+KEX_STATUS_UNVERIFIED = b"\xa2"
+KEX_STATUS_VERIFIED = b"\xa3"
+KEX_STATUS_NO_RX_PSK = b"\xa4"
+KEX_STATUS_HAS_RX_PSK = b"\xa5"
+KEX_STATUS_LOCAL_KEY = b"\xa6"
 
 
 # Queue dictionary keys
 #
 # Common
-EXIT_QUEUE      = b'exit'
-GATEWAY_QUEUE   = b'gateway'
-UNIT_TEST_QUEUE = b'unit_test'
+EXIT_QUEUE = b"exit"
+GATEWAY_QUEUE = b"gateway"
+UNIT_TEST_QUEUE = b"unit_test"
 
 # Transmitter
-MESSAGE_PACKET_QUEUE    = b'message_packet'
-COMMAND_PACKET_QUEUE    = b'command_packet'
-TM_MESSAGE_PACKET_QUEUE = b'tm_message_packet'
-TM_FILE_PACKET_QUEUE    = b'tm_file_packet'
-TM_COMMAND_PACKET_QUEUE = b'tm_command_packet'
-TM_NOISE_PACKET_QUEUE   = b'tm_noise_packet'
-TM_NOISE_COMMAND_QUEUE  = b'tm_noise_command'
-RELAY_PACKET_QUEUE      = b'relay_packet'
-LOG_PACKET_QUEUE        = b'log_packet'
-LOG_SETTING_QUEUE       = b'log_setting'
-TRAFFIC_MASKING_QUEUE   = b'traffic_masking'
-LOGFILE_MASKING_QUEUE   = b'logfile_masking'
-KEY_MANAGEMENT_QUEUE    = b'key_management'
-KEY_MGMT_ACK_QUEUE      = b'key_mgmt_ack'
-SENDER_MODE_QUEUE       = b'sender_mode'
-WINDOW_SELECT_QUEUE     = b'window_select'
+MESSAGE_PACKET_QUEUE = b"message_packet"
+COMMAND_PACKET_QUEUE = b"command_packet"
+TM_MESSAGE_PACKET_QUEUE = b"tm_message_packet"
+TM_FILE_PACKET_QUEUE = b"tm_file_packet"
+TM_COMMAND_PACKET_QUEUE = b"tm_command_packet"
+TM_NOISE_PACKET_QUEUE = b"tm_noise_packet"
+TM_NOISE_COMMAND_QUEUE = b"tm_noise_command"
+RELAY_PACKET_QUEUE = b"relay_packet"
+LOG_PACKET_QUEUE = b"log_packet"
+LOG_SETTING_QUEUE = b"log_setting"
+TRAFFIC_MASKING_QUEUE = b"traffic_masking"
+LOGFILE_MASKING_QUEUE = b"logfile_masking"
+KEY_MANAGEMENT_QUEUE = b"key_management"
+KEY_MGMT_ACK_QUEUE = b"key_mgmt_ack"
+SENDER_MODE_QUEUE = b"sender_mode"
+WINDOW_SELECT_QUEUE = b"window_select"
 
 # Relay
-DST_COMMAND_QUEUE  = b'dst_command'
-DST_MESSAGE_QUEUE  = b'dst_message'
-M_TO_FLASK_QUEUE   = b'm_to_flask'
-F_TO_FLASK_QUEUE   = b'f_to_flask'
-SRC_TO_RELAY_QUEUE = b'src_to_relay'
-URL_TOKEN_QUEUE    = b'url_token'
-GROUP_MGMT_QUEUE   = b'group_mgmt'
-GROUP_MSG_QUEUE    = b'group_msg'
-CONTACT_REQ_QUEUE  = b'contact_req'
-C_REQ_MGMT_QUEUE   = b'c_req_mgmt'
-CONTACT_MGMT_QUEUE = b'contact_mgmt'
-C_REQ_STATE_QUEUE  = b'c_req_state'
-ONION_KEY_QUEUE    = b'onion_key'
-ONION_CLOSE_QUEUE  = b'close_onion'
-TOR_DATA_QUEUE     = b'tor_data'
+DST_COMMAND_QUEUE = b"dst_command"
+DST_MESSAGE_QUEUE = b"dst_message"
+M_TO_FLASK_QUEUE = b"m_to_flask"
+F_TO_FLASK_QUEUE = b"f_to_flask"
+SRC_TO_RELAY_QUEUE = b"src_to_relay"
+URL_TOKEN_QUEUE = b"url_token"
+GROUP_MGMT_QUEUE = b"group_mgmt"
+GROUP_MSG_QUEUE = b"group_msg"
+CONTACT_REQ_QUEUE = b"contact_req"
+C_REQ_MGMT_QUEUE = b"c_req_mgmt"
+CONTACT_MGMT_QUEUE = b"contact_mgmt"
+C_REQ_STATE_QUEUE = b"c_req_state"
+ONION_KEY_QUEUE = b"onion_key"
+ONION_CLOSE_QUEUE = b"close_onion"
+TOR_DATA_QUEUE = b"tor_data"
 
 
 # Queue signals
-KDB_ADD_ENTRY_HEADER         = 'ADD'
-KDB_REMOVE_ENTRY_HEADER      = 'REM'
-KDB_M_KEY_CHANGE_HALT_HEADER = 'HALT'
-KDB_HALT_ACK_HEADER          = 'HALT_ACK'
-KDB_UPDATE_SIZE_HEADER       = 'STO'
-RP_ADD_CONTACT_HEADER        = 'RAC'
-RP_REMOVE_CONTACT_HEADER     = 'RRC'
-EXIT                         = 'EXIT'
-WIPE                         = 'WIPE'
+KDB_ADD_ENTRY_HEADER = "ADD"
+KDB_REMOVE_ENTRY_HEADER = "REM"
+KDB_M_KEY_CHANGE_HALT_HEADER = "HALT"
+KDB_HALT_ACK_HEADER = "HALT_ACK"
+KDB_UPDATE_SIZE_HEADER = "STO"
+RP_ADD_CONTACT_HEADER = "RAC"
+RP_REMOVE_CONTACT_HEADER = "RRC"
+EXIT = "EXIT"
+WIPE = "WIPE"
 
 
 # Serial interface
-BAUDS_PER_BYTE        = 10
+BAUDS_PER_BYTE = 10
 SERIAL_RX_MIN_TIMEOUT = 0.05
 
 # CLI indents
-CONTACT_LIST_INDENT  = 4
+CONTACT_LIST_INDENT = 4
 FILE_TRANSFER_INDENT = 4
-SETTINGS_INDENT      = 2
+SETTINGS_INDENT = 2
 
 # Compression
 COMPRESSION_LEVEL = 9
-MAX_MESSAGE_SIZE  = 100_000  # bytes
+MAX_MESSAGE_SIZE = 100_000  # bytes
 
 # Traffic masking
 NOISE_PACKET_BUFFER = 100
 
 # Local testing
-LOCALHOST             = 'localhost'
-SRC_DD_LISTEN_SOCKET  = 5005
-RP_LISTEN_SOCKET      = 5006
-DST_DD_LISTEN_SOCKET  = 5007
-DST_LISTEN_SOCKET     = 5008
-DD_ANIMATION_LENGTH   = 16
+LOCALHOST = "localhost"
+SRC_DD_LISTEN_SOCKET = 5005
+RP_LISTEN_SOCKET = 5006
+DST_DD_LISTEN_SOCKET = 5007
+DST_LISTEN_SOCKET = 5008
+DD_ANIMATION_LENGTH = 16
 DD_OFFSET_FROM_CENTER = 4
 
 # Field lengths
-ENCODED_BOOLEAN_LENGTH  = 1
-ENCODED_BYTE_LENGTH     = 1
-TIMESTAMP_LENGTH        = 4
-ENCODED_INTEGER_LENGTH  = 8
-ENCODED_FLOAT_LENGTH    = 8
-FILE_ETA_FIELD_LENGTH   = 8
-FILE_SIZE_FIELD_LENGTH  = 8
-GROUP_DB_HEADER_LENGTH  = 32
+ENCODED_BOOLEAN_LENGTH = 1
+ENCODED_BYTE_LENGTH = 1
+TIMESTAMP_LENGTH = 4
+ENCODED_INTEGER_LENGTH = 8
+ENCODED_FLOAT_LENGTH = 8
+FILE_ETA_FIELD_LENGTH = 8
+FILE_SIZE_FIELD_LENGTH = 8
+GROUP_DB_HEADER_LENGTH = 32
 PADDED_UTF32_STR_LENGTH = 1024
-CONFIRM_CODE_LENGTH     = 1
-PACKET_CHECKSUM_LENGTH  = 16
+CONFIRM_CODE_LENGTH = 1
+PACKET_CHECKSUM_LENGTH = 16
 
 # Onion address format
-ONION_ADDRESS_CHECKSUM_ID     = b'.onion checksum'
-ONION_SERVICE_VERSION         = b'\x03'
-ONION_SERVICE_VERSION_LENGTH  = 1
+ONION_ADDRESS_CHECKSUM_ID = b".onion checksum"
+ONION_SERVICE_VERSION = b"\x03"
+ONION_SERVICE_VERSION_LENGTH = 1
 ONION_ADDRESS_CHECKSUM_LENGTH = 2
-ONION_ADDRESS_LENGTH          = 56
+ONION_ADDRESS_LENGTH = 56
 
 # Misc
-BITS_PER_BYTE        = 8
-MAX_INT              = 2 ** 64 - 1
-B58_CHECKSUM_LENGTH  = 4
+BITS_PER_BYTE = 8
+MAX_INT = 2 ** 64 - 1
+B58_CHECKSUM_LENGTH = 4
 TRUNC_ADDRESS_LENGTH = 5
-TOR_CONTROL_PORT     = 9051
-TOR_SOCKS_PORT       = 9050
+TOR_CONTROL_PORT = 9051
+TOR_SOCKS_PORT = 9050
 DB_WRITE_RETRY_LIMIT = 10
 
 # Key derivation
-ARGON2_MIN_TIME_COST      = 1
-ARGON2_MIN_MEMORY_COST    = 8
-ARGON2_MIN_PARALLELISM    = 1
-ARGON2_SALT_LENGTH        = 32
-ARGON2_PSK_TIME_COST      = 25
-ARGON2_PSK_MEMORY_COST    = 512 * 1024  # kibibytes
-ARGON2_PSK_PARALLELISM    = 2
-MIN_KEY_DERIVATION_TIME   = 3.0         # seconds
-MAX_KEY_DERIVATION_TIME   = 4.0         # seconds
+ARGON2_MIN_TIME_COST = 1
+ARGON2_MIN_MEMORY_COST = 8
+ARGON2_MIN_PARALLELISM = 1
+ARGON2_SALT_LENGTH = 32
+ARGON2_PSK_TIME_COST = 25
+ARGON2_PSK_MEMORY_COST = 512 * 1024  # kibibytes
+ARGON2_PSK_PARALLELISM = 2
+MIN_KEY_DERIVATION_TIME = 3.0  # seconds
+MAX_KEY_DERIVATION_TIME = 4.0  # seconds
 PASSWORD_MIN_BIT_STRENGTH = 128
 
 # Cryptographic field sizes
-TFC_PRIVATE_KEY_LENGTH           = 56
-TFC_PUBLIC_KEY_LENGTH            = 56
-X448_SHARED_SECRET_LENGTH        = 56
-FINGERPRINT_LENGTH               = 32
+TFC_PRIVATE_KEY_LENGTH = 56
+TFC_PUBLIC_KEY_LENGTH = 56
+X448_SHARED_SECRET_LENGTH = 56
+FINGERPRINT_LENGTH = 32
 ONION_SERVICE_PRIVATE_KEY_LENGTH = 32
-ONION_SERVICE_PUBLIC_KEY_LENGTH  = 32
-URL_TOKEN_LENGTH                 = 32
-XCHACHA20_NONCE_LENGTH           = 24
-SYMMETRIC_KEY_LENGTH             = 32
-POLY1305_TAG_LENGTH              = 16
-BLAKE2_DIGEST_LENGTH             = 32
-BLAKE2_DIGEST_LENGTH_MIN         = 1
-BLAKE2_DIGEST_LENGTH_MAX         = 64
-BLAKE2_KEY_LENGTH_MAX            = 64
-BLAKE2_SALT_LENGTH_MAX           = 16
-BLAKE2_PERSON_LENGTH_MAX         = 16
-HARAC_LENGTH                     = 8
-PADDING_LENGTH                   = 255
+ONION_SERVICE_PUBLIC_KEY_LENGTH = 32
+URL_TOKEN_LENGTH = 32
+XCHACHA20_NONCE_LENGTH = 24
+SYMMETRIC_KEY_LENGTH = 32
+POLY1305_TAG_LENGTH = 16
+BLAKE2_DIGEST_LENGTH = 32
+BLAKE2_DIGEST_LENGTH_MIN = 1
+BLAKE2_DIGEST_LENGTH_MAX = 64
+BLAKE2_KEY_LENGTH_MAX = 64
+BLAKE2_SALT_LENGTH_MAX = 16
+BLAKE2_PERSON_LENGTH_MAX = 16
+HARAC_LENGTH = 8
+PADDING_LENGTH = 255
 
 # Domain separation
-MESSAGE_KEY = b'message_key'
-HEADER_KEY  = b'header_key'
-FINGERPRINT = b'fingerprint'
+MESSAGE_KEY = b"message_key"
+HEADER_KEY = b"header_key"
+FINGERPRINT = b"fingerprint"
 
 # Forward secrecy
-INITIAL_HARAC        = 0
+INITIAL_HARAC = 0
 HARAC_WARN_THRESHOLD = 100_000
 
 # Special messages
@@ -561,52 +563,55 @@ PLACEHOLDER_DATA = P_N_HEADER + bytes(PADDING_LENGTH)
 # Field lengths
 ASSEMBLY_PACKET_LENGTH = ASSEMBLY_PACKET_HEADER_LENGTH + PADDING_LENGTH
 
-HARAC_CT_LENGTH = (XCHACHA20_NONCE_LENGTH
-                   + HARAC_LENGTH
-                   + POLY1305_TAG_LENGTH)
+HARAC_CT_LENGTH = XCHACHA20_NONCE_LENGTH + HARAC_LENGTH + POLY1305_TAG_LENGTH
 
-ASSEMBLY_PACKET_CT_LENGTH = (XCHACHA20_NONCE_LENGTH
-                             + ASSEMBLY_PACKET_LENGTH
-                             + POLY1305_TAG_LENGTH)
+ASSEMBLY_PACKET_CT_LENGTH = (
+    XCHACHA20_NONCE_LENGTH + ASSEMBLY_PACKET_LENGTH + POLY1305_TAG_LENGTH
+)
 
 MESSAGE_LENGTH = HARAC_CT_LENGTH + ASSEMBLY_PACKET_CT_LENGTH
 
-COMMAND_LENGTH = (DATAGRAM_HEADER_LENGTH
-                  + MESSAGE_LENGTH)
+COMMAND_LENGTH = DATAGRAM_HEADER_LENGTH + MESSAGE_LENGTH
 
-PACKET_LENGTH = (DATAGRAM_HEADER_LENGTH
-                 + MESSAGE_LENGTH
-                 + ORIGIN_HEADER_LENGTH)
+PACKET_LENGTH = DATAGRAM_HEADER_LENGTH + MESSAGE_LENGTH + ORIGIN_HEADER_LENGTH
 
-GROUP_STATIC_LENGTH = (PADDED_UTF32_STR_LENGTH
-                       + GROUP_ID_LENGTH
-                       + 2 * ENCODED_BOOLEAN_LENGTH)
+GROUP_STATIC_LENGTH = (
+    PADDED_UTF32_STR_LENGTH + GROUP_ID_LENGTH + 2 * ENCODED_BOOLEAN_LENGTH
+)
 
-CONTACT_LENGTH = (ONION_SERVICE_PUBLIC_KEY_LENGTH
-                  + 2 * FINGERPRINT_LENGTH
-                  + 4 * ENCODED_BOOLEAN_LENGTH
-                  + PADDED_UTF32_STR_LENGTH)
+CONTACT_LENGTH = (
+    ONION_SERVICE_PUBLIC_KEY_LENGTH
+    + 2 * FINGERPRINT_LENGTH
+    + 4 * ENCODED_BOOLEAN_LENGTH
+    + PADDED_UTF32_STR_LENGTH
+)
 
-KEYSET_LENGTH = (ONION_SERVICE_PUBLIC_KEY_LENGTH
-                 + 4 * SYMMETRIC_KEY_LENGTH
-                 + 2 * HARAC_LENGTH)
+KEYSET_LENGTH = (
+    ONION_SERVICE_PUBLIC_KEY_LENGTH + 4 * SYMMETRIC_KEY_LENGTH + 2 * HARAC_LENGTH
+)
 
-PSK_FILE_SIZE = (XCHACHA20_NONCE_LENGTH
-                 + ARGON2_SALT_LENGTH
-                 + 2 * SYMMETRIC_KEY_LENGTH
-                 + POLY1305_TAG_LENGTH)
+PSK_FILE_SIZE = (
+    XCHACHA20_NONCE_LENGTH
+    + ARGON2_SALT_LENGTH
+    + 2 * SYMMETRIC_KEY_LENGTH
+    + POLY1305_TAG_LENGTH
+)
 
-LOG_ENTRY_LENGTH = (ONION_SERVICE_PUBLIC_KEY_LENGTH
-                    + TIMESTAMP_LENGTH
-                    + ORIGIN_HEADER_LENGTH
-                    + ASSEMBLY_PACKET_LENGTH)
+LOG_ENTRY_LENGTH = (
+    ONION_SERVICE_PUBLIC_KEY_LENGTH
+    + TIMESTAMP_LENGTH
+    + ORIGIN_HEADER_LENGTH
+    + ASSEMBLY_PACKET_LENGTH
+)
 
-MASTERKEY_DB_SIZE = (ARGON2_SALT_LENGTH
-                     + BLAKE2_DIGEST_LENGTH
-                     + 3 * ENCODED_INTEGER_LENGTH)
+MASTERKEY_DB_SIZE = (
+    ARGON2_SALT_LENGTH + BLAKE2_DIGEST_LENGTH + 3 * ENCODED_INTEGER_LENGTH
+)
 
-SETTING_LENGTH = (XCHACHA20_NONCE_LENGTH
-                  + 4 * ENCODED_INTEGER_LENGTH
-                  + 3 * ENCODED_FLOAT_LENGTH
-                  + 12 * ENCODED_BOOLEAN_LENGTH
-                  + POLY1305_TAG_LENGTH)
+SETTING_LENGTH = (
+    XCHACHA20_NONCE_LENGTH
+    + 4 * ENCODED_INTEGER_LENGTH
+    + 3 * ENCODED_FLOAT_LENGTH
+    + 12 * ENCODED_BOOLEAN_LENGTH
+    + POLY1305_TAG_LENGTH
+)
