@@ -47,9 +47,9 @@ from tests.utils        import gen_queue_dict, nick_to_onion_address, nick_to_pu
 
 class TestClient(unittest.TestCase):
 
-    url_token_private_key = X448.generate_private_key()
-    url_token_public_key  = X448.derive_public_key(url_token_private_key)
-    url_token             = X448.shared_key(url_token_private_key, url_token_public_key).hex()
+    ut_private_key = X448.generate_private_key()
+    ut_public_key  = X448.derive_public_key(ut_private_key)
+    ut             = X448.shared_key(ut_private_key, ut_public_key).hex()
 
     class MockResponse(object):
         """Mock Response object."""
@@ -105,7 +105,7 @@ class TestClient(unittest.TestCase):
                 # Test valid public key moves function to `get_data_loop`.
                 if self.test_no == 10:
                     self.test_no += 1
-                    return TestClient.MockResponse(TestClient.url_token_public_key.hex())
+                    return TestClient.MockResponse(TestClient.ut_public_key.hex())
 
     @staticmethod
     def mock_session():
@@ -129,9 +129,9 @@ class TestClient(unittest.TestCase):
         onion_address = nick_to_onion_address('Alice')
         tor_port      = '1337'
         settings      = Gateway()
-        sk            = TestClient.url_token_private_key
+        sk            = TestClient.ut_private_key
         self.assertIsNone(client(onion_pub_key, self.queues, sk, tor_port, settings, onion_address, unit_test=True))
-        self.assertEqual(self.queues[URL_TOKEN_QUEUE].get(), (onion_pub_key, TestClient.url_token))
+        self.assertEqual(self.queues[URL_TOKEN_QUEUE].get(), (onion_pub_key, TestClient.ut))
 
 
 class TestGetDataLoop(unittest.TestCase):
