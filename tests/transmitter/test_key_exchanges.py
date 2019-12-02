@@ -76,6 +76,7 @@ class TestLocalKey(TFCTestCase):
         self.contact_list.contacts    = [create_contact(LOCAL_ID)]
         self.assert_fr("Error: Command is disabled during traffic masking.", new_local_key, *self.args)
 
+    @mock.patch('src.common.misc.reset_terminal', return_value=None)
     @mock.patch('time.sleep',     return_value=None)
     @mock.patch('builtins.input', side_effect=['bad', '', '61'])
     @mock.patch('os.getrandom',   side_effect=[SYMMETRIC_KEY_LENGTH*b'a',
@@ -85,7 +86,6 @@ class TestLocalKey(TFCTestCase):
                                                SYMMETRIC_KEY_LENGTH*b'a',
                                                SYMMETRIC_KEY_LENGTH*b'a'])
     @mock.patch('os.urandom',     return_value=CONFIRM_CODE_LENGTH*b'a')
-    @mock.patch('os.system',      return_value=None)
     def test_new_local_key(self, *_):
         # Setup
         self.settings.nc_bypass_messages = False

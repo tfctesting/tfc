@@ -80,18 +80,18 @@ class TestProcessLocalKey(TFCTestCase):
         # Test
         self.assert_fr("Error: Incorrect key decryption key.", process_local_key, self.ts, packet, *self.args)
 
+    @mock.patch('src.common.misc.reset_terminal', return_value=None)
     @mock.patch('tkinter.Tk',     return_value=MagicMock())
     @mock.patch('time.sleep',     return_value=None)
     @mock.patch('builtins.input', side_effect=['5KfgdgUvseWfNkoUPWSvxMPNStu5wBBxyjz1zpZtLEjk7ZvwEAT', b58encode(kek)])
-    @mock.patch('os.system',      return_value=None)
     def test_successful_local_key_processing_with_existing_local_key(self, *_):
         self.assert_fr("Error: Incorrect key decryption key.", process_local_key, self.ts, self.packet, *self.args)
         self.assert_fr("Added new local key.",                 process_local_key, self.ts, self.packet, *self.args)
 
+    @mock.patch('src.common.misc.reset_terminal', return_value=None)
     @mock.patch('tkinter.Tk',     return_value=MagicMock())
     @mock.patch('time.sleep',     return_value=None)
     @mock.patch('builtins.input', return_value=b58encode(kek))
-    @mock.patch('os.system',      return_value=None)
     def test_successful_local_key_processing_existing_bootstrap(self, *_):
         # Setup
         self.key_list.keysets = []
@@ -110,8 +110,8 @@ class TestProcessLocalKey(TFCTestCase):
         # Test
         self.assert_fr("Local key setup aborted.", process_local_key, self.ts, bytes(SYMMETRIC_KEY_LENGTH), *self.args)
 
+    @mock.patch('src.common.misc.reset_terminal', return_value=None)
     @mock.patch('tkinter.Tk',     return_value=MagicMock())
-    @mock.patch('os.system',      return_value=None)
     @mock.patch('time.sleep',     return_value=None)
     @mock.patch('builtins.input', side_effect=[b58encode(kek), b58encode(kek), b58encode(kek), b58encode(new_kek)])
     def test_old_local_key_packet_raises_fr(self, *_):
@@ -127,9 +127,9 @@ class TestProcessLocalKey(TFCTestCase):
         self.assert_fr("Error: Received old local key packet.", process_local_key, self.ts, self.packet, *self.args)
         self.assert_fr("Added new local key.",                  process_local_key, self.ts, new_packet,  *self.args)
 
+    @mock.patch('src.common.misc.reset_terminal', return_value=None)
     @mock.patch('tkinter.Tk',     side_effect=[MagicMock(clipboard_get=MagicMock(return_value=b58encode(new_kek)),
                                                          clipboard_clear=MagicMock(side_effect=[tkinter.TclError]))])
-    @mock.patch('os.system',      return_value=None)
     @mock.patch('time.sleep',     return_value=None)
     @mock.patch('builtins.input', side_effect=[b58encode(new_kek)])
     def test_loading_local_key_from_queue(self, *_):

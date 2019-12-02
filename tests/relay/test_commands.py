@@ -107,7 +107,7 @@ class TestClearWindows(TFCTestCase):
 
 class TestResetWindows(TFCTestCase):
 
-    @mock.patch('os.system', return_value=None)
+    @mock.patch('src.common.misc.reset_terminal', return_value=None)
     def test_reset_display(self, _):
         self.gateway = Gateway(race_condition_delay=0.0)
         self.assertIsNone(reset_windows(self.gateway))
@@ -178,7 +178,7 @@ class TestWipe(unittest.TestCase):
         """Post-test actions."""
         tear_queues(self.queues)
 
-    @mock.patch('os.system', return_value=None)
+    @mock.patch('src.common.misc.reset_terminal', return_value=None)
     def test_wipe_command(self, _):
         self.assertIsNone(wipe(self.gateway, self.queues))
         self.assertEqual(self.queues[ONION_CLOSE_QUEUE].get(), WIPE)

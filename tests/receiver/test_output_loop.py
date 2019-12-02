@@ -64,8 +64,8 @@ class TestOutputLoop(unittest.TestCase):
         time.sleep = self.o_sleep
         cleanup(self.unit_test_dir)
 
+    @mock.patch('src.common.misc.reset_terminal', return_value=None)
     @mock.patch('tkinter.Tk',     return_value=MagicMock())
-    @mock.patch('os.system',      return_value=None)
     @mock.patch('builtins.input', side_effect=[b58encode(SYMMETRIC_KEY_LENGTH*b'a'),
                                                bytes(CONFIRM_CODE_LENGTH).hex(),
                                                b58encode(SYMMETRIC_KEY_LENGTH*b'a', public_key=True)])

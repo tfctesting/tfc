@@ -33,7 +33,7 @@ from src.common.db_logs  import write_log_entry
 from src.common.encoding import int_to_bytes
 from src.common.statics  import (CH_FILE_RECV, CH_LOGGING, CH_NOTIFY, CLEAR_ENTIRE_LINE, COMMAND, CURSOR_UP_ONE_LINE,
                                  C_L_HEADER, DIR_USER_DATA, DISABLE, ENABLE, F_S_HEADER, LOCAL_ID, LOCAL_PUBKEY,
-                                 LOG_REMOVE, MESSAGE, ORIGIN_CONTACT_HEADER, PADDING_LENGTH, RESET, RX,
+                                 LOG_REMOVE, MESSAGE, ORIGIN_CONTACT_HEADER, PADDING_LENGTH, RX,
                                  SYMMETRIC_KEY_LENGTH, US_BYTE, WIN_TYPE_CONTACT, WIN_TYPE_GROUP, WIN_UID_FILE, WIPE)
 
 from src.receiver.packet   import PacketList
@@ -133,7 +133,7 @@ class TestResetScreen(unittest.TestCase):
         self.window              = self.window_list.get_window(nick_to_pub_key("Alice"))
         self.window.message_log  = [(datetime.now(), 'Hi Bob', nick_to_pub_key("Alice"), ORIGIN_CONTACT_HEADER)]
 
-    @mock.patch('os.system', return_value=None, create_autospec=True)
+    @mock.patch('src.common.misc.reset_terminal', return_value=None)
     def test_screen_reset(self, reset):
         # Ensure there is a message to be removed from the ephemeral message log
         self.assertEqual(len(self.window.message_log), 1)
@@ -141,7 +141,7 @@ class TestResetScreen(unittest.TestCase):
         reset_screen(self.cmd_data, self.window_list)
 
         # Test that screen is reset by the command
-        reset.assert_called_with(RESET)
+        reset.assert_called()
 
         # Test that the ephemeral message log is empty after the command
         self.assertEqual(len(self.window.message_log), 0)
@@ -541,7 +541,7 @@ class TestWipe(unittest.TestCase):
         """Post-test actions."""
         tear_queue(self.exit_queue)
 
-    @mock.patch('os.system', return_value=None)
+    @mock.patch('src.common.misc.reset_terminal', return_value=None)
     def test_wipe_command(self, _):
         self.assertIsNone(wipe(self.exit_queue))
         self.assertEqual(self.exit_queue.get(), WIPE)

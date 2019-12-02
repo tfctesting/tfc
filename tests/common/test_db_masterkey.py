@@ -107,11 +107,11 @@ class TestMasterKey(unittest.TestCase):
 
     @mock.patch('src.common.db_masterkey.MIN_KEY_DERIVATION_TIME', 0.01)
     @mock.patch('src.common.db_masterkey.MAX_KEY_DERIVATION_TIME', 0.1)
+    @mock.patch('src.common.misc.reset_terminal', return_value=None)
     @mock.patch('os.popen',        return_value=MagicMock(
         read=MagicMock(return_value=MagicMock(splitlines=MagicMock(return_value=["MemAvailable 10240"])))))
     @mock.patch('getpass.getpass', side_effect=['generate'])
     @mock.patch('builtins.input',  side_effect=[''])
-    @mock.patch('os.system',       return_value=None)
     @mock.patch('time.sleep',      return_value=None)
     def test_new_masterkey_key_type(self, *_):
         master_key = MasterKey(self.operation, local_test=True)

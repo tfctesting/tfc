@@ -35,7 +35,7 @@ from src.common.statics      import (BOLD_ON, CLEAR_ENTIRE_SCREEN, COMMAND_PACKE
                                      DIR_USER_DATA, KEY_MGMT_ACK_QUEUE, KEX_STATUS_NO_RX_PSK, KEX_STATUS_UNVERIFIED,
                                      KEX_STATUS_VERIFIED, KEY_MANAGEMENT_QUEUE, LOGFILE_MASKING_QUEUE, MESSAGE,
                                      MESSAGE_PACKET_QUEUE, M_S_HEADER, NORMAL_TEXT, PADDING_LENGTH,
-                                     PRIVATE_MESSAGE_HEADER, RELAY_PACKET_QUEUE, RESET, SENDER_MODE_QUEUE,
+                                     PRIVATE_MESSAGE_HEADER, RELAY_PACKET_QUEUE, SENDER_MODE_QUEUE,
                                      TM_COMMAND_PACKET_QUEUE, TRAFFIC_MASKING_QUEUE, TX, UNENCRYPTED_DATAGRAM_HEADER,
                                      UNENCRYPTED_WIPE_COMMAND, VERSION, WIN_TYPE_CONTACT, WIN_TYPE_GROUP,
                                      KDB_HALT_ACK_HEADER, KDB_M_KEY_CHANGE_HALT_HEADER)
@@ -123,15 +123,15 @@ class TestClearScreens(unittest.TestCase):
         self.assertEqual(self.queues[TM_COMMAND_PACKET_QUEUE].qsize(), 1)
         self.assertEqual(self.queues[RELAY_PACKET_QUEUE].qsize(),      0)
 
-    @mock.patch('os.system', return_value=None)
-    def test_reset_screens(self, mock_os_system):
+    @mock.patch('src.common.misc.reset_terminal', return_value=None)
+    def test_reset_screens(self, mock_reset):
         self.assertIsNone(clear_screens(UserInput('reset'), *self.args))
         self.assertEqual(self.queues[COMMAND_PACKET_QUEUE].qsize(), 1)
         self.assertEqual(self.queues[RELAY_PACKET_QUEUE].qsize(),   1)
-        mock_os_system.assert_called_with(RESET)
+        mock_reset.assert_called()
 
-    @mock.patch('os.system', return_value=None)
-    def test_no_relay_reset_cmd_when_traffic_masking_is_enabled(self, mock_os_system):
+    @mock.patch('src.common.misc.reset_terminal', return_value=None)
+    def test_no_relay_reset_cmd_when_traffic_masking_is_enabled(self, mock_reset):
         # Setup
         self.settings.traffic_masking = True
 
@@ -139,7 +139,7 @@ class TestClearScreens(unittest.TestCase):
         self.assertIsNone(clear_screens(UserInput('reset'), *self.args))
         self.assertEqual(self.queues[TM_COMMAND_PACKET_QUEUE].qsize(), 1)
         self.assertEqual(self.queues[RELAY_PACKET_QUEUE].qsize(),      0)
-        mock_os_system.assert_called_with(RESET)
+        mock_reset.assert_called()
 
 
 class TestRXPShowSysWin(unittest.TestCase):
@@ -1133,7 +1133,7 @@ class TestWipe(TFCTestCase):
     def test_no_raises_fr(self, _):
         self.assert_fr("Wipe command aborted.", wipe, *self.args)
 
-    @mock.patch('os.system',      return_value=None)
+    @mock.patch('src.common.misc.reset_terminal', return_value=None)
     @mock.patch('builtins.input', return_value='Yes')
     @mock.patch('time.sleep',     return_value=None)
     def test_wipe_local_testing(self, *_):
@@ -1149,7 +1149,7 @@ class TestWipe(TFCTestCase):
         wipe_packet = UNENCRYPTED_DATAGRAM_HEADER + UNENCRYPTED_WIPE_COMMAND
         self.assertTrue(self.queues[RELAY_PACKET_QUEUE].get().startswith(wipe_packet))
 
-    @mock.patch('os.system',      return_value=None)
+    @mock.patch('src.common.misc.reset_terminal', return_value=None)
     @mock.patch('builtins.input', return_value='Yes')
     @mock.patch('time.sleep',     return_value=None)
     def test_wipe(self, *_):
