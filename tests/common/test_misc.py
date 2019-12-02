@@ -283,7 +283,6 @@ class TestProcessArguments(unittest.TestCase):
 
             def add_argument(self, *_, **__):
                 """Mock function for adding argument."""
-                pass
 
         self.o_argparse         = argparse.ArgumentParser
         argparse.ArgumentParser = MockParser
