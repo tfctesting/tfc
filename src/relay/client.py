@@ -53,10 +53,10 @@ if typing.TYPE_CHECKING:
     QueueDict = Dict[bytes, Queue[Any]]
 
 
-def client_scheduler(queues:                'QueueDict',
-                     gateway:               'Gateway',
-                     url_token_private_key: X448PrivateKey,
-                     unit_test:             bool = False
+def client_scheduler(queues:         'QueueDict',
+                     gateway:        'Gateway',
+                     ut_private_key: X448PrivateKey,
+                     unit_test:      bool = False
                      ) -> None:
     """Manage `client` processes."""
     proc_dict = dict()  # type: Dict[bytes, Process]
@@ -81,7 +81,7 @@ def client_scheduler(queues:                'QueueDict',
 
             if command == RP_ADD_CONTACT_HEADER:
                 add_new_client_process(gateway, is_existing_contact, onion_addr_user, onion_pub_keys,
-                                       proc_dict, queues, tor_port, url_token_private_key)
+                                       proc_dict, queues, tor_port, ut_private_key)
 
             elif command == RP_REMOVE_CONTACT_HEADER:
                 remove_client_process(onion_pub_keys, proc_dict)
@@ -167,43 +167,43 @@ def client(onion_pub_key:         bytes,
                 break
 
 
-def update_url_token(url_token_private_key:    'X448PrivateKey',
-                     url_token_public_key_hex: str,
-                     cached_pk:                str,
-                     onion_pub_key:            bytes,
-                     queues:                   'QueueDict'
+def update_url_token(ut_private_key: 'X448PrivateKey',
+                     ut_pubkey_hex:  str,
+                     cached_pk:      str,
+                     onion_pub_key:  bytes,
+                     queues:         'QueueDict'
                      ) -> Tuple[str, str]:
     """Update URL token for contact.
 
     When contact's URL token public key changes, update URL token.
     """
-    if url_token_public_key_hex == cached_pk:
+    if ut_pubkey_hex == cached_pk:
         raise FunctionReturn("URL token public key has not changed.", output=False)
 
     try:
-        public_key = bytes.fromhex(url_token_public_key_hex)
+        public_key = bytes.fromhex(ut_pubkey_hex)
 
         if len(public_key) != TFC_PUBLIC_KEY_LENGTH or public_key == bytes(TFC_PUBLIC_KEY_LENGTH):
             raise ValueError
 
-        shared_secret = url_token_private_key.exchange(X448PublicKey.from_public_bytes(public_key))
+        shared_secret = ut_private_key.exchange(X448PublicKey.from_public_bytes(public_key))
         url_token = hashlib.blake2b(shared_secret, digest_size=URL_TOKEN_LENGTH).hexdigest()
 
         queues[URL_TOKEN_QUEUE].put((onion_pub_key, url_token))  # Update Flask server's URL token for contact
 
-        return url_token, url_token_public_key_hex
+        return url_token, ut_pubkey_hex
 
     except (TypeError, ValueError):
         raise FunctionReturn("Error: URL token derivation failed.")
 
 
-def manage_contact_status(url_token_public_key_hex: str,
-                          check_delay:              float,
-                          is_online:                bool,
-                          short_addr:               str
+def manage_contact_status(ut_pubkey_hex: str,
+                          check_delay:   float,
+                          is_online:     bool,
+                          short_addr:    str
                           ) -> Tuple[bool, float]:
     """Manage online status of contact based on availability of URL token's public key."""
-    if url_token_public_key_hex == '':
+    if ut_pubkey_hex == '':
         if check_delay < RELAY_CLIENT_MAX_DELAY:
             check_delay *= 2
         if check_delay > CLIENT_OFFLINE_THRESHOLD and is_online:

@@ -128,7 +128,9 @@ def flask_server(queues:               'QueueDict',
 
     if unit_test:
         return app
-    app.run()  # pragma: no cover
+    else:  # pragma: no cover
+        app.run()
+        return None
 
 
 def get_message(purp_url_token: str,
