@@ -34,7 +34,7 @@ class RandomSample(object):
         for i in sample(range(self.nn), self.num_errs):
             index = i  # type: int
             yield index
-    
+
 
 class TestReedSolomon(unittest.TestCase):
 
