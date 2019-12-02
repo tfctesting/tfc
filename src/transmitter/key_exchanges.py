@@ -134,7 +134,7 @@ def deliver_onion_service_data(relay_command: bytes,
             onion_service.new_confirmation_code()
             break
 
-        elif purp_code == '':
+        if purp_code == '':
             phase("Resending Onion Service data", head=2)
             gateway.write(relay_command)
             phase(DONE)
