@@ -188,7 +188,7 @@ import math
 import shutil
 
 from array import array
-from typing import Any, Dict, Iterator, List, Optional, Tuple, Union
+from typing import Any, Dict, Iterator, List, Optional, overload, Tuple, Union
 
 
 class ReedSolomonError(Exception):
@@ -1360,7 +1360,7 @@ def rs_forney_syndromes(
 
 
 def rs_correct_msg(
-    msg_in: bytearray,
+    msg_in: Union[bytes, bytearray],
     nsym: int,
     fcr: int = 0,
     generator: int = 2,
@@ -1551,6 +1551,32 @@ def rs_check(msg: bytearray, nsym: int, fcr: int = 0, generator: int = 2) -> boo
     return max(rs_calc_syndromes(msg, nsym, fcr, generator)) == 0
 
 
+@overload
+def chunk(data: bytearray, chunk_size: int) -> Iterator[bytearray]:
+    """Split a long message into chunks"""
+    for i in range(0, len(data), chunk_size):
+        # Split the long message in a chunk.
+        chunk_ = data[i : i + chunk_size]
+        yield chunk_
+
+
+@overload
+def chunk(data: bytes, chunk_size: int) -> Iterator[bytes]:
+    """Split a long message into chunks"""
+    for i in range(0, len(data), chunk_size):
+        # Split the long message in a chunk.
+        chunk_ = data[i : i + chunk_size]
+        yield chunk_
+
+
+def chunk(data: Union[bytearray, bytes], chunk_size: int) -> Iterator[Union[bytearray, bytes]]:
+    """Split a long message into chunks"""
+    for i in range(0, len(data), chunk_size):
+        # Split the long message in a chunk.
+        chunk_ = data[i : i + chunk_size]
+        yield chunk_
+
+
 class RSCodec(object):
     """\
     A Reed Solomon encoder/decoder. After initializing the object, use
@@ -1656,14 +1682,6 @@ class RSCodec(object):
         else:  # pragma: no cover
             self.gen = rs_generator_poly_all(nsize, fcr=fcr, generator=generator)
 
-    @staticmethod
-    def chunk(data: bytes, chunk_size: int) -> Iterator[Any]:
-        """Split a long message into chunks"""
-        for i in range(0, len(data), chunk_size):
-            # Split the long message in a chunk.
-            chunk = data[i : i + chunk_size]
-            yield chunk
-
     def encode(self, data_: Union[bytes, str], nsym: Optional[int] = None) -> bytearray:
         """\
         Encode a message (i.e., add the ecc symbols) using Reed-Solomon,
@@ -1682,10 +1700,10 @@ class RSCodec(object):
         else:
             data = data_
         enc = _bytearray()  # type: bytearray
-        for chunk in self.chunk(data, self.nsize - self.nsym):
+        for chunk_ in chunk(data, self.nsize - self.nsym):
             enc.extend(
                 rs_encode_msg(
-                    chunk,
+                    chunk_,
                     self.nsym,
                     fcr=self.fcr,
                     generator=self.generator,
@@ -1728,7 +1746,7 @@ class RSCodec(object):
             data = _bytearray(data)
         dec = _bytearray()
         dec_full = _bytearray()
-        for chunk in self.chunk(data, self.nsize):
+        for chunk_ in chunk(data, self.nsize):
             # Extract the erasures for this chunk
             e_pos = []  # type: List[int]
             if erase_pos:  # pragma: no cover
@@ -1744,7 +1762,7 @@ class RSCodec(object):
 
             # Decode/repair this chunk!
             rmes, recc = rs_correct_msg(
-                chunk,
+                chunk_,
                 nsym,
                 fcr=self.fcr,
                 generator=self.generator,
@@ -1765,6 +1783,6 @@ class RSCodec(object):
         if isinstance(data, str):  # pragma: no cover
             data = _bytearray(data)
         check = []
-        for chunk in self.chunk(data, self.nsize):
-            check.append(rs_check(chunk, nsym, fcr=self.fcr, generator=self.generator))
+        for chunk_ in chunk(data, self.nsize):
+            check.append(rs_check(chunk_, nsym, fcr=self.fcr, generator=self.generator))
         return check
