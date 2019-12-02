@@ -224,11 +224,11 @@ def load_url_token(onion_addr: str,
                    ) -> str:
     """Load URL token for contact."""
     try:
-        url_token_public_key_hex = session.get(f'http://{onion_addr}.onion/', timeout=5).text
+        ut_pubkey_hex = session.get(f'http://{onion_addr}.onion/', timeout=5).text
     except requests.exceptions.RequestException:
-        url_token_public_key_hex = ''
+        ut_pubkey_hex = ''
 
-    return url_token_public_key_hex
+    return ut_pubkey_hex
 
 
 def send_contact_request(onion_addr:      str,
