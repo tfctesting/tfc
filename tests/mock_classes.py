@@ -167,11 +167,9 @@ class GroupList(OrigGroupList, Iterable, Sized):
 
     def load_groups(self):
         """Mock method."""
-        pass
 
     def print_groups(self):
         """Mock method."""
-        pass
 
 
 class KeyList(OrigKeyList):
@@ -193,7 +191,6 @@ class KeyList(OrigKeyList):
 
     def load_keys(self):
         """Mock method."""
-        pass
 
 
 class MasterKey(OrigMasterKey):
@@ -279,16 +276,13 @@ class Settings(OrigSettings):
 
     def store_settings(self, replace: bool = True):
         """Mock method."""
-        pass
 
     def load_settings(self):
         """Mock method."""
-        pass
 
     @staticmethod
     def validate_key_value_pair(key, value, contact_list, group_list):
         """Mock method."""
-        pass
 
 
 # Transmitter Program
@@ -326,11 +320,9 @@ class GatewaySettings(OrigGatewaySettings):
 
     def store_settings(self):
         """Mock method."""
-        pass
 
     def load_settings(self):
         """Mock method."""
-        pass
 
 
 class TxWindow(OrigTxWindow):
@@ -387,7 +379,6 @@ class Packet(object):
 
     def add_packet(self, packet):
         """Mock method."""
-        pass
 
     def assemble_message_packet(self):
         """Mock method."""
