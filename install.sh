@@ -142,14 +142,14 @@ function verify_files {
 function process_tcb_dependencies {
     # Manage TCB dependencies in batch. The command that uses the files
     # is passed to the function as a parameter.
-    sudo "$*" "/opt/tfc/${SIX}"
-    sudo "$*" "/opt/tfc/${PYCPARSER}"
-    sudo "$*" "/opt/tfc/${CFFI}"
-    sudo "$*" "/opt/tfc/${ARGON2}"
-    sudo "$*" "/opt/tfc/${SETUPTOOLS}"
-    sudo "$*" "/opt/tfc/${PYNACL}"
-    sudo "$*" "/opt/tfc/${PYSERIAL}"
-    sudo "$*" "/opt/tfc/${CRYPTOGRAPHY}"
+    sudo $1 "/opt/tfc/${SIX}"
+    sudo $1 "/opt/tfc/${PYCPARSER}"
+    sudo $1 "/opt/tfc/${CFFI}"
+    sudo $1 "/opt/tfc/${ARGON2}"
+    sudo $1 "/opt/tfc/${SETUPTOOLS}"
+    sudo $1 "/opt/tfc/${PYNACL}"
+    sudo $1 "/opt/tfc/${PYSERIAL}"
+    sudo $1 "/opt/tfc/${CRYPTOGRAPHY}"
 }
 
 
@@ -157,33 +157,33 @@ function process_tails_dependencies {
     # Manage Tails dependencies in batch. The command that uses the
     # files is passed to the function as a parameter.
 
-    t_sudo -E "$*" "/opt/tfc/${PYSERIAL}"
-    t_sudo -E "$*" "/opt/tfc/${STEM}"
-    t_sudo -E "$*" "/opt/tfc/${PYSOCKS}"
+    t_sudo -E $1 "/opt/tfc/${PYSERIAL}"
+    t_sudo -E $1 "/opt/tfc/${STEM}"
+    t_sudo -E $1 "/opt/tfc/${PYSOCKS}"
 
     # Requests
-    t_sudo -E "$*" "/opt/tfc/${URLLIB3}"
-    t_sudo -E "$*" "/opt/tfc/${IDNA}"
-    t_sudo -E "$*" "/opt/tfc/${CHARDET}"
-    t_sudo -E "$*" "/opt/tfc/${CERTIFI}"
-    t_sudo -E "$*" "/opt/tfc/${REQUESTS}"
+    t_sudo -E $1 "/opt/tfc/${URLLIB3}"
+    t_sudo -E $1 "/opt/tfc/${IDNA}"
+    t_sudo -E $1 "/opt/tfc/${CHARDET}"
+    t_sudo -E $1 "/opt/tfc/${CERTIFI}"
+    t_sudo -E $1 "/opt/tfc/${REQUESTS}"
 
     # Flask
-    t_sudo -E "$*" "/opt/tfc/${WERKZEUG}"
-    t_sudo -E "$*" "/opt/tfc/${MARKUPSAFE}"
-    t_sudo -E "$*" "/opt/tfc/${JINJA2}"
-    t_sudo -E "$*" "/opt/tfc/${ITSDANGEROUS}"
-    t_sudo -E "$*" "/opt/tfc/${CLICK}"
-    t_sudo -E "$*" "/opt/tfc/${FLASK}"
+    t_sudo -E $1 "/opt/tfc/${WERKZEUG}"
+    t_sudo -E $1 "/opt/tfc/${MARKUPSAFE}"
+    t_sudo -E $1 "/opt/tfc/${JINJA2}"
+    t_sudo -E $1 "/opt/tfc/${ITSDANGEROUS}"
+    t_sudo -E $1 "/opt/tfc/${CLICK}"
+    t_sudo -E $1 "/opt/tfc/${FLASK}"
 
     # Cryptography
-    t_sudo -E "$*" "/opt/tfc/${SIX}"
-    t_sudo -E "$*" "/opt/tfc/${PYCPARSER}"
-    t_sudo -E "$*" "/opt/tfc/${CFFI}"
-    t_sudo -E "$*" "/opt/tfc/${CRYPTOGRAPHY}"
+    t_sudo -E $1 "/opt/tfc/${SIX}"
+    t_sudo -E $1 "/opt/tfc/${PYCPARSER}"
+    t_sudo -E $1 "/opt/tfc/${CFFI}"
+    t_sudo -E $1 "/opt/tfc/${CRYPTOGRAPHY}"
 
     # PyNaCl
-    t_sudo -E "$*" "/opt/tfc/${PYNACL}"
+    t_sudo -E $1 "/opt/tfc/${PYNACL}"
 }
 
 
