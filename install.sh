@@ -408,9 +408,9 @@ function install_developer {
     torsocks python3.7 -m pip install -r "${HOME}/tfc/requirements-dev.txt"
     deactivate
 
-    sudo cp "${HOME}/tfc/tfc.png                   /usr/share/pixmaps/"
-    sudo cp "${HOME}/tfc/launchers/TFC-Dev.desktop /usr/share/applications/"
-    sudo sed -i "s|\$HOME|${HOME}|g"              "/usr/share/applications/TFC-Dev.desktop"
+    sudo cp "${HOME}/tfc/tfc.png"                   "/usr/share/pixmaps/"
+    sudo cp "${HOME}/tfc/launchers/TFC-Dev.desktop" "/usr/share/applications/"
+    sudo sed -i "s|\$HOME|${HOME}|g"                "/usr/share/applications/TFC-Dev.desktop"
     modify_terminator_font_size "" "${HOME}/tfc/launchers/terminator-config-dev"
     chmod a+rwx -R "${HOME}/tfc/"
 
