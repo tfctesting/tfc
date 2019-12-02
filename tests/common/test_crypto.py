@@ -200,7 +200,7 @@ class TestArgon2KDF(unittest.TestCase):
                          '2957db15d320b0970a34be9a6ef984b11b2296b1b1f8b051a47e35035c1bc7cf')
 
         # Unzip, compile, and test the command-line utility.
-        subprocess.Popen(f'unzip {file_name}', shell=True).wait()
+        subprocess.Popen(f'/bin/unzip {file_name}', shell=True).wait()
         os.chdir('phc-winner-argon2-master/')
         subprocess.Popen('/bin/make',      shell=True).wait()
         subprocess.Popen('/bin/make test', shell=True).wait()
