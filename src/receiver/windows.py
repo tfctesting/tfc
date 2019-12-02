@@ -294,7 +294,7 @@ class RxWindow(Iterable[MsgTuple]):
                     c3.append(p.contact.nick)
                     c4.append(f"{len(p.assembly_pt_list) / p.packets * 100:.2f}%")
 
-        if not len(c1) > 1:
+        if len(c1) <= 1:
             m_print("No file transmissions currently in progress.", bold=True, head=1, tail=1)
             print_on_previous_line(reps=3, delay=0.1)
             return None
