@@ -610,8 +610,9 @@ def rxp_load_psk(window:       'TxWindow',
                 window.contact.kex_status = KEX_STATUS_HAS_RX_PSK
                 contact_list.store_contacts()
                 raise FunctionReturn(f"Removed PSK reminder for {window.name}.", tail_clear=True, delay=1)
-            else:
-                m_print("Incorrect confirmation code.", head=1)
-                print_on_previous_line(reps=4, delay=2)
+
+            m_print("Incorrect confirmation code.", head=1)
+            print_on_previous_line(reps=4, delay=2)
+
         except (EOFError, KeyboardInterrupt):
             raise FunctionReturn("PSK verification aborted.", tail_clear=True, delay=1, head=2)
