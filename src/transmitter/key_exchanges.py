@@ -337,8 +337,8 @@ def start_key_exchange(onion_pub_key: bytes,          # Public key of contact's 
 
         queues[KEY_MANAGEMENT_QUEUE].put((KDB_ADD_ENTRY_HEADER,
                                           onion_pub_key,
-                                          tx_mk, csprng(),
-                                          tx_hk, csprng()))
+                                          tx_mk, rx_mk,
+                                          tx_hk, rx_hk))
 
         m_print(f"Successfully added {nick}.", bold=True, tail_clear=True, delay=1, head=1)
 
