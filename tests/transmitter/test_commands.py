@@ -34,11 +34,11 @@ from src.common.encoding     import bool_to_bytes
 from src.common.statics      import (BOLD_ON, CLEAR_ENTIRE_SCREEN, COMMAND_PACKET_QUEUE, CURSOR_LEFT_UP_CORNER,
                                      DIR_USER_DATA, KEY_MGMT_ACK_QUEUE, KEX_STATUS_NO_RX_PSK, KEX_STATUS_UNVERIFIED,
                                      KEX_STATUS_VERIFIED, KEY_MANAGEMENT_QUEUE, LOGFILE_MASKING_QUEUE, MESSAGE,
-                                     MESSAGE_PACKET_QUEUE, M_S_HEADER, NORMAL_TEXT, PADDING_LENGTH, PRIVATE_MESSAGE_HEADER,
-                                     RELAY_PACKET_QUEUE, RESET, SENDER_MODE_QUEUE, TM_COMMAND_PACKET_QUEUE,
-                                     TRAFFIC_MASKING_QUEUE, TX, UNENCRYPTED_DATAGRAM_HEADER, UNENCRYPTED_WIPE_COMMAND,
-                                     VERSION, WIN_TYPE_CONTACT, WIN_TYPE_GROUP, KDB_HALT_ACK_HEADER,
-                                     KDB_M_KEY_CHANGE_HALT_HEADER)
+                                     MESSAGE_PACKET_QUEUE, M_S_HEADER, NORMAL_TEXT, PADDING_LENGTH,
+                                     PRIVATE_MESSAGE_HEADER, RELAY_PACKET_QUEUE, RESET, SENDER_MODE_QUEUE,
+                                     TM_COMMAND_PACKET_QUEUE, TRAFFIC_MASKING_QUEUE, TX, UNENCRYPTED_DATAGRAM_HEADER,
+                                     UNENCRYPTED_WIPE_COMMAND, VERSION, WIN_TYPE_CONTACT, WIN_TYPE_GROUP,
+                                     KDB_HALT_ACK_HEADER, KDB_M_KEY_CHANGE_HALT_HEADER)
 
 from src.transmitter.commands import change_master_key, change_setting, clear_screens, exit_tfc, log_command
 from src.transmitter.commands import print_about, print_help, print_recipients, print_settings, process_command
