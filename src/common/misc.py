@@ -239,27 +239,12 @@ def monitor_processes(process_list:       List[Process],
                         data = f.read()
                     if TAILS not in data:
                         shred_databases(software_operation)
-
-                    os.system(POWEROFF)
-
-
-def reset_terminal() -> None:
-    """Reset terminal."""
-    reset_terminal()
+                    power_off_system()
 
 
-def shred_databases(software_operation: str) -> None:
-    """Shred TFC databases and remove directories."""
-    if software_operation == RX:
-        subprocess.Popen("find {} -type f -exec shred -n 3 -z -u {{}} \\;"
-                         .format(DIR_RECV_FILES), shell=True).wait()
-
-    subprocess.Popen("find {} -name '{}*' -type f -exec shred -n 3 -z -u {{}} \\;"
-                     .format(DIR_USER_DATA, software_operation), shell=True).wait()
-
-    for d in [DIR_USER_DATA, DIR_RECV_FILES]:
-        with ignored(FileNotFoundError):
-            shutil.rmtree(d)
+def power_off_system() -> None:
+    """Power off system."""
+    os.system(POWEROFF)
 
 
 def process_arguments() -> Tuple[str, bool, bool]:
@@ -307,9 +292,28 @@ def readable_size(size: int) -> str:
     return f'{f_size:3.1f}YB'
 
 
+def reset_terminal() -> None:
+    """Reset terminal."""
+    reset_terminal()
+
+
 def round_up(value: Union[int, float]) -> int:
     """Round value to next 10."""
     return int(math.ceil(value / 10.0)) * 10
+
+
+def shred_databases(software_operation: str) -> None:
+    """Shred TFC databases and remove directories."""
+    if software_operation == RX:
+        subprocess.Popen("find {} -type f -exec shred -n 3 -z -u {{}} \\;"
+                         .format(DIR_RECV_FILES), shell=True).wait()
+
+    subprocess.Popen("find {} -name '{}*' -type f -exec shred -n 3 -z -u {{}} \\;"
+                     .format(DIR_USER_DATA, software_operation), shell=True).wait()
+
+    for d in [DIR_USER_DATA, DIR_RECV_FILES]:
+        with ignored(FileNotFoundError):
+            shutil.rmtree(d)
 
 
 def split_byte_string(bytestring: bytes,  # Bytestring to split
