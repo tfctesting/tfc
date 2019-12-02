@@ -37,13 +37,13 @@ from src.common.db_masterkey import MasterKey
 from src.common.encoding     import b58encode, bytes_to_str, pub_key_to_short_address
 from src.common.exceptions   import FunctionReturn
 from src.common.input        import get_b58_key
-from src.common.misc         import separate_header, separate_headers
+from src.common.misc         import reset_terminal, separate_header, separate_headers
 from src.common.output       import m_print, phase, print_on_previous_line
 from src.common.path         import ask_path_gui
 from src.common.statics      import (ARGON2_PSK_MEMORY_COST, ARGON2_PSK_PARALLELISM, ARGON2_PSK_TIME_COST,
                                      ARGON2_SALT_LENGTH, B58_LOCAL_KEY, CONFIRM_CODE_LENGTH, DONE, FINGERPRINT_LENGTH,
                                      KEX_STATUS_HAS_RX_PSK, KEX_STATUS_LOCAL_KEY, KEX_STATUS_NONE, KEX_STATUS_NO_RX_PSK,
-                                     LOCAL_NICK, LOCAL_PUBKEY, ONION_SERVICE_PUBLIC_KEY_LENGTH, PSK_FILE_SIZE, RESET,
+                                     LOCAL_NICK, LOCAL_PUBKEY, ONION_SERVICE_PUBLIC_KEY_LENGTH, PSK_FILE_SIZE,
                                      SYMMETRIC_KEY_LENGTH, WIN_TYPE_CONTACT, WIN_TYPE_GROUP)
 
 if typing.TYPE_CHECKING:
@@ -60,7 +60,7 @@ if typing.TYPE_CHECKING:
 def protect_kdk(kdk: bytes) -> None:
     """Prevent leak of KDK via terminal history / clipboard."""
     readline.clear_history()
-    os.system(RESET)
+    reset_terminal()
     root = tkinter.Tk()
     root.withdraw()
 

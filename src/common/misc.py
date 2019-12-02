@@ -243,6 +243,11 @@ def monitor_processes(process_list:       List[Process],
                     os.system(POWEROFF)
 
 
+def reset_terminal():
+    """Reset terminal."""
+    reset_terminal()
+
+
 def shred_databases(software_operation: str) -> None:
     """Shred TFC databases and remove directories."""
     if software_operation == RX:

@@ -32,13 +32,13 @@ from src.common.database   import TFCUnencryptedDatabase
 from src.common.encoding   import bytes_to_int, int_to_bytes
 from src.common.exceptions import CriticalError, FunctionReturn, graceful_exit
 from src.common.input      import pwd_prompt
-from src.common.misc       import ensure_dir, separate_headers
+from src.common.misc       import ensure_dir, reset_terminal, separate_headers
 from src.common.output     import clear_screen, m_print, phase, print_on_previous_line
 from src.common.word_list  import eff_wordlist
 from src.common.statics    import (ARGON2_MIN_MEMORY_COST, ARGON2_MIN_PARALLELISM, ARGON2_MIN_TIME_COST,
                                    ARGON2_SALT_LENGTH, BLAKE2_DIGEST_LENGTH, DIR_USER_DATA, DONE,
                                    ENCODED_INTEGER_LENGTH, GENERATE, MASTERKEY_DB_SIZE, MAX_KEY_DERIVATION_TIME,
-                                   MIN_KEY_DERIVATION_TIME, PASSWORD_MIN_BIT_STRENGTH, RESET)
+                                   MIN_KEY_DERIVATION_TIME, PASSWORD_MIN_BIT_STRENGTH)
 
 
 class MasterKey(object):
@@ -309,7 +309,7 @@ class MasterKey(object):
                      '', password_1, '',
                      "Write down this password and dispose of the copy once you remember it.",
                      "Press <Enter> to continue."], manual_proceed=True, box=True, head=1, tail=1)
-            os.system(RESET)
+            reset_terminal()
 
             password_2 = password_1
         else:

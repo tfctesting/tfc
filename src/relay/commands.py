@@ -29,12 +29,12 @@ from typing import Any, Dict
 
 from src.common.encoding   import bytes_to_bool, bytes_to_int
 from src.common.exceptions import FunctionReturn
-from src.common.misc       import ignored, separate_header, separate_headers, split_byte_string
+from src.common.misc       import ignored, reset_terminal, separate_header, separate_headers, split_byte_string
 from src.common.output     import clear_screen, m_print
 from src.common.statics    import (CONFIRM_CODE_LENGTH, CONTACT_MGMT_QUEUE, C_REQ_MGMT_QUEUE, C_REQ_STATE_QUEUE,
                                    ENCODED_BOOLEAN_LENGTH, ENCODED_INTEGER_LENGTH, EXIT, GROUP_MGMT_QUEUE,
                                    LOCAL_TESTING_PACKET_DELAY, MAX_INT, ONION_CLOSE_QUEUE, ONION_KEY_QUEUE,
-                                   ONION_SERVICE_PRIVATE_KEY_LENGTH, ONION_SERVICE_PUBLIC_KEY_LENGTH, RESET,
+                                   ONION_SERVICE_PRIVATE_KEY_LENGTH, ONION_SERVICE_PUBLIC_KEY_LENGTH,
                                    RP_ADD_CONTACT_HEADER, RP_REMOVE_CONTACT_HEADER, SRC_TO_RELAY_QUEUE,
                                    UNENCRYPTED_ADD_EXISTING_CONTACT, UNENCRYPTED_ADD_NEW_CONTACT, UNENCRYPTED_BAUDRATE,
                                    UNENCRYPTED_COMMAND_HEADER_LENGTH, UNENCRYPTED_EC_RATIO, UNENCRYPTED_EXIT_COMMAND,
@@ -116,7 +116,7 @@ def clear_windows(gateway: 'Gateway') -> None:
 def reset_windows(gateway: 'Gateway') -> None:
     """Reset Relay Program screen."""
     race_condition_delay(gateway)
-    os.system(RESET)
+    reset_terminal()
 
 
 def exit_tfc(gateway: 'Gateway', queues: 'QueueDict') -> None:
@@ -140,7 +140,7 @@ def wipe(gateway: 'Gateway', queues: 'QueueDict') -> None:
     The queue is read by
         relay.onion.onion_service()
     """
-    os.system(RESET)
+    reset_terminal()
     race_condition_delay(gateway)
     queues[ONION_CLOSE_QUEUE].put(WIPE)
 

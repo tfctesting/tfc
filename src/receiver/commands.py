@@ -19,7 +19,6 @@ You should have received a copy of the GNU General Public License
 along with TFC. If not, see <https://www.gnu.org/licenses/>.
 """
 
-import os
 import typing
 
 from typing import Any, Dict, Tuple, Union
@@ -27,14 +26,14 @@ from typing import Any, Dict, Tuple, Union
 from src.common.db_logs    import access_logs, change_log_db_key, remove_logs, replace_log_db
 from src.common.encoding   import bytes_to_int, pub_key_to_short_address
 from src.common.exceptions import FunctionReturn
-from src.common.misc       import ignored, separate_header
+from src.common.misc       import ignored, reset_terminal, separate_header
 from src.common.output     import clear_screen, m_print, phase, print_on_previous_line
 from src.common.statics    import (CH_FILE_RECV, CH_LOGGING, CH_MASTER_KEY, CH_NICKNAME, CH_NOTIFY, CH_SETTING,
                                    CLEAR_SCREEN, COMMAND, CONTACT_REM, CONTACT_SETTING_HEADER_LENGTH, DISABLE, DONE,
                                    ENABLE, ENCODED_INTEGER_LENGTH, ENCRYPTED_COMMAND_HEADER_LENGTH, EXIT, EXIT_PROGRAM,
                                    GROUP_ADD, GROUP_CREATE, GROUP_DELETE, GROUP_REMOVE, GROUP_RENAME, KEY_EX_ECDHE,
                                    KEY_EX_PSK_RX, KEY_EX_PSK_TX, LOCAL_KEY_RDY, LOCAL_PUBKEY, LOG_DISPLAY, LOG_EXPORT,
-                                   LOG_REMOVE, ONION_SERVICE_PUBLIC_KEY_LENGTH, ORIGIN_USER_HEADER, RESET, RESET_SCREEN,
+                                   LOG_REMOVE, ONION_SERVICE_PUBLIC_KEY_LENGTH, ORIGIN_USER_HEADER, RESET_SCREEN,
                                    US_BYTE, WIN_ACTIVITY, WIN_SELECT, WIN_TYPE_CONTACT, WIN_TYPE_GROUP, WIN_UID_COMMAND,
                                    WIN_UID_FILE, WIPE, WIPE_USR_DATA)
 
@@ -142,7 +141,7 @@ def reset_screen(win_uid: bytes, window_list: 'WindowList') -> None:
     """Reset window specified by the Transmitter Program."""
     window = window_list.get_window(win_uid)
     window.reset_window()
-    os.system(RESET)
+    reset_terminal()
 
 
 def exit_tfc(exit_queue: 'Queue[str]') -> None:
@@ -450,5 +449,5 @@ def wipe(exit_queue: 'Queue[str]') -> None:
     of user data becomes impossible very fast:
         https://www1.cs.fau.de/filepool/projects/coldboot/fares_coldboot.pdf
     """
-    os.system(RESET)
+    reset_terminal()
     exit_queue.put(WIPE)

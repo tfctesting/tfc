@@ -30,6 +30,7 @@ from src.common.db_masterkey import MasterKey
 from src.common.encoding     import bool_to_bytes, int_to_bytes, pub_key_to_short_address, str_to_bytes
 from src.common.exceptions   import FunctionReturn
 from src.common.input        import ask_confirmation_code, get_b58_key, nc_bypass_msg, yes
+from src.common.misc         import reset_terminal
 from src.common.output       import m_print, phase, print_fingerprint, print_key, print_on_previous_line
 from src.common.path         import ask_path_gui
 from src.common.statics      import (ARGON2_PSK_MEMORY_COST, ARGON2_PSK_PARALLELISM, ARGON2_PSK_TIME_COST,
@@ -39,7 +40,7 @@ from src.common.statics      import (ARGON2_PSK_MEMORY_COST, ARGON2_PSK_PARALLEL
                                      KEX_STATUS_VERIFIED, KEY_EX_ECDHE, KEY_EX_PSK_RX, KEY_EX_PSK_TX,
                                      KEY_MANAGEMENT_QUEUE, LOCAL_KEY_DATAGRAM_HEADER, LOCAL_KEY_RDY, LOCAL_NICK,
                                      LOCAL_PUBKEY, NC_BYPASS_START, NC_BYPASS_STOP, PUBLIC_KEY_DATAGRAM_HEADER,
-                                     RELAY_PACKET_QUEUE, RESET, TFC_PUBLIC_KEY_LENGTH, UNENCRYPTED_DATAGRAM_HEADER,
+                                     RELAY_PACKET_QUEUE, TFC_PUBLIC_KEY_LENGTH, UNENCRYPTED_DATAGRAM_HEADER,
                                      UNENCRYPTED_ONION_SERVICE_DATA, WIN_TYPE_GROUP)
 
 from src.transmitter.packet import queue_command, queue_to_nc
@@ -219,7 +220,7 @@ def new_local_key(contact_list: 'ContactList',
         queue_command(LOCAL_KEY_RDY, settings, queues)
 
         m_print("Successfully completed the local key exchange.", bold=True, tail_clear=True, delay=1, head=1)
-        os.system(RESET)
+        reset_terminal()
 
     except (EOFError, KeyboardInterrupt):
         raise FunctionReturn("Local key setup aborted.", tail_clear=True, delay=1, head=2)

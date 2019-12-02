@@ -19,7 +19,6 @@ You should have received a copy of the GNU General Public License
 along with TFC. If not, see <https://www.gnu.org/licenses/>.
 """
 
-import os
 import readline
 import struct
 import textwrap
@@ -34,14 +33,14 @@ from src.common.db_keys    import KeyList
 from src.common.encoding   import b58decode, b58encode, bool_to_bytes, int_to_bytes, onion_address_to_pub_key
 from src.common.exceptions import CriticalError, FunctionReturn
 from src.common.input      import yes
-from src.common.misc       import get_terminal_width, ignored, validate_onion_addr
+from src.common.misc       import get_terminal_width, ignored, reset_terminal, validate_onion_addr
 from src.common.output     import clear_screen, m_print, phase, print_on_previous_line
 from src.common.statics    import (CH_MASTER_KEY, CH_SETTING, CLEAR, CLEAR_SCREEN, COMMAND_PACKET_QUEUE, DONE,
                                    EXIT_PROGRAM, GROUP_ID_ENC_LENGTH, KDB_HALT_ACK_HEADER, KDB_M_KEY_CHANGE_HALT_HEADER,
                                    KDB_UPDATE_SIZE_HEADER, KEX_STATUS_UNVERIFIED, KEX_STATUS_VERIFIED,
                                    KEY_MANAGEMENT_QUEUE, KEY_MGMT_ACK_QUEUE, LOCAL_TESTING_PACKET_DELAY,
                                    LOGFILE_MASKING_QUEUE, LOG_DISPLAY, LOG_EXPORT, LOG_REMOVE, MESSAGE,
-                                   ONION_ADDRESS_LENGTH, RELAY_PACKET_QUEUE, RESET, RESET_SCREEN, RX, SENDER_MODE_QUEUE,
+                                   ONION_ADDRESS_LENGTH, RELAY_PACKET_QUEUE, RESET_SCREEN, RX, SENDER_MODE_QUEUE,
                                    TRAFFIC_MASKING_QUEUE, TX, UNENCRYPTED_BAUDRATE, UNENCRYPTED_DATAGRAM_HEADER,
                                    UNENCRYPTED_EC_RATIO, UNENCRYPTED_EXIT_COMMAND, UNENCRYPTED_MANAGE_CONTACT_REQ,
                                    UNENCRYPTED_SCREEN_CLEAR, UNENCRYPTED_SCREEN_RESET, UNENCRYPTED_WIPE_COMMAND,
@@ -170,7 +169,7 @@ def clear_screens(user_input: 'UserInput',
 
     if not clear:
         readline.clear_history()
-        os.system(RESET)
+        reset_terminal()
 
 
 def rxp_show_sys_win(user_input: 'UserInput',
@@ -807,4 +806,4 @@ def wipe(settings: 'Settings',
     relay_command = UNENCRYPTED_DATAGRAM_HEADER + UNENCRYPTED_WIPE_COMMAND
     queue_to_nc(relay_command, queues[RELAY_PACKET_QUEUE])
 
-    os.system(RESET)
+    reset_terminal()
