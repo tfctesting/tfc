@@ -342,7 +342,8 @@ def g_msg_manager(queues:    'QueueDict',
     is received, existing contacts are displayed under "known contacts",
     and non-existing contacts are displayed under "unknown contacts".
     """
-    existing_contacts = []  # type: List[bytes]
+    existing_contacts      = []  # type: List[bytes]
+    group_management_queue = queues[GROUP_MGMT_QUEUE]
 
     while True:
         with ignored(EOFError, KeyboardInterrupt):
@@ -356,15 +357,7 @@ def g_msg_manager(queues:    'QueueDict',
                 continue
             group_id_hr = b58encode(group_id)
 
-            # Update list of existing contacts
-            while queues[GROUP_MGMT_QUEUE].qsize() > 0:
-                command, ser_onion_pub_keys = queues[GROUP_MGMT_QUEUE].get()
-                onion_pub_key_list          = split_byte_string(ser_onion_pub_keys, ONION_SERVICE_PUBLIC_KEY_LENGTH)
-
-                if command == RP_ADD_CONTACT_HEADER:
-                    existing_contacts = list(set(existing_contacts) | set(onion_pub_key_list))
-                elif command == RP_REMOVE_CONTACT_HEADER:
-                    existing_contacts = list(set(existing_contacts) - set(onion_pub_key_list))
+            existing_contacts = update_list_of_existing_contacts(group_management_queue, existing_contacts)
 
             # Handle group management messages
             process_group_management_message(data, existing_contacts, group_id_hr, header, trunc_addr)
@@ -461,7 +454,7 @@ def update_list_of_existing_contacts(contact_queue:     'Queue[Any]',
     """Update list of existing contacts."""
     while contact_queue.qsize() > 0:
         command, ser_onion_pub_keys = contact_queue.get()
-        onion_pub_key_list = split_byte_string(ser_onion_pub_keys, ONION_SERVICE_PUBLIC_KEY_LENGTH)
+        onion_pub_key_list          = split_byte_string(ser_onion_pub_keys, ONION_SERVICE_PUBLIC_KEY_LENGTH)
 
         if command == RP_ADD_CONTACT_HEADER:
             existing_contacts = list(set(existing_contacts) | set(onion_pub_key_list))
