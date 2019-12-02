@@ -255,7 +255,7 @@ def yes(prompt: str,                    # Question to be asked
             print_spacing(tail)
             return True
 
-        elif user_input.lower() in ['n', 'no']:
+        if user_input.lower() in ['n', 'no']:
             print(indent * ' ' + f'│ {prompt}No  │\n')
             print_spacing(tail)
             return False
