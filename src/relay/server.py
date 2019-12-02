@@ -157,9 +157,9 @@ def get_message(purp_url_token: str,
 
 
 def get_file(purp_url_token:  str,
-             queues:       'QueueDict',
-             pub_key_dict: 'PubKeyDict',
-             file_dict:    'FileDict'
+             queues:          'QueueDict',
+             pub_key_dict:    'PubKeyDict',
+             file_dict:       'FileDict'
              ) -> Any:
     if not validate_url_token(purp_url_token, queues, pub_key_dict):
         return ''

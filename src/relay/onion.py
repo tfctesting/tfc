@@ -60,7 +60,7 @@ def get_available_port(min_port: int, max_port: int) -> int:
                 break
             except OSError:
                 pass
-        _, port = temp_sock.getsockname()  # type: Any, int
+        _, port = temp_sock.getsockname()  # type: str, int
 
     if Tor.platform_is_tails():
         return TOR_SOCKS_PORT

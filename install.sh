@@ -18,7 +18,7 @@
 
 # PIP dependency file names
 ARGON2=argon2_cffi-19.2.0-cp34-abi3-manylinux1_x86_64.whl
-CERTIFI=certifi-2019.9.11-py2.py3-none-any.whl
+CERTIFI=certifi-2019.11.28-py2.py3-none-any.whl
 CFFI=cffi-1.13.2-cp37-cp37m-manylinux1_x86_64.whl
 CHARDET=chardet-3.0.4-py2.py3-none-any.whl
 CLICK=Click-7.0-py2.py3-none-any.whl
@@ -33,11 +33,11 @@ PYNACL=PyNaCl-1.3.0-cp34-abi3-manylinux1_x86_64.whl
 PYSERIAL=pyserial-3.4-py2.py3-none-any.whl
 PYSOCKS=PySocks-1.7.1-py3-none-any.whl
 REQUESTS=requests-2.22.0-py2.py3-none-any.whl
-SETUPTOOLS=setuptools-41.6.0-py2.py3-none-any.whl
+SETUPTOOLS=setuptools-42.0.2-py2.py3-none-any.whl
 SIX=six-1.13.0-py2.py3-none-any.whl
 # STEM=stem-1.7.1.tar.gz
 URLLIB3=urllib3-1.25.7-py2.py3-none-any.whl
-VIRTUALENV=virtualenv-16.7.7-py2.py3-none-any.whl
+VIRTUALENV=virtualenv-16.7.8-py2.py3-none-any.whl
 WERKZEUG=Werkzeug-0.16.0-py2.py3-none-any.whl
 
 
@@ -56,8 +56,8 @@ function compare_digest {
 function verify_tcb_requirements_files {
     # To minimize the time TCB installer configuration stays online, only
     # the requirements files are authenticated between downloads.
-    compare_digest 3a3f8a79420ddb792f647c0bb2a82ac6bfec70f4497005a6ca77ba113cfda40bda502456156860b2a92b464eaf26b23e78bcf907d849ec40a08357955f31549d '' requirements.txt
-    compare_digest 97558ed189976ccd54e3a25bcf639f1944aa43f4a4f42ff5ef2cf22349a7b649272e91746041b4e04b2f33adf1fab8818c339b1cc58f9353af3e5ac76cb1ec0b '' requirements-venv.txt
+    compare_digest b2ac8925070d9f304aac6c7500a752b3907b236fe796b5fd82491d02ce9a8b6e2f739a5efd175a2205ecc9241d5e0465a748ad373e8e2a1346eb4f674cf16e65 '' requirements.txt
+    compare_digest 1c95643d28addf2e8a631b7ec54b2c03cdbe8135695aa5c74b7729bbd272d8590fa3ac03ced5034429c2a3012334713924a83550ff835bc1d0fff77cf43500f6 '' requirements-venv.txt
 }
 
 
@@ -67,10 +67,10 @@ function verify_files {
     compare_digest d361e5e8201481c6346ee6a886592c51265112be550d5224f1a7a6e116255c2f1ab8788df579d9b8372ed7bfd19bac4b6e70e00b472642966ab5b319b99a2686 '' LICENSE
     compare_digest 7e519d20fef24e25e88ec4a9c03abadf513b084e05038f17c62ca7899c2f9174a953caa0bfbd3b61e455e243513cdab737c22a34d73ebab07b65d3ce99100f0a '' LICENSE-3RD-PARTY
     compare_digest 99815d0cfbca7d83409b7317947fe940fe93fd94b50e6099a566563ee6999e33830fd883ff61e5367a040d5fda3f2a43165ef0dc6155e14a573e07dc27eba70d '' relay.py
-    compare_digest 3904003688f993c6566fb8cc39e7bd8f820ef3ec0d097b7e467a5aa3019f480a026ae424bfb5473ff71c01002dc386528a010a8fb36cd0f5a03eb0c355450d61 '' requirements-dev.txt
-    compare_digest 119fbe604a01ad0ef1d6e758ed6ee8dc46be4d746207b0cda1d4c17ba12621d32e6f479229856c6008a77f796bbd778dbecc27bb38dca817d88c257a9d3b27b8 '' requirements-relay.txt
-    compare_digest 1696663138ca74e4c85caeeea82e34168ddbb1dd1a626a12064c43515859590e17c982dd0f1de2d807039794884bf053c147060760c84751143214e2af3611de '' requirements-relay-tails.txt
-    compare_digest 550a82b9c07376e9eaf1117f77362f89c401169a848010110c2f8f2d99d50376f4cc5308d8b7e1928e68f15834aca7d5c9a9a7e7b8db956e5e55755ab7ea0a25 '' requirements-setuptools.txt
+    compare_digest cb1ee534d74c6f4ce94c2c673c56424fbde0c031e35effc8ae20f98c9d681c831faa1d5403fe43d2accefdd235ed9416c0f2f94bfa32dd83bcab0e76be582c41 '' requirements-dev.txt
+    compare_digest 6d3c903bc74f5d1f2d20072a73aaac9b3c5f55de6a844f627a1e9d2b3522ecd7516d8637a52ccddb74bb8a854703bc28ec0349049a0e3c9cc59838dfdd22b328 '' requirements-relay.txt
+    compare_digest fd6073d05c3dc24b44fe1a3b24fcbc6d3b4ffff44d7a96cb5f99c4e431bf7ebe6838fde80384f18fce75bc4f2be752a446bc2cb5bb0335de80366d60eccfdfcc '' requirements-relay-tails.txt
+    compare_digest c9ac159bb9a7969ab152ea192f3c7597f852493b088bd1801fc36aee8870e319459509abb253915f4d9bfb4f9482d2b0f004fbccce2d41305557ded33cf8c19e '' requirements-setuptools.txt
     compare_digest 79f8272a2ab122a48c60630c965cd9d000dcafabf5ee9d69b1c33c58ec321feb17e4654dbbbf783cc8868ccdfe2777d60c6c3fc9ef16f8264d9fcf43724e83c2 '' tfc.png
     compare_digest 7e24d0962e0be4b8e206d9390e888caab10604f5bf1bb29af4b91c4c20e42bcc04ef4ef15ce3248ac68c0acfd2e391a96a5567d87d91223f7be63a05b9dbf843 '' tfc.py
     compare_digest 7ae1c2a393d96761843bea90edd569244bfb4e0f9943e68a4549ee46d93180d26d4101c2471c1a37785ccdfaef45eedecf15057c0a9cc6c056460c5f9a69d37b '' tfc.yml
@@ -96,7 +96,7 @@ function verify_files {
     compare_digest 18e86599ee813be8a38d5775cff7d423735677bc40f1758dcc676d683b29dd3b4ba3eba72a300a1c3fabc4d68ad211329cef0c934403909491cb981e4a1bcda8 src/common/ db_settings.py
     compare_digest 7a673e6feb7a5b2e3417d2c0eee82a59b3730a5d241938a84fd866dfc838c3cd63d7ef96772d43f62df740a2ba1001456746dd6c86e950484eac3ebabed498ce src/common/ encoding.py
     compare_digest b4b502381c3d37908f6550e52c0fdabcedb0cd4b89700bd4aca0478b8185d2d7e5b75aa684eb7f72d46ec2f21d3455ac10d4629532e37496b58656b88bc9ce72 src/common/ exceptions.py
-    compare_digest b84504970c22c056fb758e349c8de184838f0b1adabf755d8e212520b4df0deef49a1d5cdc06a817f95968e30561bdca2cbac1563c05adb858cd680028f8f5ec src/common/ gateway.py
+    compare_digest 34942ab8daa2e81c096c073c1472fa0b117485f00f69e760d6d0fe34a9b3896e1cb6fd86432176dbc8f99646eab4f46ee16bb388cd9a0c1405a586111f948d60 src/common/ gateway.py
     compare_digest 72cfc8cad6aecf6913ecb8cf9635158ed0113a1168b522c0b032f21880a42d2e5642d7a9adf54574611daa03af5bbebdaab9b3617d67eacd041d42cea0b5ab15 src/common/ input.py
     compare_digest a5dcd65a1d42ec51d95251e42c08ef06e4e6bc7ba5237a415e24f0847e536d271b18e24f710b6478ef3b112bc26301d2f6120e654294fb775b714b4d3caeb450 src/common/ misc.py
     compare_digest 280562cc55555dbac9fa83e9930c86147b28e42e7639d04d52c362f674da27cdd5797433c2bb067c4785246eb85ca0068d6daf26b94f5110964c4b35ede6f4b1 src/common/ output.py
@@ -119,8 +119,8 @@ function verify_files {
     compare_digest cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce47d0d13c5d85f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e src/relay/ __init__.py
     compare_digest f131935d220897f6ba97d85c0269a654cb40d1567fd0c9185744f5777cd5c29f1304ddb648ad6327d51557deaee7500ae00e722d7019da5b06aa59099bfbdf9a src/relay/ client.py
     compare_digest e2d6ffb9e28d0adf9ae43ce1ba8f5c59edaa2ef94c5257e4701faa78c6516032e680c958fb9e2864ee4fb5781f0dbbdfdbb1014096ef46e41dc30ec0cca6e858 src/relay/ commands.py
-    compare_digest 8192da7588bf4c6cdd05facab8443b64b932d78181f632b6842b3d14b257b8d9b76d559414f197eb4b74946ac11544920aa1692926556471abd7f9da760fb5b4 src/relay/ onion.py
-    compare_digest b71c62e1dd0d27a2437de589db5506efc469ee3c4b463afe9bea72564358213b77b091ec51224c1ad17f87d9c8fa84d5e66acf4a9383a4e479e09ae61d688d48 src/relay/ server.py
+    compare_digest fc6166e86a066e238915334252f27a97dd97e80154427487866284f00fdd4a465fee9c7a69e6b9890f3f18c4fe4a94f1a1f0551b2678421574b111a49f42075b src/relay/ onion.py
+    compare_digest 643c5aa070a410945dffb0c6b1350ac64db82d3fec1a8b609489fac4535f2fd8f628b02ce389b16b775d4802d684326e7b3d00871b9e4aa544cf4afa06d77690 src/relay/ server.py
     compare_digest f60e75581ec996098d4eff996fa959acf8a5c8b5790635b94fdf7892ea2958258c1fda8fa46aab7cca812c13b96cc653d528fb77a5d73784ab6e3583841e5602 src/relay/ tcb.py
 
     compare_digest cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce47d0d13c5d85f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e src/transmitter/ __init__.py
@@ -223,7 +223,7 @@ function verify_tails_dependencies {
     # Tails doesn't allow downloading over PIP to /opt/tfc, so we
     # first download to $HOME, move the files to /opt/tfc, and then
     # perform additional hash verification
-    compare_digest e80eb04615d1dcd2546bd5ceef5408bbb577fa0dd725bc69f20dd7840518af575f0b41e629e8164fdaea398628813720a6f70a42e7748336601391605b79f542 '' ${VIRTUALENV}
+    compare_digest 4483bdd81d63cc38e0003cd3cba995f3e21d506e2f6a64bc98a673f1ef5ccd56e8e1109ec049c9394a538b879ea47dbafa0c575cdc02eedb1b9172e8fc045ca6 '' ${VIRTUALENV}
     compare_digest 8333ac2843fd136d5d0d63b527b37866f7d18afc3bb33c4938b63af077492aeb118eb32a89ac78547f14d59a2adb1e5d00728728275de62317da48dadf6cdff9 '' ${PYSERIAL}
     # compare_digest a275f59bba650cb5bb151cf53fb1dd820334f9abbeae1a25e64502adc854c7f54c51bc3d6c1656b595d142fc0695ffad53aab3c57bc285421c1f4f10c9c3db4c '' ${STEM}
     compare_digest 313b954102231d038d52ab58f41e3642579be29f827135b8dd92c06acb362effcb0a7fd5f35de9273372b92d9fe29f38381ae44f8b41aa90d2564d6dd07ecd12 '' ${PYSOCKS}
@@ -232,7 +232,7 @@ function verify_tails_dependencies {
     compare_digest f6a78508cb87050e176005a088118f8ad87b17cf541457d949e5712c356f8c4de7e7516ba066e5c4bb9ced5c7e7590ba7e07d4ae7fc7190487bf27f1bb9d0668 '' ${URLLIB3}
     compare_digest fb07dbec1de86efbad82a4f73d98123c59b083c1f1277445204bef75de99ca200377ad2f1db8924ae79b31b3dd984891c87d0a6344ec4d07a0ddbbbc655821a3 '' ${IDNA}
     compare_digest bfae58c8ea19c87cc9c9bf3d0b6146bfdb3630346bd954fe8e9f7da1f09da1fc0d6943ff04802798a665ea3b610ee2d65658ce84fe5a89f9e93625ea396a17f4 '' ${CHARDET}
-    compare_digest 06e8e1546d375e528a1486e1dee4fda3e585a03ef23ede85d1dad006e0eda837ebade1edde62fdc987a7f310bda69159e94ec36b79a066e0e13bbe8bf7019cfc '' ${CERTIFI}
+    compare_digest fe5b05c29c1e1d9079150aaea28b09d84f0dd15907e276ccabb314433cfaac948a9615e10d6d01cbd537f99eed8072fbda7cb901e932fbab4f1286ae8c50471b '' ${CERTIFI}
     compare_digest 9186ce4e39bb64f5931a205ffc9afac61657bc42078bc4754ed12a2b66a12b7a620583440849fc2e161d1061ac0750ddef4670f54916931ace1e9abd2a9fb09c '' ${REQUESTS}
 
     # Flask
@@ -259,7 +259,7 @@ function install_tails_setuptools {
     # Download setuptools package for Tails and then authenticate and install it.
     torsocks python3.7 -m pip download --no-cache-dir -r "/opt/tfc/requirements-setuptools.txt" --require-hashes --no-deps -d "${HOME}/"
     t_sudo mv "$HOME/${SETUPTOOLS} /opt/tfc/"
-    compare_digest 2e90929aa61c847e1d414d427b08403679ba5f512a56d58b92ee64d47e8a2c5da18e47126e5f59faca335b3a4b5ec9857aa323d866252546a6df42c3e3ef3884 '' ${SETUPTOOLS}
+    compare_digest dd18da86ba566a7abde86890f6fa7c5a4dee34970927ef883a07a44ca8992713f9c2c4c87538d18d7bbf19073f1cc7887b150474375f24a0938cef5db097c841 '' ${SETUPTOOLS}
     t_sudo python3.7 -m pip install "/opt/tfc/${SETUPTOOLS}"
     t_sudo -E rm "/opt/tfc/${SETUPTOOLS}"
 }

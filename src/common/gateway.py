@@ -31,7 +31,7 @@ import time
 import typing
 
 from datetime import datetime
-from typing   import Dict, Optional, Tuple, Union
+from typing   import Any, Dict, Optional, Tuple, Union
 
 from serial.serialutil import SerialException
 
@@ -463,7 +463,7 @@ class GatewaySettings(object):
         """Load and validate JSON settings for serial interface."""
         with open(self.file_name) as f:
             try:
-                json_dict = json.load(f)  # type: JSONDict
+                json_dict = json.load(f)
             except json.decoder.JSONDecodeError:
                 os.remove(self.file_name)
                 self.store_settings()
@@ -478,7 +478,7 @@ class GatewaySettings(object):
         # and to remove settings that do not belong in the JSON file.
         self.store_settings()
 
-    def check_missing_settings(self, json_dict: JSONDict) -> None:
+    def check_missing_settings(self, json_dict: Any) -> None:
         """Check for missing JSON fields and invalid values."""
         for key in self.key_list:
             if key not in json_dict:
