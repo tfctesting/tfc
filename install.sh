@@ -195,7 +195,7 @@ function move_tails_dependencies {
     t_sudo mv "$HOME/${PYSOCKS}"    "/opt/tfc/"
 
     # Requests
-    t_sudo mv "$HOME/${URLLIB3}"  "opt/tfc/"
+    t_sudo mv "$HOME/${URLLIB3}"  "/opt/tfc/"
     t_sudo mv "$HOME/${IDNA}"     "/opt/tfc/"
     t_sudo mv "$HOME/${CHARDET}"  "/opt/tfc/"
     t_sudo mv "$HOME/${CERTIFI}"  "/opt/tfc/"
