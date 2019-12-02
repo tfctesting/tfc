@@ -2,6 +2,7 @@
 
 ### Tinfoil Chat
 
+[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 [![Python 3.6](https://img.shields.io/badge/python-3.7-informational.svg)](https://www.python.org/downloads/release/python-360/)
 [![Build Status](https://travis-ci.org/tfctesting/tfc.svg?branch=master)](https://travis-ci.org/tfctesting/tfc) 
 [![Coverage Status](https://coveralls.io/repos/github/tfctesting/tfc/badge.svg?branch=master)](https://coveralls.io/github/tfctesting/tfc?branch=master)
