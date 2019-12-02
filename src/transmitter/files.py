@@ -154,7 +154,7 @@ class File(object):
         packet_data = time_bytes + size + name + US_BYTE + processed
         if len(packet_data) < PADDING_LENGTH:
             return 1
-        else:
-            packet_data += bytes(FILE_PACKET_CTR_LENGTH)
-            packet_data  = byte_padding(packet_data)
-            return len(split_byte_string(packet_data, item_len=PADDING_LENGTH))
+
+        packet_data += bytes(FILE_PACKET_CTR_LENGTH)
+        packet_data  = byte_padding(packet_data)
+        return len(split_byte_string(packet_data, item_len=PADDING_LENGTH))
