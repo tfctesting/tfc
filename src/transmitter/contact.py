@@ -143,8 +143,7 @@ def remove_contact(user_input:   'UserInput',
     else:
         if validate_onion_addr(selection):
             raise FunctionReturn("Error: Invalid selection.", head=0, delay=1, tail_clear=True)
-        else:
-            onion_pub_key = onion_address_to_pub_key(selection)
+        onion_pub_key = onion_address_to_pub_key(selection)
 
     receiver_command = CONTACT_REM + onion_pub_key
     queue_command(receiver_command, settings, queues)
