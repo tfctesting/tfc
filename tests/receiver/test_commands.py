@@ -49,6 +49,7 @@ from src.common.statics import (
     MESSAGE,
     ORIGIN_CONTACT_HEADER,
     PADDING_LENGTH,
+    RESET,
     RX,
     SYMMETRIC_KEY_LENGTH,
     US_BYTE,
@@ -214,15 +215,15 @@ class TestResetScreen(unittest.TestCase):
             (datetime.now(), "Hi Bob", nick_to_pub_key("Alice"), ORIGIN_CONTACT_HEADER)
         ]
 
-    @mock.patch("src.common.misc.reset_terminal", return_value=None)
-    def test_screen_reset(self, reset) -> None:
+    @mock.patch("os.system", return_value=None)
+    def test_screen_reset(self, mock_os_system) -> None:
         # Ensure there is a message to be removed from the ephemeral message log
         self.assertEqual(len(self.window.message_log), 1)
 
         reset_screen(self.cmd_data, self.window_list)
 
         # Test that screen is reset by the command
-        reset.assert_called()
+        mock_os_system.assert_called_with(RESET)
 
         # Test that the ephemeral message log is empty after the command
         self.assertEqual(len(self.window.message_log), 0)

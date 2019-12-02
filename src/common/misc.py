@@ -63,6 +63,7 @@ from src.common.statics import (
     PADDING_LENGTH,
     POWEROFF,
     PSK,
+    RESET,
     RX,
     STATIC,
     TAILS,
@@ -364,7 +365,7 @@ def readable_size(size: int) -> str:
 
 def reset_terminal() -> None:
     """Reset terminal."""
-    reset_terminal()
+    os.system(RESET)
 
 
 def round_up(value: Union[int, float]) -> int:

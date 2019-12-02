@@ -50,6 +50,7 @@ from src.common.statics import (
     PADDING_LENGTH,
     PRIVATE_MESSAGE_HEADER,
     RELAY_PACKET_QUEUE,
+    RESET,
     SENDER_MODE_QUEUE,
     TM_COMMAND_PACKET_QUEUE,
     TRAFFIC_MASKING_QUEUE,
@@ -200,16 +201,16 @@ class TestClearScreens(unittest.TestCase):
         self.assertEqual(self.queues[TM_COMMAND_PACKET_QUEUE].qsize(), 1)
         self.assertEqual(self.queues[RELAY_PACKET_QUEUE].qsize(), 0)
 
-    @mock.patch("src.common.misc.reset_terminal", return_value=None)
-    def test_reset_screens(self, mock_reset) -> None:
+    @mock.patch("os.system", return_value=None)
+    def test_reset_screens(self, mock_os_system) -> None:
         self.assertIsNone(clear_screens(UserInput("reset"), *self.args))
         self.assertEqual(self.queues[COMMAND_PACKET_QUEUE].qsize(), 1)
         self.assertEqual(self.queues[RELAY_PACKET_QUEUE].qsize(), 1)
-        mock_reset.assert_called()
+        mock_os_system.assert_called_with(RESET)
 
-    @mock.patch("src.common.misc.reset_terminal", return_value=None)
+    @mock.patch("os.system", return_value=None)
     def test_no_relay_reset_cmd_when_traffic_masking_is_enabled(
-        self, mock_reset
+        self, mock_os_system
     ) -> None:
         # Setup
         self.settings.traffic_masking = True
@@ -218,7 +219,7 @@ class TestClearScreens(unittest.TestCase):
         self.assertIsNone(clear_screens(UserInput("reset"), *self.args))
         self.assertEqual(self.queues[TM_COMMAND_PACKET_QUEUE].qsize(), 1)
         self.assertEqual(self.queues[RELAY_PACKET_QUEUE].qsize(), 0)
-        mock_reset.assert_called()
+        mock_os_system.assert_called_with(RESET)
 
 
 class TestRXPShowSysWin(unittest.TestCase):

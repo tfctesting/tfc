@@ -93,7 +93,7 @@ class TestOutputLoop(unittest.TestCase):
         time.sleep = self.o_sleep
         cleanup(self.unit_test_dir)
 
-    @mock.patch("src.common.misc.reset_terminal", return_value=None)
+    @mock.patch("os.system", return_value=None)
     @mock.patch("tkinter.Tk", return_value=MagicMock())
     @mock.patch(
         "builtins.input",
@@ -110,7 +110,7 @@ class TestOutputLoop(unittest.TestCase):
         conf_code = bytes(1)
         tx_pub_key = nick_to_pub_key("Bob")
         o_sleep = self.o_sleep
-        test_delay = 0.2
+        test_delay = 0.3
 
         def queue_packet(mk, hk, tx_harac, packet, onion_pub_key=None) -> None:
             """Create encrypted datagram."""
