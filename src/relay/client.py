@@ -275,7 +275,7 @@ def update_url_token(
         return url_token, ut_pubkey_hex
 
     except (TypeError, ValueError):
-        raise SoftError("Error: URL token derivation failed.")
+        raise SoftError("URL token derivation failed.", output=False)
 
 
 def manage_contact_status(
