@@ -19,7 +19,7 @@ You should have received a copy of the GNU General Public License
 along with TFC. If not, see <https://www.gnu.org/licenses/>.
 """
 
-"""Program details"""
+# Program details
 TFC         = 'TFC'
 VERSION     = '1.19.12'
 TRANSMITTER = 'Transmitter'
@@ -27,10 +27,9 @@ RECEIVER    = 'Receiver'
 RELAY       = 'Relay'
 
 
-"""Identifiers
-
-Placeholder accounts for databases need to be valid v3 Onion addresses.
-"""
+# Identifiers
+#
+# Placeholder accounts for databases need to be valid v3 Onion addresses.
 LOCAL_ID      = 'localidlocalidlocalidlocalidlocalidlocalidlocalidloj7uyd'
 LOCAL_PUBKEY  = b'[\x84\x05\xa0kp\x80\xb4\rn\x10\x16\x81\xad\xc2\x02\xd05\xb8@Z\x06\xb7\x08\x0b@\xd6\xe1\x01h\x1a\xdc'
 LOCAL_NICK    = 'local Source Computer'
@@ -44,25 +43,25 @@ NC            = 'nc'
 TAILS         = 'TAILS_PRODUCT_NAME="Tails"'
 
 
-"""Window identifiers"""
+# Window identifiers
 WIN_TYPE_COMMAND = 'system messages'
 WIN_TYPE_FILE    = 'incoming files'
 WIN_TYPE_CONTACT = 'contact'
 WIN_TYPE_GROUP   = 'group'
 
 
-"""Window UIDs"""
+# Window UIDs
 WIN_UID_COMMAND = b'win_uid_command'
 WIN_UID_FILE    = b'win_uid_file'
 
 
-"""Packet types"""
+# Packet types
 COMMAND = 'command'
 FILE    = 'file'
 MESSAGE = 'message'
 
 
-"""Group message IDs"""
+# Group message IDs
 NEW_GROUP        = 'new_group'
 ADDED_MEMBERS    = 'added_members'
 ALREADY_MEMBER   = 'already_member'
@@ -71,59 +70,59 @@ NOT_IN_GROUP     = 'not_in_group'
 UNKNOWN_ACCOUNTS = 'unknown_accounts'
 
 
-"""Base58 encoding"""
+# Base58 encoding
 B58_ALPHABET   = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz'
 MAINNET_HEADER = b'\x80'
 TESTNET_HEADER = b'\xef'
 
 
-"""Base58 key types"""
+# Base58 key types
 B58_PUBLIC_KEY = 'b58_public_key'
 B58_LOCAL_KEY  = 'b58_local_key'
 
 
-"""Base58 key input guides"""
+# Base58 key input guides
 B58_PUBLIC_KEY_GUIDE = '   A       B       C       D       E       F       G       H       I       J       K       L   '
 B58_LOCAL_KEY_GUIDE  = ' A   B   C   D   E   F   G   H   I   J   K   L   M   N   O   P   Q '
 
 
-"""Key exchange types"""
+# Key exchange types
 ECDHE = 'X448'
 PSK   = 'PSK'
 
 
-"""Contact setting types"""
+# Contact setting types
 LOGGING = 'logging'
 STORE   = 'store'
 NOTIFY  = 'notify'
 
 
-"""Command identifiers"""
+# Command identifiers
 CLEAR    = 'clear'
 RESET    = 'reset'
 POWEROFF = 'systemctl poweroff'
 GENERATE = 'generate'
 
 
-"""Contact setting management"""
+# Contact setting management
 CONTACT_SETTING_HEADER_LENGTH = 2
 ENABLE                        = b'es'
 DISABLE                       = b'ds'
 ALL                           = 'all'
 
 
-"""Networked Computer bypass states"""
+# Networked Computer bypass states
 NC_BYPASS_START = 'nc_bypass_start'
 NC_BYPASS_STOP  = 'nc_bypass_stop'
 
 
-"""Status messages"""
+# Status messages
 DONE  = 'DONE'
 EVENT = '-!-'
 ME    = 'Me'
 
 
-"""Data diode simulator identifiers"""
+# Data diode simulator identifiers
 IDLE      = 'Idle'
 DATA_FLOW = 'Data flow'
 SCNCLR    = 'scnclr'
@@ -132,11 +131,10 @@ NCDCLR    = 'ncdclr'
 NCDCRL    = 'ncdcrl'
 
 
-"""VT100 codes
-
-VT100 codes are used to control printing to the terminal. These make
-building functions like textbox drawers possible.
-"""
+# VT100 codes
+#
+# VT100 codes are used to control printing to the terminal. These make
+# building functions like textbox drawers possible.
 CURSOR_UP_ONE_LINE      = '\x1b[1A'
 CURSOR_RIGHT_ONE_COLUMN = '\x1b[1C'
 CLEAR_ENTIRE_LINE       = '\x1b[2K'
@@ -146,61 +144,59 @@ BOLD_ON                 = '\033[1m'
 NORMAL_TEXT             = '\033[0m'
 
 
-"""Separators
-
-Separator byte is a non-printable byte used to separate fields in
-serialized data structures.
-"""
+# Separators
+#
+# Separator byte is a non-printable byte used to separate fields in
+# serialized data structures.
 US_BYTE = b'\x1f'
 
 
-"""Datagram headers
+# Datagram headers
 
-These headers are prepended to datagrams that are transmitted over
-serial or over the network. They tell the receiving device what type of
-datagram is in question.
+# These headers are prepended to datagrams that are transmitted over
+# serial or over the network. They tell the receiving device what type of
+# datagram is in question.
+#
+# Datagrams with local key header contain the encrypted local key, used to
+# encrypt commands and data transferred between local Source and
+# Destination computers. Packets with the header are only accepted by the
+# Relay Program when they originate from the user's Source Computer. Even
+# if the Networked Computer is compromised and the local key datagram is
+# injected to the Destination Computer, the injected key could not be
+# accepted by the user as they don't know the decryption key for it. The
+# worst case scenario is a DoS attack where the Receiver Program receives
+# new local keys continuously. Such an attack would, however, reveal the
+# user they are under a sophisticated attack, and that their Networked
+# Computer has been compromised.
+#
+# Datagrams with Public key header contain TCB-level public keys that
+# originate from the sender's Source Computer, and are displayed by the
+# recipient's Networked Computer, from where they are manually typed to
+# recipient's Destination Computer.
+#
+# Message and command type datagrams tell the Receiver Program whether to
+# parse the trailing fields that determine which XChaCha20-Poly1305
+# decryption keys it should load. Contacts can of course try to alter
+# their datagrams to contain a COMMAND_DATAGRAM_HEADER header, but Relay
+# Program will by design drop them. Even if a compromised Networked
+# Computer injects such a datagram to Destination Computer, the Receiver
+# Program will drop the datagram when the MAC verification of the
+# encrypted hash ratchet counter value fails.
+#
+# File type datagram contains an encrypted file that the Receiver Program
+# caches until its decryption key arrives from the sender inside a
+# special, automated key delivery message.
 
-Datagrams with local key header contain the encrypted local key, used to
-encrypt commands and data transferred between local Source and
-Destination computers. Packets with the header are only accepted by the
-Relay Program when they originate from the user's Source Computer. Even
-if the Networked Computer is compromised and the local key datagram is
-injected to the Destination Computer, the injected key could not be
-accepted by the user as they don't know the decryption key for it. The
-worst case scenario is a DoS attack where the Receiver Program receives
-new local keys continuously. Such an attack would, however, reveal the
-user they are under a sophisticated attack, and that their Networked
-Computer has been compromised.
-
-Datagrams with Public key header contain TCB-level public keys that
-originate from the sender's Source Computer, and are displayed by the
-recipient's Networked Computer, from where they are manually typed to
-recipient's Destination Computer.
-
-Message and command type datagrams tell the Receiver Program whether to
-parse the trailing fields that determine which XChaCha20-Poly1305
-decryption keys it should load. Contacts can of course try to alter
-their datagrams to contain a COMMAND_DATAGRAM_HEADER header, but Relay
-Program will by design drop them. Even if a compromised Networked
-Computer injects such a datagram to Destination Computer, the Receiver
-Program will drop the datagram when the MAC verification of the
-encrypted hash ratchet counter value fails.
-
-File type datagram contains an encrypted file that the Receiver Program
-caches until its decryption key arrives from the sender inside a
-special, automated key delivery message.
-
-Unencrypted type datagrams contain commands intended for the Relay
-Program. These commands are in some cases preceded by an encrypted
-version of the command, that the Relay Program forwards to Receiver
-Program on Destination Computer. The unencrypted Relay commands are
-disabled during traffic masking to hide the quantity and schedule of
-communication even from the Networked Computer (in case it's compromised
-and monitoring the user). The fact these commands are unencrypted, do
-not cause security issues because if an adversary can compromise the
-Networked Computer to the point it can issue commands to the Relay
-Program, they could DoS the Relay Program, and thus TFC, anyway.
-"""
+# Unencrypted type datagrams contain commands intended for the Relay
+# Program. These commands are in some cases preceded by an encrypted
+# version of the command, that the Relay Program forwards to Receiver
+# Program on Destination Computer. The unencrypted Relay commands are
+# disabled during traffic masking to hide the quantity and schedule of
+# communication even from the Networked Computer (in case it's compromised
+# and monitoring the user). The fact these commands are unencrypted, do
+# not cause security issues because if an adversary can compromise the
+# Networked Computer to the point it can issue commands to the Relay
+# Program, they could DoS the Relay Program, and thus TFC, anyway.
 DATAGRAM_TIMESTAMP_LENGTH   = 8
 DATAGRAM_HEADER_LENGTH      = 1
 LOCAL_KEY_DATAGRAM_HEADER   = b'L'
@@ -211,13 +207,12 @@ FILE_DATAGRAM_HEADER        = b'F'
 UNENCRYPTED_DATAGRAM_HEADER = b'U'
 
 
-"""Group management headers
-
-Group management datagrams are are automatic messages that the
-Transmitter Program recommends the user to send when they make changes
-to the member list of a group, or when they add or remove groups. These
-messages are displayed by the Relay Program.
-"""
+# Group management headers
+#
+# Group management datagrams are are automatic messages that the
+# Transmitter Program recommends the user to send when they make changes
+# to the member list of a group, or when they add or remove groups. These
+# messages are displayed by the Relay Program.
 GROUP_ID_LENGTH             = 4
 GROUP_ID_ENC_LENGTH         = 13
 GROUP_MSG_ID_LENGTH         = 16
@@ -229,15 +224,14 @@ GROUP_MSG_MEMBER_REM_HEADER = b'R'
 GROUP_MSG_EXIT_GROUP_HEADER = b'X'
 
 
-"""Assembly packet headers
-
-These one-byte assembly packet headers are not part of the padded
-message parsed from assembly packets. They are however the very first
-plaintext byte, prepended to every padded assembly packet that is
-delivered to the recipient/local Destination Computer. The header
-delivers the information about if and when to assemble the packet,
-as well as when to drop any previously collected assembly packets.
-"""
+# Assembly packet headers
+#
+# These one-byte assembly packet headers are not part of the padded
+# message parsed from assembly packets. They are however the very first
+# plaintext byte, prepended to every padded assembly packet that is
+# delivered to the recipient/local Destination Computer. The header
+# delivers the information about if and when to assemble the packet,
+# as well as when to drop any previously collected assembly packets.
 FILE_PACKET_CTR_LENGTH        = 8
 ASSEMBLY_PACKET_HEADER_LENGTH = 1
 
@@ -262,16 +256,15 @@ C_C_HEADER = b'4'  # Cancelled          multi-packet command (reserved but not i
 C_N_HEADER = b'5'  # Noise command packet
 
 
-"""Unencrypted command headers
-
-These two-byte headers are only used to control the Relay Program on
-Networked Computer. These commands will not be used during traffic
-masking, as they would reveal when TFC is being used. These commands do
-not require encryption, because if an attacker can compromise the
-Networked Computer to the point it could inject commands to Relay
-Program, it could most likely also access any decryption keys used by
-the Relay Program.
-"""
+# Unencrypted command headers
+#
+# These two-byte headers are only used to control the Relay Program on
+# Networked Computer. These commands will not be used during traffic
+# masking, as they would reveal when TFC is being used. These commands do
+# not require encryption, because if an attacker can compromise the
+# Networked Computer to the point it could inject commands to Relay
+# Program, it could most likely also access any decryption keys used by
+# the Relay Program.
 UNENCRYPTED_COMMAND_HEADER_LENGTH = 2
 
 UNENCRYPTED_SCREEN_CLEAR         = b'UC'
@@ -287,14 +280,13 @@ UNENCRYPTED_ONION_SERVICE_DATA   = b'UO'
 UNENCRYPTED_MANAGE_CONTACT_REQ   = b'UM'
 
 
-"""Encrypted command headers
-
-These two-byte headers determine the type of command for Receiver
-Program on local Destination Computer. The header is evaluated after the
-Receiver Program has received all assembly packets and assembled the
-command. These headers tell the Receiver Program to which function the
-provided parameters (if any) must be redirected.
-"""
+# Encrypted command headers
+#
+# These two-byte headers determine the type of command for Receiver
+# Program on local Destination Computer. The header is evaluated after the
+# Receiver Program has received all assembly packets and assembled the
+# command. These headers tell the Receiver Program to which function the
+# provided parameters (if any) must be redirected.
 ENCRYPTED_COMMAND_HEADER_LENGTH = 2
 
 LOCAL_KEY_RDY = b'LI'
@@ -324,47 +316,45 @@ CONTACT_REM   = b'CR'
 WIPE_USR_DATA = b'WD'
 
 
-"""Origin headers
-
-This one-byte header tells the Relay and Receiver Programs whether the
-account included in the packet is the source or the destination of the
-transmission. The user origin header is used when the Relay Program
-forwards the message packets from user's Source Computer to user's
-Destination Computer. The contact origin header is used when the program
-forwards packets that are loaded from servers of contacts to the user's
-Destination Computer.
-
-On Destination Computer, the Receiver Program uses the origin header to
-determine which unidirectional keys it should load to decrypt the
-datagram payload.
-"""
+# Origin headers
+#
+# This one-byte header tells the Relay and Receiver Programs whether the
+# account included in the packet is the source or the destination of the
+# transmission. The user origin header is used when the Relay Program
+# forwards the message packets from user's Source Computer to user's
+# Destination Computer. The contact origin header is used when the program
+# forwards packets that are loaded from servers of contacts to the user's
+# Destination Computer.
+#
+# On Destination Computer, the Receiver Program uses the origin header to
+# determine which unidirectional keys it should load to decrypt the
+# datagram payload.
 ORIGIN_HEADER_LENGTH  = 1
 ORIGIN_USER_HEADER    = b'o'
 ORIGIN_CONTACT_HEADER = b'i'
 
 
-"""Message headers
-
-This one-byte header will be prepended to each plaintext message before
-padding and splitting the message. It will be evaluated once the Relay
-Program has received all assembly packets and assembled the message.
-
-The private and group message headers allow the Receiver Program to
-determine whether the message should be displayed in a private or in a
-group window. This does not allow re-direction of messages to
-unauthorized group windows, because TFC's manually managed group
-configuration is also a whitelist for accounts that are authorized to
-display messages under the group's window.
-
-Messages with the whisper message header have "sender-based control".
-Unless the contact maliciously alters their Receiver Program's behavior,
-whispered messages are not logged regardless of in-program controlled
-settings.
-
-Messages with file key header contain the hash of the file ciphertext
-that was sent to the user earlier. It also contains the symmetric
-decryption key for that file.
-"""
+# Message headers
+#
+# This one-byte header will be prepended to each plaintext message before
+# padding and splitting the message. It will be evaluated once the Relay
+# Program has received all assembly packets and assembled the message.
+#
+# The private and group message headers allow the Receiver Program to
+# determine whether the message should be displayed in a private or in a
+# group window. This does not allow re-direction of messages to
+# unauthorized group windows, because TFC's manually managed group
+# configuration is also a whitelist for accounts that are authorized to
+# display messages under the group's window.
+#
+# Messages with the whisper message header have "sender-based control".
+# Unless the contact maliciously alters their Receiver Program's behavior,
+# whispered messages are not logged regardless of in-program controlled
+# settings.
+#
+# Messages with file key header contain the hash of the file ciphertext
+# that was sent to the user earlier. It also contains the symmetric
+# decryption key for that file.
 MESSAGE_HEADER_LENGTH  = 1
 WHISPER_FIELD_LENGTH   = 1
 PRIVATE_MESSAGE_HEADER = b'p'
@@ -372,18 +362,17 @@ GROUP_MESSAGE_HEADER   = b'g'
 FILE_KEY_HEADER        = b'k'
 
 
-"""Delays
-
-Traffic masking packet queue check delay ensures that the lookup time
-for the packet queue is obfuscated.
-
-The local testing packet delay is an arbitrary delay that simulates the
-slight delay caused by data transmission over a serial interface.
-
-The Relay client delays are values that determine the delays between
-checking the online status of the contact (and the state of their
-ephemeral URL token public key).
-"""
+# Delays
+#
+# Traffic masking packet queue check delay ensures that the lookup time
+# for the packet queue is obfuscated.
+#
+# The local testing packet delay is an arbitrary delay that simulates the
+# slight delay caused by data transmission over a serial interface.
+#
+# The Relay client delays are values that determine the delays between
+# checking the online status of the contact (and the state of their
+# ephemeral URL token public key).
 TRAFFIC_MASKING_QUEUE_CHECK_DELAY = 0.1
 TRAFFIC_MASKING_MIN_STATIC_DELAY  = 0.1
 TRAFFIC_MASKING_MIN_RANDOM_DELAY  = 0.1
@@ -393,19 +382,19 @@ RELAY_CLIENT_MIN_DELAY            = 0.125
 CLIENT_OFFLINE_THRESHOLD          = 4.0
 
 
-"""Constant time delay types"""
+# Constant time delay types
 STATIC          = 'static'
 TRAFFIC_MASKING = 'traffic_masking'
 
 
-"""Default directories"""
+# Default directories
 DIR_USER_DATA  = 'user_data/'
 DIR_RECV_FILES = 'received_files/'
 DIR_TFC        = 'tfc/'
 TEMP_POSTFIX   = '_temp'
 
 
-"""Key exchange status states"""
+# Key exchange status states
 KEX_STATUS_LENGTH     = 1
 KEX_STATUS_NONE       = b'\xa0'
 KEX_STATUS_PENDING    = b'\xa1'
@@ -416,7 +405,8 @@ KEX_STATUS_HAS_RX_PSK = b'\xa5'
 KEX_STATUS_LOCAL_KEY  = b'\xa6'
 
 
-"""Queue dictionary keys"""
+# Queue dictionary keys
+#
 # Common
 EXIT_QUEUE      = b'exit'
 GATEWAY_QUEUE   = b'gateway'
@@ -458,7 +448,7 @@ ONION_CLOSE_QUEUE  = b'close_onion'
 TOR_DATA_QUEUE     = b'tor_data'
 
 
-"""Queue signals"""
+# Queue signals
 KDB_ADD_ENTRY_HEADER         = 'ADD'
 KDB_REMOVE_ENTRY_HEADER      = 'REM'
 KDB_M_KEY_CHANGE_HALT_HEADER = 'HALT'
@@ -470,7 +460,6 @@ EXIT                         = 'EXIT'
 WIPE                         = 'WIPE'
 
 
-"""Static values"""
 # Serial interface
 BAUDS_PER_BYTE        = 10
 SERIAL_RX_MIN_TIMEOUT = 0.05
