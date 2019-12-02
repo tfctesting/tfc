@@ -243,7 +243,7 @@ def monitor_processes(process_list:       List[Process],
                     os.system(POWEROFF)
 
 
-def reset_terminal():
+def reset_terminal() -> None:
     """Reset terminal."""
     reset_terminal()
 
