@@ -132,8 +132,7 @@ def ask_path_cli(prompt_msg: str,          # File selection prompt
 
     if get_file:
         return cli_get_file(prompt_msg)
-    else:
-        return cli_get_path(prompt_msg)
+    return cli_get_path(prompt_msg)
 
 
 def cli_get_file(prompt_msg: str) -> str:
