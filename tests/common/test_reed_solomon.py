@@ -14,6 +14,7 @@ https://github.com/tomerfiliba/reedsolomon/blob/master/LICENSE
 
 import unittest
 
+from typing import Iterator
 from random import sample
 
 from src.common.reed_solomon import (RSCodec, ReedSolomonError, find_prime_polys, gf_add, gf_div, gf_mul, gf_mult_nolut,
@@ -21,6 +22,19 @@ from src.common.reed_solomon import (RSCodec, ReedSolomonError, find_prime_polys
                                      init_tables, itertools, rs_check, rs_correct_msg, rs_correct_msg_nofsynd,
                                      rs_encode_msg, rs_generator_poly, rs_generator_poly_all, rs_simple_encode_msg)
 
+
+class RandomSample(object):
+
+    def __init__(self, nn: int, num_errs: int) -> None:
+        self.nn = nn
+        self.num_errs = num_errs
+
+    def __iter__(self) -> Iterator[int]:
+        """Get random indexes."""
+        for i in sample(range(self.nn), self.num_errs):
+            index = i  # type: int
+            yield index
+    
 
 class TestReedSolomon(unittest.TestCase):
 
@@ -94,17 +108,17 @@ class TestReedSolomon(unittest.TestCase):
 
         # Encoding and decoding intact message seem OK, so test errors
         numerrs = tt >> 1  # Inject tt/2 errors (expected to recover fully)
-        for i in sample(range(nn), numerrs):  # inject errors in random places
-            index        = i  # type: int
-            tem1[index] ^= 0xff  # flip all 8 bits
+        random_sample = RandomSample(nn, numerrs)
+        for i in random_sample:  # Inject errors in random places
+            tem1[i] ^= 0xff  # flip all 8 bits
         tdm, _ = rs.decode(tem1)
         self.assertEqual(tdm, decmsg, msg="decoded with errors does not match original")
 
         tem1 = bytearray(tem)  # Clone another copy
         numerrs += 1  # Inject tt/2 + 1 errors (expected to fail and detect it)
-        for i in sample(range(nn), numerrs):  # Inject errors in random places
-            index        = i  # type: int
-            tem1[index] ^= 0xff  # Flip all 8 bits
+        random_sample = RandomSample(nn, numerrs)
+        for i in random_sample:  # Inject errors in random places
+            tem1[i] ^= 0xff  # Flip all 8 bits
         # If this fails, it means excessive errors not detected
         self.assertRaises(ReedSolomonError, rs.decode, tem1)
 
@@ -127,18 +141,18 @@ class TestReedSolomon(unittest.TestCase):
 
         tem1    = bytearray(tem)
         numerrs = tt >> 1
-        for i in sample(range(nn), numerrs):
-            index        = i  # type: int
-            tem1[index] ^= 0xff
+        random_sample = RandomSample(nn, numerrs)
+        for i in random_sample:  # Inject errors in random places
+            tem1[i] ^= 0xff  # flip all 8 bits
         tdm, rtem = rs.decode(tem1)
         self.assertEqual(tdm, decmsg, msg="decoded with errors does not match original")
         self.assertEqual(rtem, tem, msg="decoded mesecc with errors does not match original")
 
         tem1     = bytearray(tem)
         numerrs += 1
-        for i in sample(range(nn), numerrs):
-            index        = i  # type: int
-            tem1[index] ^= 0xff
+        random_sample = RandomSample(nn, numerrs)
+        for i in random_sample:  # Inject errors in random places
+            tem1[i] ^= 0xff  # flip all 8 bits
         self.assertRaises(ReedSolomonError, rs.decode, tem1)
 
     def test_generator_poly(self):
