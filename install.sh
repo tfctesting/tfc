@@ -189,34 +189,34 @@ function process_tails_dependencies {
 
 function move_tails_dependencies {
     # Move Tails dependencies in batch.
-    t_sudo mv "$HOME/${VIRTUALENV} /opt/tfc/"
-    t_sudo mv "$HOME/${PYSERIAL}   /opt/tfc/"
-    # t_sudo mv "$HOME/${STEM}       /opt/tfc/"
-    t_sudo mv "$HOME/${PYSOCKS}    /opt/tfc/"
+    t_sudo mv "$HOME/${VIRTUALENV}" "/opt/tfc/"
+    t_sudo mv "$HOME/${PYSERIAL}"   "/opt/tfc/"
+    t_sudo mv "$HOME/${STEM}"       "/opt/tfc/"
+    t_sudo mv "$HOME/${PYSOCKS}"    "/opt/tfc/"
 
     # Requests
-    t_sudo mv "$HOME/${URLLIB3}  /opt/tfc/"
-    t_sudo mv "$HOME/${IDNA}     /opt/tfc/"
-    t_sudo mv "$HOME/${CHARDET}  /opt/tfc/"
-    t_sudo mv "$HOME/${CERTIFI}  /opt/tfc/"
-    t_sudo mv "$HOME/${REQUESTS} /opt/tfc/"
+    t_sudo mv "$HOME/${URLLIB3}"  "opt/tfc/"
+    t_sudo mv "$HOME/${IDNA}"     "/opt/tfc/"
+    t_sudo mv "$HOME/${CHARDET}"  "/opt/tfc/"
+    t_sudo mv "$HOME/${CERTIFI}"  "/opt/tfc/"
+    t_sudo mv "$HOME/${REQUESTS}" "/opt/tfc/"
 
     # Flask
-    t_sudo mv "$HOME/${WERKZEUG}     /opt/tfc/"
-    t_sudo mv "$HOME/${MARKUPSAFE}   /opt/tfc/"
-    t_sudo mv "$HOME/${JINJA2}       /opt/tfc/"
-    t_sudo mv "$HOME/${ITSDANGEROUS} /opt/tfc/"
-    t_sudo mv "$HOME/${CLICK}        /opt/tfc/"
-    t_sudo mv "$HOME/${FLASK}        /opt/tfc/"
+    t_sudo mv "$HOME/${WERKZEUG}"     "/opt/tfc/"
+    t_sudo mv "$HOME/${MARKUPSAFE}"   "/opt/tfc/"
+    t_sudo mv "$HOME/${JINJA2}"       "/opt/tfc/"
+    t_sudo mv "$HOME/${ITSDANGEROUS}" "/opt/tfc/"
+    t_sudo mv "$HOME/${CLICK}"        "/opt/tfc/"
+    t_sudo mv "$HOME/${FLASK}"        "/opt/tfc/"
 
     # Cryptography
-    t_sudo mv "$HOME/${SIX}          /opt/tfc/"
-    t_sudo mv "$HOME/${PYCPARSER}    /opt/tfc/"
-    t_sudo mv "$HOME/${CFFI}         /opt/tfc/"
-    t_sudo mv "$HOME/${CRYPTOGRAPHY} /opt/tfc/"
+    t_sudo mv "$HOME/${SIX}"          "/opt/tfc/"
+    t_sudo mv "$HOME/${PYCPARSER}"    "/opt/tfc/"
+    t_sudo mv "$HOME/${CFFI}"         "/opt/tfc/"
+    t_sudo mv "$HOME/${CRYPTOGRAPHY}" "/opt/tfc/"
 
     # PyNaCl
-    t_sudo mv "$HOME/${PYNACL} /opt/tfc/"
+    t_sudo mv "$HOME/${PYNACL}" "/opt/tfc/"
 }
 
 
@@ -259,7 +259,7 @@ function verify_tails_dependencies {
 function install_tails_setuptools {
     # Download setuptools package for Tails and then authenticate and install it.
     torsocks python3.7 -m pip download --no-cache-dir -r "/opt/tfc/requirements-setuptools.txt" --require-hashes --no-deps -d "${HOME}/"
-    t_sudo mv "$HOME/${SETUPTOOLS} /opt/tfc/"
+    t_sudo mv "$HOME/${SETUPTOOLS}" "/opt/tfc/"
     compare_digest dd18da86ba566a7abde86890f6fa7c5a4dee34970927ef883a07a44ca8992713f9c2c4c87538d18d7bbf19073f1cc7887b150474375f24a0938cef5db097c841 '' ${SETUPTOOLS}
     t_sudo python3.7 -m pip install "/opt/tfc/${SETUPTOOLS}"
     t_sudo -E rm "/opt/tfc/${SETUPTOOLS}"
