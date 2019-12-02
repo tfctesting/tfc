@@ -193,7 +193,6 @@ from typing import Any, Dict, Iterator, List, Optional, Tuple, Union
 
 class ReedSolomonError(Exception):
     """Reed-Solomon exception stub."""
-    pass
 
 
 # For efficiency, gf_exp[] has size 2*GF_SIZE, so that a simple
