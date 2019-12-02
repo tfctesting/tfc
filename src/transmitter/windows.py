@@ -185,7 +185,7 @@ class TxWindow(Iterable[Contact], Sized):
             add_new_contact(self.contact_list, self.group_list, settings, queues, onion_service)
             raise FunctionReturn("New contact added.", output=False)
 
-        elif selection == '/connect':
+        if selection == '/connect':
             export_onion_service_data(self.contact_list, settings, onion_service, gateway)
 
         elif selection.startswith('/rm'):
