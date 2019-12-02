@@ -441,9 +441,7 @@ class GatewaySettings(object):
                 m_print("Error: USB-to-serial/TTL adapter not found.")
                 self.setup()
             else:
-                if self.built_in_serial_interface in sorted(os.listdir('/dev/')):
-                    return None
-                else:
+                if self.built_in_serial_interface not in sorted(os.listdir('/dev/')):
                     m_print(f"Error: Serial interface /dev/{self.built_in_serial_interface} not found.")
                     self.setup()
 
