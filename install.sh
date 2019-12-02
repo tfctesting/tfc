@@ -158,7 +158,7 @@ function process_tails_dependencies {
     # files is passed to the function as a parameter.
 
     t_sudo -E $1 "/opt/tfc/${PYSERIAL}"
-    t_sudo -E $1 "/opt/tfc/${STEM}"
+    # t_sudo -E $1 "/opt/tfc/${STEM}"
     t_sudo -E $1 "/opt/tfc/${PYSOCKS}"
 
     # Requests
