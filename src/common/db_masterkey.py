@@ -80,7 +80,7 @@ class MasterKey(object):
 
     def get_available_memory(self) -> int:
         """Return the amount of available memory in the system."""
-        fields    = os.popen("cat /proc/meminfo").read().splitlines()
+        fields    = os.popen("/bin/cat /proc/meminfo").read().splitlines()
         field     = [f for f in fields if f.startswith('MemAvailable')][0]
         mem_avail = int(field.split()[1])
 
