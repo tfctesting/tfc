@@ -202,8 +202,8 @@ class TxWindow(Iterable[Contact], Sized):
                 self.contact_list.remove_contact_by_pub_key(onion_pub_key)
                 self.contact_list.store_contacts()
                 raise FunctionReturn(f"Removed contact '{selection}'.", delay=1)
-            else:
-                raise FunctionReturn(f"Error: Unknown contact '{selection}'.", delay=1)
+
+            raise FunctionReturn(f"Error: Unknown contact '{selection}'.", delay=1)
 
         else:
             raise FunctionReturn("Error: Invalid command.", delay=1)
