@@ -133,7 +133,7 @@ def process_complete_message_packet(ts:            'datetime',          # Timest
             packet.assemble_and_store_file(ts, onion_pub_key, window_list)
             raise FunctionReturn("File storage complete.", output=False)  # Raising allows calling log_masking_packets
 
-        elif p_type == MESSAGE:
+        if p_type == MESSAGE:
             process_message(ts, onion_pub_key, origin, logging, packet, window_list,
                             contact_list, group_list, message_log, file_keys)
 
