@@ -119,15 +119,12 @@ class ContactList(OrigContactList, Iterable, Sized):
 
     def store_contacts(self, replace: bool = True):
         """Mock method."""
-        pass
 
-    def load_contacts(self):
+    def load_contacts(self) -> None:
         """Mock method."""
-        pass
 
-    def print_contacts(self):
+    def print_contacts(self) -> None:
         """Mock method."""
-        pass
 
 
 class Gateway(OrigGateway):
