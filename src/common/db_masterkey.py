@@ -317,10 +317,10 @@ class MasterKey(object):
 
         if password_1 == password_2:
             return password_1
-        else:
-            m_print("Error: Passwords did not match. Try again.", head=1, tail=1)
-            print_on_previous_line(delay=1, reps=7)
-            return cls.new_password(purpose)
+
+        m_print("Error: Passwords did not match. Try again.", head=1, tail=1)
+        print_on_previous_line(delay=1, reps=7)
+        return cls.new_password(purpose)
 
     @classmethod
     def get_password(cls, purpose: str = "master password") -> str:
