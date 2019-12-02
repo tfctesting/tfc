@@ -214,8 +214,7 @@ class TestExitTFC(unittest.TestCase):
 
 class TestLogCommand(TFCTestCase):
 
-    @mock.patch("getpass.getpass", return_value='test_password')
-    def setUp(self, _):
+    def setUp(self):
         """Pre-test actions."""
         self.unit_test_dir    = cd_unit_test()
         self.window           = TxWindow(name='Alice', uid=nick_to_pub_key('Alice'))
