@@ -36,9 +36,9 @@ class TestFlaskServer(unittest.TestCase):
         queues                = gen_queue_dict()
         url_token_private_key = X448.generate_private_key()
         url_token_public_key  = X448.derive_public_key(url_token_private_key).hex()
-        url_token             = 'a450987345098723459870234509827340598273405983274234098723490285'
-        url_token_old         = 'a450987345098723459870234509827340598273405983274234098723490286'
-        url_token_invalid     = 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'
+        ut                    = 'a450987345098723459870234509827340598273405983274234098723490285'
+        ut_old                = 'a450987345098723459870234509827340598273405983274234098723490286'
+        ut_invalid            = 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'
         onion_pub_key         = nick_to_pub_key('Alice')
         onion_address         = nick_to_onion_address('Alice')
         packet1               = "packet1"
@@ -58,33 +58,33 @@ class TestFlaskServer(unittest.TestCase):
             self.assertEqual(queues[CONTACT_REQ_QUEUE].qsize(), 1)
 
             # Test invalid URL token returns empty response
-            resp = c.get(f'/{url_token_invalid}/messages/')
+            resp = c.get(f'/{ut_invalid}/messages/')
             self.assertEqual(b'', resp.data)
-            resp = c.get(f'/{url_token_invalid}/files/')
+            resp = c.get(f'/{ut_invalid}/files/')
             self.assertEqual(b'', resp.data)
 
         # Test valid URL token returns all queued messages
-        queues[URL_TOKEN_QUEUE].put((onion_pub_key, url_token_old))
-        queues[URL_TOKEN_QUEUE].put((onion_pub_key, url_token))
+        queues[URL_TOKEN_QUEUE].put((onion_pub_key, ut_old))
+        queues[URL_TOKEN_QUEUE].put((onion_pub_key, ut))
         queues[M_TO_FLASK_QUEUE].put((packet1, onion_pub_key))
         queues[M_TO_FLASK_QUEUE].put((packet2, onion_pub_key))
         queues[F_TO_FLASK_QUEUE].put((packet3, onion_pub_key))
 
         with app.test_client() as c:
-            resp = c.get(f'/{url_token}/messages/')
+            resp = c.get(f'/{ut}/messages/')
             self.assertEqual(b'packet1\npacket2', resp.data)
 
         with app.test_client() as c:
-            resp = c.get(f'/{url_token}/files/')
+            resp = c.get(f'/{ut}/files/')
             self.assertEqual(b'packet3', resp.data)
 
         # Test valid URL token returns nothing as queues are empty
         with app.test_client() as c:
-            resp = c.get(f'/{url_token}/messages/')
+            resp = c.get(f'/{ut}/messages/')
             self.assertEqual(b'', resp.data)
 
         with app.test_client() as c:
-            resp = c.get(f'/{url_token}/files/')
+            resp = c.get(f'/{ut}/files/')
             self.assertEqual(b'', resp.data)
 
         # Teardown
