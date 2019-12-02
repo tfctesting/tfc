@@ -44,3 +44,13 @@ itsdangerous>=1.1.0
 jinja2>=2.10.3
 markupsafe>=1.1.1
 werkzeug>=0.16.0
+
+# Black
+black>=19.10b0
+appdirs>=1.4.3
+attrs>=19.3.0
+Click>=7.0
+pathspec>=0.6.0
+regex>=2019.11.1
+toml>=0.10.0
+typed_ast>=1.4.0

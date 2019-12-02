@@ -2,6 +2,7 @@
 
 ### Tinfoil Chat
 
+[![Python 3.6](https://img.shields.io/badge/python-3.7-informational.svg)](https://www.python.org/downloads/release/python-360/)
 [![Build Status](https://travis-ci.org/tfctesting/tfc.svg?branch=master)](https://travis-ci.org/tfctesting/tfc) 
 [![Coverage Status](https://coveralls.io/repos/github/tfctesting/tfc/badge.svg?branch=master)](https://coveralls.io/github/tfctesting/tfc?branch=master)
 [![Checked with mypy](http://www.mypy-lang.org/static/mypy_badge.svg)](http://mypy-lang.org/)
@@ -9,7 +10,6 @@
 [![CodeFactor](https://www.codefactor.io/repository/github/tfctesting/tfc/badge)](https://www.codefactor.io/repository/github/tfctesting/tfc)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 [![Known Vulnerabilities](https://snyk.io/test/github/tfctesting/tfc/badge.svg)](https://snyk.io/test/github/tfctesting/tfc) 
-
 
 # Do not use this repository
 
