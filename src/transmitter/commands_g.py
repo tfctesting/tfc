@@ -212,8 +212,7 @@ def group_add_member(group_name:   str,
         if yes(f"Group {group_name} was not found. Create new group?", abort=False, head=1):
             group_create(group_name, purp_members, contact_list, group_list, settings, queues, master_key)
             return None
-        else:
-            raise FunctionReturn("Group creation aborted.", head=0, delay=1, tail_clear=True)
+        raise FunctionReturn("Group creation aborted.", head=0, delay=1, tail_clear=True)
 
     purp_pub_keys    = set(purp_members)
     pub_keys         = set(contact_list.get_list_of_pub_keys())
