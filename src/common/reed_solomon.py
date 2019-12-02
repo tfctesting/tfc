@@ -1554,19 +1554,11 @@ def rs_check(msg: bytearray, nsym: int, fcr: int = 0, generator: int = 2) -> boo
 @overload
 def chunk(data: bytearray, chunk_size: int) -> Iterator[bytearray]:
     """Split a long message into chunks"""
-    for i in range(0, len(data), chunk_size):
-        # Split the long message in a chunk.
-        chunk_ = data[i : i + chunk_size]
-        yield chunk_
 
 
 @overload
 def chunk(data: bytes, chunk_size: int) -> Iterator[bytes]:
     """Split a long message into chunks"""
-    for i in range(0, len(data), chunk_size):
-        # Split the long message in a chunk.
-        chunk_ = data[i : i + chunk_size]
-        yield chunk_
 
 
 def chunk(data: Union[bytearray, bytes], chunk_size: int) -> Iterator[Union[bytearray, bytes]]:
