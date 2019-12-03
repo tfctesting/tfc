@@ -554,13 +554,23 @@ class TestSendPacket(unittest.TestCase):
         for msg_len in range(1, 256):
             with self.assertRaises(SystemExit):
                 send_packet(
-                    self.key_list, self.gateway, self.l_queue, bytes(msg_len), pub_key, True
+                    self.key_list,
+                    self.gateway,
+                    self.l_queue,
+                    bytes(msg_len),
+                    pub_key,
+                    True,
                 )
 
         for msg_len in range(257, 300):
             with self.assertRaises(SystemExit):
                 send_packet(
-                    self.key_list, self.gateway, self.l_queue, bytes(msg_len), pub_key, True
+                    self.key_list,
+                    self.gateway,
+                    self.l_queue,
+                    bytes(msg_len),
+                    pub_key,
+                    True,
                 )
 
     def test_invalid_harac_raises_raises_struct_error(self) -> None:
@@ -571,7 +581,9 @@ class TestSendPacket(unittest.TestCase):
             key_list = KeyList()
             key_list.keysets = [
                 create_keyset(
-                    "Alice", tx_key=SYMMETRIC_KEY_LENGTH * b"\x02", tx_harac=harac_len * b"k"
+                    "Alice",
+                    tx_key=SYMMETRIC_KEY_LENGTH * b"\x02",
+                    tx_harac=harac_len * b"k",
                 )
             ]
 
