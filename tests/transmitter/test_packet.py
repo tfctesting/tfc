@@ -551,27 +551,27 @@ class TestSendPacket(unittest.TestCase):
     def test_message_length(self) -> None:
         # Check that only 256-byte plaintext messages are ever allowed
         pub_key = nick_to_pub_key("Alice")
-        for l in range(1, 256):
+        for msg_len in range(1, 256):
             with self.assertRaises(SystemExit):
                 send_packet(
-                    self.key_list, self.gateway, self.l_queue, bytes(l), pub_key, True
+                    self.key_list, self.gateway, self.l_queue, bytes(msg_len), pub_key, True
                 )
 
-        for l in range(257, 300):
+        for msg_len in range(257, 300):
             with self.assertRaises(SystemExit):
                 send_packet(
-                    self.key_list, self.gateway, self.l_queue, bytes(l), pub_key, True
+                    self.key_list, self.gateway, self.l_queue, bytes(msg_len), pub_key, True
                 )
 
     def test_invalid_harac_raises_raises_struct_error(self) -> None:
         # Check that in the case where an internal error caused bytestring (possible key material) to end up in hash
         # ratchet value, the system raises some error that prevents the output of packet. In this case the, error comes
         # from the unsuccessful encoding of hash ratchet counter.
-        for l in range(1, 33):
+        for harac_len in range(1, 33):
             key_list = KeyList()
             key_list.keysets = [
                 create_keyset(
-                    "Alice", tx_key=SYMMETRIC_KEY_LENGTH * b"\x02", tx_harac=l * b"k"
+                    "Alice", tx_key=SYMMETRIC_KEY_LENGTH * b"\x02", tx_harac=harac_len * b"k"
                 )
             ]
 
