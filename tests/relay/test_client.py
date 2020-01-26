@@ -98,12 +98,12 @@ class TestClient(unittest.TestCase):
                     return TestClient.MockResponse(((ONION_SERVICE_PUBLIC_KEY_LENGTH-1)*b'a').hex())
 
                 # Test client prints online/offline messages.
-                elif self.test_no < 10:
+                if self.test_no < 10:
                     self.test_no += 1
                     return TestClient.MockResponse('')
 
                 # Test valid public key moves function to `get_data_loop`.
-                elif self.test_no == 10:
+                if self.test_no == 10:
                     self.test_no += 1
                     return TestClient.MockResponse(TestClient.url_token_public_key.hex())
 

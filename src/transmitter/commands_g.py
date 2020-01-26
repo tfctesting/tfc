@@ -200,11 +200,10 @@ def group_add_member(group_name:   str,
                      ) -> None:
     """Add new member(s) to a specified group."""
     if group_name not in group_list.get_list_of_group_names():
-        if yes(f"Group {group_name} was not found. Create new group?", abort=False, head=1):
-            group_create(group_name, purp_members, contact_list, group_list, settings, queues, master_key)
-            return None
-        else:
+        if not yes(f"Group {group_name} was not found. Create new group?", abort=False, head=1):
             raise SoftError("Group creation aborted.", head=0, delay=1, tail_clear=True)
+        group_create(group_name, purp_members, contact_list, group_list, settings, queues, master_key)
+        return None
 
     purp_pub_keys    = set(purp_members)
     pub_keys         = set(contact_list.get_list_of_pub_keys())

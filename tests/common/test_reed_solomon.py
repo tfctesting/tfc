@@ -329,7 +329,7 @@ class TestReedSolomon(unittest.TestCase):
             ]
         ]
 
-        for i in range(len(params)):
+        for i, _ in enumerate(params):
             p                                                       = params[i]
             expected_log_t, expected_exp_t, expected_field_charac_t = expected[i]
             log_t, exp_t, field_charac_t                            = init_tables(prim=p[0], generator=p[1], c_exp=p[2])
