@@ -143,8 +143,7 @@ def remove_contact(user_input:   'UserInput',
     else:
         if validate_onion_addr(selection):
             raise SoftError("Error: Invalid selection.", head=0, delay=1, tail_clear=True)
-        else:
-            onion_pub_key = onion_address_to_pub_key(selection)
+        onion_pub_key = onion_address_to_pub_key(selection)
 
     receiver_command = CONTACT_REM + onion_pub_key
     queue_command(receiver_command, settings, queues)
@@ -296,17 +295,22 @@ def change_setting_for_selected_contact(cmd_key:      str,
                                         ) -> None:
     """Change setting for selected contact."""
     if window.type == WIN_TYPE_CONTACT and window.contact is not None:
-        if cmd_key == LOGGING: window.contact.log_messages   = b_value
-        if cmd_key == STORE:   window.contact.file_reception = b_value
-        if cmd_key == NOTIFY:  window.contact.notifications  = b_value
+        if cmd_key == LOGGING:
+            window.contact.log_messages   = b_value
+        if cmd_key == STORE:
+            window.contact.file_reception = b_value
+        if cmd_key == NOTIFY:
+            window.contact.notifications  = b_value
         contact_list.store_contacts()
 
     if window.type == WIN_TYPE_GROUP and window.group is not None:
-        if cmd_key == LOGGING: window.group.log_messages = b_value
+        if cmd_key == LOGGING:
+            window.group.log_messages = b_value
         if cmd_key == STORE:
             for c in window:
                 c.file_reception = b_value
-        if cmd_key == NOTIFY: window.group.notifications = b_value
+        if cmd_key == NOTIFY:
+            window.group.notifications = b_value
         group_list.store_groups()
 
 
@@ -317,12 +321,17 @@ def change_setting_for_all_contacts(cmd_key:      str,
                                     ) -> None:
     """Change settings for all contacts."""
     for contact in contact_list:
-        if cmd_key == LOGGING: contact.log_messages   = b_value
-        if cmd_key == STORE:   contact.file_reception = b_value
-        if cmd_key == NOTIFY:  contact.notifications  = b_value
+        if cmd_key == LOGGING:
+            contact.log_messages   = b_value
+        if cmd_key == STORE:
+            contact.file_reception = b_value
+        if cmd_key == NOTIFY:
+            contact.notifications  = b_value
     contact_list.store_contacts()
 
     for group in group_list:
-        if cmd_key == LOGGING: group.log_messages  = b_value
-        if cmd_key == NOTIFY:  group.notifications = b_value
+        if cmd_key == LOGGING:
+            group.log_messages  = b_value
+        if cmd_key == NOTIFY:
+            group.notifications = b_value
     group_list.store_groups()

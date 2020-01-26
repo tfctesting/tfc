@@ -120,15 +120,12 @@ class ContactList(OrigContactList, Iterable, Sized):
 
     def store_contacts(self, replace: bool = True):
         """Mock method."""
-        pass
 
     def load_contacts(self) -> None:
         """Mock method."""
-        pass
 
     def print_contacts(self) -> None:
         """Mock method."""
-        pass
 
 
 class Gateway(OrigGateway):
@@ -171,11 +168,9 @@ class GroupList(OrigGroupList, Iterable, Sized):
 
     def load_groups(self) -> None:
         """Mock method."""
-        pass
 
     def print_groups(self) -> None:
         """Mock method."""
-        pass
 
 
 class KeyList(OrigKeyList):
@@ -197,7 +192,6 @@ class KeyList(OrigKeyList):
 
     def load_keys(self) -> None:
         """Mock method."""
-        pass
 
 
 class MasterKey(OrigMasterKey):
@@ -217,8 +211,7 @@ class MasterKey(OrigMasterKey):
         """Create mock master key bytes."""
         if getpass.getpass() == 'test_password':
             return self.master_key
-        else:
-            return SYMMETRIC_KEY_LENGTH * b'f'
+        return SYMMETRIC_KEY_LENGTH * b'f'
 
 
 class OnionService(OrigOnionService):
@@ -283,11 +276,9 @@ class Settings(OrigSettings):
 
     def store_settings(self, replace: bool = True):
         """Mock method."""
-        pass
 
     def load_settings(self) -> None:
         """Mock method."""
-        pass
 
     @staticmethod
     def validate_key_value_pair(key:          str,
@@ -296,7 +287,6 @@ class Settings(OrigSettings):
                                 group_list:   'GroupList'
                                 ) -> None:
         """Mock method."""
-        pass
 
 
 # Transmitter Program
@@ -334,11 +324,9 @@ class GatewaySettings(OrigGatewaySettings):
 
     def store_settings(self) -> None:
         """Mock method."""
-        pass
 
     def load_settings(self) -> None:
         """Mock method."""
-        pass
 
 
 class TxWindow(OrigTxWindow):
@@ -395,7 +383,6 @@ class Packet(object):
 
     def add_packet(self, packet: bytes) -> None:
         """Mock method."""
-        pass
 
     def assemble_message_packet(self) -> None:
         """Mock method."""

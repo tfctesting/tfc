@@ -618,7 +618,7 @@ def gf_mult_nolut(x:                 int,
 
 def gf_poly_scale(p: bytes, x: int) -> bytearray:
     """No docstring provided."""
-    ret_val = _bytearray([gf_mul(p[i], x) for i in range(len(p))])  # type: bytearray
+    ret_val = _bytearray([gf_mul(p[i], x) for i, _ in enumerate(p)])  # type: bytearray
     return ret_val
 
 
@@ -646,7 +646,7 @@ def gf_poly_mul(p: Any,
     r = _bytearray(len(p) + len(q) - 1)
 
     # Precompute the logarithm of p
-    lp = [gf_log[p[i]] for i in range(len(p))]
+    lp = [gf_log[p[i]] for i, _ in enumerate(p)]
 
     # Compute the polynomial multiplication (just like the
     # outer product of two vectors, we multiply each
@@ -853,12 +853,12 @@ def rs_encode_msg(msg_in:    bytes,
     msg_out = _bytearray(msg_in) + _bytearray(len(gen) - 1)  # type: bytearray
 
     # Precompute the logarithm of every items in the generator
-    lgen = _bytearray([gf_log[gen[j]] for j in range(len(gen))])
+    lgen = _bytearray([gf_log[gen[j]] for j, _ in enumerate(gen)])
 
     # Extended synthetic division main loop
     # Fastest implementation with PyPy (but the Cython
     # version in creedsolo.pyx is about 2x faster)
-    for i in range(len(msg_in)):
+    for i, _ in enumerate(msg_in):
         # Note that it's msg_out here, not msg_in. Thus, we reuse the
         # updated value at each iteration (this is how Synthetic Division
         # works: instead of storing in a temporary register the
@@ -1334,7 +1334,7 @@ def rs_forney_syndromes(synd:      List[int],
     # Optimized method, all operations are in-lined make a copy and
     # trim the first coefficient which is always 0 by definition
     fsynd = list(synd[1:])
-    for i in range(len(pos)):
+    for i, _ in enumerate(pos):
         x = gf_pow(generator, erase_pos_reversed[i])
         for j in range(len(fsynd) - 1):
             fsynd[j] = gf_mul(fsynd[j], x) ^ fsynd[j + 1]
