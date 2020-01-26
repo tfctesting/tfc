@@ -3,7 +3,7 @@
 
 """
 TFC - Onion-routed, endpoint secure messaging system
-Copyright (C) 2013-2019  Markus Ottela
+Copyright (C) 2013-2020  Markus Ottela
 
 This file is part of TFC.
 
@@ -25,12 +25,15 @@ from src.common.word_list import eff_wordlist
 
 
 class TestWordList(unittest.TestCase):
+
     def test_each_word_is_unique(self) -> None:
-        self.assertEqual(len(eff_wordlist), len(set(eff_wordlist)))
+        self.assertEqual(len(eff_wordlist),
+                         len(set(eff_wordlist)))
 
     def test_word_list_length(self) -> None:
-        self.assertEqual(len(eff_wordlist), 7776)
+        self.assertEqual(len(eff_wordlist),
+                         7776)
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     unittest.main()
