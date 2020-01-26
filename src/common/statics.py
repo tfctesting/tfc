@@ -462,6 +462,8 @@ PUB_KEY_CHECK_QUEUE = b'pubkey_check'
 PUB_KEY_SEND_QUEUE  = b'pubkey_send'
 ACCOUNT_CHECK_QUEUE = b'account_check'
 ACCOUNT_SEND_QUEUE  = b'account_send'
+USER_ACCOUNT_QUEUE  = b'user_account'
+
 
 """Queue signals"""
 KDB_ADD_ENTRY_HEADER         = 'ADD'
@@ -528,6 +530,7 @@ TRUNC_ADDRESS_LENGTH = 5
 TOR_CONTROL_PORT     = 9051
 TOR_SOCKS_PORT       = 9050
 DB_WRITE_RETRY_LIMIT = 10
+ACCOUNT_RATIO_LIMIT  = 0.75
 
 # Key derivation
 ARGON2_MIN_TIME_COST      = 1

@@ -440,12 +440,12 @@ class X448(object):
         message and header keys.
         """
         tx_mk = blake2b(tfc_public_key_contact, dh_shared_key, person=MESSAGE_KEY, digest_size=SYMMETRIC_KEY_LENGTH)
-        rx_mk = blake2b(tfc_public_key_user, dh_shared_key,    person=MESSAGE_KEY, digest_size=SYMMETRIC_KEY_LENGTH)
+        rx_mk = blake2b(tfc_public_key_user,    dh_shared_key, person=MESSAGE_KEY, digest_size=SYMMETRIC_KEY_LENGTH)
 
         tx_hk = blake2b(tfc_public_key_contact, dh_shared_key, person=HEADER_KEY,  digest_size=SYMMETRIC_KEY_LENGTH)
-        rx_hk = blake2b(tfc_public_key_user, dh_shared_key,    person=HEADER_KEY,  digest_size=SYMMETRIC_KEY_LENGTH)
+        rx_hk = blake2b(tfc_public_key_user,    dh_shared_key, person=HEADER_KEY,  digest_size=SYMMETRIC_KEY_LENGTH)
 
-        tx_fp = blake2b(tfc_public_key_user, dh_shared_key,    person=FINGERPRINT, digest_size=FINGERPRINT_LENGTH)
+        tx_fp = blake2b(tfc_public_key_user,    dh_shared_key, person=FINGERPRINT, digest_size=FINGERPRINT_LENGTH)
         rx_fp = blake2b(tfc_public_key_contact, dh_shared_key, person=FINGERPRINT, digest_size=FINGERPRINT_LENGTH)
 
         key_tuple = tx_mk, rx_mk, tx_hk, rx_hk, tx_fp, rx_fp

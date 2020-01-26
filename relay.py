@@ -35,7 +35,8 @@ from src.common.statics import (ACCOUNT_CHECK_QUEUE, ACCOUNT_SEND_QUEUE, CONTACT
                                 C_REQ_MGMT_QUEUE, C_REQ_STATE_QUEUE, DIR_TFC, DST_COMMAND_QUEUE, DST_MESSAGE_QUEUE,
                                 EXIT_QUEUE, F_TO_FLASK_QUEUE, GATEWAY_QUEUE, GROUP_MGMT_QUEUE, GROUP_MSG_QUEUE,
                                 M_TO_FLASK_QUEUE, NC, ONION_CLOSE_QUEUE, PUB_KEY_CHECK_QUEUE, PUB_KEY_SEND_QUEUE,
-                                ONION_KEY_QUEUE, SRC_TO_RELAY_QUEUE, TOR_DATA_QUEUE, URL_TOKEN_QUEUE)
+                                ONION_KEY_QUEUE, SRC_TO_RELAY_QUEUE, TOR_DATA_QUEUE, URL_TOKEN_QUEUE,
+                                USER_ACCOUNT_QUEUE)
 
 from src.relay.client   import account_checker, c_req_manager, client_scheduler, g_msg_manager, pub_key_checker
 from src.relay.commands import relay_command
@@ -167,8 +168,9 @@ def main() -> None:
          EXIT_QUEUE:          Queue(),  # EXIT/WIPE signal            from `relay_command`         to `main`
          ACCOUNT_CHECK_QUEUE: Queue(),  # Incorrectly typed accounts  from `src_incomfing`         to `account_checker`
          ACCOUNT_SEND_QUEUE:  Queue(),  # Contact requests            from `flask_server`          to `account_checker`
+         USER_ACCOUNT_QUEUE:  Queue(),  # User's public key           from `onion_service`         to `account_checker`
          PUB_KEY_CHECK_QUEUE: Queue(),  # Typed public keys           from `src_incoming`          to `pub_key_checker`
-         PUB_KEY_SEND_QUEUE:  Queue()   # Received public keys         from `client`                to `pub_key_checker`
+         PUB_KEY_SEND_QUEUE:  Queue()   # Received public keys        from `client`                to `pub_key_checker`
          }  # type: Dict[bytes, Queue[Any]]
 
     process_list = [Process(target=gateway_loop,     args=(queues, gateway                       )),

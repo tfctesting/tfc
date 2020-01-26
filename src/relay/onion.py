@@ -42,7 +42,8 @@ from src.common.encoding   import pub_key_to_onion_address
 from src.common.exceptions import CriticalError
 from src.common.output     import m_print, rp_print
 from src.common.statics    import (EXIT, EXIT_QUEUE, ONION_CLOSE_QUEUE, ONION_KEY_QUEUE,
-                                   ONION_SERVICE_PRIVATE_KEY_LENGTH, TOR_CONTROL_PORT, TOR_DATA_QUEUE, TOR_SOCKS_PORT)
+                                   ONION_SERVICE_PRIVATE_KEY_LENGTH, TOR_CONTROL_PORT, TOR_DATA_QUEUE, TOR_SOCKS_PORT,
+                                   USER_ACCOUNT_QUEUE)
 
 if typing.TYPE_CHECKING:
     from multiprocessing import Queue
@@ -229,6 +230,7 @@ def onion_service(queues: Dict[bytes, 'Queue[Any]']) -> None:
 
         # Allow the client to start looking for contacts at this point.
         queues[TOR_DATA_QUEUE].put((tor_port, onion_addr_user))
+        queues[USER_ACCOUNT_QUEUE].put(onion_addr_user)
 
     except (KeyboardInterrupt, stem.SocketClosed):
         tor.stop()
