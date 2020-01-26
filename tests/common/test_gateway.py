@@ -26,7 +26,7 @@ import socket
 from datetime      import datetime
 from unittest      import mock
 from unittest.mock import MagicMock
-from typing        import   Any
+from typing        import Any
 
 from serial import SerialException
 
@@ -169,6 +169,7 @@ class TestGatewaySerial(TFCTestCase):
         self.assertEqual(
             gateway.add_error_correction(packet), gateway.rs.encode(packet)
         )
+
     @mock.patch('time.sleep',     return_value=None)
     @mock.patch('serial.Serial',  return_value=MagicMock())
     @mock.patch('os.listdir',     side_effect=[['ttyUSB0'], ['ttyUSB0']])

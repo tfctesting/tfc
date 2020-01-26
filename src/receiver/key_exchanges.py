@@ -89,7 +89,7 @@ def process_local_key_buffer(kdk:     bytes,
             plaintext = auth_and_decrypt(tup[1], kdk)
 
             # If we reach this point, decryption was successful.
-            for unexamined in buffer[i + 1 :]:
+            for unexamined in buffer[i + 1:]:
                 l_queue.put(unexamined)
             buffer = []
             ts     = tup[0]

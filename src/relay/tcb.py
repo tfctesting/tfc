@@ -95,7 +95,7 @@ def src_incoming(queues:    'QueueDict',
                             GROUP_MSG_JOIN_HEADER,
                             GROUP_MSG_MEMBER_ADD_HEADER,
                             GROUP_MSG_MEMBER_REM_HEADER,
-                            GROUP_MSG_EXIT_GROUP_HEADER,]:
+                            GROUP_MSG_EXIT_GROUP_HEADER]:
                 process_group_management_message(ts, packet, header, messages_to_flask)
 
             if unit_test:

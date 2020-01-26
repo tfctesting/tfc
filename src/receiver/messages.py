@@ -37,14 +37,14 @@ from src.common.statics    import (ASSEMBLY_PACKET_HEADER_LENGTH, BLAKE2_DIGEST_
 from src.receiver.packet import decrypt_assembly_packet
 
 if typing.TYPE_CHECKING:
-    from datetime                import datetime
-    from src.common.database     import MessageLog
-    from src.common.db_contacts  import ContactList
-    from src.common.db_groups    import GroupList
-    from src.common.db_keys      import KeyList
-    from src.common.db_settings  import Settings
-    from src.receiver.packet     import Packet, PacketList
-    from src.receiver.windows    import WindowList
+    from datetime               import datetime
+    from src.common.database    import MessageLog
+    from src.common.db_contacts import ContactList
+    from src.common.db_groups   import GroupList
+    from src.common.db_keys     import KeyList
+    from src.common.db_settings import Settings
+    from src.receiver.packet    import Packet, PacketList
+    from src.receiver.windows   import WindowList
 
 
 def log_masking_packets(onion_pub_key: bytes,         # Onion address of associated contact

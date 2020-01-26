@@ -147,8 +147,7 @@ class TestRXPShowSysWin(unittest.TestCase):
 
     def setUp(self) -> None:
         """Pre-test actions."""
-        self.window   = TxWindow(name='Alice',
-                                 uid=nick_to_pub_key('Alice'))
+        self.window   = TxWindow(name='Alice', uid=nick_to_pub_key('Alice'))
         self.settings = Settings()
         self.queues   = gen_queue_dict()
         self.args     = self.window, self.settings, self.queues

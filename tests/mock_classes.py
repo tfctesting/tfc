@@ -145,10 +145,10 @@ class GroupList(OrigGroupList, Iterable, Sized):
     """Mock the object for unit testing."""
 
     def __init__(self, groups: List[str] = None, **kwargs) -> None:
-        self.master_key   = MasterKey()
-        self.settings     = Settings()
-        self.contact_list = ContactList()
-        self.groups = [] if groups is None else [(create_group(g)) for g in groups]  # type: List[Group]
+        self.master_key          = MasterKey()
+        self.settings            = Settings()
+        self.contact_list        = ContactList()
+        self.groups              = [] if groups is None else [(create_group(g)) for g in groups]  # type: List[Group]
         self.store_groups_called = False
 
         for key, value in kwargs.items():

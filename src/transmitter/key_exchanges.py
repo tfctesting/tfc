@@ -310,7 +310,7 @@ def start_key_exchange(onion_pub_key: bytes,          # Public key of contact's 
         tfc_private_key_user = contact.tfc_private_key
 
     try:
-        tfc_public_key_user     = X448.derive_public_key(tfc_private_key_user)
+        tfc_public_key_user    = X448.derive_public_key(tfc_private_key_user)
         tfc_public_key_contact = exchange_public_keys(onion_pub_key, tfc_public_key_user, contact, settings, queues)
 
         validate_contact_public_key(tfc_public_key_contact)
@@ -379,7 +379,7 @@ def validate_contact_public_key(tfc_public_key_contact: bytes) -> None:
         m_print(["Warning!", 
                  "Received invalid size public key.", 
                  "Aborting key exchange for your safety."],
-            bold=True, tail=1)
+                bold=True, tail=1)
         raise SoftError("Error: Invalid public key length", output=False)
 
     if tfc_public_key_contact == bytes(TFC_PUBLIC_KEY_LENGTH):
@@ -403,18 +403,18 @@ def validate_contact_fingerprint(tx_fp: bytes, rx_fp: bytes) -> bytes:
     try:
         if not verify_fingerprints(tx_fp, rx_fp):
             m_print(["Warning!",
-                    "Possible man-in-the-middle attack detected.",
-                    "Aborting key exchange for your safety."], bold=True, tail=1)
+                     "Possible man-in-the-middle attack detected.",
+                     "Aborting key exchange for your safety."], bold=True, tail=1)
             raise SoftError("Error: Fingerprint mismatch", delay=2.5, output=False)
         kex_status = KEX_STATUS_VERIFIED
 
     except (EOFError, KeyboardInterrupt):
         m_print(["Skipping fingerprint verification.",
                  '', "Warning!",
-                "Man-in-the-middle attacks can not be detected",
-                "unless fingerprints are verified! To re-verify",
-                "the contact, use the command '/verify'.",
-                '', "Press <enter> to continue."],
+                 "Man-in-the-middle attacks can not be detected",
+                 "unless fingerprints are verified! To re-verify",
+                 "the contact, use the command '/verify'.",
+                 '', "Press <enter> to continue."],
                 manual_proceed=True, box=True, head=2, tail=1,)
         kex_status = KEX_STATUS_UNVERIFIED
 
@@ -446,7 +446,7 @@ def verify_fingerprints(
             "call the contact over an end-to-end encrypted line, preferably Signal "
             "(https://signal.org/). Make sure Signal's safety numbers have been "
             "verified, and then verbally compare the key fingerprints below.",
-        head_clear=True, max_width=49, head=1, tail=1)
+            head_clear=True, max_width=49, head=1, tail=1)
 
     print_fingerprint(tx_fp, "         Your fingerprint (you read)         ")
     print_fingerprint(rx_fp, "Purported fingerprint for contact (they read)")

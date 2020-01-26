@@ -82,7 +82,7 @@ class TestTFCDatabase(unittest.TestCase):
         self.database.verify_file = MagicMock(side_effect=DB_WRITE_RETRY_LIMIT*[False])
 
         # Test
-        with self.assertRaises(SystemExit) :
+        with self.assertRaises(SystemExit):
             self.database.store_database(os.urandom(MASTERKEY_DB_SIZE))
 
         # Teardown

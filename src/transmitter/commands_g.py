@@ -154,11 +154,12 @@ def group_create(group_name:   str,
     rejected      = list(purp_pub_keys - public_keys)
 
     if len(accepted) > settings.max_number_of_group_members:
-        raise SoftError(f"Error: TFC settings only allow {settings.max_number_of_group_members} "
-                             f"members per group.", head_clear=True)
+        raise SoftError(f"Error: TFC settings only allow {settings.max_number_of_group_members} members per group.",
+                        head_clear=True)
 
     if len(group_list) == settings.max_number_of_groups:
-        raise SoftError(f"Error: TFC settings only allow {settings.max_number_of_groups} groups.", head_clear=True)
+        raise SoftError(f"Error: TFC settings only allow {settings.max_number_of_groups} groups.",
+                        head_clear=True)
 
     header = GROUP_MSG_INVITE_HEADER if group_id is None else GROUP_MSG_JOIN_HEADER
 
@@ -218,8 +219,8 @@ def group_add_member(group_name:   str,
     ok_pub_keys  = list(ok_pub_keys_set)
 
     if len(end_assembly) > settings.max_number_of_group_members:
-        raise SoftError(f"Error: TFC settings only allow {settings.max_number_of_group_members} "
-                             f"members per group.", head_clear=True)
+        raise SoftError(f"Error: TFC settings only allow {settings.max_number_of_group_members} members per group.",
+                        head_clear=True)
 
     group = group_list.get_group(group_name)
     group.add_members([contact_list.get_contact_by_pub_key(k) for k in new_in_group])

@@ -55,8 +55,7 @@ def group_create(cmd_data:     bytes,
     rejected      = list(purp_pub_keys - pub_keys)
 
     if len(accepted) > settings.max_number_of_group_members:
-        raise SoftError(f"Error: TFC settings only allow {settings.max_number_of_group_members} "
-                             f"members per group.")
+        raise SoftError(f"Error: TFC settings only allow {settings.max_number_of_group_members} members per group.")
 
     if len(group_list) == settings.max_number_of_groups:
         raise SoftError(f"Error: TFC settings only allow {settings.max_number_of_groups} groups.")
@@ -109,8 +108,7 @@ def group_add(cmd_data:     bytes,
     new_in_group = list(new_in_group_set)
 
     if len(end_assembly) > settings.max_number_of_group_members:
-        raise SoftError(f"Error: TFC settings only allow {settings.max_number_of_group_members} "
-                             f"members per group.")
+        raise SoftError(f"Error: TFC settings only allow {settings.max_number_of_group_members} members per group.")
 
     group = group_list.get_group(group_name)
     group.add_members([contact_list.get_contact_by_pub_key(k) for k in new_in_group])
@@ -215,6 +213,6 @@ def group_rename(cmd_data:     bytes,
     window      = window_list.get_window(group.group_id)
     window.name = new_name
 
-    message   = f"Renamed group '{old_name}' to '{new_name}'."
+    message = f"Renamed group '{old_name}' to '{new_name}'."
     cmd_win = window_list.get_window(WIN_UID_COMMAND)
     cmd_win.add_new(ts, message, output=True)

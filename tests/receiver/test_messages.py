@@ -187,7 +187,8 @@ class TestProcessMessagePacket(TFCTestCase):
                                                    message_header=FILE_KEY_HEADER)
 
         for p in assembly_ct_list[-1:]:
-            self.assert_se("Error: Received an invalid file key message.", process_message_packet, self.ts, p, *self.args)
+            self.assert_se("Error: Received an invalid file key message.",
+                           process_message_packet, self.ts, p, *self.args)
 
     @mock.patch('time.sleep', return_value=None)
     def test_too_large_file_key_data_raises_se(self, _: Any) -> None:
@@ -199,7 +200,8 @@ class TestProcessMessagePacket(TFCTestCase):
                                                    message_header=FILE_KEY_HEADER)
 
         for p in assembly_ct_list[-1:]:
-            self.assert_se("Error: Received an invalid file key message.", process_message_packet, self.ts, p, *self.args)
+            self.assert_se("Error: Received an invalid file key message.",
+                           process_message_packet, self.ts, p, *self.args)
 
     @mock.patch('time.sleep', return_value=None)
     def test_valid_file_key_message(self, _: Any) -> None:
@@ -209,7 +211,8 @@ class TestProcessMessagePacket(TFCTestCase):
                                                    encrypt_packet=True, onion_pub_key=nick_to_pub_key('Alice'),
                                                    message_header=FILE_KEY_HEADER)
         for p in assembly_ct_list[-1:]:
-            self.assert_se("Received file decryption key from Alice", process_message_packet, self.ts, p, *self.args)
+            self.assert_se("Received file decryption key from Alice",
+                           process_message_packet, self.ts, p, *self.args)
 
     # Group messages
     @mock.patch('time.sleep', return_value=None)

@@ -1568,7 +1568,7 @@ def chunk(data:       Union[bytearray, bytes],
     """Split a long message into chunks."""
     for i in range(0, len(data), chunk_size):
         # Split the long message in a chunk.
-        chunk_ = data[i : i + chunk_size]
+        chunk_ = data[i: i + chunk_size]
         yield chunk_
 
 

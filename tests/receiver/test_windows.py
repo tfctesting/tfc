@@ -78,10 +78,10 @@ class TestRxWindow(TFCTestCase):
 
     def test_invalid_uid_raises_se(self) -> None:
         self.assert_se("Invalid window 'mfqwcylbmfqwcylbmfqwcylbmfqwcylbmfqwcylbmfqwcylbmfqwbfad'.",
-                       self.create_window, ONION_SERVICE_PUBLIC_KEY_LENGTH *b'a')
+                       self.create_window, ONION_SERVICE_PUBLIC_KEY_LENGTH * b'a')
 
         self.assert_se("Invalid window '2dnAMoWNfTXAJ'.",
-                       self.create_window, GROUP_ID_LENGTH *b'a')
+                       self.create_window, GROUP_ID_LENGTH * b'a')
 
         self.assert_se("Invalid window '<unable to encode>'.",
                        self.create_window, b'bad_uid')

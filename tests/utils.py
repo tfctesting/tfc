@@ -241,12 +241,12 @@ def assembly_packet_creator(
 
     elif packet_type == FILE:  # Create packets for traffic masking file transmission
 
-        file_data_size  = 100_000_001 if create_zip_bomb else 10_000
+        file_data_size  = 100_000_001                if create_zip_bomb else 10_000
         payload_bytes   = os.urandom(file_data_size) if payload is None else payload
 
         compressed      = zlib.compress(payload_bytes, level=COMPRESSION_LEVEL)
-        compressed      = compressed if not tamper_compression else compressed[::-1]
-        file_key_bytes  = os.urandom(SYMMETRIC_KEY_LENGTH) if inner_key is None else inner_key
+        compressed      = compressed                       if not tamper_compression else compressed[::-1]
+        file_key_bytes  = os.urandom(SYMMETRIC_KEY_LENGTH) if inner_key is None      else inner_key
 
         ciphertext      = encrypt_and_sign(compressed, key=file_key_bytes)
         ciphertext      = ciphertext if not tamper_ciphertext else ciphertext[::-1]

@@ -261,7 +261,7 @@ def standard_sender_loop(queues:   'QueueDict',
             pass
 
 
-def process_key_management_command(queues  : 'QueueDict',
+def process_key_management_command(queues:   'QueueDict',
                                    key_list: 'KeyList'
                                    ) -> None:
     """Process key management command."""

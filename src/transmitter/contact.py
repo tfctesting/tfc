@@ -79,7 +79,7 @@ def add_new_contact(contact_list:  'ContactList',
 
         if len(contact_list) >= settings.max_number_of_contacts:
             raise SoftError(f"Error: TFC settings only allow {settings.max_number_of_contacts} accounts.",
-                                 head_clear=True)
+                            head_clear=True)
 
         m_print("Add new contact", head=1, bold=True, head_clear=True)
 
