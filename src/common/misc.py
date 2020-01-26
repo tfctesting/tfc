@@ -426,8 +426,8 @@ def validate_onion_addr(onion_address_contact: str,      # String to slice
     if onion_address_contact in (LOCAL_ID, DUMMY_CONTACT, DUMMY_MEMBER) or public_key == LOCAL_PUBKEY:
         error_msg = "Error: Can not add reserved account."
 
-    if onion_address_user and onion_address_contact == onion_address_user:
-        error_msg = "Error: Can not add own account."
+    # if onion_address_user and onion_address_contact == onion_address_user:
+    #     error_msg = "Error: Can not add own account."
 
     return error_msg
 

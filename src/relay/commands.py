@@ -31,16 +31,16 @@ from src.common.encoding   import bytes_to_bool, bytes_to_int
 from src.common.exceptions import SoftError
 from src.common.misc       import ignored, reset_terminal, separate_header, separate_headers, split_byte_string
 from src.common.output     import clear_screen, m_print
-from src.common.statics    import (CONFIRM_CODE_LENGTH, CONTACT_MGMT_QUEUE, C_REQ_MGMT_QUEUE, C_REQ_STATE_QUEUE,
-                                   ENCODED_BOOLEAN_LENGTH, ENCODED_INTEGER_LENGTH, EXIT, GROUP_MGMT_QUEUE,
-                                   LOCAL_TESTING_PACKET_DELAY, MAX_INT, ONION_CLOSE_QUEUE, ONION_KEY_QUEUE,
-                                   ONION_SERVICE_PRIVATE_KEY_LENGTH, ONION_SERVICE_PUBLIC_KEY_LENGTH,
-                                   RP_ADD_CONTACT_HEADER, RP_REMOVE_CONTACT_HEADER, SRC_TO_RELAY_QUEUE,
-                                   UNENCRYPTED_ADD_EXISTING_CONTACT, UNENCRYPTED_ADD_NEW_CONTACT, UNENCRYPTED_BAUDRATE,
-                                   UNENCRYPTED_COMMAND_HEADER_LENGTH, UNENCRYPTED_EC_RATIO, UNENCRYPTED_EXIT_COMMAND,
-                                   UNENCRYPTED_MANAGE_CONTACT_REQ, UNENCRYPTED_ONION_SERVICE_DATA,
-                                   UNENCRYPTED_REM_CONTACT, UNENCRYPTED_SCREEN_CLEAR, UNENCRYPTED_SCREEN_RESET,
-                                   UNENCRYPTED_WIPE_COMMAND, WIPE)
+from src.common.statics    import (ACCOUNT_CHECK_QUEUE, CONFIRM_CODE_LENGTH, CONTACT_MGMT_QUEUE, C_REQ_MGMT_QUEUE,
+                                   C_REQ_STATE_QUEUE, ENCODED_BOOLEAN_LENGTH, ENCODED_INTEGER_LENGTH, EXIT,
+                                   GROUP_MGMT_QUEUE, LOCAL_TESTING_PACKET_DELAY, MAX_INT, ONION_CLOSE_QUEUE,
+                                   ONION_KEY_QUEUE, ONION_SERVICE_PRIVATE_KEY_LENGTH, ONION_SERVICE_PUBLIC_KEY_LENGTH,
+                                   PUB_KEY_CHECK_QUEUE, RP_ADD_CONTACT_HEADER, RP_REMOVE_CONTACT_HEADER,
+                                   SRC_TO_RELAY_QUEUE, UNENCRYPTED_ACCOUNT_CHECK, UNENCRYPTED_ADD_EXISTING_CONTACT,
+                                   UNENCRYPTED_ADD_NEW_CONTACT, UNENCRYPTED_BAUDRATE, UNENCRYPTED_COMMAND_HEADER_LENGTH,
+                                   UNENCRYPTED_EC_RATIO, UNENCRYPTED_EXIT_COMMAND, UNENCRYPTED_MANAGE_CONTACT_REQ,
+                                   UNENCRYPTED_ONION_SERVICE_DATA, UNENCRYPTED_PUBKEY_CHECK, UNENCRYPTED_REM_CONTACT,
+                                   UNENCRYPTED_SCREEN_CLEAR, UNENCRYPTED_SCREEN_RESET, UNENCRYPTED_WIPE_COMMAND, WIPE)
 
 if typing.TYPE_CHECKING:
     from multiprocessing    import Queue
@@ -50,11 +50,9 @@ if typing.TYPE_CHECKING:
 
 def relay_command(queues:    'QueueDict',
                   gateway:   'Gateway',
-                  stdin_fd:  int,
                   unit_test: bool = False
                   ) -> None:
     """Process Relay Program commands."""
-    sys.stdin      = os.fdopen(stdin_fd)
     queue_from_src = queues[SRC_TO_RELAY_QUEUE]
 
     while True:
@@ -88,7 +86,9 @@ def process_command(command:  bytes,
                   UNENCRYPTED_ADD_NEW_CONTACT:      (add_contact,        command, False,    queues),
                   UNENCRYPTED_ADD_EXISTING_CONTACT: (add_contact,        command, True,     queues),
                   UNENCRYPTED_REM_CONTACT:          (remove_contact,     command,           queues),
-                  UNENCRYPTED_ONION_SERVICE_DATA:   (add_onion_data,     command,           queues)
+                  UNENCRYPTED_ONION_SERVICE_DATA:   (add_onion_data,     command,           queues),
+                  UNENCRYPTED_ACCOUNT_CHECK:        (compare_accounts,   command,           queues),
+                  UNENCRYPTED_PUBKEY_CHECK:         (compare_pubkeys,    command,           queues)
                   }  # type: Dict[bytes, Any]
 
     if header not in function_d:
@@ -240,3 +240,20 @@ def add_onion_data(command: bytes, queues: 'QueueDict') -> None:
 
     manage_contact_req(allow_req_byte, queues, notify=False)
     queues[ONION_KEY_QUEUE].put((os_private_key, confirmation_code))
+
+
+def compare_accounts(command: bytes, queues: 'QueueDict') -> None:
+    """\
+    Compare incorrectly typed account to what's available on Relay
+    Program.
+    """
+    queues[ACCOUNT_CHECK_QUEUE].put(command.decode())
+
+
+def compare_pubkeys(command: bytes, queues: 'QueueDict') -> None:
+    """\
+    Compare incorrectly typed public key to what's available on Relay
+    Program.
+    """
+    account, incorrect_text = separate_header(command, ONION_SERVICE_PUBLIC_KEY_LENGTH)
+    queues[PUB_KEY_CHECK_QUEUE].put((account, incorrect_text))

@@ -28,12 +28,12 @@ from src.common.encoding   import onion_address_to_pub_key
 from src.common.exceptions import SoftError
 from src.common.input      import box_input, yes
 from src.common.misc       import ignored, validate_key_exchange, validate_nick, validate_onion_addr
-from src.common.output     import m_print
+from src.common.output     import m_print, print_on_previous_line
 from src.common.statics    import (ALL, CH_FILE_RECV, CH_LOGGING, CH_NICKNAME, CH_NOTIFY, CONTACT_REM, DISABLE, ECDHE,
                                    ENABLE, KDB_REMOVE_ENTRY_HEADER, KEY_MANAGEMENT_QUEUE, LOGGING, LOG_SETTING_QUEUE,
                                    NOTIFY, ONION_ADDRESS_LENGTH, PSK, RELAY_PACKET_QUEUE, STORE, TRUNC_ADDRESS_LENGTH,
-                                   UNENCRYPTED_ADD_NEW_CONTACT, UNENCRYPTED_DATAGRAM_HEADER, UNENCRYPTED_REM_CONTACT,
-                                   WIN_TYPE_CONTACT, WIN_TYPE_GROUP)
+                                   UNENCRYPTED_ACCOUNT_CHECK, UNENCRYPTED_ADD_NEW_CONTACT, UNENCRYPTED_DATAGRAM_HEADER,
+                                   UNENCRYPTED_REM_CONTACT, WIN_TYPE_CONTACT, WIN_TYPE_GROUP)
 
 from src.transmitter.commands_g    import group_rename
 from src.transmitter.key_exchanges import create_pre_shared_key, start_key_exchange
@@ -89,11 +89,8 @@ def add_new_contact(contact_list:  'ContactList',
                  "Anyone who knows this account",
                  "can see when your TFC is online"], box=True)
 
-        contact_address = box_input("Contact account",
-                                    expected_len=ONION_ADDRESS_LENGTH,
-                                    validator=validate_onion_addr,
-                                    validator_args=onion_service.user_onion_address).strip()
-        onion_pub_key = onion_address_to_pub_key(contact_address)
+        contact_address = get_onion_address_from_user(onion_service.user_onion_address, queues)
+        onion_pub_key   = onion_address_to_pub_key(contact_address)
 
         contact_nick = box_input("Contact nick",
                                  expected_len=ONION_ADDRESS_LENGTH,  # Limited to 255 but such long nick is unpractical.
@@ -116,6 +113,25 @@ def add_new_contact(contact_list:  'ContactList',
 
     except (EOFError, KeyboardInterrupt):
         raise SoftError("Contact creation aborted.", head=2, delay=1, tail_clear=True)
+
+
+def get_onion_address_from_user(onion_address_user: str,
+                                queues:            'QueueDict'
+                                ) -> str:
+    """Get contact's Onion Address from user."""
+    while True:
+        onion_address_contact = box_input("Contact account", expected_len=ONION_ADDRESS_LENGTH)
+        error_msg             = validate_onion_addr(onion_address_contact, onion_address_user)
+
+        if error_msg:
+            m_print(error_msg, head=1)
+            print_on_previous_line(reps=5, delay=1)
+
+            relay_command = UNENCRYPTED_DATAGRAM_HEADER + UNENCRYPTED_ACCOUNT_CHECK + onion_address_contact.encode()
+            queue_to_nc(relay_command, queues[RELAY_PACKET_QUEUE])
+            continue
+
+        return onion_address_contact
 
 
 def remove_contact(user_input:   'UserInput',
@@ -164,7 +180,7 @@ def remove_contact(user_input:   'UserInput',
     check_for_window_deselection(onion_pub_key, window, group_list)
 
 
-def determine_target(selection: str,
+def determine_target(selection:     str,
                      onion_pub_key: bytes,
                      contact_list: 'ContactList'
                      ) -> str:
@@ -181,9 +197,10 @@ def determine_target(selection: str,
     return target
 
 
-def check_for_window_deselection(
-    onion_pub_key: bytes, window: "TxWindow", group_list: "GroupList"
-) -> None:
+def check_for_window_deselection(onion_pub_key: bytes,
+                                 window:        'TxWindow',
+                                 group_list:    'GroupList'
+                                 ) -> None:
     """\
     Check if the window should be deselected after contact is removed.
     """

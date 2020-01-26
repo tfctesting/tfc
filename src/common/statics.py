@@ -285,6 +285,8 @@ UNENCRYPTED_ADD_EXISTING_CONTACT = b'UA'
 UNENCRYPTED_REM_CONTACT          = b'UD'
 UNENCRYPTED_ONION_SERVICE_DATA   = b'UO'
 UNENCRYPTED_MANAGE_CONTACT_REQ   = b'UM'
+UNENCRYPTED_PUBKEY_CHECK         = b'UP'
+UNENCRYPTED_ACCOUNT_CHECK        = b'UT'
 
 
 """Encrypted command headers
@@ -441,22 +443,25 @@ SENDER_MODE_QUEUE       = b'sender_mode'
 WINDOW_SELECT_QUEUE     = b'window_select'
 
 # Relay
-DST_COMMAND_QUEUE  = b'dst_command'
-DST_MESSAGE_QUEUE  = b'dst_message'
-M_TO_FLASK_QUEUE   = b'm_to_flask'
-F_TO_FLASK_QUEUE   = b'f_to_flask'
-SRC_TO_RELAY_QUEUE = b'src_to_relay'
-URL_TOKEN_QUEUE    = b'url_token'
-GROUP_MGMT_QUEUE   = b'group_mgmt'
-GROUP_MSG_QUEUE    = b'group_msg'
-CONTACT_REQ_QUEUE  = b'contact_req'
-C_REQ_MGMT_QUEUE   = b'c_req_mgmt'
-CONTACT_MGMT_QUEUE = b'contact_mgmt'
-C_REQ_STATE_QUEUE  = b'c_req_state'
-ONION_KEY_QUEUE    = b'onion_key'
-ONION_CLOSE_QUEUE  = b'close_onion'
-TOR_DATA_QUEUE     = b'tor_data'
-
+DST_COMMAND_QUEUE   = b'dst_command'
+DST_MESSAGE_QUEUE   = b'dst_message'
+M_TO_FLASK_QUEUE    = b'm_to_flask'
+F_TO_FLASK_QUEUE    = b'f_to_flask'
+SRC_TO_RELAY_QUEUE  = b'src_to_relay'
+URL_TOKEN_QUEUE     = b'url_token'
+GROUP_MGMT_QUEUE    = b'group_mgmt'
+GROUP_MSG_QUEUE     = b'group_msg'
+CONTACT_REQ_QUEUE   = b'contact_req'
+C_REQ_MGMT_QUEUE    = b'c_req_mgmt'
+CONTACT_MGMT_QUEUE  = b'contact_mgmt'
+C_REQ_STATE_QUEUE   = b'c_req_state'
+ONION_KEY_QUEUE     = b'onion_key'
+ONION_CLOSE_QUEUE   = b'close_onion'
+TOR_DATA_QUEUE      = b'tor_data'
+PUB_KEY_CHECK_QUEUE = b'pubkey_check'
+PUB_KEY_SEND_QUEUE  = b'pubkey_send'
+ACCOUNT_CHECK_QUEUE = b'account_check'
+ACCOUNT_SEND_QUEUE  = b'account_send'
 
 """Queue signals"""
 KDB_ADD_ENTRY_HEADER         = 'ADD'
@@ -555,6 +560,7 @@ BLAKE2_SALT_LENGTH_MAX           = 16
 BLAKE2_PERSON_LENGTH_MAX         = 16
 HARAC_LENGTH                     = 8
 PADDING_LENGTH                   = 255
+ENCODED_B58_PUB_KEY_LENGTH       = 84
 
 # Domain separation
 MESSAGE_KEY = b'message_key'

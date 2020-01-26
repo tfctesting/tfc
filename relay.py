@@ -31,12 +31,13 @@ from cryptography.hazmat.primitives.serialization   import Encoding, PublicForma
 from src.common.gateway import Gateway, gateway_loop
 from src.common.misc    import ensure_dir, monitor_processes, process_arguments
 from src.common.output  import print_title
-from src.common.statics import (CONTACT_MGMT_QUEUE, CONTACT_REQ_QUEUE, C_REQ_MGMT_QUEUE, C_REQ_STATE_QUEUE, DIR_TFC,
-                                DST_COMMAND_QUEUE, DST_MESSAGE_QUEUE, EXIT_QUEUE, F_TO_FLASK_QUEUE, GATEWAY_QUEUE,
-                                GROUP_MGMT_QUEUE, GROUP_MSG_QUEUE, M_TO_FLASK_QUEUE, NC, ONION_CLOSE_QUEUE,
+from src.common.statics import (ACCOUNT_CHECK_QUEUE, ACCOUNT_SEND_QUEUE, CONTACT_MGMT_QUEUE, CONTACT_REQ_QUEUE,
+                                C_REQ_MGMT_QUEUE, C_REQ_STATE_QUEUE, DIR_TFC, DST_COMMAND_QUEUE, DST_MESSAGE_QUEUE,
+                                EXIT_QUEUE, F_TO_FLASK_QUEUE, GATEWAY_QUEUE, GROUP_MGMT_QUEUE, GROUP_MSG_QUEUE,
+                                M_TO_FLASK_QUEUE, NC, ONION_CLOSE_QUEUE, PUB_KEY_CHECK_QUEUE, PUB_KEY_SEND_QUEUE,
                                 ONION_KEY_QUEUE, SRC_TO_RELAY_QUEUE, TOR_DATA_QUEUE, URL_TOKEN_QUEUE)
 
-from src.relay.client   import c_req_manager, client_scheduler, g_msg_manager
+from src.relay.client   import account_checker, c_req_manager, client_scheduler, g_msg_manager, pub_key_checker
 from src.relay.commands import relay_command
 from src.relay.onion    import onion_service
 from src.relay.server   import flask_server
@@ -147,23 +148,27 @@ def main() -> None:
                                                                             format=PublicFormat.Raw).hex()  # type: str
 
     queues = \
-        {GATEWAY_QUEUE:      Queue(),  # All     datagrams           from `gateway_loop`          to `src_incoming`
-         DST_MESSAGE_QUEUE:  Queue(),  # Message datagrams           from `src_incoming`/`client` to `dst_outgoing`
-         M_TO_FLASK_QUEUE:   Queue(),  # Message/pubkey datagrams    from `src_incoming`          to `flask_server`
-         F_TO_FLASK_QUEUE:   Queue(),  # File datagrams              from `src_incoming`          to `flask_server`
-         SRC_TO_RELAY_QUEUE: Queue(),  # Command datagrams           from `src_incoming`          to `relay_command`
-         DST_COMMAND_QUEUE:  Queue(),  # Command datagrams           from `src_incoming`          to `dst_outgoing`
-         CONTACT_MGMT_QUEUE: Queue(),  # Contact management commands from `relay_command`         to `client_scheduler`
-         C_REQ_STATE_QUEUE:  Queue(),  # Contact req. notify setting from `relay_command`         to `c_req_manager`
-         URL_TOKEN_QUEUE:    Queue(),  # URL tokens                  from `client`                to `flask_server`
-         GROUP_MSG_QUEUE:    Queue(),  # Group management messages   from `client`                to `g_msg_manager`
-         CONTACT_REQ_QUEUE:  Queue(),  # Contact requests            from `flask_server`          to `c_req_manager`
-         C_REQ_MGMT_QUEUE:   Queue(),  # Contact list management     from `relay_command`         to `c_req_manager`
-         GROUP_MGMT_QUEUE:   Queue(),  # Contact list management     from `relay_command`         to `g_msg_manager`
-         ONION_CLOSE_QUEUE:  Queue(),  # Onion Service close command from `relay_command`         to `onion_service`
-         ONION_KEY_QUEUE:    Queue(),  # Onion Service private key   from `relay_command`         to `onion_service`
-         TOR_DATA_QUEUE:     Queue(),  # Open port for Tor           from `onion_service`         to `client_scheduler`
-         EXIT_QUEUE:         Queue()   # EXIT/WIPE signal            from `relay_command`         to `main`
+        {GATEWAY_QUEUE:       Queue(),  # All     datagrams           from `gateway_loop`          to `src_incoming`
+         DST_MESSAGE_QUEUE:   Queue(),  # Message datagrams           from `src_incoming`/`client` to `dst_outgoing`
+         M_TO_FLASK_QUEUE:    Queue(),  # Message/pubkey datagrams    from `src_incoming`          to `flask_server`
+         F_TO_FLASK_QUEUE:    Queue(),  # File datagrams              from `src_incoming`          to `flask_server`
+         SRC_TO_RELAY_QUEUE:  Queue(),  # Command datagrams           from `src_incoming`          to `relay_command`
+         DST_COMMAND_QUEUE:   Queue(),  # Command datagrams           from `src_incoming`          to `dst_outgoing`
+         CONTACT_MGMT_QUEUE:  Queue(),  # Contact management commands from `relay_command`         to `client_scheduler`
+         C_REQ_STATE_QUEUE:   Queue(),  # Contact req. notify setting from `relay_command`         to `c_req_manager`
+         URL_TOKEN_QUEUE:     Queue(),  # URL tokens                  from `client`                to `flask_server`
+         GROUP_MSG_QUEUE:     Queue(),  # Group management messages   from `client`                to `g_msg_manager`
+         CONTACT_REQ_QUEUE:   Queue(),  # Contact requests            from `flask_server`          to `c_req_manager`
+         C_REQ_MGMT_QUEUE:    Queue(),  # Contact list management     from `relay_command`         to `c_req_manager`
+         GROUP_MGMT_QUEUE:    Queue(),  # Contact list management     from `relay_command`         to `g_msg_manager`
+         ONION_CLOSE_QUEUE:   Queue(),  # Onion Service close command from `relay_command`         to `onion_service`
+         ONION_KEY_QUEUE:     Queue(),  # Onion Service private key   from `relay_command`         to `onion_service`
+         TOR_DATA_QUEUE:      Queue(),  # Open port for Tor           from `onion_service`         to `client_scheduler`
+         EXIT_QUEUE:          Queue(),  # EXIT/WIPE signal            from `relay_command`         to `main`
+         ACCOUNT_CHECK_QUEUE: Queue(),  # Incorrectly typed accounts  from `src_incomfing`         to `account_checker`
+         ACCOUNT_SEND_QUEUE:  Queue(),  # Contact requests            from `flask_server`          to `account_checker`
+         PUB_KEY_CHECK_QUEUE: Queue(),  # Typed public keys           from `src_incoming`          to `pub_key_checker`
+         PUB_KEY_SEND_QUEUE:  Queue()   # Received public keys         from `client`                to `pub_key_checker`
          }  # type: Dict[bytes, Queue[Any]]
 
     process_list = [Process(target=gateway_loop,     args=(queues, gateway                       )),
@@ -174,7 +179,9 @@ def main() -> None:
                     Process(target=c_req_manager,    args=(queues,                               )),
                     Process(target=flask_server,     args=(queues,          url_token_public_key )),
                     Process(target=onion_service,    args=(queues,                               )),
-                    Process(target=relay_command,    args=(queues, gateway, sys.stdin.fileno())  )]
+                    Process(target=relay_command,    args=(queues, gateway,                      )),
+                    Process(target=account_checker,  args=(queues,             sys.stdin.fileno())),
+                    Process(target=pub_key_checker,  args=(queues,          local_test           ))]
 
     for p in process_list:
         p.start()

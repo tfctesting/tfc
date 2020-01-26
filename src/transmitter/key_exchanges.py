@@ -41,7 +41,7 @@ from src.common.statics      import (ARGON2_PSK_MEMORY_COST, ARGON2_PSK_PARALLEL
                                      KEY_MANAGEMENT_QUEUE, LOCAL_KEY_DATAGRAM_HEADER, LOCAL_KEY_RDY, LOCAL_NICK,
                                      LOCAL_PUBKEY, NC_BYPASS_START, NC_BYPASS_STOP, PUBLIC_KEY_DATAGRAM_HEADER,
                                      RELAY_PACKET_QUEUE, TFC_PUBLIC_KEY_LENGTH, UNENCRYPTED_DATAGRAM_HEADER,
-                                     UNENCRYPTED_ONION_SERVICE_DATA, WIN_TYPE_GROUP)
+                                     UNENCRYPTED_ONION_SERVICE_DATA, UNENCRYPTED_PUBKEY_CHECK, WIN_TYPE_GROUP)
 
 from src.transmitter.packet import queue_command, queue_to_nc
 
@@ -355,16 +355,24 @@ def exchange_public_keys(onion_pub_key:       bytes,
     enter the public key of the contact. If the User presses <Enter>,
     the function will resend the users' public key to contact.
     """
+    public_key_packet = (PUBLIC_KEY_DATAGRAM_HEADER + onion_pub_key + tfc_public_key_user)
+    queue_to_nc(public_key_packet, queues[RELAY_PACKET_QUEUE])
+
     while True:
-        public_key_packet = (PUBLIC_KEY_DATAGRAM_HEADER + onion_pub_key + tfc_public_key_user)
-        queue_to_nc(public_key_packet, queues[RELAY_PACKET_QUEUE])
+        try:
+            tfc_public_key_contact = get_b58_key(B58_PUBLIC_KEY, settings, contact.short_address)
+        except ValueError as invalid_pub_key:
+            invalid_key       = str(invalid_pub_key).encode()
+            public_key_packet = (UNENCRYPTED_DATAGRAM_HEADER + UNENCRYPTED_PUBKEY_CHECK + onion_pub_key + invalid_key)
+            queue_to_nc(public_key_packet, queues[RELAY_PACKET_QUEUE])
+            continue
 
-        tfc_public_key_contact = get_b58_key(B58_PUBLIC_KEY, settings, contact.short_address)
+        if tfc_public_key_contact == b'':
+            public_key_packet = (PUBLIC_KEY_DATAGRAM_HEADER + onion_pub_key + tfc_public_key_user)
+            queue_to_nc(public_key_packet, queues[RELAY_PACKET_QUEUE])
+            continue
 
-        if tfc_public_key_contact != b"":
-            break
-
-    return tfc_public_key_contact
+        return tfc_public_key_contact
 
 
 def validate_contact_public_key(tfc_public_key_contact: bytes) -> None:
@@ -421,9 +429,9 @@ def validate_contact_fingerprint(tx_fp: bytes, rx_fp: bytes) -> bytes:
     return kex_status
 
 
-def verify_fingerprints(
-    tx_fp: bytes, rx_fp: bytes  # User's fingerprint  # Contact's fingerprint
-) -> bool:  # True if fingerprints match, else False
+def verify_fingerprints(tx_fp: bytes,  # User's fingerprint
+                        rx_fp: bytes   # Contact's fingerprint
+                        ) -> bool:     # True if fingerprints match, else False
     """\
     Verify fingerprints over an authenticated out-of-band channel to
     detect MITM attacks against TFC's key exchange.
