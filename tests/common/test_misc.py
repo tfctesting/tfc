@@ -286,7 +286,6 @@ class TestProcessArguments(unittest.TestCase):
 
             def add_argument(self, *_: Any, **__: Any) -> None:
                 """Mock function for adding argument."""
-                pass
 
         self.o_argparse         = argparse.ArgumentParser
         argparse.ArgumentParser = MockParser
@@ -537,4 +536,3 @@ class TestHideRunTime(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main(exit=False)
-
