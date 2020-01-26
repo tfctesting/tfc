@@ -158,7 +158,9 @@ def get_b58_key(key_type:      str,         # The type of Base58 key to be enter
         except ValueError:
             m_print("Checksum error - Check that the entered key is correct.")
             print_on_previous_line(reps=(4 if settings.local_testing_mode else 5), delay=1)
-            raise ValueError(rx_pk)
+
+            if key_type == B58_PUBLIC_KEY:
+                raise ValueError(rx_pk)
 
 
 def nc_bypass_msg(key: str, settings: 'Settings') -> None:

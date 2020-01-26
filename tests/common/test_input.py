@@ -75,8 +75,12 @@ class TestGetB58Key(unittest.TestCase):
 
         for boolean in [True, False]:
             self.settings.local_testing_mode = boolean
-            key = get_b58_key(B58_PUBLIC_KEY, self.settings, nick_to_short_address('Alice'))
+            with self.assertRaises(ValueError):
+                get_b58_key(B58_PUBLIC_KEY, self.settings, nick_to_short_address('Alice'))
+            with self.assertRaises(ValueError):
+                get_b58_key(B58_PUBLIC_KEY, self.settings, nick_to_short_address('Alice'))
 
+            key = get_b58_key(B58_PUBLIC_KEY, self.settings, nick_to_short_address('Alice'))
             self.assertIsInstance(key, bytes)
             self.assertEqual(len(key), TFC_PUBLIC_KEY_LENGTH)
 
