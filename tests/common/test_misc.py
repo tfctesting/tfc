@@ -40,7 +40,7 @@ from src.common.statics import (DIR_RECV_FILES, DIR_USER_DATA, DUMMY_GROUP, ECDH
                                 PADDING_LENGTH, RX, TAILS, TRAFFIC_MASKING, WIPE)
 
 from tests.mock_classes import ContactList, Gateway, GroupList, Settings
-from tests.utils        import cd_unit_test, cleanup, gen_queue_dict, ignored, nick_to_onion_address
+from tests.utils        import cd_unit_test, cleanup, gen_queue_dict, nick_to_onion_address
 from tests.utils        import nick_to_pub_key, tear_queues, TFCTestCase
 
 
