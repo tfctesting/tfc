@@ -303,7 +303,7 @@ function steps_before_network_kill {
 
     sudo torsocks apt update
     sudo torsocks apt install git gnome-terminal libssl-dev python3-pip python3-tk net-tools -y
-    sudo torsocks git clone --depth 1 https://github.com/maqp/tfc.git /opt/tfc
+    sudo torsocks git clone --depth 1 https://github.com/tfctesting/tfc.git /opt/tfc
 
     verify_tcb_requirements_files
     sudo torsocks python3.7 -m pip download --no-cache-dir -r "/opt/tfc/requirements-venv.txt" --require-hashes --no-deps -d /opt/tfc/
@@ -398,7 +398,7 @@ function install_developer {
     sudo torsocks apt update
     sudo torsocks apt install git libssl-dev python3-pip python3-tk terminator -y
 
-    torsocks git clone https://github.com/maqp/tfc.git "${HOME}/tfc"
+    torsocks git clone https://github.com/tfctesting/tfc.git "${HOME}/tfc"
 
     torsocks python3.7 -m pip install -r "${HOME}/tfc/requirements-venv.txt" --require-hashes --no-deps
 
@@ -468,7 +468,7 @@ function install_relay_tails {
     t_sudo apt update
     t_sudo apt install git libssl-dev python3-pip -y || true  # Ignore error in case packets can not be persistently installed
 
-    torsocks git clone --depth 1 https://github.com/maqp/tfc.git "${HOME}/tfc"
+    torsocks git clone --depth 1 https://github.com/tfctesting/tfc.git "${HOME}/tfc"
     t_sudo mv "${HOME}/tfc/ /opt/tfc/"
     t_sudo chown -R root /opt/tfc/
 
