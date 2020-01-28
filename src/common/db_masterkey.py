@@ -56,7 +56,6 @@ class MasterKey(object):
         self.database_data = None  # type: Optional[bytes]
 
         ensure_dir(DIR_USER_DATA)
-        #self.master_key = 32*b'a'  # TODO REMOVE
         try:
             if os.path.isfile(self.file_name):
                 self.master_key = self.load_master_key()

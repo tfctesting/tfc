@@ -19,9 +19,7 @@ You should have received a copy of the GNU General Public License
 along with TFC. If not, see <https://www.gnu.org/licenses/>.
 """
 
-import os
 import serial
-import sys
 import time
 import typing
 
