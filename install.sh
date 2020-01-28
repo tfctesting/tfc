@@ -26,7 +26,7 @@ CRYPTOGRAPHY=cryptography-2.8-cp34-abi3-manylinux1_x86_64.whl
 FLASK=Flask-1.1.1-py2.py3-none-any.whl
 IDNA=idna-2.8-py2.py3-none-any.whl
 ITSDANGEROUS=itsdangerous-1.1.0-py2.py3-none-any.whl
-JINJA2=Jinja2-2.10.3-py2.py3-none-any.whl
+JINJA2=Jinja2-2.11.0-py2.py3-none-any.whl
 MARKUPSAFE=MarkupSafe-1.1.1-cp37-cp37m-manylinux1_x86_64.whl
 PYCPARSER=pycparser-2.19.tar.gz
 PYNACL=PyNaCl-1.3.0-cp34-abi3-manylinux1_x86_64.whl
@@ -38,7 +38,7 @@ SIX=six-1.14.0-py2.py3-none-any.whl
 # STEM=stem-1.8.0.tar.gz
 URLLIB3=urllib3-1.25.7-py2.py3-none-any.whl
 VIRTUALENV=virtualenv-16.7.9-py2.py3-none-any.whl
-WERKZEUG=Werkzeug-0.16.0-py2.py3-none-any.whl
+WERKZEUG=Werkzeug-0.16.1-py2.py3-none-any.whl
 
 
 function compare_digest {
@@ -67,9 +67,9 @@ function verify_files {
     compare_digest d361e5e8201481c6346ee6a886592c51265112be550d5224f1a7a6e116255c2f1ab8788df579d9b8372ed7bfd19bac4b6e70e00b472642966ab5b319b99a2686 '' LICENSE
     compare_digest 4a239b91b2626375255fbf4202a4bf49ea248832b65d69e00530d7cec88e489466508aeb1ff8c8ef0f138819500c4fde2010207ebe3e289c36bc201df55d3c47 '' LICENSE-3RD-PARTY
     compare_digest 95b6422cae6c643de278de98b1b1f959d296498dcd64cc674717b05238d81707a70be2fc24ff1fbe6173e7df057abf5c8aa9304cdb3c8ae0e8cf6824c34cdfe4 '' relay.py
-    compare_digest 5314b82246eb7a4130f605e71a143f7bc87022d3563ed3abd42d6401936624029453d4441d66b13db55ef34aa5be5a79127dfd89f9f80ee73942cd2654a8adbf '' requirements-dev.txt
-    compare_digest 984d928b2c20ba7bdb0612ce3c40d649088658f20153b9bffdd0db3ef09faf67b18ff91f91dcbca04f08c11d83e97053932e960a3a4b41908b718147190dd0ca '' requirements-relay.txt
-    compare_digest 917634f2136bd2db2e46e1f2959da145080bbf6c5613421f338bfbc743cd4f110e7ee812b9e1a4c8e5d87c653389283cb601ebd1be79317a4cbd065eabaaf5a3 '' requirements-relay-tails.txt
+    compare_digest 4c6e646f2a28c2535f4f1c7da8cff2447fb21a8fc01af5ea4af5ffeec9f7af717d06a882913fcad427832f20dfc8b91162aea9ee20e3a90570a23e983b1a7c65 '' requirements-dev.txt
+    compare_digest 1276cf7dbfea9b59ef3730a47e79090330dea7ed4137336edc095423cd35dbe5a55ce3c28a801fea193833d18d06a8b3c8b1fceb4df71b33717d863cc896b3e9 '' requirements-relay.txt
+    compare_digest fcb793f4bea82fdf60706b948b1e0363d7a361814056ac339df5f0a27f6b955f8098b069883ebfeea4e87467bc77f73443006dd521b88df561ef4ded60f7e1ee '' requirements-relay-tails.txt
     compare_digest 89e82f1f1b1a4d9f3d1432c2988c00f70d2cc1b5e670f50666d189817115bac7b1e15331dc243d1f0364d7d283a9d25c9982ee7ba90563b29bdf41986e734b50 '' requirements-setuptools.txt
     compare_digest 79f8272a2ab122a48c60630c965cd9d000dcafabf5ee9d69b1c33c58ec321feb17e4654dbbbf783cc8868ccdfe2777d60c6c3fc9ef16f8264d9fcf43724e83c2 '' tfc.png
     compare_digest 4e659a97f7f4b8ba816b111446e5795460db8def5db380bd05ede96042170796def1f4cdc4f6afc7062079fca584ac09010a6222d6835403777d6acba91add8c '' tfc.py
@@ -224,7 +224,7 @@ function verify_tails_dependencies {
     # Tails doesn't allow downloading over PIP to /opt/tfc, so we
     # first download to $HOME, move the files to /opt/tfc, and then
     # perform additional hash verification
-    compare_digest e80eb04615d1dcd2546bd5ceef5408bbb577fa0dd725bc69f20dd7840518af575f0b41e629e8164fdaea398628813720a6f70a42e7748336601391605b79f542 '' ${VIRTUALENV}
+    compare_digest f4e7148f1de50fa2e69061e72db211085fc2f44007de4d18ee02a20d34bca30a00d2fe56ff6f3132e696c3f6efd4151863f26dac4c1d43e87b597c47a51c52ad '' ${VIRTUALENV}
     compare_digest 8333ac2843fd136d5d0d63b527b37866f7d18afc3bb33c4938b63af077492aeb118eb32a89ac78547f14d59a2adb1e5d00728728275de62317da48dadf6cdff9 '' ${PYSERIAL}
     # compare_digest a275f59bba650cb5bb151cf53fb1dd820334f9abbeae1a25e64502adc854c7f54c51bc3d6c1656b595d142fc0695ffad53aab3c57bc285421c1f4f10c9c3db4c '' ${STEM}
     compare_digest 313b954102231d038d52ab58f41e3642579be29f827135b8dd92c06acb362effcb0a7fd5f35de9273372b92d9fe29f38381ae44f8b41aa90d2564d6dd07ecd12 '' ${PYSOCKS}
@@ -239,7 +239,7 @@ function verify_tails_dependencies {
     # Flask
     compare_digest 3905022d0c398856b30d2ed6bae046c1532e87f56a0a40060030c18124c6c9c98976d9429e2ab03676c4ce75be4ea915ffc2719e04e4b4912a96e498dcd9eb89 '' ${WERKZEUG}
     compare_digest 69e9b9c9ac4fdf3cfa1a3de23d14964b843989128f8cc6ea58617fc5d6ef937bcc3eae9cb32b5164b5f54b06f96bdff9bc249529f20671cc26adc9e6ce8f6bec '' ${MARKUPSAFE}
-    compare_digest 658d069944c81f9d8b2e90577a9d2c844b4c6a26764efefd7a86f26c05276baf6c7255f381e20e5178782be1786b7400cab12dec15653e7262b36194228bf649 '' ${JINJA2}
+    compare_digest 13af0d7e5abe1f99c61cef7841f3ce6ad559ec7bd3f7e50546e9a1b27e754badee9a75bed64caee34ca87cfb1047529084e73246a3ae92d2ab5dfcc5c291c7c6 '' ${JINJA2}
     compare_digest 891c294867f705eb9c66274bd04ac5d93140d6e9beea6cbf9a44e7f9c13c0e2efa3554bdf56620712759a5cd579e112a782d25f3f91ba9419d60b2b4d2bc5b7c '' ${ITSDANGEROUS}
     compare_digest 6b30987349df7c45c5f41cff9076ed45b178b444fca1ab1965f4ae33d1631522ce0a2868392c736666e83672b8b20e9503ae9ce5016dce3fa8f77bc8a3674130 '' ${CLICK}
     compare_digest bd49cb364307569480196289fa61fbb5493e46199620333f67617367278e1f56b20fc0d40fd540bef15642a8065e488c24e97f50535e8ec143875095157d8069 '' ${FLASK}
