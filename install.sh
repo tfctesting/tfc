@@ -237,7 +237,7 @@ function verify_tails_dependencies {
     compare_digest 9186ce4e39bb64f5931a205ffc9afac61657bc42078bc4754ed12a2b66a12b7a620583440849fc2e161d1061ac0750ddef4670f54916931ace1e9abd2a9fb09c '' ${REQUESTS}
 
     # Flask
-    compare_digest 3905022d0c398856b30d2ed6bae046c1532e87f56a0a40060030c18124c6c9c98976d9429e2ab03676c4ce75be4ea915ffc2719e04e4b4912a96e498dcd9eb89 '' ${WERKZEUG}
+    compare_digest 4c982970fef39bf7cfbb4e516864fec0f8ec3f743ccb632d1659c6ee415597d98f4abd63b5c0fd999eb43fc0c89a97123f07625b01ea86b02ef51cb67a2b148d '' ${WERKZEUG}
     compare_digest 69e9b9c9ac4fdf3cfa1a3de23d14964b843989128f8cc6ea58617fc5d6ef937bcc3eae9cb32b5164b5f54b06f96bdff9bc249529f20671cc26adc9e6ce8f6bec '' ${MARKUPSAFE}
     compare_digest 13af0d7e5abe1f99c61cef7841f3ce6ad559ec7bd3f7e50546e9a1b27e754badee9a75bed64caee34ca87cfb1047529084e73246a3ae92d2ab5dfcc5c291c7c6 '' ${JINJA2}
     compare_digest 891c294867f705eb9c66274bd04ac5d93140d6e9beea6cbf9a44e7f9c13c0e2efa3554bdf56620712759a5cd579e112a782d25f3f91ba9419d60b2b4d2bc5b7c '' ${ITSDANGEROUS}
