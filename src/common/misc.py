@@ -396,6 +396,7 @@ def split_to_substrings(bytestring: bytes, length: int) -> List[bytes]:
     substrings = []
     for i in range(0, len(bytestring) - length + 1):
         substrings.append(bytestring[i:length + i])
+
     return substrings
 
 

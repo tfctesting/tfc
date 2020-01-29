@@ -193,23 +193,31 @@ placerat, aliquam dolor ac, venenatis arcu.
 
     def test_wrapping(self) -> None:
         self.assert_prints("""\
-┌──────────────────────────────────────────────────────────────────────────────┐
-│                                short message                                 │
-│ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean condimentum  │
-│  consectetur purus quis dapibus. Fusce venenatis lacus ut rhoncus faucibus.  │
-│ Cras sollicitudin commodo sapien, sed bibendum velit maximus in. Aliquam ac  │
-│    metus risus. Sed cursus ornare luctus. Integer aliquet lectus id massa    │
-│   blandit imperdiet. Ut sed massa eget quam facilisis rutrum. Mauris eget    │
-│  luctus nisl. Sed ut elit iaculis, faucibus lacus eget, sodales magna. Nunc  │
-│  sed commodo arcu. In hac habitasse platea dictumst. Integer luctus aliquam  │
-│  justo, at vestibulum dolor iaculis ac. Etiam laoreet est eget odio rutrum,  │
-│     vel malesuada lorem rhoncus. Cras finibus in neque eu euismod. Nulla     │
-│  facilisi. Nunc nec aliquam quam, quis ullamcorper leo. Nunc egestas lectus  │
-│ eget est porttitor, in iaculis felis scelerisque. In sem elit, fringilla id  │
-│ viverra commodo, sagittis varius purus. Pellentesque rutrum lobortis neque a │
-│   facilisis. Mauris id tortor placerat, aliquam dolor ac, venenatis arcu.    │
-└──────────────────────────────────────────────────────────────────────────────┘
-""", m_print, ["short message", TestMPrint.long_msg], box=True)
+             ┌────────────────────────────────────────────────────┐             
+             │                   short message                    │             
+             │ Lorem ipsum dolor sit amet, consectetur adipiscing │             
+             │  elit. Aenean condimentum consectetur purus quis   │             
+             │     dapibus. Fusce venenatis lacus ut rhoncus      │             
+             │  faucibus. Cras sollicitudin commodo sapien, sed   │             
+             │ bibendum velit maximus in. Aliquam ac metus risus. │             
+             │  Sed cursus ornare luctus. Integer aliquet lectus  │             
+             │ id massa blandit imperdiet. Ut sed massa eget quam │             
+             │ facilisis rutrum. Mauris eget luctus nisl. Sed ut  │             
+             │ elit iaculis, faucibus lacus eget, sodales magna.  │             
+             │   Nunc sed commodo arcu. In hac habitasse platea   │             
+             │     dictumst. Integer luctus aliquam justo, at     │             
+             │   vestibulum dolor iaculis ac. Etiam laoreet est   │             
+             │   eget odio rutrum, vel malesuada lorem rhoncus.   │             
+             │ Cras finibus in neque eu euismod. Nulla facilisi.  │             
+             │ Nunc nec aliquam quam, quis ullamcorper leo. Nunc  │             
+             │   egestas lectus eget est porttitor, in iaculis    │             
+             │    felis scelerisque. In sem elit, fringilla id    │             
+             │      viverra commodo, sagittis varius purus.       │             
+             │  Pellentesque rutrum lobortis neque a facilisis.   │             
+             │    Mauris id tortor placerat, aliquam dolor ac,    │             
+             │                  venenatis arcu.                   │             
+             └────────────────────────────────────────────────────┘             
+""", m_print, ["short message", TestMPrint.long_msg], box=True, max_width = 50)
 
     @mock.patch("builtins.input", return_value='')
     def test_manual_proceed(self, _: Any) -> None:

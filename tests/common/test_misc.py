@@ -31,13 +31,16 @@ from multiprocessing import Process
 from unittest        import mock
 from typing          import Any, NoReturn
 
+from unittest.mock import MagicMock
+
 from src.common.misc    import calculate_race_condition_delay, decompress, ensure_dir, get_tab_complete_list
 from src.common.misc    import get_tab_completer, get_terminal_height, get_terminal_width, HideRunTime, ignored
-from src.common.misc    import monitor_processes, process_arguments, readable_size, round_up, separate_header
-from src.common.misc    import separate_headers, separate_trailer, split_string, split_byte_string, terminal_width_check
-from src.common.misc    import validate_group_name, validate_key_exchange, validate_onion_addr, validate_nick
+from src.common.misc    import monitor_processes, process_arguments, readable_size, reset_terminal, round_up
+from src.common.misc    import separate_header, separate_headers, separate_trailer, split_string, split_byte_string
+from src.common.misc    import split_to_substrings, terminal_width_check, validate_group_name, validate_key_exchange
+from src.common.misc    import validate_onion_addr, validate_nick
 from src.common.statics import (DIR_RECV_FILES, DIR_USER_DATA, DUMMY_GROUP, ECDHE, EXIT, EXIT_QUEUE, LOCAL_ID,
-                                PADDING_LENGTH, RX, TAILS, TRAFFIC_MASKING, WIPE)
+                                PADDING_LENGTH, RESET, RX, TAILS, TRAFFIC_MASKING, WIPE)
 
 from tests.mock_classes import ContactList, Gateway, GroupList, Settings
 from tests.utils        import cd_unit_test, cleanup, gen_queue_dict, nick_to_onion_address
@@ -307,6 +310,14 @@ class TestReadableSize(unittest.TestCase):
             self.assertEqual(size, f'1.0{sizes[i]}B')
 
 
+class TestResetTerminal(unittest.TestCase):
+
+    @mock.patch('os.system', return_value=MagicMock(return_value=None))
+    def test_reset_terminal(self, oss):
+        self.assertIsNone(reset_terminal())
+        oss.assert_called_with(RESET)
+
+
 class TestRoundUp(unittest.TestCase):
 
     def test_round_up(self) -> None:
@@ -410,6 +421,32 @@ class TestSeparateTrailer(unittest.TestCase):
                          (b"cypher", b"punk"))
 
 
+class TestSplitToSubStrings(unittest.TestCase):
+
+    def test_splitting(self):
+        test_string = b'cypherpunk'
+
+        self.assertEqual(split_to_substrings(test_string, length=5),
+                         [b'cyphe',
+                          b'ypher',
+                          b'pherp',
+                          b'herpu',
+                          b'erpun',
+                          b'rpunk'])
+
+        self.assertEqual(split_to_substrings(test_string, length=7),
+                         [b'cypherp',
+                          b'ypherpu',
+                          b'pherpun',
+                          b'herpunk'])
+
+        self.assertEqual(split_to_substrings(test_string, length=len(test_string)),
+                         [b'cypherpunk'])
+
+        self.assertEqual(split_to_substrings(test_string, length=len(test_string)+1),
+                         [])
+
+
 class TestTerminalWidthCheck(unittest.TestCase):
 
     @mock.patch('time.sleep',               return_value=None)
@@ -422,20 +459,20 @@ class TestValidateOnionAddr(unittest.TestCase):
 
     def test_validate_account(self) -> None:
         user_account = nick_to_onion_address("Bob")
-        self.assertEqual(validate_onion_addr(nick_to_onion_address("Alice"),            user_account),
-                         '')
-        self.assertEqual(validate_onion_addr(nick_to_onion_address("Bob"),              user_account),
-                         'Error: Can not add own account.')
+        self.assertEqual(validate_onion_addr(nick_to_onion_address("Alice")      + 'a', user_account),
+                         'Error: Invalid account length.')
+        self.assertEqual(validate_onion_addr(nick_to_onion_address("Alice").upper(),    user_account),
+                         'Error: Account must be in lower case.')
         self.assertEqual(validate_onion_addr(nick_to_onion_address("Alice")[:-1] + 'a', user_account),
                          'Checksum error - Check that the entered account is correct.')
         self.assertEqual(validate_onion_addr(nick_to_onion_address("Alice")[:-1] + '%', user_account),
                          'Error: Invalid account format.')
-        self.assertEqual(validate_onion_addr(nick_to_onion_address("Alice")      + 'a', user_account),
-                         'Error: Invalid account length.')
-        self.assertEqual(validate_onion_addr(nick_to_onion_address("Alice")[:-1] + '€', user_account),
-                         'Error: Invalid account format.')
         self.assertEqual(validate_onion_addr(LOCAL_ID,                                  user_account),
                          'Error: Can not add reserved account.')
+        self.assertEqual(validate_onion_addr(nick_to_onion_address("Bob"),              user_account),
+                         'Error: Can not add own account.')
+        self.assertEqual(validate_onion_addr(nick_to_onion_address("Alice"),            user_account),
+                         '')
 
 
 class TestValidateGroupName(unittest.TestCase):

@@ -76,17 +76,19 @@ class TestGetB58Key(unittest.TestCase):
 
     @mock.patch('time.sleep',               return_value=None)
     @mock.patch('shutil.get_terminal_size', return_value=[200, 200])
-    @mock.patch('builtins.input',           side_effect=([VALID_ECDHE_PUB_KEY[:-1],
+    @mock.patch('builtins.input',           side_effect=(2*[VALID_ECDHE_PUB_KEY[:-1],
                                                           VALID_ECDHE_PUB_KEY+'a',
                                                           VALID_ECDHE_PUB_KEY,
                                                           84*'a']))
     def test_get_b58_pub_key(self, *_: Any) -> None:
-        key = get_b58_key(B58_PUBLIC_KEY, self.settings)
-        self.assertIsInstance(key, bytes)
-        self.assertEqual(len(key), TFC_PUBLIC_KEY_LENGTH)
+        for local_testing in [True, False]:
+            self.settings.local_testing_mode = local_testing
+            key = get_b58_key(B58_PUBLIC_KEY, self.settings)
+            self.assertIsInstance(key, bytes)
+            self.assertEqual(len(key), TFC_PUBLIC_KEY_LENGTH)
 
-        with self.assertRaises(ValueError):
-            get_b58_key(B58_PUBLIC_KEY, self.settings, nick_to_short_address('Alice'))
+            with self.assertRaises(ValueError):
+                get_b58_key(B58_PUBLIC_KEY, self.settings, nick_to_short_address('Alice'))
 
     @mock.patch('builtins.input',           return_value='')
     @mock.patch('shutil.get_terminal_size', return_value=[200, 200])
@@ -114,7 +116,8 @@ class TestPwdPrompt(unittest.TestCase):
 class TestYes(unittest.TestCase):
 
     @mock.patch('builtins.input', side_effect=['Invalid', '', 'invalid', 'Y', 'YES', 'N', 'NO',
-                                               KeyboardInterrupt, KeyboardInterrupt, EOFError, EOFError])
+                                               KeyboardInterrupt, KeyboardInterrupt, EOFError,
+                                               EOFError, EOFError, KeyboardInterrupt])
     def test_yes(self, _: Any) -> None:
         self.assertTrue(yes('test prompt', head=1, tail=1))
         self.assertTrue(yes('test prompt'))
@@ -127,6 +130,12 @@ class TestYes(unittest.TestCase):
 
         self.assertTrue(yes('test prompt', head=1, tail=1, abort=True))
         self.assertFalse(yes('test prompt', abort=False))
+
+        with self.assertRaises(EOFError):
+            self.assertFalse(yes('test prompt'))
+
+        with self.assertRaises(KeyboardInterrupt):
+            self.assertFalse(yes('test prompt'))
 
 
 if __name__ == '__main__':

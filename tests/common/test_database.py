@@ -322,55 +322,63 @@ class TestTFCUnencryptedDatabase(unittest.TestCase):
         self.assertFalse(os.path.isfile(self.database.database_temp))
 
 
-class TestTFCLogDatabase(unittest.TestCase):
+class TestMessageLog(unittest.TestCase):
 
     def setUp(self) -> None:
         """Pre-test actions."""
-        self.unit_test_dir    = cd_unit_test()
-        self.file_name        = f'{DIR_USER_DATA}ut_logs'
-        self.temp_name        = self.file_name + '_temp'
-        self.settings         = Settings()
-        self.database_key     = os.urandom(SYMMETRIC_KEY_LENGTH)
-        self.tfc_log_database = MessageLog(self.file_name, self.database_key)
+        self.unit_test_dir = cd_unit_test()
+        self.file_name     = f'{DIR_USER_DATA}ut_logs'
+        self.temp_name     = self.file_name + '_temp'
+        self.settings      = Settings()
+        self.database_key  = os.urandom(SYMMETRIC_KEY_LENGTH)
+        self.message_log   = MessageLog(self.file_name, self.database_key)
 
     def tearDown(self) -> None:
         """Post-test actions."""
         cleanup(self.unit_test_dir)
 
     def test_empty_log_database_is_verified(self) -> None:
-        self.assertTrue(self.tfc_log_database.verify_file(self.file_name))
+        self.assertTrue(self.message_log.verify_file(self.file_name))
 
     def test_database_with_one_entry_is_verified(self) -> None:
         # Setup
         test_entry = b'test_log_entry'
-        self.tfc_log_database.insert_log_entry(test_entry)
+        self.message_log.insert_log_entry(test_entry)
 
         # Test
-        self.assertTrue(self.tfc_log_database.verify_file(self.file_name))
+        self.assertTrue(self.message_log.verify_file(self.file_name))
+
+    def test_invalid_database_returns_false(self) -> None:
+        # Setup
+        self.message_log.c.execute("DROP TABLE log_entries")
+        self.message_log.conn.commit()
+
+        # Test
+        self.assertFalse(self.message_log.verify_file(self.file_name))
 
     def test_invalid_entry_returns_false(self) -> None:
         # Setup
         params = (os.urandom(LOG_ENTRY_LENGTH),)
-        self.tfc_log_database.c.execute(f"""INSERT INTO log_entries (log_entry) VALUES (?)""", params)
-        self.tfc_log_database.conn.commit()
+        self.message_log.c.execute(f"""INSERT INTO log_entries (log_entry) VALUES (?)""", params)
+        self.message_log.conn.commit()
 
         # Test
-        self.assertFalse(self.tfc_log_database.verify_file(self.file_name))
+        self.assertFalse(self.message_log.verify_file(self.file_name))
 
     def test_table_creation(self) -> None:
-        self.assertIsInstance(self.tfc_log_database, MessageLog)
+        self.assertIsInstance(self.message_log, MessageLog)
         self.assertTrue(os.path.isfile(self.file_name))
 
     def test_writing_to_log_database(self) -> None:
         data = os.urandom(LOG_ENTRY_LENGTH)
-        self.assertIsNone(self.tfc_log_database.insert_log_entry(data))
+        self.assertIsNone(self.message_log.insert_log_entry(data))
 
     def test_iterating_over_log_database(self) -> None:
         data = [os.urandom(LOG_ENTRY_LENGTH), os.urandom(LOG_ENTRY_LENGTH)]
         for entry in data:
-            self.assertIsNone(self.tfc_log_database.insert_log_entry(entry))
+            self.assertIsNone(self.message_log.insert_log_entry(entry))
 
-        for index, stored_entry in enumerate(self.tfc_log_database):
+        for index, stored_entry in enumerate(self.message_log):
             self.assertEqual(stored_entry, data[index])
 
     def test_invalid_temp_database_is_not_loaded(self) -> None:
@@ -417,16 +425,16 @@ class TestTFCLogDatabase(unittest.TestCase):
         self.assertFalse(os.path.isfile(self.temp_name))
 
     def test_database_closing(self) -> None:
-        self.tfc_log_database.close_database()
+        self.message_log.close_database()
 
         # Test insertion would fail at this point
         with self.assertRaises(sqlite3.ProgrammingError):
-            self.tfc_log_database.c.execute(f"""INSERT INTO log_entries (log_entry) VALUES (?)""",
-                                            (os.urandom(LOG_ENTRY_LENGTH),))
+            self.message_log.c.execute(f"""INSERT INTO log_entries (log_entry) VALUES (?)""",
+                                       (os.urandom(LOG_ENTRY_LENGTH),))
 
         # Test that TFC reopens closed database on write
         data = os.urandom(LOG_ENTRY_LENGTH)
-        self.assertIsNone(self.tfc_log_database.insert_log_entry(data))
+        self.assertIsNone(self.message_log.insert_log_entry(data))
 
 
 if __name__ == '__main__':

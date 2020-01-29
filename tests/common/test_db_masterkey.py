@@ -33,12 +33,13 @@ from src.common.misc         import ensure_dir
 from src.common.statics      import (BLAKE2_DIGEST_LENGTH, DIR_USER_DATA, MASTERKEY_DB_SIZE, PASSWORD_MIN_BIT_STRENGTH,
                                      SYMMETRIC_KEY_LENGTH, TX)
 
-from tests.utils import cd_unit_test, cleanup
+from tests.utils import cd_unit_test, cleanup, TFCTestCase
+
 
 KL = SYMMETRIC_KEY_LENGTH
 
 
-class TestMasterKey(unittest.TestCase):
+class TestMasterKey(TFCTestCase):
     input_list = ['password', 'different_password',  # Invalid new password pair
                   'password', 'password',            # Valid   new password pair
                   'invalid_password',                # Invalid login password
@@ -110,6 +111,21 @@ class TestMasterKey(unittest.TestCase):
     @mock.patch('src.common.db_masterkey.MAX_KEY_DERIVATION_TIME', 0.1)
     @mock.patch('os.popen',        return_value=MagicMock(
         read=MagicMock(return_value=MagicMock(splitlines=MagicMock(return_value=["MemAvailable 10240"])))))
+    @mock.patch('os.path.isfile',  side_effect=[False, True, False])
+    @mock.patch('getpass.getpass', side_effect=4*['password'])
+    @mock.patch('time.sleep',      return_value=None)
+    def test_database_data_caching_and_storage_on_command(self, *_: Any):
+        master_key = MasterKey(self.operation, local_test=True)
+        master_key.new_master_key(replace=False)
+        self.assertEqual(len(master_key.database_data), MASTERKEY_DB_SIZE)
+        master_key.replace_database_data()
+        self.assertIsNone(master_key.database_data)
+        self.assertTrue(os.path.isfile(self.file_name))
+
+    @mock.patch('src.common.db_masterkey.MIN_KEY_DERIVATION_TIME', 0.01)
+    @mock.patch('src.common.db_masterkey.MAX_KEY_DERIVATION_TIME', 0.1)
+    @mock.patch('os.popen',        return_value=MagicMock(
+        read=MagicMock(return_value=MagicMock(splitlines=MagicMock(return_value=["MemAvailable 10240"])))))
     @mock.patch('getpass.getpass', side_effect=['generate'])
     @mock.patch('builtins.input',  side_effect=[''])
     @mock.patch('os.system',       return_value=None)
@@ -128,6 +144,17 @@ class TestMasterKey(unittest.TestCase):
     @mock.patch('time.sleep',      return_value=None)
     def test_kd_binary_search(self, *_: Any) -> None:
         MasterKey(self.operation, local_test=True)
+
+    @mock.patch('src.common.db_masterkey.MIN_KEY_DERIVATION_TIME', 0.01)
+    @mock.patch('src.common.db_masterkey.MAX_KEY_DERIVATION_TIME', 0.1)
+    @mock.patch('os.popen',        return_value=MagicMock(
+        read=MagicMock(return_value=MagicMock(splitlines=MagicMock(return_value=["MemAvailable 10240"])))))
+    @mock.patch('getpass.getpass', side_effect=['password', 'password', KeyboardInterrupt, 'password', 'invalid_pwd'])
+    @mock.patch('time.sleep',      return_value=None)
+    def test_authenticate_action(self, *_: Any) -> None:
+        master_key = MasterKey(self.operation, local_test=True)
+        self.assert_se("Authentication aborted.", master_key.authenticate_action)
+        self.assertTrue(master_key.authenticate_action())
 
 
 if __name__ == '__main__':

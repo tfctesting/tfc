@@ -1448,7 +1448,7 @@ def rs_correct_msg(msg_in:        Union[bytes, bytearray],
 
     # Check if the final message is fully repaired.
     synd = rs_calc_syndromes(msg_out, nsym, fcr, generator)
-    if max(synd) > 0:
+    if max(synd) > 0:  # pragma: no cover
         raise ReedSolomonError("Could not correct message")
 
     # Return the successfully decoded message. Also return the corrected
