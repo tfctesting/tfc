@@ -225,7 +225,9 @@ def manage_contact_status(ut_pubkey_hex: str,
     return is_online, check_delay
 
 
-def load_url_token(onion_addr: str, session: 'Session') -> str:
+def load_url_token(onion_addr: str,
+                   session:    'Session'
+                   ) -> str:
     """Load URL token for contact."""
     try:
         ut_pubkey_hex = session.get(f"http://{onion_addr}.onion/", timeout=5).text
@@ -235,7 +237,10 @@ def load_url_token(onion_addr: str, session: 'Session') -> str:
     return ut_pubkey_hex
 
 
-def send_contact_request(onion_addr: str, onion_addr_user: str, session: "Session") -> None:
+def send_contact_request(onion_addr:      str,
+                         onion_addr_user: str,
+                         session:         'Session'
+                         ) -> None:
     """Send contact request."""
     while True:
         try:
@@ -466,7 +471,9 @@ def update_list_of_existing_contacts(contact_queue:     'Queue[Any]',
     return existing_contacts
 
 
-def account_checker(queues: 'QueueDict', stdin_fd: int) -> None:
+def account_checker(queues:   'QueueDict',
+                    stdin_fd: int
+                    ) -> None:
     """\
     Display diffs between received TFC accounts and accounts
     manually imported to Source Computer."""
@@ -540,11 +547,11 @@ def pub_key_checker(queues:     'QueueDict',
                 continue
 
             if pub_key_check_queue.qsize() != 0:
-                account, purp_pub_key = pub_key_check_queue.get()  # type: bytes, bytes
+                purp_account, purp_pub_key = pub_key_check_queue.get()  # type: bytes, bytes
 
-                if account in pub_key_dictionary:
+                if purp_account in pub_key_dictionary:
                     purp_b58_pub_key = purp_pub_key.decode()
-                    true_b58_pub_key = pub_key_dictionary[account]
+                    true_b58_pub_key = pub_key_dictionary[purp_account]
 
                     show_value_diffs("public key", true_b58_pub_key, purp_b58_pub_key, local_test)
 

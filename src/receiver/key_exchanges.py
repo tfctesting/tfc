@@ -141,9 +141,9 @@ def process_local_key(ts:            'datetime',
                       contact_list:  'ContactList',
                       key_list:      'KeyList',
                       settings:      'Settings',
-                      kdk_hashes:     List[bytes],
-                      packet_hashes:  List[bytes],
-                      l_queue:        'Queue[Tuple[datetime, bytes]]'
+                      kdk_hashes:    List[bytes],
+                      packet_hashes: List[bytes],
+                      l_queue:       'Queue[Tuple[datetime, bytes]]'
                       ) -> None:
     """Decrypt local key packet and add local contact/keyset."""
     first_local_key = not key_list.has_local_keyset()
@@ -296,7 +296,7 @@ def decrypt_rx_psk(ct_tag: bytes, salt: bytes) -> bytes:
         try:
             password = MasterKey.get_password("PSK password")
             phase("Deriving the key decryption key", head=2)
-            kdk = argon2_kdf(password, salt, ARGON2_PSK_TIME_COST, ARGON2_PSK_MEMORY_COST, ARGON2_PSK_PARALLELISM,)
+            kdk = argon2_kdf(password, salt, ARGON2_PSK_TIME_COST, ARGON2_PSK_MEMORY_COST, ARGON2_PSK_PARALLELISM)
             psk = auth_and_decrypt(ct_tag, kdk)
             phase(DONE)
             return psk

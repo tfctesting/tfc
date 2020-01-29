@@ -112,7 +112,10 @@ class File(object):
         processed += file_key
         return processed
 
-    def finalize(self, size: bytes, processed: bytes) -> Tuple[str, bytes]:
+    def finalize(self,
+                 size:      bytes,
+                 processed: bytes
+                 ) -> Tuple[str, bytes]:
         """Finalize packet and generate plaintext."""
         time_bytes, time_print = self.update_delivery_time(self.name, size, processed, self.settings, self.window)
         packet_data            = time_bytes + size + self.name + US_BYTE + processed

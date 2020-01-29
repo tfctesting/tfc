@@ -39,7 +39,7 @@ if typing.TYPE_CHECKING:
     from src.common.db_settings import Settings
     from src.common.gateway     import GatewaySettings as GWSettings
 
-    msg_list_type = Union[str, List[str]]
+    MsgListType = Union[str, List[str]]
 
 
 def clear_screen(delay: float = 0.0) -> None:
@@ -129,9 +129,9 @@ def m_print(msg_list:       Union[str, List[str]],  # List of lines to print
 
 def split_too_wide_messages(box:            bool,
                             max_width:      int,
-                            msg_list:       "msg_list_type",
+                            msg_list:       'MsgListType',
                             terminal_width: int
-                            ) -> Tuple[int, "msg_list_type"]:
+                            ) -> Tuple[int, 'MsgListType']:
     """Split too wide messages to multiple lines."""
     len_widest_msg = max(len(m) for m in msg_list)
     spc_around_msg = 4 if box else 2

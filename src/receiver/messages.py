@@ -111,17 +111,17 @@ def process_message_packet(ts:                 'datetime',          # Timestamp 
                                         contact_list, group_list, settings, message_log, file_keys)
 
 
-def process_complete_message_packet(ts:            "datetime",         # Timestamp of received message packet
+def process_complete_message_packet(ts:            'datetime',         # Timestamp of received message packet
                                     onion_pub_key: bytes,              # Onion address of associated contact
                                     p_type:        str,                # Packet type (file, message)
                                     origin:        bytes,              # Origin of packet (user / contact)
                                     logging:       bool,               # When True, message will be logged
-                                    packet:        "Packet",           # Packet object
-                                    window_list:   "WindowList",       # WindowList object
-                                    contact_list:  "ContactList",      # ContactList object
-                                    group_list:    "GroupList",        # GroupList object
-                                    settings:      "Settings",         # Settings object
-                                    message_log:   "MessageLog",       # MessageLog object
+                                    packet:        'Packet',           # Packet object
+                                    window_list:   'WindowList',       # WindowList object
+                                    contact_list:  'ContactList',      # ContactList object
+                                    group_list:    'GroupList',        # GroupList object
+                                    settings:      'Settings',         # Settings object
+                                    message_log:   'MessageLog',       # MessageLog object
                                     file_keys:     Dict[bytes, bytes]  # Dictionary of file decryption keys
                                     ) -> None:
     """Process complete message packet.
@@ -136,7 +136,7 @@ def process_complete_message_packet(ts:            "datetime",         # Timesta
 
         if p_type == MESSAGE:
             process_message(ts, onion_pub_key, origin, logging, packet, window_list,
-                            contact_list, group_list, message_log, file_keys,)
+                            contact_list, group_list, message_log, file_keys)
 
     except (SoftError, UnicodeError):
         log_masking_packets(onion_pub_key, origin, logging, settings, packet, message_log, completed=True)

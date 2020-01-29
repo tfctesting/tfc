@@ -135,10 +135,10 @@ def log_writer_loop(queues:      Dict[bytes, 'Queue[Any]'],  # Dictionary of que
                 break
 
 
-def check_log_setting_queues(traffic_masking:       bool, 
-                             traffic_masking_queue: "Queue[Any]", 
-                             logfile_masking:       bool, 
-                             logfile_masking_queue: "Queue[Any]"
+def check_log_setting_queues(traffic_masking:       bool,
+                             traffic_masking_queue: 'Queue[Any]',
+                             logfile_masking:       bool,
+                             logfile_masking_queue: 'Queue[Any]'
                              ) -> Tuple[bool, bool]:
     """Check for updates to logging settings."""
     if traffic_masking_queue.qsize():
@@ -153,7 +153,7 @@ def check_log_setting_queues(traffic_masking:       bool,
 def update_logging_state(assembly_packet:   bytes, 
                          logging_state:     bool, 
                          log_messages:      bool, 
-                         log_setting_queue: "Queue[Any]"
+                         log_setting_queue: 'Queue[Any]'
                          ) -> bool:
     """Update logging state.
 
@@ -258,23 +258,15 @@ def access_logs(window:       Union['TxWindow', 'RxWindow'],
 
     message_log.close_database()
 
-    print_logs(
-        message_list[-msg_to_load:],
-        export,
-        msg_to_load,
-        window,
-        contact_list,
-        group_list,
-        settings,
-    )
+    print_logs(message_list[-msg_to_load:], export, msg_to_load, window, contact_list, group_list, settings)
 
 
-def add_complete_message_to_message_list(timestamp: bytes, 
-                                         onion_pub_key: bytes, 
-                                         group_msg_id: bytes, 
-                                         packet: "Packet", 
-                                         message_list: List[MsgTuple], 
-                                         window: Union["TxWindow", "RxWindow"]
+def add_complete_message_to_message_list(timestamp:     bytes,
+                                         onion_pub_key: bytes,
+                                         group_msg_id:  bytes,
+                                         packet:        'Packet',
+                                         message_list:  List[MsgTuple],
+                                         window:        Union['TxWindow', 'RxWindow']
                                          ) -> bytes:
     """Add complete log file message to `message_list`."""
     whisper_byte, header, message = separate_headers(
@@ -443,7 +435,7 @@ def remove_logs(contact_list: 'ContactList',
 
 
 def check_packet_fate(entries_to_keep: List[bytes],
-                      packet:          "Packet",
+                      packet:          'Packet',
                       removed:         bool,
                       selector:        bytes
                       ) -> bool:

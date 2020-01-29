@@ -143,7 +143,7 @@ class Tor(object):
                             "Log":             "notice stdout",
                             "GeoIPFile":       "/usr/share/tor/geoip",
                             "GeoIPv6File ":    "/usr/share/tor/geoip6"},
-                    tor_cmd="/usr/bin/tor",)
+                    tor_cmd="/usr/bin/tor")
                 break
 
             except OSError:

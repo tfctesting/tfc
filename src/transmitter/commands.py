@@ -596,7 +596,7 @@ def change_setting(user_input:   'UserInput',
 
     check_setting_change_conditions(setting, settings, relay_settings, master_key)
 
-    change_setting_value(setting, value, relay_settings, queues, contact_list, group_list, settings, gateway,)
+    change_setting_value(setting, value, relay_settings, queues, contact_list, group_list, settings, gateway)
 
     propagate_setting_effects(setting, queues, contact_list, group_list, settings, window)
 
@@ -611,7 +611,7 @@ def check_setting_change_conditions(setting:        str,
         raise SoftError("Error: Can't change this setting during traffic masking.", head_clear=True)
 
     if setting in ["use_serial_usb_adapter", "built_in_serial_interface"]:
-        raise SoftError("Error: Serial interface setting can only be changed manually.", head_clear=True,)
+        raise SoftError("Error: Serial interface setting can only be changed manually.", head_clear=True)
 
     if setting == "ask_password_for_log_access":
         if not master_key.authenticate_action():

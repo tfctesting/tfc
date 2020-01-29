@@ -159,7 +159,7 @@ class TestGatewaySerial(TFCTestCase):
         # Test BLAKE2b based checksum
         gateway.settings.session_serial_error_correction = 0
         self.assertEqual(
-            gateway.add_error_correction(packet,),
+            gateway.add_error_correction(packet),
             packet + blake2b(packet, digest_size=PACKET_CHECKSUM_LENGTH),
         )
 

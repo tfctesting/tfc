@@ -59,7 +59,7 @@ class SoftError(Exception):
                  delay:      float                = 0,      # The delay before continuing
                  head:       int                  = 1,      # The number of new-lines to print before the message
                  tail:       int                  = 1,      # The number of new-lines to print after message
-                 ts:         Optional["datetime"] = None    # Datetime object
+                 ts:         Optional['datetime'] = None    # Datetime object
                  ) -> None:
         """Print return message and return to exception handler function."""
         self.message = message

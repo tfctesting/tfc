@@ -423,7 +423,7 @@ def validate_contact_fingerprint(tx_fp: bytes, rx_fp: bytes) -> bytes:
                  "unless fingerprints are verified! To re-verify",
                  "the contact, use the command '/verify'.",
                  '', "Press <enter> to continue."],
-                manual_proceed=True, box=True, head=2, tail=1,)
+                manual_proceed=True, box=True, head=2, tail=1)
         kex_status = KEX_STATUS_UNVERIFIED
 
     return kex_status

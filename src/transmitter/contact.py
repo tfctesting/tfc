@@ -182,7 +182,7 @@ def remove_contact(user_input:   'UserInput',
 
 def determine_target(selection:     str,
                      onion_pub_key: bytes,
-                     contact_list: 'ContactList'
+                     contact_list:  'ContactList'
                      ) -> str:
     """Determine name of the target that will be removed."""
     if onion_pub_key in contact_list.get_list_of_pub_keys():

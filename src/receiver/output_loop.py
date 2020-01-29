@@ -55,7 +55,7 @@ if typing.TYPE_CHECKING:
     queue_dict         = Dict[bytes, Queue[Any]]
 
 
-def output_loop(queues:       Dict[bytes, "Queue[Any]"],
+def output_loop(queues:       Dict[bytes, 'Queue[Any]'],
                 gateway:      'Gateway',
                 settings:     'Settings',
                 contact_list: 'ContactList',
@@ -138,8 +138,8 @@ def process_local_key_queue(queues:        'queue_dict',
         raise SoftError("No local key", output=False)
 
 
-def process_command_queue(queues:      'queue_dict',
-                          window_list: 'WindowList',
+def process_command_queue(queues:       'queue_dict',
+                          window_list:  'WindowList',
                           contact_list: 'ContactList',
                           group_list:   'GroupList',
                           settings:     'Settings',
@@ -199,7 +199,7 @@ def process_message_queue(queues:        'queue_dict',
 
         if contact_list.has_pub_key(onion_pub_key) and key_list.has_rx_mk(onion_pub_key):
             process_message_packet(ts, packet, window_list, packet_list, contact_list, key_list,
-                                   group_list, settings, file_keys, message_log,)
+                                   group_list, settings, file_keys, message_log)
         else:
             packet_buffer.setdefault(onion_pub_key, []).append((ts, packet))
 

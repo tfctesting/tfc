@@ -86,7 +86,7 @@ class TestProcessLocalKey(TFCTestCase):
     @mock.patch('time.sleep',     return_value=None)
     @mock.patch('builtins.input', side_effect=['5KfgdgUvseWfNkoUPWSvxMPNStu5wBBxyjz1zpZtLEjk7ZvwEAT', b58encode(kek)])
     def test_successful_local_key_processing_with_existing_local_key(self, *_: Any) -> None:
-        self.assert_se("Error: Incorrect key decryption key.", process_local_key, self.ts, self.packet, *self.args,)
+        self.assert_se("Error: Incorrect key decryption key.", process_local_key, self.ts, self.packet, *self.args)
         self.assert_se("Added new local key.", process_local_key, self.ts, self.packet, *self.args)
 
     @mock.patch("src.common.misc.reset_terminal", return_value=None)

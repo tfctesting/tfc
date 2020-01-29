@@ -40,7 +40,7 @@ if typing.TYPE_CHECKING:
     from src.common.db_contacts  import ContactList
     from src.common.db_groups    import GroupList
     from src.common.db_masterkey import MasterKey
-
+    SettingType = Union[int, float, bool]
 
 class Settings(object):
     """\
@@ -187,33 +187,33 @@ class Settings(object):
         self.store_settings()
 
     @staticmethod
-    def validate_key_value_pair(key:          str,                      # Name of the setting
-                                value:        Union[int, float, bool],  # Value of the setting
-                                contact_list: "ContactList",            # ContactList object
-                                group_list:   "GroupList",              # GroupList object
+    def validate_key_value_pair(key:          str,            # Name of the setting
+                                value:        'SettingType',  # Value of the setting
+                                contact_list: 'ContactList',  # ContactList object
+                                group_list:   'GroupList',    # GroupList object
                                 ) -> None:
         """Evaluate values for settings that have further restrictions."""
         Settings.validate_database_limit(key, value)
-
         Settings.validate_max_number_of_group_members(key, value, group_list)
-
         Settings.validate_max_number_of_groups(key, value, group_list)
-
         Settings.validate_max_number_of_contacts(key, value, contact_list)
-
         Settings.validate_new_message_notify_duration(key, value)
-
         Settings.validate_traffic_maskig_delay(key, value, contact_list)
 
     @staticmethod
-    def validate_database_limit(key: str, value: Union[int, float, bool]) -> None:
+    def validate_database_limit(key:   str,
+                                value: 'SettingType'
+                                ) -> None:
         """Validate setting values for database entry limits."""
         if key in ["max_number_of_group_members", "max_number_of_groups", "max_number_of_contacts"]:
             if value % 10 != 0 or value == 0:
                 raise SoftError("Error: Database padding settings must be divisible by 10.", head_clear=True)
 
     @staticmethod
-    def validate_max_number_of_group_members(key: str, value: Union[int, float, bool], group_list: "GroupList") -> None:
+    def validate_max_number_of_group_members(key:        str,
+                                             value:      'SettingType',
+                                             group_list: 'GroupList'
+                                             ) -> None:
         """Validate setting value for maximum number of group members."""
         if key == "max_number_of_group_members":
             min_size = round_up(group_list.largest_group())
@@ -221,7 +221,10 @@ class Settings(object):
                 raise SoftError(f"Error: Can't set the max number of members lower than {min_size}.", head_clear=True)
 
     @staticmethod
-    def validate_max_number_of_groups(key: str, value: Union[int, float, bool], group_list: "GroupList") -> None:
+    def validate_max_number_of_groups(key:        str,
+                                      value:      'SettingType',
+                                      group_list: 'GroupList'
+                                      ) -> None:
         """Validate setting value for maximum number of groups."""
         if key == "max_number_of_groups":
             min_size = round_up(len(group_list))
@@ -229,7 +232,10 @@ class Settings(object):
                 raise SoftError(f"Error: Can't set the max number of groups lower than {min_size}.", head_clear=True)
 
     @staticmethod
-    def validate_max_number_of_contacts(key: str, value: Union[int, float, bool], contact_list: "ContactList") -> None:
+    def validate_max_number_of_contacts(key:          str,
+                                        value:        'SettingType',
+                                        contact_list: 'ContactList'
+                                        ) -> None:
         """Validate setting value for maximum number of contacts."""
         if key == "max_number_of_contacts":
             min_size = round_up(len(contact_list))
@@ -237,13 +243,18 @@ class Settings(object):
                 raise SoftError(f"Error: Can't set the max number of contacts lower than {min_size}.", head_clear=True)
 
     @staticmethod
-    def validate_new_message_notify_duration(key: str, value: Union[int, float, bool]) -> None:
+    def validate_new_message_notify_duration(key:   str,
+                                             value: 'SettingType'
+                                             ) -> None:
         """Validate setting value for duration of new message notification."""
         if key == "new_message_notify_duration" and value < 0.05:
             raise SoftError("Error: Too small value for message notify duration.", head_clear=True)
 
     @staticmethod
-    def validate_traffic_maskig_delay(key: str, value: Union[int, float, bool], contact_list: "ContactList") -> None:
+    def validate_traffic_maskig_delay(key:          str,
+                                      value:        'SettingType',
+                                      contact_list: 'ContactList'
+                                      ) -> None:
         """Validate setting value for traffic masking delays."""
         if key in ["tm_static_delay", "tm_random_delay"]:
 

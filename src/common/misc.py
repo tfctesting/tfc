@@ -143,8 +143,7 @@ def get_tab_complete_list(contact_list: 'ContactList',
                 'unread', 
                 'verify', 
                 'whisper ', 
-                'whois '
-                ]
+                'whois ']
 
     tc_list  = ['all', 'create ', 'false', 'False', 'join ', 'true', 'True']
     tc_list += commands
@@ -198,8 +197,8 @@ class HideRunTime(object):
         https://docs.python.org/2/library/random.html#random.SystemRandom
     """
 
-    def __init__(self, 
-                 settings:   Optional["Settings"] = None, 
+    def __init__(self,
+                 settings:   Optional['Settings'] = None,
                  delay_type: str                  = STATIC,
                  duration:   float                = 0.0
                  ) -> None:
@@ -338,7 +337,7 @@ def shred_databases(software_operation: str) -> None:
         subprocess.Popen("find {} -type f -exec shred -n 3 -z -u {{}} \\;".format(DIR_RECV_FILES), shell=True).wait()
 
     subprocess.Popen("find {} -name '{}*' -type f -exec shred -n 3 -z -u {{}} \\;"
-                     .format(DIR_USER_DATA, software_operation), shell=True,).wait()
+                     .format(DIR_USER_DATA, software_operation), shell=True).wait()
 
     for d in [DIR_USER_DATA, DIR_RECV_FILES]:
         with ignored(FileNotFoundError):
@@ -519,7 +518,7 @@ def validate_nick(nick: str,                                      # Nick to vali
 
 def same_contact_check(onion_pub_key: bytes,
                        nick:          str,
-                       contact_list:  "ContactList"
+                       contact_list:  'ContactList'
                        ) -> str:
     """Check if nick matches the account being replaced."""
     error_msg = "Error: Nick already in use."

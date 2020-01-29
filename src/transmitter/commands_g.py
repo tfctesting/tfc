@@ -84,7 +84,7 @@ def process_group_command(user_input:   'UserInput',
 
 
 def parse_group_command_parameters(input_parameters: List[str],
-                                   group_list: 'GroupList'
+                                   group_list:       'GroupList'
                                    ) -> Tuple[str, Optional[bytes], str, List[str]]:
     """Parse parameters for group command issued by the user."""
     try:

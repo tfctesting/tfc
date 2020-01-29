@@ -168,7 +168,7 @@ def traffic_masking_loop(queues:   'QueueDict',
                 return settings
 
 
-def exit_packet_check(queues: "QueueDict", gateway: "Gateway") -> None:
+def exit_packet_check(queues: 'QueueDict', gateway: 'Gateway') -> None:
     """Check for unencrypted commands that close TFC.
 
     The relay packet queue is empty until the user is willing to reveal to

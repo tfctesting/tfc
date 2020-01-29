@@ -150,7 +150,11 @@ class TxWindow(Iterable[Contact], Sized):
         self.type            = WIN_TYPE_CONTACT
         self.type_print      = "contact"
 
-    def select_group(self, selection: str, cmd: bool, settings: "Settings") -> None:
+    def select_group(self,
+                     selection: str,
+                     cmd:       bool,
+                     settings:  'Settings'
+                     ) -> None:
         """Select group."""
         if cmd and settings.traffic_masking and selection != self.name:
             raise SoftError("Error: Can't change window during traffic masking.", head_clear=True)

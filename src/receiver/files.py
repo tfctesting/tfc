@@ -98,14 +98,14 @@ def process_assembled_file(ts:            'datetime',    # Timestamp last receiv
     )
 
 
-def decrypt_and_store_file(ts:            "datetime",
-                           file_ct:       bytes,
-                           file_key:      bytes,
-                           file_name:     str,
-                           onion_pub_key: bytes,
-                           nick:          str,
-                           window_list:   "WindowList",
-                           settings:      "Settings"
+def decrypt_and_store_file(ts:            'datetime',    # Timestamp of received packet
+                           file_ct:       bytes,         # File ciphertext
+                           file_key:      bytes,         # File decryption key
+                           file_name:     str,           # Name of the file
+                           onion_pub_key: bytes,         # Onion Service pubkey of sender
+                           nick:          str,           # Nickname of sender
+                           window_list:   'WindowList',  # WindowList object
+                           settings:      'Settings'     # Settings object
                            ) -> None:
     """Decrypt and store file."""
     try:
@@ -129,7 +129,7 @@ def decrypt_and_store_file(ts:            "datetime",
     window.add_new(ts, message, onion_pub_key, output=True, event_msg=True)
 
 
-def new_file(ts:           'datetime',                             # Timestamp of received_packet
+def new_file(ts:           'datetime',                             # Timestamp of received packet
              packet:       bytes,                                  # Sender of file and file ciphertext
              file_keys:    Dict[bytes, bytes],                     # Dictionary for file decryption keys
              file_buf:     Dict[bytes, Tuple['datetime', bytes]],  # Dictionary for cached file ciphertexts

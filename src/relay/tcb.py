@@ -195,7 +195,7 @@ def process_group_management_message(ts:                'datetime',
         if header == GROUP_MSG_MEMBER_ADD_HEADER:
 
             process_add_or_group_remove_member(ts, header, header_str, group_id, messages_to_flask,
-                                               before_adding, new_in_group,)
+                                               before_adding, new_in_group)
 
             for onion_pub_key in new_in_group:
                 other_new  = [k for k in new_in_group if k != onion_pub_key]

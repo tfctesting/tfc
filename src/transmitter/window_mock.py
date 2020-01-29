@@ -36,7 +36,7 @@ class MockWindow(Iterable[Contact]):
     automatically generated group management and key delivery messages.
     """
 
-    def __init__(self, uid: bytes, contacts: List["Contact"]) -> None:
+    def __init__(self, uid: bytes, contacts: List['Contact']) -> None:
         """Create a new MockWindow object."""
         self.window_contacts = contacts
         self.type            = WIN_TYPE_CONTACT
