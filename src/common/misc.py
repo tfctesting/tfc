@@ -407,6 +407,13 @@ def validate_onion_addr(onion_address_contact: str,      # String to slice
     """Validate a v3 Onion Service address."""
     error_msg = ''
 
+    if len(onion_address_contact) != ONION_ADDRESS_LENGTH:
+        return "Error: Invalid account length."
+
+    # Together with length check this should make accidental export local key decryption keys hard enough.
+    if any(c.isupper() for c in onion_address_contact):
+        return "Error: Account must be in lower case."
+
     try:
         decoded = base64.b32decode(onion_address_contact.upper())
 

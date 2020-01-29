@@ -431,7 +431,7 @@ class TestValidateOnionAddr(unittest.TestCase):
         self.assertEqual(validate_onion_addr(nick_to_onion_address("Alice")[:-1] + '%', user_account),
                          'Error: Invalid account format.')
         self.assertEqual(validate_onion_addr(nick_to_onion_address("Alice")      + 'a', user_account),
-                         'Error: Invalid account format.')
+                         'Error: Invalid account length.')
         self.assertEqual(validate_onion_addr(nick_to_onion_address("Alice")[:-1] + '€', user_account),
                          'Error: Invalid account format.')
         self.assertEqual(validate_onion_addr(LOCAL_ID,                                  user_account),
