@@ -380,7 +380,7 @@ class TestPacket(TFCTestCase):
     def test_long_command(self) -> None:
         # Setup
         packet  = Packet(LOCAL_ID, ORIGIN_CONTACT_HEADER, COMMAND, self.contact, self.settings)
-        command = 500*b'test_command'
+        command = 500 * b'test_command'
         packets = assembly_packet_creator(COMMAND, command)
 
         for p in packets:

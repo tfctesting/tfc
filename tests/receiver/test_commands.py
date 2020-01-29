@@ -272,10 +272,10 @@ class TestChMasterKey(TFCTestCase):
         # Setup
         write_log_entry(F_S_HEADER + bytes(PADDING_LENGTH), nick_to_pub_key("Alice"), self.tfc_log_database)
 
-        self.contact_list.file_name  = f'{DIR_USER_DATA}{RX}_contacts'
-        self.group_list.file_name    = f'{DIR_USER_DATA}{RX}_groups'
-        self.key_list.file_name      = f'{DIR_USER_DATA}{RX}_keys'
-        self.settings.file_name      = f'{DIR_USER_DATA}{RX}_settings'
+        self.contact_list.file_name = f'{DIR_USER_DATA}{RX}_contacts'
+        self.group_list.file_name   = f'{DIR_USER_DATA}{RX}_groups'
+        self.key_list.file_name     = f'{DIR_USER_DATA}{RX}_keys'
+        self.settings.file_name     = f'{DIR_USER_DATA}{RX}_settings'
 
         self.contact_list.database = TFCDatabase(self.contact_list.file_name, self.contact_list.master_key)
         self.group_list.database   = TFCDatabase(self.group_list.file_name,   self.group_list.master_key)
