@@ -1,7 +1,7 @@
 # Static type checking tool
 mypy>=0.761
 mypy_extensions>=0.4.3
-typed_ast>=1.4.0
+typed_ast>=1.4.1
 typing_extensions>=3.7.4.1
 
 # Unit test tools
@@ -52,6 +52,6 @@ werkzeug>=0.16.1
 pylama>=7.7.1
 snowballstemmer>=2.0.0
 pyflakes>=2.1.1
-pydocstyle>=4.0.1
+pydocstyle>=5.0.2
 pycodestyle>=2.5.0
 mccabe>=0.6.1
