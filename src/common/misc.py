@@ -391,6 +391,14 @@ def separate_trailer(bytestring:     bytes,     # Bytestring to slice
     return bytestring[:-trailer_length], bytestring[-trailer_length:]
 
 
+def split_to_substrings(bytestring: bytes, length: int) -> List[bytes]:
+    """Split byte string into all it's possible `length` long substrings."""
+    substrings = []
+    for i in range(0, len(bytestring) - length + 1):
+        substrings.append(bytestring[i:length + i])
+    return substrings
+
+
 def terminal_width_check(minimum_width: int) -> None:
     """Wait until user re-sizes their terminal to specified width. """
     if get_terminal_width() < minimum_width:

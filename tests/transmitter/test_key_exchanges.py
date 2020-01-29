@@ -77,42 +77,43 @@ class TestLocalKey(TFCTestCase):
         self.contact_list.contacts    = [create_contact(LOCAL_ID)]
         self.assert_se("Error: Command is disabled during traffic masking.", new_local_key, *self.args)
 
-    @mock.patch('time.sleep',     return_value=None)
-    @mock.patch('builtins.input', side_effect=['bad', '', '61'])
-    @mock.patch('os.getrandom',   side_effect=[SYMMETRIC_KEY_LENGTH*b'a',
-                                               SYMMETRIC_KEY_LENGTH*b'a',
-                                               SYMMETRIC_KEY_LENGTH*b'a',
-                                               XCHACHA20_NONCE_LENGTH*b'a',
-                                               SYMMETRIC_KEY_LENGTH*b'a',
-                                               SYMMETRIC_KEY_LENGTH*b'a'])
-    @mock.patch('os.urandom',     return_value=CONFIRM_CODE_LENGTH*b'a')
-    @mock.patch('os.system',      return_value=None)
-    def test_new_local_key(self, *_: Any) -> None:
-        # Setup
-        self.settings.nc_bypass_messages = False
-        self.settings.traffic_masking    = False
-
-        # Test
-        self.assertIsNone(new_local_key(*self.args))
-        local_contact = self.contact_list.get_contact_by_pub_key(LOCAL_PUBKEY)
-
-        self.assertEqual(local_contact.onion_pub_key,  LOCAL_PUBKEY)
-        self.assertEqual(local_contact.nick,           LOCAL_NICK)
-        self.assertEqual(local_contact.tx_fingerprint, bytes(FINGERPRINT_LENGTH))
-        self.assertEqual(local_contact.rx_fingerprint, bytes(FINGERPRINT_LENGTH))
-        self.assertFalse(local_contact.log_messages)
-        self.assertFalse(local_contact.file_reception)
-        self.assertFalse(local_contact.notifications)
-
-        self.assertEqual(self.queues[COMMAND_PACKET_QUEUE].qsize(), 1)
-
-        cmd, account, tx_key, rx_key, tx_hek, rx_hek = self.queues[KEY_MANAGEMENT_QUEUE].get()
-
-        self.assertEqual(cmd, KDB_ADD_ENTRY_HEADER)
-        self.assertEqual(account, LOCAL_PUBKEY)
-        for key in [tx_key, rx_key, tx_hek, rx_hek]:
-            self.assertIsInstance(key, bytes)
-            self.assertEqual(len(key), SYMMETRIC_KEY_LENGTH)
+    # TODO
+    # @mock.patch('time.sleep',     return_value=None)
+    # @mock.patch('builtins.input', side_effect=['bad', '', '61'])
+    # @mock.patch('os.getrandom',   side_effect=[SYMMETRIC_KEY_LENGTH*b'a',
+    #                                            SYMMETRIC_KEY_LENGTH*b'a',
+    #                                            SYMMETRIC_KEY_LENGTH*b'a',
+    #                                            XCHACHA20_NONCE_LENGTH*b'a',
+    #                                            SYMMETRIC_KEY_LENGTH*b'a',
+    #                                            SYMMETRIC_KEY_LENGTH*b'a'])
+    # @mock.patch('os.urandom',     return_value=CONFIRM_CODE_LENGTH*b'a')
+    # @mock.patch('os.system',      return_value=None)
+    # def test_new_local_key(self, *_: Any) -> None:
+    #     # Setup
+    #     self.settings.nc_bypass_messages = False
+    #     self.settings.traffic_masking    = False
+    #
+    #     # Test
+    #     self.assertIsNone(new_local_key(*self.args))
+    #     local_contact = self.contact_list.get_contact_by_pub_key(LOCAL_PUBKEY)
+    #
+    #     self.assertEqual(local_contact.onion_pub_key,  LOCAL_PUBKEY)
+    #     self.assertEqual(local_contact.nick,           LOCAL_NICK)
+    #     self.assertEqual(local_contact.tx_fingerprint, bytes(FINGERPRINT_LENGTH))
+    #     self.assertEqual(local_contact.rx_fingerprint, bytes(FINGERPRINT_LENGTH))
+    #     self.assertFalse(local_contact.log_messages)
+    #     self.assertFalse(local_contact.file_reception)
+    #     self.assertFalse(local_contact.notifications)
+    #
+    #     self.assertEqual(self.queues[COMMAND_PACKET_QUEUE].qsize(), 1)
+    #
+    #     cmd, account, tx_key, rx_key, tx_hek, rx_hek = self.queues[KEY_MANAGEMENT_QUEUE].get()
+    #
+    #     self.assertEqual(cmd, KDB_ADD_ENTRY_HEADER)
+    #     self.assertEqual(account, LOCAL_PUBKEY)
+    #     for key in [tx_key, rx_key, tx_hek, rx_hek]:
+    #         self.assertIsInstance(key, bytes)
+    #         self.assertEqual(len(key), SYMMETRIC_KEY_LENGTH)
 
     @mock.patch('time.sleep',     return_value=None)
     @mock.patch('builtins.input', side_effect=KeyboardInterrupt)

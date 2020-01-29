@@ -564,6 +564,7 @@ BLAKE2_PERSON_LENGTH_MAX         = 16
 HARAC_LENGTH                     = 8
 PADDING_LENGTH                   = 255
 ENCODED_B58_PUB_KEY_LENGTH       = 84
+ENCODED_B58_KDK_LENGTH           = 51
 
 # Domain separation
 MESSAGE_KEY = b'message_key'

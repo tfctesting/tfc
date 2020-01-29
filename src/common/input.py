@@ -29,8 +29,8 @@ from src.common.exceptions import CriticalError
 from src.common.misc       import get_terminal_width, terminal_width_check
 from src.common.output     import clear_screen, m_print, print_on_previous_line, print_spacing
 from src.common.statics    import (B58_LOCAL_KEY, B58_LOCAL_KEY_GUIDE, B58_PUBLIC_KEY, B58_PUBLIC_KEY_GUIDE,
-                                   CURSOR_UP_ONE_LINE, ECDHE, NC_BYPASS_START, NC_BYPASS_STOP,
-                                   ENCODED_B58_PUB_KEY_LENGTH)
+                                   CURSOR_UP_ONE_LINE, ECDHE, ENCODED_B58_KDK_LENGTH, ENCODED_B58_PUB_KEY_LENGTH,
+                                   NC_BYPASS_START, NC_BYPASS_STOP)
 
 if typing.TYPE_CHECKING:
     from src.common.db_settings import Settings
@@ -89,7 +89,8 @@ def box_input(message:        str,                          # Input prompt messa
         if guide:
             inner_spc = len(key_guide) + 2
         else:
-            inner_spc = (86 if key_type == B58_PUBLIC_KEY else 53)
+            inner_spc = ENCODED_B58_PUB_KEY_LENGTH if key_type == B58_PUBLIC_KEY else ENCODED_B58_KDK_LENGTH
+            inner_spc += 2  # Spacing around input space
     else:
         key_guide = ''
         inner_spc = terminal_width - 2 if expected_len == 0 else expected_len + 2

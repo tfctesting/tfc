@@ -23,14 +23,14 @@ import os
 import time
 import typing
 
-from typing import Any, Dict
+from typing import Any, Dict, List
 
 from src.common.crypto       import argon2_kdf, blake2b, csprng, encrypt_and_sign, X448
 from src.common.db_masterkey import MasterKey
-from src.common.encoding     import bool_to_bytes, int_to_bytes, pub_key_to_short_address, str_to_bytes
+from src.common.encoding     import bool_to_bytes, int_to_bytes, pub_key_to_short_address, str_to_bytes, b58encode
 from src.common.exceptions   import SoftError
 from src.common.input        import ask_confirmation_code, get_b58_key, nc_bypass_msg, yes
-from src.common.misc         import reset_terminal
+from src.common.misc         import reset_terminal, split_to_substrings
 from src.common.output       import m_print, phase, print_fingerprint, print_key, print_on_previous_line
 from src.common.path         import ask_path_gui
 from src.common.statics      import (ARGON2_PSK_MEMORY_COST, ARGON2_PSK_PARALLELISM, ARGON2_PSK_TIME_COST,
@@ -41,7 +41,7 @@ from src.common.statics      import (ARGON2_PSK_MEMORY_COST, ARGON2_PSK_PARALLEL
                                      KEY_MANAGEMENT_QUEUE, LOCAL_KEY_DATAGRAM_HEADER, LOCAL_KEY_RDY, LOCAL_NICK,
                                      LOCAL_PUBKEY, NC_BYPASS_START, NC_BYPASS_STOP, PUBLIC_KEY_DATAGRAM_HEADER,
                                      RELAY_PACKET_QUEUE, TFC_PUBLIC_KEY_LENGTH, UNENCRYPTED_DATAGRAM_HEADER,
-                                     UNENCRYPTED_ONION_SERVICE_DATA, UNENCRYPTED_PUBKEY_CHECK, WIN_TYPE_GROUP)
+                                     UNENCRYPTED_ONION_SERVICE_DATA, UNENCRYPTED_PUBKEY_CHECK, WIN_TYPE_GROUP, ENCODED_B58_KDK_LENGTH)
 
 from src.transmitter.packet import queue_command, queue_to_nc
 
@@ -201,7 +201,7 @@ def new_local_key(contact_list: 'ContactList',
         # Add local contact to contact list database
         contact_list.add_contact(LOCAL_PUBKEY,
                                  LOCAL_NICK,
-                                 bytes(FINGERPRINT_LENGTH),
+                                 blake2b(b58encode(kek).encode()),
                                  bytes(FINGERPRINT_LENGTH),
                                  KEX_STATUS_LOCAL_KEY,
                                  False, False, False)
@@ -311,7 +311,7 @@ def start_key_exchange(onion_pub_key: bytes,          # Public key of contact's 
 
     try:
         tfc_public_key_user    = X448.derive_public_key(tfc_private_key_user)
-        tfc_public_key_contact = exchange_public_keys(onion_pub_key, tfc_public_key_user, contact, settings, queues)
+        tfc_public_key_contact = exchange_public_keys(onion_pub_key, tfc_public_key_user, contact, settings, queues, contact_list)
 
         validate_contact_public_key(tfc_public_key_contact)
 
@@ -347,7 +347,8 @@ def exchange_public_keys(onion_pub_key:       bytes,
                          tfc_public_key_user: bytes,
                          contact:             'Contact',
                          settings:            'Settings',
-                         queues:              'QueueDict'
+                         queues:              'QueueDict',
+                         contact_list:        'ContactList'
                          ) -> bytes:
     """Exchange public keys with contact.
 
@@ -357,14 +358,22 @@ def exchange_public_keys(onion_pub_key:       bytes,
     """
     public_key_packet = PUBLIC_KEY_DATAGRAM_HEADER + onion_pub_key + tfc_public_key_user
     queue_to_nc(public_key_packet, queues[RELAY_PACKET_QUEUE])
+    kdk_hash = b'a'  # contact_list.get_contact_by_pub_key(LOCAL_PUBKEY).tx_fingerprint  # TODO
 
     while True:
         try:
             tfc_public_key_contact = get_b58_key(B58_PUBLIC_KEY, settings, contact.short_address)
         except ValueError as invalid_pub_key:
-            invalid_key       = str(invalid_pub_key).encode()
-            public_key_packet = (UNENCRYPTED_DATAGRAM_HEADER + UNENCRYPTED_PUBKEY_CHECK + onion_pub_key + invalid_key)
-            queue_to_nc(public_key_packet, queues[RELAY_PACKET_QUEUE])
+            invalid_key = str(invalid_pub_key).encode()
+
+            # Do not send packet to Relay Program if the user has for some reason
+            # managed to embed the local key decryption key inside the public key.
+            substrings  = split_to_substrings(invalid_key, ENCODED_B58_KDK_LENGTH)
+            safe_string = not any(blake2b(substring) == kdk_hash for substring in substrings)
+
+            if safe_string:
+                public_key_packet = (UNENCRYPTED_DATAGRAM_HEADER + UNENCRYPTED_PUBKEY_CHECK + onion_pub_key + invalid_key)
+                queue_to_nc(public_key_packet, queues[RELAY_PACKET_QUEUE])
             continue
 
         if tfc_public_key_contact == b'':

@@ -211,3 +211,9 @@ def show_value_diffs(value_type: str,
                                 replace_l,
                                 true_value,
                                 B58_PUBLIC_KEY_GUIDE], box=True)
+
+
+if __name__ == '__main__':
+    queue = Queue()  # type: Queue[Optional[str]]
+    GetAccountFromUser(queue, 58*'a')
+    print(queue.get_nowait())
