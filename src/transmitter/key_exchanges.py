@@ -355,7 +355,7 @@ def exchange_public_keys(onion_pub_key:       bytes,
     enter the public key of the contact. If the User presses <Enter>,
     the function will resend the users' public key to contact.
     """
-    public_key_packet = (PUBLIC_KEY_DATAGRAM_HEADER + onion_pub_key + tfc_public_key_user)
+    public_key_packet = PUBLIC_KEY_DATAGRAM_HEADER + onion_pub_key + tfc_public_key_user
     queue_to_nc(public_key_packet, queues[RELAY_PACKET_QUEUE])
 
     while True:
@@ -368,7 +368,7 @@ def exchange_public_keys(onion_pub_key:       bytes,
             continue
 
         if tfc_public_key_contact == b'':
-            public_key_packet = (PUBLIC_KEY_DATAGRAM_HEADER + onion_pub_key + tfc_public_key_user)
+            public_key_packet = PUBLIC_KEY_DATAGRAM_HEADER + onion_pub_key + tfc_public_key_user
             queue_to_nc(public_key_packet, queues[RELAY_PACKET_QUEUE])
             continue
 

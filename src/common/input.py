@@ -29,7 +29,8 @@ from src.common.exceptions import CriticalError
 from src.common.misc       import get_terminal_width, terminal_width_check
 from src.common.output     import clear_screen, m_print, print_on_previous_line, print_spacing
 from src.common.statics    import (B58_LOCAL_KEY, B58_LOCAL_KEY_GUIDE, B58_PUBLIC_KEY, B58_PUBLIC_KEY_GUIDE,
-                                   CURSOR_UP_ONE_LINE, ECDHE, NC_BYPASS_START, NC_BYPASS_STOP)
+                                   CURSOR_UP_ONE_LINE, ECDHE, NC_BYPASS_START, NC_BYPASS_STOP,
+                                   ENCODED_B58_PUB_KEY_LENGTH)
 
 if typing.TYPE_CHECKING:
     from src.common.db_settings import Settings
@@ -159,7 +160,7 @@ def get_b58_key(key_type:      str,         # The type of Base58 key to be enter
             m_print("Checksum error - Check that the entered key is correct.")
             print_on_previous_line(reps=(4 if settings.local_testing_mode else 5), delay=1)
 
-            if key_type == B58_PUBLIC_KEY:
+            if key_type == B58_PUBLIC_KEY and len(rx_pk) == ENCODED_B58_PUB_KEY_LENGTH:
                 raise ValueError(rx_pk)
 
 
