@@ -58,35 +58,35 @@ class TestGetB58Key(unittest.TestCase):
         """Pre-test actions."""
         self.settings = Settings()
 
-    # TODO
-    # @mock.patch('time.sleep',               return_value=None)
-    # @mock.patch('shutil.get_terminal_size', return_value=[200, 200])
-    # @mock.patch('builtins.input',           side_effect=(2*['invalid', VALID_LOCAL_KEY_KDK[:-1], VALID_LOCAL_KEY_KDK] +
-    #                                                      2*['invalid', VALID_ECDHE_PUB_KEY[:-1], VALID_ECDHE_PUB_KEY]))
-    # def test_get_b58_key(self, *_: Any) -> None:
-    #     for boolean in [True, False]:
-    #         self.settings.local_testing_mode = boolean
-    #         key = get_b58_key(B58_LOCAL_KEY, self.settings)
-    #
-    #         self.assertIsInstance(key, bytes)
-    #         self.assertEqual(len(key), SYMMETRIC_KEY_LENGTH)
-    #
-    #         with self.assertRaises(SystemExit):
-    #             get_b58_key('invalid_key_type', self.settings)
-    #
-    #     for boolean in [True, False]:
-    #         self.settings.local_testing_mode = boolean
-    #         with self.assertRaises(ValueError):
-    #             get_b58_key(B58_PUBLIC_KEY, self.settings, nick_to_short_address('Alice'))
-    #         with self.assertRaises(ValueError):
-    #             get_b58_key(B58_PUBLIC_KEY, self.settings, nick_to_short_address('Alice'))
-    #
-    #         key = get_b58_key(B58_PUBLIC_KEY, self.settings, nick_to_short_address('Alice'))
-    #         self.assertIsInstance(key, bytes)
-    #         self.assertEqual(len(key), TFC_PUBLIC_KEY_LENGTH)
-    #
-    #         with self.assertRaises(SystemExit):
-    #             get_b58_key('invalid_key_type', self.settings)
+    def test_invalid_key_type_raises_critical_error(self):
+        with self.assertRaises(SystemExit):
+            get_b58_key('invalid_key_type', self.settings)
+
+
+    @mock.patch('time.sleep',               return_value=None)
+    @mock.patch('shutil.get_terminal_size', return_value=[200, 200])
+    @mock.patch('builtins.input',           side_effect=([51*'a',
+                                                          VALID_LOCAL_KEY_KDK[:-1],
+                                                          VALID_LOCAL_KEY_KDK+'a',
+                                                          VALID_LOCAL_KEY_KDK]))
+    def test_get_b58_local_key(self, *_: Any) -> None:
+        key = get_b58_key(B58_LOCAL_KEY, self.settings)
+        self.assertIsInstance(key, bytes)
+        self.assertEqual(len(key), SYMMETRIC_KEY_LENGTH)
+
+    @mock.patch('time.sleep',               return_value=None)
+    @mock.patch('shutil.get_terminal_size', return_value=[200, 200])
+    @mock.patch('builtins.input',           side_effect=([VALID_ECDHE_PUB_KEY[:-1],
+                                                          VALID_ECDHE_PUB_KEY+'a',
+                                                          VALID_ECDHE_PUB_KEY,
+                                                          84*'a']))
+    def test_get_b58_pub_key(self, *_: Any) -> None:
+        key = get_b58_key(B58_PUBLIC_KEY, self.settings)
+        self.assertIsInstance(key, bytes)
+        self.assertEqual(len(key), TFC_PUBLIC_KEY_LENGTH)
+
+        with self.assertRaises(ValueError):
+            get_b58_key(B58_PUBLIC_KEY, self.settings, nick_to_short_address('Alice'))
 
     @mock.patch('builtins.input',           return_value='')
     @mock.patch('shutil.get_terminal_size', return_value=[200, 200])

@@ -27,7 +27,7 @@ from typing   import Any
 from src.common.crypto      import blake2b
 from src.common.db_contacts import Contact
 from src.common.statics     import (COMMAND_PACKET_QUEUE, CONFIRM_CODE_LENGTH, KEX_STATUS_PENDING, KEX_STATUS_VERIFIED,
-                                    WINDOW_SELECT_QUEUE, WIN_TYPE_CONTACT, WIN_TYPE_GROUP)
+                                    LOCAL_ID, WINDOW_SELECT_QUEUE, WIN_TYPE_CONTACT, WIN_TYPE_GROUP)
 
 from src.transmitter.windows import select_window, TxWindow
 
@@ -41,7 +41,7 @@ class TestTxWindow(TFCTestCase):
 
     def setUp(self) -> None:
         """Pre-test actions."""
-        self.contact_list  = ContactList(['Alice', 'Bob'])
+        self.contact_list  = ContactList(['Alice', 'Bob', LOCAL_ID])
         self.group_list    = GroupList(groups=['test_group', 'test_group_2'])
         self.window        = TxWindow(self.contact_list, self.group_list)
         self.window.group  = self.group_list.get_group('test_group')
@@ -66,7 +66,8 @@ class TestTxWindow(TFCTestCase):
 
     def test_len_returns_number_of_contacts_in_window(self) -> None:
         # Setup
-        self.window.window_contacts = self.contact_list.contacts
+        self.window.window_contacts = [self.contact_list.get_contact_by_pub_key(nick_to_pub_key('Alice')),
+                                       self.contact_list.get_contact_by_pub_key(nick_to_pub_key('Bob'))]
 
         # Test
         self.assertEqual(len(self.window), 2)

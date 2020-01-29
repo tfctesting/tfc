@@ -27,8 +27,8 @@ from typing   import Any
 
 from src.common.crypto  import blake2b
 from src.common.statics import (COMMAND_PACKET_QUEUE, CONFIRM_CODE_LENGTH, FINGERPRINT_LENGTH, KDB_REMOVE_ENTRY_HEADER,
-                                KEY_MANAGEMENT_QUEUE, LOG_SETTING_QUEUE, RELAY_PACKET_QUEUE, TM_COMMAND_PACKET_QUEUE,
-                                WIN_TYPE_CONTACT, WIN_TYPE_GROUP)
+                                KEY_MANAGEMENT_QUEUE, LOCAL_ID, LOG_SETTING_QUEUE, RELAY_PACKET_QUEUE,
+                                TM_COMMAND_PACKET_QUEUE, WIN_TYPE_CONTACT, WIN_TYPE_GROUP)
 
 from src.transmitter.contact import add_new_contact, change_nick, contact_setting, remove_contact
 
@@ -42,7 +42,7 @@ class TestAddNewContact(TFCTestCase):
 
     def setUp(self) -> None:
         """Pre-test actions."""
-        self.contact_list  = ContactList()
+        self.contact_list  = ContactList(nicks=[LOCAL_ID])
         self.group_list    = GroupList()
         self.settings      = Settings(disable_gui_dialog=True)
         self.queues        = gen_queue_dict()

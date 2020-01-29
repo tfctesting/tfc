@@ -23,7 +23,7 @@ import os
 import time
 import typing
 
-from typing import Any, Dict, List
+from typing import Any, Dict
 
 from src.common.crypto       import argon2_kdf, blake2b, csprng, encrypt_and_sign, X448
 from src.common.db_masterkey import MasterKey
@@ -311,7 +311,8 @@ def start_key_exchange(onion_pub_key: bytes,          # Public key of contact's 
 
     try:
         tfc_public_key_user    = X448.derive_public_key(tfc_private_key_user)
-        tfc_public_key_contact = exchange_public_keys(onion_pub_key, tfc_public_key_user, contact, settings, queues, contact_list)
+        kdk_hash               = contact_list.get_contact_by_pub_key(LOCAL_PUBKEY).tx_fingerprint
+        tfc_public_key_contact = exchange_public_keys(onion_pub_key, tfc_public_key_user, kdk_hash, contact, settings, queues)
 
         validate_contact_public_key(tfc_public_key_contact)
 
@@ -345,10 +346,10 @@ def start_key_exchange(onion_pub_key: bytes,          # Public key of contact's 
 
 def exchange_public_keys(onion_pub_key:       bytes,
                          tfc_public_key_user: bytes,
+                         kdk_hash:            bytes,
                          contact:             'Contact',
                          settings:            'Settings',
                          queues:              'QueueDict',
-                         contact_list:        'ContactList'
                          ) -> bytes:
     """Exchange public keys with contact.
 
@@ -358,7 +359,6 @@ def exchange_public_keys(onion_pub_key:       bytes,
     """
     public_key_packet = PUBLIC_KEY_DATAGRAM_HEADER + onion_pub_key + tfc_public_key_user
     queue_to_nc(public_key_packet, queues[RELAY_PACKET_QUEUE])
-    kdk_hash = b'a'  # contact_list.get_contact_by_pub_key(LOCAL_PUBKEY).tx_fingerprint  # TODO
 
     while True:
         try:
