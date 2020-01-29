@@ -423,7 +423,7 @@ class TestSeparateTrailer(unittest.TestCase):
 
 class TestSplitToSubStrings(unittest.TestCase):
 
-    def test_splitting(self):
+    def test_splitting(self) -> None:
         test_string = b'cypherpunk'
 
         self.assertEqual(split_to_substrings(test_string, length=5),

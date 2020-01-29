@@ -499,6 +499,13 @@ testfile.txt    100.0KB    Bob       50.00%
         self.assertFalse(tg_win.is_active)
         self.assertTrue(self.window_list.get_window(WIN_UID_FILE).is_active)
 
+    def test_refresh_file_window_check(self) -> None:
+        # Setup
+        self.window_list.active_win.uid = WIN_UID_FILE
+
+        # Test
+        self.assertIsNone(self.window_list.refresh_file_window_check())
+
     def test_get_command_window(self) -> None:
         # Setup
         self.window_list.windows = [self.create_window(uid) for uid in [group_name_to_group_id('test_group'),

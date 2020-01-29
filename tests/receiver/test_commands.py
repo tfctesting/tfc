@@ -31,9 +31,9 @@ from unittest.mock   import MagicMock
 from src.common.database import MessageLog, TFCDatabase
 from src.common.db_logs  import write_log_entry
 from src.common.encoding import int_to_bytes
-from src.common.statics  import (CH_FILE_RECV, CH_LOGGING, CH_NOTIFY, CLEAR_ENTIRE_LINE, COMMAND, CURSOR_UP_ONE_LINE,
-                                 C_L_HEADER, DIR_USER_DATA, DISABLE, ENABLE, F_S_HEADER, LOCAL_ID, LOCAL_PUBKEY,
-                                 LOG_REMOVE, MESSAGE, ORIGIN_CONTACT_HEADER, PADDING_LENGTH, RESET, RX,
+from src.common.statics  import (CH_FILE_RECV, CH_LOGGING, CH_NOTIFY, CLEAR_ENTIRE_LINE, CLEAR_SCREEN, COMMAND,
+                                 CURSOR_UP_ONE_LINE, C_L_HEADER, DIR_USER_DATA, DISABLE, ENABLE, F_S_HEADER, LOCAL_ID,
+                                 LOCAL_PUBKEY, MESSAGE, ORIGIN_CONTACT_HEADER, PADDING_LENGTH, RESET, RX,
                                  SYMMETRIC_KEY_LENGTH, US_BYTE, WIN_TYPE_CONTACT, WIN_TYPE_GROUP, WIN_UID_FILE, WIPE)
 
 from src.receiver.packet   import PacketList
@@ -80,9 +80,8 @@ class TestProcessCommand(TFCTestCase):
         self.assert_se("Error: Received an invalid command.", process_command, self.ts, packet, *self.args)
 
     def test_process_command(self) -> None:
-        packet = assembly_packet_creator(COMMAND, LOG_REMOVE, encrypt_packet=True)[0]
-        self.assert_se(f"No log database available.", process_command, self.ts, packet, *self.args)
-
+        packet = assembly_packet_creator(COMMAND, CLEAR_SCREEN, encrypt_packet=True)[0]
+        self.assert_se(f"Command completed.", process_command, self.ts, packet, *self.args)
 
 class TestWinActivity(TFCTestCase):
 

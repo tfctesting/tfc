@@ -254,7 +254,7 @@ class TestContactList(TFCTestCase):
         self.assertIs(self.contact_list.get_contact_by_address_or_nick('Bob'),
                       self.contact_list.get_contact_by_address_or_nick(nick_to_onion_address('Bob')))
 
-    def test_get_nick_by_pub_key(self):
+    def test_get_nick_by_pub_key(self) -> None:
         self.assertEqual(self.contact_list.get_nick_by_pub_key(nick_to_pub_key('Alice')), 'Alice')
 
     def test_get_list_of_contacts(self) -> None:

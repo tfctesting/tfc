@@ -58,7 +58,7 @@ class TestGetB58Key(unittest.TestCase):
         """Pre-test actions."""
         self.settings = Settings()
 
-    def test_invalid_key_type_raises_critical_error(self):
+    def test_invalid_key_type_raises_critical_error(self) -> None:
         with self.assertRaises(SystemExit):
             get_b58_key('invalid_key_type', self.settings)
 

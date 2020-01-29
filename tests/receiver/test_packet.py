@@ -445,6 +445,16 @@ class TestPacketList(unittest.TestCase):
         self.assertEqual(packet.origin, ORIGIN_CONTACT_HEADER)
         self.assertEqual(packet.type, MESSAGE)
 
+        packet = self.packet_list.get_packet(nick_to_pub_key('Bob'), ORIGIN_CONTACT_HEADER, MESSAGE)
+        self.assertEqual(packet.onion_pub_key, nick_to_pub_key('Bob'))
+        self.assertEqual(packet.origin, ORIGIN_CONTACT_HEADER)
+        self.assertEqual(packet.type, MESSAGE)
+
+        packet = self.packet_list.get_packet(nick_to_pub_key('Charlie'), ORIGIN_CONTACT_HEADER, MESSAGE, log_access=True)
+        self.assertEqual(packet.onion_pub_key, nick_to_pub_key('Charlie'))
+        self.assertEqual(packet.origin, ORIGIN_CONTACT_HEADER)
+        self.assertEqual(packet.type, MESSAGE)
+
         packet = self.packet_list.get_packet(self.onion_pub_key, ORIGIN_CONTACT_HEADER, MESSAGE)
         self.assertEqual(packet.onion_pub_key, self.onion_pub_key)
         self.assertEqual(packet.origin, ORIGIN_CONTACT_HEADER)
