@@ -560,8 +560,8 @@ def cl_div(dividend: int, divisor: int) -> int:
     return dividend
 
 
-def gf_mult_nolut_slow(x:    int, 
-                       y:    int, 
+def gf_mult_nolut_slow(x:    int,
+                       y:    int,
                        prim: int = 0
                        ) -> int:
     """\
@@ -622,7 +622,7 @@ def gf_poly_scale(p: bytes, x: int) -> bytearray:
     return ret_val
 
 
-def gf_poly_add(p: bytes, 
+def gf_poly_add(p: bytes,
                 q: Union[bytearray, List[int]]
                 ) -> Any:
     """No docstring provided."""
@@ -1562,7 +1562,7 @@ def chunk(data: bytes, chunk_size: int) -> Iterator[bytes]:
     """Split a long message into chunks."""
 
 
-def chunk(data:       Union[bytearray, bytes], 
+def chunk(data:       Union[bytearray, bytes],
           chunk_size: int
           ) -> Iterator[Union[bytearray, bytes]]:
     """Split a long message into chunks."""

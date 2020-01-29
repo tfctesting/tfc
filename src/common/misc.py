@@ -116,33 +116,33 @@ def get_tab_complete_list(contact_list: 'ContactList',
                           gateway:      'Gateway'
                           ) -> List[str]:
     """Return a list of tab-complete words."""
-    commands = ['about', 
-                'add ', 
-                'clear', 
-                'cmd', 
-                'connect', 
-                'exit', 
-                'export ', 
-                'file', 
-                'group ', 
-                'help', 
+    commands = ['about',
+                'add ',
+                'clear',
+                'cmd',
+                'connect',
+                'exit',
+                'export ',
+                'file',
+                'group ',
+                'help',
                 'history ',
-                'localkey', 
-                'logging ', 
-                'msg ', 
-                'names', 
-                'nick ', 
-                'notify ', 
-                'passwd ', 
-                'psk', 
-                'reset', 
+                'localkey',
+                'logging ',
+                'msg ',
+                'names',
+                'nick ',
+                'notify ',
+                'passwd ',
+                'psk',
+                'reset',
                 'rmlogs ',
-                'set ', 
-                'settings', 
-                'store ', 
-                'unread', 
-                'verify', 
-                'whisper ', 
+                'set ',
+                'settings',
+                'store ',
+                'unread',
+                'verify',
+                'whisper ',
                 'whois ']
 
     tc_list  = ['all', 'create ', 'false', 'False', 'join ', 'true', 'True']
@@ -214,9 +214,9 @@ class HideRunTime(object):
         self.timer = threading.Thread(target=time.sleep, args=(self.length,))
         self.timer.start()
 
-    def __exit__(self, 
-                 exc_type:  Any, 
-                 exc_value: Any, 
+    def __exit__(self,
+                 exc_type:  Any,
+                 exc_value: Any,
                  traceback: Any
                  ) -> None:
         self.timer.join()
@@ -344,7 +344,7 @@ def shred_databases(software_operation: str) -> None:
             shutil.rmtree(d)
 
 
-def split_byte_string(bytestring: bytes,  # Bytestring to split  
+def split_byte_string(bytestring: bytes,  # Bytestring to split
                       item_len: int       # Length of each substring
                       ) -> List[bytes]:   # List of substrings
     """Split a bytestring into a list of specific length substrings."""

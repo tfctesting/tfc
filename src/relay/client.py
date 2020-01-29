@@ -20,10 +20,7 @@ along with TFC. If not, see <https://www.gnu.org/licenses/>.
 """
 
 import base64
-import difflib
 import hashlib
-import os
-import sys
 import time
 import typing
 
@@ -38,21 +35,19 @@ from cryptography.hazmat.primitives.asymmetric.x448 import X448PublicKey, X448Pr
 from src.common.encoding   import b58encode, int_to_bytes, onion_address_to_pub_key, pub_key_to_onion_address
 from src.common.encoding   import pub_key_to_short_address
 from src.common.exceptions import SoftError
-from src.common.misc       import ignored, separate_header, split_byte_string, split_string, validate_onion_addr
-from src.common.input      import box_input
-from src.common.output     import m_print, print_key, print_on_previous_line, rp_print
-from src.common.statics    import (ACCOUNT_CHECK_QUEUE, ACCOUNT_RATIO_LIMIT, ACCOUNT_SEND_QUEUE, B58_PUBLIC_KEY_GUIDE,
+from src.common.misc       import ignored, separate_header, split_byte_string, validate_onion_addr
+from src.common.output     import m_print, print_key, rp_print
+from src.common.statics    import (ACCOUNT_SEND_QUEUE,
                                    CLIENT_OFFLINE_THRESHOLD, CONTACT_MGMT_QUEUE, CONTACT_REQ_QUEUE, C_REQ_MGMT_QUEUE,
                                    C_REQ_STATE_QUEUE, DATAGRAM_HEADER_LENGTH, DST_MESSAGE_QUEUE,
-                                   ENCODED_B58_PUB_KEY_LENGTH, FILE_DATAGRAM_HEADER, GROUP_ID_LENGTH, GROUP_MGMT_QUEUE,
+                                   FILE_DATAGRAM_HEADER, GROUP_ID_LENGTH, GROUP_MGMT_QUEUE,
                                    GROUP_MSG_EXIT_GROUP_HEADER, GROUP_MSG_INVITE_HEADER, GROUP_MSG_JOIN_HEADER,
                                    GROUP_MSG_MEMBER_ADD_HEADER, GROUP_MSG_MEMBER_REM_HEADER, GROUP_MSG_QUEUE,
-                                   MESSAGE_DATAGRAM_HEADER, ONION_ADDRESS_LENGTH, ONION_SERVICE_PUBLIC_KEY_LENGTH,
-                                   ORIGIN_CONTACT_HEADER, PUB_KEY_CHECK_QUEUE, PUB_KEY_SEND_QUEUE,
+                                   MESSAGE_DATAGRAM_HEADER, ONION_SERVICE_PUBLIC_KEY_LENGTH,
+                                   ORIGIN_CONTACT_HEADER, PUB_KEY_SEND_QUEUE,
                                    PUBLIC_KEY_DATAGRAM_HEADER, RELAY_CLIENT_MAX_DELAY, RELAY_CLIENT_MIN_DELAY,
                                    RP_ADD_CONTACT_HEADER, RP_REMOVE_CONTACT_HEADER, TFC_PUBLIC_KEY_LENGTH,
-                                   TOR_DATA_QUEUE, UNIT_TEST_QUEUE, URL_TOKEN_LENGTH, URL_TOKEN_QUEUE,
-                                   USER_ACCOUNT_QUEUE)
+                                   TOR_DATA_QUEUE, UNIT_TEST_QUEUE, URL_TOKEN_LENGTH, URL_TOKEN_QUEUE)
 
 if typing.TYPE_CHECKING:
     from src.common.gateway import Gateway
@@ -261,7 +256,7 @@ def get_data_loop(onion_addr:    str,
     """Load TFC data from contact's Onion Service using valid URL token."""
     while True:
         try:
-            check_files(url_token, onion_pub_key, onion_addr, short_addr, session, queues)
+            check_for_files(url_token, onion_pub_key, onion_addr, short_addr, session, queues)
 
             try:
                 r = session.get(f'http://{onion_addr}.onion/{url_token}/messages', stream=True)
@@ -288,13 +283,13 @@ def get_data_loop(onion_addr:    str,
             break
 
 
-def check_files(url_token:     str,
-                onion_pub_key: bytes,
-                onion_addr:    str,
-                short_addr:    str,
-                session:       'Session',
-                queues:        'QueueDict'
-                ) -> None:
+def check_for_files(url_token:     str,
+                    onion_pub_key: bytes,
+                    onion_addr:    str,
+                    short_addr:    str,
+                    session:       'Session',
+                    queues:        'QueueDict'
+                    ) -> None:
     """See if a file is available from contact.."""
     try:
         file_data = session.get(f"http://{onion_addr}.onion/{url_token}/files", stream=True).content
@@ -469,128 +464,3 @@ def update_list_of_existing_contacts(contact_queue:     'Queue[Any]',
             existing_contacts = list(set(existing_contacts) - set(onion_pub_key_list))
 
     return existing_contacts
-
-
-def account_checker(queues:   'QueueDict',
-                    stdin_fd: int
-                    ) -> None:
-    """\
-    Display diffs between received TFC accounts and accounts
-    manually imported to Source Computer."""
-    sys.stdin           = os.fdopen(stdin_fd)
-    account_list        = []  # type: List[str]
-    account_check_queue = queues[ACCOUNT_CHECK_QUEUE]
-    account_send_queue  = queues[ACCOUNT_SEND_QUEUE]
-
-    while queues[USER_ACCOUNT_QUEUE].qsize() == 0:
-        time.sleep(0.01)
-    onion_address_user = queues[USER_ACCOUNT_QUEUE].get()
-
-    while True:
-        with ignored(EOFError, KeyboardInterrupt):
-            if account_send_queue.qsize() != 0:
-                account = account_send_queue.get()  # type:str
-                account_list.append(account)
-                continue
-
-            if account_check_queue.qsize() != 0:
-                purp_account = account_check_queue.get()  # type: str
-
-                for account in account_list:
-                    # Check if accounts are similar enough:
-                    ratio = difflib.SequenceMatcher(a=account, b=purp_account).ratio()
-                    if ratio >= ACCOUNT_RATIO_LIMIT:
-                        show_value_diffs("account", account, purp_account, local_test=True)
-                        break
-                else:
-                    while True:
-                        m_print(["Could not determine the account being added.",
-                                 "Please paste the account here to show diffs",
-                                 "or press <Enter> to dismiss this prompt."], head=1, tail=1)
-
-                        try:
-                            account_  = box_input("Contact account", expected_len=ONION_ADDRESS_LENGTH)
-                        except (EOFError, KeyboardInterrupt):
-                            break
-
-                        if account_ == '':
-                            print_on_previous_line(reps=7, flush=True)
-                            break
-
-                        error_msg = validate_onion_addr(account_, onion_address_user)
-
-                        if error_msg:
-                            m_print(error_msg, head=1)
-                            print_on_previous_line(reps=10, delay=1)
-                            continue
-
-                        show_value_diffs("account", account_, purp_account, local_test=True)
-                        break
-
-
-def pub_key_checker(queues:     'QueueDict',
-                    local_test: bool
-                    ) -> None:
-    """\
-    Display diffs between received public keys and public keys
-    manually imported to Source Computer.
-    """
-    pub_key_check_queue = queues[PUB_KEY_CHECK_QUEUE]
-    pub_key_send_queue  = queues[PUB_KEY_SEND_QUEUE]
-    pub_key_dictionary  = dict()
-
-    while True:
-        with ignored(EOFError, KeyboardInterrupt):
-            if pub_key_send_queue.qsize() != 0:
-                account, pub_key            = pub_key_send_queue.get()
-                pub_key_dictionary[account] = b58encode(pub_key, public_key=True)
-                continue
-
-            if pub_key_check_queue.qsize() != 0:
-                purp_account, purp_pub_key = pub_key_check_queue.get()  # type: bytes, bytes
-
-                if purp_account in pub_key_dictionary:
-                    purp_b58_pub_key = purp_pub_key.decode()
-                    true_b58_pub_key = pub_key_dictionary[purp_account]
-
-                    show_value_diffs("public key", true_b58_pub_key, purp_b58_pub_key, local_test)
-
-            time.sleep(0.01)
-
-
-def show_value_diffs(value_type: str,
-                     true_value: str,
-                     purp_value: str,
-                     local_test: bool
-                     ) -> None:
-    """Compare purported value with correct value."""
-    # Pad with underscores to denote missing chars
-    while len(purp_value) < ENCODED_B58_PUB_KEY_LENGTH:
-        purp_value += '_'
-
-    replace_l = ''
-    purported = ''
-    for c1, c2 in zip(purp_value, true_value):
-        if c1 == c2:
-            replace_l += ' '
-            purported += c1
-        else:
-            replace_l += '↓'
-            purported += c1
-
-    message_list = [f"Source Computer received an invalid {value_type}.",
-                    "See arrows below that point to correct characters."]
-
-    if local_test:
-        m_print(message_list + ['', purported, replace_l, true_value], box=True)
-    else:
-        purported  = ' '.join(split_string(purported, item_len=7))
-        replace_l  = ' '.join(split_string(replace_l, item_len=7))
-        true_value = ' '.join(split_string(true_value, item_len=7))
-
-        m_print(message_list + ['',
-                                B58_PUBLIC_KEY_GUIDE,
-                                purported,
-                                replace_l,
-                                true_value,
-                                B58_PUBLIC_KEY_GUIDE], box=True)

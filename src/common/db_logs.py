@@ -38,7 +38,7 @@ from src.common.statics    import (ASSEMBLY_PACKET_HEADER_LENGTH, DIR_USER_DATA,
                                    GROUP_MSG_ID_LENGTH, LOGFILE_MASKING_QUEUE, LOG_ENTRY_LENGTH, LOG_PACKET_QUEUE,
                                    LOG_SETTING_QUEUE, MESSAGE, MESSAGE_HEADER_LENGTH, ONION_SERVICE_PUBLIC_KEY_LENGTH,
                                    ORIGIN_HEADER_LENGTH, ORIGIN_USER_HEADER, PLACEHOLDER_DATA, PRIVATE_MESSAGE_HEADER,
-                                   P_N_HEADER, RX, TEMP_POSTFIX, TIMESTAMP_LENGTH, TRAFFIC_MASKING_QUEUE, TX, 
+                                   P_N_HEADER, RX, TEMP_POSTFIX, TIMESTAMP_LENGTH, TRAFFIC_MASKING_QUEUE, TX,
                                    UNIT_TEST_QUEUE, WHISPER_FIELD_LENGTH, WIN_TYPE_CONTACT, WIN_TYPE_GROUP)
 
 from src.receiver.packet  import Packet, PacketList
@@ -84,8 +84,8 @@ def log_writer_loop(queues:      Dict[bytes, 'Queue[Any]'],  # Dictionary of que
             while log_packet_queue.qsize() == 0:
                 time.sleep(0.01)
 
-            traffic_masking, logfile_masking = check_log_setting_queues(traffic_masking, 
-                                                                        traffic_masking_queue, 
+            traffic_masking, logfile_masking = check_log_setting_queues(traffic_masking,
+                                                                        traffic_masking_queue,
                                                                         logfile_masking,
                                                                         logfile_masking_queue)
 
@@ -150,9 +150,9 @@ def check_log_setting_queues(traffic_masking:       bool,
     return traffic_masking, logfile_masking
 
 
-def update_logging_state(assembly_packet:   bytes, 
-                         logging_state:     bool, 
-                         log_messages:      bool, 
+def update_logging_state(assembly_packet:   bytes,
+                         logging_state:     bool,
+                         log_messages:      bool,
                          log_setting_queue: 'Queue[Any]'
                          ) -> bool:
     """Update logging state.
@@ -253,7 +253,7 @@ def access_logs(window:       Union['TxWindow', 'RxWindow'],
         if not packet.is_complete:
             continue
 
-        group_msg_id = add_complete_message_to_message_list(timestamp, onion_pub_key, group_msg_id, 
+        group_msg_id = add_complete_message_to_message_list(timestamp, onion_pub_key, group_msg_id,
                                                             packet, message_list, window)
 
     message_log.close_database()

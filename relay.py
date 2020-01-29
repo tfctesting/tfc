@@ -38,8 +38,9 @@ from src.common.statics import (ACCOUNT_CHECK_QUEUE, ACCOUNT_SEND_QUEUE, CONTACT
                                 ONION_KEY_QUEUE, SRC_TO_RELAY_QUEUE, TOR_DATA_QUEUE, URL_TOKEN_QUEUE,
                                 USER_ACCOUNT_QUEUE)
 
-from src.relay.client   import account_checker, c_req_manager, client_scheduler, g_msg_manager, pub_key_checker
+from src.relay.client   import c_req_manager, client_scheduler, g_msg_manager
 from src.relay.commands import relay_command
+from src.relay.diffs    import account_checker, pub_key_checker
 from src.relay.onion    import onion_service
 from src.relay.server   import flask_server
 from src.relay.tcb      import dst_outgoing, src_incoming

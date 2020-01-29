@@ -127,8 +127,9 @@ def get_onion_address_from_user(onion_address_user: str,
             m_print(error_msg, head=1)
             print_on_previous_line(reps=5, delay=1)
 
-            relay_command = UNENCRYPTED_DATAGRAM_HEADER + UNENCRYPTED_ACCOUNT_CHECK + onion_address_contact.encode()
-            queue_to_nc(relay_command, queues[RELAY_PACKET_QUEUE])
+            if error_msg not in ["Error: Can not add reserved account.", "Error: Can not add own account."]:
+                relay_command = UNENCRYPTED_DATAGRAM_HEADER + UNENCRYPTED_ACCOUNT_CHECK + onion_address_contact.encode()
+                queue_to_nc(relay_command, queues[RELAY_PACKET_QUEUE])
             continue
 
         return onion_address_contact

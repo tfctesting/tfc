@@ -42,6 +42,7 @@ if typing.TYPE_CHECKING:
     from src.common.db_masterkey import MasterKey
     SettingType = Union[int, float, bool]
 
+
 class Settings(object):
     """\
     Settings object stores user adjustable settings (excluding those

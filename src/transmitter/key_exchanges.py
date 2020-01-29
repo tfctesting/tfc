@@ -384,8 +384,8 @@ def validate_contact_public_key(tfc_public_key_contact: bytes) -> None:
     `src.common.crypto` module.
     """
     if len(tfc_public_key_contact) != TFC_PUBLIC_KEY_LENGTH:
-        m_print(["Warning!", 
-                 "Received invalid size public key.", 
+        m_print(["Warning!",
+                 "Received invalid size public key.",
                  "Aborting key exchange for your safety."],
                 bold=True, tail=1)
         raise SoftError("Error: Invalid public key length", output=False)
@@ -394,9 +394,9 @@ def validate_contact_public_key(tfc_public_key_contact: bytes) -> None:
         # The public key of contact is zero with negligible probability,
         # therefore we assume such key is malicious and attempts to set
         # the shared key to zero.
-        m_print(["Warning!", 
-                 "Received a malicious zero-public key.", 
-                 "Aborting key exchange for your safety."], 
+        m_print(["Warning!",
+                 "Received a malicious zero-public key.",
+                 "Aborting key exchange for your safety."],
                 bold=True, tail=1)
         raise SoftError("Error: Zero public key", output=False)
 
