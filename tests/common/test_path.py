@@ -61,19 +61,19 @@ class TestAskPathGui(TFCTestCase):
         self.assertEqual(ask_path_gui('path to file:', self.settings, get_file=True),
                          self.file_path)
 
-    @unittest.skipIf("TRAVIS" in os.environ and os.environ["TRAVIS"] == "true", "Skip as Travis has no $DISPLAY.")
+    @mock.patch('tkinter.Tk',                         return_value=MagicMock())
     @mock.patch('tkinter.filedialog.askopenfilename', return_value='')
-    def test_no_path_to_file_raises_se(self, _: Any) -> None:
+    def test_no_path_to_file_raises_se(self, *_: Any) -> None:
         self.assert_se("File selection aborted.", ask_path_gui, 'test message', self.settings, True)
 
-    @unittest.skipIf("TRAVIS" in os.environ and os.environ["TRAVIS"] == "true", "Skip as Travis has no $DISPLAY.")
+    @mock.patch('tkinter.Tk',                      return_value=MagicMock())
     @mock.patch('tkinter.filedialog.askdirectory', return_value=path)
-    def test_get_path_gui(self, _: Any) -> None:
+    def test_get_path_gui(self, *_: Any) -> None:
         self.assertEqual(ask_path_gui('select path for file:', self.settings), self.path)
 
-    @unittest.skipIf("TRAVIS" in os.environ and os.environ["TRAVIS"] == "true", "Skip as Travis has no $DISPLAY.")
+    @mock.patch('tkinter.Tk',                      return_value=MagicMock())
     @mock.patch('tkinter.filedialog.askdirectory', return_value='')
-    def test_no_path_raises_se(self, _: Any) -> None:
+    def test_no_path_raises_se(self, *_: Any) -> None:
         self.assert_se("Path selection aborted.", ask_path_gui, 'test message', self.settings, False)
 
 
