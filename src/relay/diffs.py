@@ -31,7 +31,7 @@ from typing          import Any, Dict, List, Optional
 import tkinter
 
 from src.common.encoding import b58encode
-from src.common.misc     import validate_onion_addr, split_string, ignored
+from src.common.misc     import ignored, split_string, validate_onion_addr
 from src.common.output   import m_print
 from src.common.statics  import (ACCOUNT_CHECK_QUEUE, ACCOUNT_RATIO_LIMIT, ACCOUNT_SEND_QUEUE, B58_PUBLIC_KEY_GUIDE,
                                  ENCODED_B58_PUB_KEY_LENGTH, GUI_INPUT_QUEUE, PUB_KEY_CHECK_QUEUE, PUB_KEY_SEND_QUEUE,
@@ -45,7 +45,7 @@ if typing.TYPE_CHECKING:
 # Accounts
 
 class GetAccountFromUser(object):
-    """Load actual account of contact with Tkinter prompt."""
+    """Get correct account of contact from the user via Tkinter prompt."""
 
     def __init__(self, queue: 'AccountQueue', onion_address_user: str) -> None:
         """Create new Tkinter input box."""
