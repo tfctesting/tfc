@@ -92,8 +92,8 @@ class TFCDatabase(object):
         ensure_dir(DIR_USER_DATA)
         self.ensure_temp_write(ct_bytes)
 
-        # Replace original file with temp file. (`os.replace` is atomic as per POSIX
-        # requirements): https://docs.python.org/3/library/os.html#os.replace
+        # Replace the original file with a temp file. (`os.replace` is atomic as per
+        # POSIX requirements): https://docs.python.org/3/library/os.html#os.replace
         if replace:
             self.replace_database()
 
@@ -176,8 +176,8 @@ class TFCUnencryptedDatabase(object):
 
         self.ensure_temp_write(data + blake2b(data))
 
-        # Replace original file with temp file. (`os.replace` is atomic as per POSIX
-        # requirements): https://docs.python.org/3/library/os.html#os.replace
+        # Replace the original file with a temp file. (`os.replace` is atomic as per
+        # POSIX requirements): https://docs.python.org/3/library/os.html#os.replace
         os.replace(self.database_temp, self.database_name)
 
     def replace_database(self) -> None:
@@ -274,7 +274,7 @@ class MessageLog(object):
         ct_log_entry = encrypt_and_sign(pt_log_entry, self.database_key)
 
         try:
-            self.c.execute(f"""INSERT INTO log_entries (log_entry) VALUES (?)""", (ct_log_entry,))
+            self.c.execute("""INSERT INTO log_entries (log_entry) VALUES (?)""", (ct_log_entry,))
             self.conn.commit()
         except sqlite3.Error:
             # Re-connect to database

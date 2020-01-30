@@ -335,13 +335,13 @@ class X448(object):
            OpenSSL CSPRNG, and activates the pyca/cryptography
            "OS random engine".[5]
 
-        4. Unlike OpenSSL user-space CSPRNG that only seeds from
-           /dev/urandom, the OS random engine uses GETRANDOM(0) syscall
-           that sources all of its entropy directly from the ChaCha20
-           DRNG. The OS random engine does not suffer from the fork()
-           weakness where forked process is not automatically reseeded,
-           and it's also safe from issues with OpenSSL CSPRNG
-           initialization.[6]
+        4. Unlike the OpenSSL user-space CSPRNG that only seeds from
+           /dev/urandom, the OS random engine uses the GETRANDOM(0)
+           syscall that sources all of its entropy directly from the
+           LRNG's ChaCha20 DRNG. The OS random engine does not suffer
+           from the fork() weakness where forked process is not
+           automatically reseeded, and it's also safe from issues with
+           OpenSSL CSPRNG initialization.[6]
 
         5. The fallback option (/dev/urandom) of OS random engine might
            be problematic on pre-3.17 kernels if the CSPRNG has not been
@@ -450,7 +450,7 @@ class X448(object):
 
         key_tuple = tx_mk, rx_mk, tx_hk, rx_hk, tx_fp, rx_fp
 
-        if len(key_tuple) != len(set(key_tuple)):
+        if len(set(key_tuple)) != len(key_tuple):
             raise CriticalError("Derived keys were not unique.")
 
         return key_tuple
