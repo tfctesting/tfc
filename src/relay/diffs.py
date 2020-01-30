@@ -41,8 +41,8 @@ if typing.TYPE_CHECKING:
     AccountQueue = Queue[Optional[str]]
     QueueDict    = Dict[bytes, Queue[Any]]
 
-# Accounts
 
+# Accounts
 
 class GetAccountFromUser(object):
     """Load actual account of contact with Tkinter prompt."""
