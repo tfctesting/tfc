@@ -261,9 +261,7 @@ def standard_sender_loop(queues:   'QueueDict',
             pass
 
 
-def process_key_management_command(queues:   'QueueDict',
-                                   key_list: 'KeyList'
-                                   ) -> None:
+def process_key_management_command(queues: 'QueueDict', key_list: 'KeyList') -> None:
     """Process key management command."""
     km_queue = queues[KEY_MANAGEMENT_QUEUE]
 
@@ -286,9 +284,7 @@ def process_command(queues:   'QueueDict',
         SoftError("Command processing complete.", output=False)
 
 
-def process_relay_packets(queues:  'QueueDict',
-                          gateway: 'Gateway'
-                          ) -> None:
+def process_relay_packets(queues: 'QueueDict', gateway: 'Gateway') -> None:
     """Process packet to Relay Program on Networked Computer."""
     rp_queue = queues[RELAY_PACKET_QUEUE]
 

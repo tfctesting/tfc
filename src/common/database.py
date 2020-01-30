@@ -86,10 +86,7 @@ class TFCDatabase(object):
 
             self.write_to_file(self.database_temp, ct_bytes)
 
-    def store_database(self,
-                       pt_bytes: bytes,
-                       replace:  bool = True
-                       ) -> None:
+    def store_database(self, pt_bytes: bytes, replace: bool = True) -> None:
         """Encrypt and store data into database."""
         ct_bytes = encrypt_and_sign(pt_bytes, self.database_key)
         ensure_dir(DIR_USER_DATA)

@@ -115,9 +115,7 @@ def add_new_contact(contact_list:  'ContactList',
         raise SoftError("Contact creation aborted.", head=2, delay=1, tail_clear=True)
 
 
-def get_onion_address_from_user(onion_address_user: str,
-                                queues:             'QueueDict'
-                                ) -> str:
+def get_onion_address_from_user(onion_address_user: str, queues: 'QueueDict') -> str:
     """Get contact's Onion Address from user."""
     while True:
         onion_address_contact = box_input("Contact account", expected_len=ONION_ADDRESS_LENGTH)
@@ -144,7 +142,8 @@ def remove_contact(user_input:   'UserInput',
                    group_list:   'GroupList',
                    settings:     'Settings',
                    queues:       'QueueDict',
-                   master_key:   'MasterKey') -> None:
+                   master_key:   'MasterKey'
+                   ) -> None:
     """Remove contact from TFC."""
     if settings.traffic_masking:
         raise SoftError("Error: Command is disabled during traffic masking.", head_clear=True)
@@ -230,7 +229,8 @@ def change_nick(user_input:   'UserInput',
                 contact_list: 'ContactList',
                 group_list:   'GroupList',
                 settings:     'Settings',
-                queues:       'QueueDict') -> None:
+                queues:       'QueueDict'
+                ) -> None:
     """Change nick of contact."""
     try:
         nick = user_input.plaintext.split()[1]

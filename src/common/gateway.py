@@ -453,7 +453,10 @@ class GatewaySettings(object):
             f.flush()
             os.fsync(f.fileno())
 
-    def invalid_setting(self, key: str, json_dict: Dict[str, Union[bool, int, str]]) -> None:
+    def invalid_setting(self,
+                        key:       str,
+                        json_dict: Dict[str, Union[bool, int, str]]
+                        ) -> None:
         """Notify about setting an invalid value to default value."""
         m_print([f"Error: Invalid value '{json_dict[key]}' for setting '{key}' in '{self.file_name}'.",
                  f"The value has been set to default ({self.defaults[key]})."], head=1, tail=1)
@@ -535,7 +538,9 @@ class GatewaySettings(object):
         self.store_settings()
 
     @staticmethod
-    def validate_key_value_pair(key: str, value: Union[int, bool]) -> None:
+    def validate_key_value_pair(key:   str,
+                                value: Union[int, bool]
+                                ) -> None:
         """\
         Perform further evaluation on settings the values of which have
         restrictions.

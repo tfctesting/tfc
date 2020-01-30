@@ -668,9 +668,7 @@ def propagate_setting_effects(setting:      str,
         queues[LOGFILE_MASKING_QUEUE].put(settings.log_file_masking)
 
 
-def print_settings(settings: 'Settings',
-                   gateway:  'Gateway'
-                   ) -> None:
+def print_settings(settings: 'Settings', gateway: 'Gateway') -> None:
     """Print settings and gateway settings."""
     settings.print_settings()
     gateway.settings.print_settings()

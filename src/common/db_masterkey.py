@@ -55,7 +55,6 @@ class MasterKey(object):
         self.local_test    = local_test
         self.database_data = None  # type: Optional[bytes]
 
-        # self.master_key = 32*b'a'
         ensure_dir(DIR_USER_DATA)
         try:
             if os.path.isfile(self.file_name):

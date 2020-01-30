@@ -220,9 +220,7 @@ def manage_contact_status(ut_pubkey_hex: str,
     return is_online, check_delay
 
 
-def load_url_token(onion_addr: str,
-                   session:    'Session'
-                   ) -> str:
+def load_url_token(onion_addr: str, session: 'Session') -> str:
     """Load URL token for contact."""
     try:
         ut_pubkey_hex = session.get(f"http://{onion_addr}.onion/", timeout=5).text
@@ -252,7 +250,8 @@ def get_data_loop(onion_addr:    str,
                   onion_pub_key: bytes,
                   queues:        'QueueDict',
                   session:       'Session',
-                  gateway:       'Gateway') -> None:
+                  gateway:       'Gateway'
+                  ) -> None:
     """Load TFC data from contact's Onion Service using valid URL token."""
     while True:
         try:
@@ -335,9 +334,7 @@ def process_received_packet(ts:            'datetime',
         rp_print(f"Received invalid packet from {short_addr}", ts, bold=True)
 
 
-def g_msg_manager(queues:    'QueueDict',
-                  unit_test: bool = False
-                  ) -> None:
+def g_msg_manager(queues: 'QueueDict', unit_test: bool = False) -> None:
     """Show group management messages according to contact list state.
 
     This process keeps track of existing contacts for whom there's a
@@ -408,9 +405,7 @@ def process_group_management_message(data:              bytes,
                  "can still read messages you send to the group."], box=True)
 
 
-def c_req_manager(queues:    'QueueDict',
-                  unit_test: bool = False
-                  ) -> None:
+def c_req_manager(queues: 'QueueDict', unit_test: bool = False) -> None:
     """Manage incoming contact requests."""
     existing_contacts = []  # type: List[bytes]
     contact_requests  = []  # type: List[bytes]

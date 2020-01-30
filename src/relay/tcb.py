@@ -173,7 +173,8 @@ def process_file_datagram(ts:     'datetime',
 def process_group_management_message(ts:                'datetime',
                                      packet:            bytes,
                                      header:            bytes,
-                                     messages_to_flask: 'Queue[Tuple[Union[bytes, str], bytes]]') -> None:
+                                     messages_to_flask: 'Queue[Tuple[Union[bytes, str], bytes]]'
+                                     ) -> None:
     """Parse and display group management message."""
     header_str       = header.decode()
     group_id, packet = separate_header(packet, GROUP_ID_LENGTH)

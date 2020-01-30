@@ -202,9 +202,7 @@ class Settings(object):
         Settings.validate_traffic_maskig_delay(key, value, contact_list)
 
     @staticmethod
-    def validate_database_limit(key:   str,
-                                value: 'SettingType'
-                                ) -> None:
+    def validate_database_limit(key: str, value: 'SettingType') -> None:
         """Validate setting values for database entry limits."""
         if key in ["max_number_of_group_members", "max_number_of_groups", "max_number_of_contacts"]:
             if value % 10 != 0 or value == 0:
@@ -244,9 +242,7 @@ class Settings(object):
                 raise SoftError(f"Error: Can't set the max number of contacts lower than {min_size}.", head_clear=True)
 
     @staticmethod
-    def validate_new_message_notify_duration(key:   str,
-                                             value: 'SettingType'
-                                             ) -> None:
+    def validate_new_message_notify_duration(key: str, value: 'SettingType') -> None:
         """Validate setting value for duration of new message notification."""
         if key == "new_message_notify_duration" and value < 0.05:
             raise SoftError("Error: Too small value for message notify duration.", head_clear=True)

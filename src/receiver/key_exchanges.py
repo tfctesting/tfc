@@ -194,7 +194,8 @@ def process_local_key(ts:            'datetime',
 
 def local_key_rdy(ts:           'datetime',
                   window_list:  'WindowList',
-                  contact_list: 'ContactList') -> None:
+                  contact_list: 'ContactList'
+                  ) -> None:
     """Clear local key bootstrap process from the screen."""
     message = "Successfully completed the local key setup."
     cmd_win = window_list.get_command_window()
