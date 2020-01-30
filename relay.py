@@ -171,7 +171,8 @@ def main() -> None:
          ACCOUNT_SEND_QUEUE:  Queue(),  # Contact requests            from `flask_server`          to `account_checker`
          USER_ACCOUNT_QUEUE:  Queue(),  # User's public key           from `onion_service`         to `account_checker`
          PUB_KEY_CHECK_QUEUE: Queue(),  # Typed public keys           from `src_incoming`          to `pub_key_checker`
-         PUB_KEY_SEND_QUEUE:  Queue()   # Received public keys        from `client`                to `pub_key_checker`
+         PUB_KEY_SEND_QUEUE:  Queue(),  # Received public keys        from `client`                to `pub_key_checker`
+         GUI_INPUT_QUEUE:     Queue()   # User inputs                 from `GUI prompt`            to `account_checker`
          }  # type: Dict[bytes, Queue[Any]]
 
     process_list = [Process(target=gateway_loop,     args=(queues, gateway                       )),

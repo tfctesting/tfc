@@ -27,16 +27,17 @@ from unittest import mock
 
 from unittest.mock import MagicMock
 
-from src.common.encoding import int_to_bytes
-from src.common.statics  import (CLEAR_ENTIRE_SCREEN, CONTACT_MGMT_QUEUE, CURSOR_LEFT_UP_CORNER, C_REQ_MGMT_QUEUE,
-                                 C_REQ_STATE_QUEUE, EXIT, GROUP_MGMT_QUEUE, LOCAL_TESTING_PACKET_DELAY,
-                                 ONION_CLOSE_QUEUE, ONION_KEY_QUEUE, ONION_SERVICE_PRIVATE_KEY_LENGTH,
-                                 RP_ADD_CONTACT_HEADER, RP_REMOVE_CONTACT_HEADER, SRC_TO_RELAY_QUEUE,
-                                 UNENCRYPTED_SCREEN_CLEAR, WIPE)
+from src.common.encoding import b58encode, int_to_bytes
+from src.common.statics  import (ACCOUNT_CHECK_QUEUE, CLEAR_ENTIRE_SCREEN, CONTACT_MGMT_QUEUE, CURSOR_LEFT_UP_CORNER,
+                                 C_REQ_MGMT_QUEUE, C_REQ_STATE_QUEUE, EXIT, GROUP_MGMT_QUEUE,
+                                 LOCAL_TESTING_PACKET_DELAY, ONION_CLOSE_QUEUE, ONION_KEY_QUEUE,
+                                 ONION_SERVICE_PRIVATE_KEY_LENGTH, ONION_SERVICE_PUBLIC_KEY_LENGTH,
+                                 PUB_KEY_CHECK_QUEUE, RP_ADD_CONTACT_HEADER, RP_REMOVE_CONTACT_HEADER, SRC_TO_RELAY_QUEUE,
+                                 TFC_PUBLIC_KEY_LENGTH, UNENCRYPTED_SCREEN_CLEAR, WIPE)
 
-from src.relay.commands import add_contact, add_onion_data, change_baudrate, change_ec_ratio, clear_windows, exit_tfc
-from src.relay.commands import manage_contact_req, process_command, race_condition_delay, relay_command, remove_contact
-from src.relay.commands import reset_windows, wipe
+from src.relay.commands import add_contact, add_onion_data, change_baudrate, change_ec_ratio, clear_windows
+from src.relay.commands import compare_accounts, compare_pub_keys, exit_tfc, manage_contact_req, process_command
+from src.relay.commands import race_condition_delay, relay_command, remove_contact, reset_windows, wipe
 
 from tests.mock_classes import Gateway, nick_to_pub_key
 from tests.utils        import gen_queue_dict, tear_queues, TFCTestCase
@@ -272,6 +273,42 @@ class TestAddOnionKey(unittest.TestCase):
         self.assertIsNone(add_onion_data(command, self.queues))
         self.assertEqual(self.queues[ONION_KEY_QUEUE].qsize(), 1)
         self.assertEqual(self.queues[ONION_KEY_QUEUE].get(), (ONION_SERVICE_PRIVATE_KEY_LENGTH * b'a', b'b'))
+
+
+class TestCompareAccounts(unittest.TestCase):
+
+    def setUp(self) -> None:
+        """Pre-test actions."""
+        self.queues = gen_queue_dict()
+
+    def tearDown(self) -> None:
+        """Post-test actions."""
+        tear_queues(self.queues)
+
+    def test_compare_accounts(self):
+        account = b58encode(TFC_PUBLIC_KEY_LENGTH*b'a').encode()
+        compare_accounts(account, self.queues)
+        self.assertEqual(self.queues[ACCOUNT_CHECK_QUEUE].get(), account.decode())
+
+
+class TestComparePubKeys(unittest.TestCase):
+
+    def setUp(self) -> None:
+        """Pre-test actions."""
+        self.queues = gen_queue_dict()
+
+    def tearDown(self) -> None:
+        """Post-test actions."""
+        tear_queues(self.queues)
+
+    def test_compare_pub_keys(self):
+        # Setup
+        onion_pub_key   = ONION_SERVICE_PUBLIC_KEY_LENGTH * b'a'
+        invalid_pub_key = b58encode(TFC_PUBLIC_KEY_LENGTH * b'a').encode()
+
+        # Test
+        compare_pub_keys(onion_pub_key + invalid_pub_key, self.queues)
+        self.assertEqual(self.queues[PUB_KEY_CHECK_QUEUE].get(), (onion_pub_key, invalid_pub_key))
 
 
 if __name__ == '__main__':

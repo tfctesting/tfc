@@ -463,6 +463,7 @@ PUB_KEY_SEND_QUEUE  = b'pubkey_send'
 ACCOUNT_CHECK_QUEUE = b'account_check'
 ACCOUNT_SEND_QUEUE  = b'account_send'
 USER_ACCOUNT_QUEUE  = b'user_account'
+GUI_INPUT_QUEUE     = b'gui_input'
 
 
 """Queue signals"""

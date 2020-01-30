@@ -86,7 +86,7 @@ def process_command(command:  bytes,
                   UNENCRYPTED_REM_CONTACT:          (remove_contact,     command,           queues),
                   UNENCRYPTED_ONION_SERVICE_DATA:   (add_onion_data,     command,           queues),
                   UNENCRYPTED_ACCOUNT_CHECK:        (compare_accounts,   command,           queues),
-                  UNENCRYPTED_PUBKEY_CHECK:         (compare_pubkeys,    command,           queues)
+                  UNENCRYPTED_PUBKEY_CHECK:         (compare_pub_keys,   command,           queues)
                   }  # type: Dict[bytes, Any]
 
     if header not in function_d:
@@ -248,10 +248,10 @@ def compare_accounts(command: bytes, queues: 'QueueDict') -> None:
     queues[ACCOUNT_CHECK_QUEUE].put(command.decode())
 
 
-def compare_pubkeys(command: bytes, queues: 'QueueDict') -> None:
+def compare_pub_keys(command: bytes, queues: 'QueueDict') -> None:
     """\
     Compare incorrectly typed public key to what's available on Relay
     Program.
     """
-    account, incorrect_text = separate_header(command, ONION_SERVICE_PUBLIC_KEY_LENGTH)
-    queues[PUB_KEY_CHECK_QUEUE].put((account, incorrect_text))
+    account, incorrect_pub_key = separate_header(command, ONION_SERVICE_PUBLIC_KEY_LENGTH)
+    queues[PUB_KEY_CHECK_QUEUE].put((account, incorrect_pub_key))

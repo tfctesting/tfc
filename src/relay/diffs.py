@@ -34,7 +34,7 @@ from src.common.encoding import b58encode
 from src.common.misc     import validate_onion_addr, split_string, ignored
 from src.common.output   import m_print
 from src.common.statics  import (ACCOUNT_CHECK_QUEUE, ACCOUNT_RATIO_LIMIT, ACCOUNT_SEND_QUEUE, B58_PUBLIC_KEY_GUIDE,
-                                 ENCODED_B58_PUB_KEY_LENGTH, PUB_KEY_CHECK_QUEUE, PUB_KEY_SEND_QUEUE,
+                                 ENCODED_B58_PUB_KEY_LENGTH, GUI_INPUT_QUEUE, PUB_KEY_CHECK_QUEUE, PUB_KEY_SEND_QUEUE,
                                  USER_ACCOUNT_QUEUE)
 
 if typing.TYPE_CHECKING:
@@ -94,8 +94,9 @@ class GetAccountFromUser(object):
         self.root.destroy()
 
 
-def account_checker(queues:   'QueueDict',
-                    stdin_fd: int
+def account_checker(queues:    'QueueDict',
+                    stdin_fd:  int,
+                    unit_test: bool = False
                     ) -> None:
     """\
     Display diffs between received TFC accounts and accounts
@@ -104,6 +105,7 @@ def account_checker(queues:   'QueueDict',
     account_list        = []  # type: List[str]
     account_check_queue = queues[ACCOUNT_CHECK_QUEUE]
     account_send_queue  = queues[ACCOUNT_SEND_QUEUE]
+    account_input_queue = queues[GUI_INPUT_QUEUE]
 
     while queues[USER_ACCOUNT_QUEUE].qsize() == 0:
         time.sleep(0.01)
@@ -127,9 +129,8 @@ def account_checker(queues:   'QueueDict',
                     if ratio >= ACCOUNT_RATIO_LIMIT:
                         break
                 else:
-                    queue = Queue()  # type: AccountQueue
-                    GetAccountFromUser(queue, onion_address_user)
-                    account = queue.get()
+                    GetAccountFromUser(account_input_queue, onion_address_user)
+                    account = account_input_queue.get()
                     if account is not None and account not in account_list:
                         account_list.append(account)
 
@@ -140,11 +141,15 @@ def account_checker(queues:   'QueueDict',
 
             time.sleep(0.01)
 
+            if unit_test:
+                break
+
 
 # Public keys
 
 def pub_key_checker(queues:     'QueueDict',
-                    local_test: bool
+                    local_test: bool,
+                    unit_test:  bool = False
                     ) -> None:
     """\
     Display diffs between received public keys and public keys
@@ -172,7 +177,8 @@ def pub_key_checker(queues:     'QueueDict',
 
             time.sleep(0.01)
 
-
+            if unit_test:
+                break
 # Diffs
 
 def show_value_diffs(value_type: str,
@@ -211,9 +217,3 @@ def show_value_diffs(value_type: str,
                                 replace_l,
                                 true_value,
                                 B58_PUBLIC_KEY_GUIDE], box=True)
-
-
-if __name__ == '__main__':
-    queue = Queue()  # type: Queue[Optional[str]]
-    GetAccountFromUser(queue, 58*'a')
-    print(queue.get_nowait())
