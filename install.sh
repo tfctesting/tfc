@@ -36,7 +36,7 @@ REQUESTS=requests-2.22.0-py2.py3-none-any.whl
 SETUPTOOLS=setuptools-45.1.0-py3-none-any.whl
 SIX=six-1.14.0-py2.py3-none-any.whl
 # STEM=stem-1.8.0.tar.gz
-URLLIB3=urllib3-1.25.7-py2.py3-none-any.whl
+URLLIB3=urllib3-1.25.8-py2.py3-none-any.whl
 VIRTUALENV=virtualenv-16.7.9-py2.py3-none-any.whl
 WERKZEUG=Werkzeug-0.16.1-py2.py3-none-any.whl
 
