@@ -27,19 +27,35 @@ from typing        import Any
 from unittest      import mock
 from unittest.mock import MagicMock
 
-from src.common.encoding import b58encode, pub_key_to_onion_address
+from src.common.encoding import b58encode
 from src.common.statics  import (ACCOUNT_CHECK_QUEUE, ACCOUNT_SEND_QUEUE, GUI_INPUT_QUEUE, PUB_KEY_CHECK_QUEUE,
                                  PUB_KEY_SEND_QUEUE, TFC_PUBLIC_KEY_LENGTH, USER_ACCOUNT_QUEUE)
 
 from src.relay.diffs import account_checker, GetAccountFromUser, pub_key_checker, show_value_diffs
 
-from tests.utils import gen_queue_dict, nick_to_pub_key, tear_queues, TFCTestCase
+from tests.utils import gen_queue_dict, nick_to_pub_key, nick_to_onion_address, tear_queues, TFCTestCase
 
 
 class TestGetAccountFromUser(unittest.TestCase):
 
-    def test(self) -> None:
-        pass  # TODO
+    def setUp(self) -> None:
+        """Pre-test actions."""
+        self.queues = gen_queue_dict()
+
+    def tearDown(self) -> None:
+        """Post-test actions."""
+        tear_queues(self.queues)
+
+    @mock.patch('tkinter.Tk',        MagicMock())
+    @mock.patch('tkinter.Entry.get', side_effect=[nick_to_onion_address('Alice'),
+                                                  nick_to_onion_address('Bob')])
+    def test_input(self, *_: Any) -> None:
+        self.queue = self.queues[GUI_INPUT_QUEUE]
+        app = GetAccountFromUser(self.queue, nick_to_onion_address('Alice'))
+        self.assertIsNone(app.evaluate_account())
+        self.assertIsNone(app.evaluate_account())
+        self.assertIsNone(app.dismiss_window())
+        self.assertEqual(self.queue.get(), nick_to_onion_address('Bob'))
 
 
 class TestAccountChecker(unittest.TestCase):
@@ -153,8 +169,8 @@ class TestShowValueDiffs(TFCTestCase):
           │ hpcrayuxhrcy2wtpfwgwjibderrvjll6azfr4tqat3eka2m2gbb55bid │          
           └──────────────────────────────────────────────────────────┘          
 """, show_value_diffs, 'account',
-                           pub_key_to_onion_address(nick_to_pub_key('Alice')),
-                           pub_key_to_onion_address(nick_to_pub_key('Bob')),
+                           nick_to_onion_address('Alice'),
+                           nick_to_onion_address('Bob'),
                            local_test=True)
 
 

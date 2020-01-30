@@ -30,7 +30,8 @@ from src.common.statics import (COMMAND_PACKET_QUEUE, CONFIRM_CODE_LENGTH, FINGE
                                 KEY_MANAGEMENT_QUEUE, LOCAL_ID, LOG_SETTING_QUEUE, RELAY_PACKET_QUEUE,
                                 TM_COMMAND_PACKET_QUEUE, WIN_TYPE_CONTACT, WIN_TYPE_GROUP)
 
-from src.transmitter.contact import add_new_contact, change_nick, contact_setting, remove_contact
+from src.transmitter.contact import add_new_contact, change_nick, contact_setting, get_onion_address_from_user
+from src.transmitter.contact import remove_contact
 
 from tests.mock_classes import ContactList, create_contact, create_group, Group, GroupList, MasterKey, OnionService
 from tests.mock_classes import Settings, TxWindow, UserInput
@@ -97,6 +98,35 @@ class TestAddNewContact(TFCTestCase):
     @mock.patch('builtins.input', side_effect=KeyboardInterrupt)
     def test_keyboard_interrupt_raises_se(self, *_: Any) -> None:
         self.assert_se('Contact creation aborted.', add_new_contact, *self.args)
+
+
+class TestGetOnionAddressFromUser(unittest.TestCase):
+
+    def setUp(self) -> None:
+        """Pre-test actions."""
+        self.queues = gen_queue_dict()
+
+    def tearDown(self) -> None:
+        """Post-test actions."""
+        tear_queues(self.queues)
+
+    @mock.patch('builtins.input', side_effect=[nick_to_onion_address('Alice')[:-1]+'a',
+                                               nick_to_onion_address('Bob')])
+    def test_invalid_onion_address_from_user_gets_sent_to_relay_program(self, _: Any) -> None:
+        onion_addres_user = nick_to_onion_address('Alice')
+
+        self.assertEqual(get_onion_address_from_user(onion_addres_user, self.queues),
+                         nick_to_onion_address('Bob'))
+        self.assertEqual(self.queues[RELAY_PACKET_QUEUE].qsize(), 1)
+
+    @mock.patch('builtins.input', side_effect=[nick_to_onion_address('Alice'),
+                                               nick_to_onion_address('Bob')])
+    def test_user_or_valid_onion_address_from_user_does_not_get_sent_to_relay_program(self, _: Any) -> None:
+        onion_addres_user = nick_to_onion_address('Alice')
+
+        self.assertEqual(get_onion_address_from_user(onion_addres_user, self.queues),
+                         nick_to_onion_address('Bob'))
+        self.assertEqual(self.queues[RELAY_PACKET_QUEUE].qsize(), 0)
 
 
 class TestRemoveContact(TFCTestCase):
