@@ -64,13 +64,13 @@ class GetAccountFromUser(object):
                                        "Please paste the account here to see diffs\n"
                                        "or press Cancel to dismiss this prompt.")
         self.instruction.tag_add('center', '1.0', 'end')  # type: ignore
-        self.instruction.pack()
+        self.instruction.grid(row=0, rowspan=2, columnspan=2)
 
         self.address_entry_box = tkinter.Entry(self.root, width=54)
-        self.address_entry_box.pack()
+        self.address_entry_box.grid(row=2, columnspan=2)
 
-        tkinter.Button(self.root, text='Cancel', command=self.dismiss_window).pack()
-        tkinter.Button(self.root, text='Ok',     command=self.evaluate_account).pack()
+        tkinter.Button(self.root, text='Cancel', command=self.dismiss_window).grid(  row=4, column=0, sticky='NSEW')
+        tkinter.Button(self.root, text='Ok',     command=self.evaluate_account).grid(row=4, column=1, sticky='NSEW')
 
         self.root.mainloop()
 
@@ -82,8 +82,8 @@ class GetAccountFromUser(object):
         if error_msg:
             self.address_entry_box.delete(0, tkinter.END)
             self.error_label.forget()
-            self.error_label.configure(text=error_msg)
-            self.error_label.pack()
+            self.error_label.configure(text=error_msg, justify='center')
+            self.error_label.grid(row=3, columnspan=2, sticky='NSEW')
         else:
             self.queue.put(purp_acco)
             self.root.destroy()
