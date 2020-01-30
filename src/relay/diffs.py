@@ -129,20 +129,28 @@ def account_checker(queues:    'QueueDict',
                     if ratio >= ACCOUNT_RATIO_LIMIT:
                         break
                 else:
-                    GetAccountFromUser(account_input_queue, onion_address_user)
-                    account = account_input_queue.get()
-                    if account is not None and account not in account_list:
-                        account_list.append(account)
+                    account = get_account_from_user(account_list, onion_address_user, account_input_queue)
 
                 if account is not None:
                     show_value_diffs("account", account, purp_account, local_test=True)
 
                 continue
-
             time.sleep(0.01)
 
             if unit_test:
                 break
+
+
+def get_account_from_user(account_list:        List[str],
+                          onion_address_user:  str,
+                          account_input_queue: 'AccountQueue'
+                          ) -> Optional[str]:
+    """Get account from user."""
+    GetAccountFromUser(account_input_queue, onion_address_user)
+    account = account_input_queue.get()
+    if account is not None and account not in account_list:
+        account_list.append(account)
+    return account
 
 
 # Public keys
@@ -179,6 +187,8 @@ def pub_key_checker(queues:     'QueueDict',
 
             if unit_test:
                 break
+
+
 # Diffs
 
 def show_value_diffs(value_type: str,

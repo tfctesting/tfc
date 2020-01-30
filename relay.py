@@ -33,10 +33,10 @@ from src.common.misc    import ensure_dir, monitor_processes, process_arguments
 from src.common.output  import print_title
 from src.common.statics import (ACCOUNT_CHECK_QUEUE, ACCOUNT_SEND_QUEUE, CONTACT_MGMT_QUEUE, CONTACT_REQ_QUEUE,
                                 C_REQ_MGMT_QUEUE, C_REQ_STATE_QUEUE, DIR_TFC, DST_COMMAND_QUEUE, DST_MESSAGE_QUEUE,
-                                EXIT_QUEUE, F_TO_FLASK_QUEUE, GATEWAY_QUEUE, GROUP_MGMT_QUEUE, GROUP_MSG_QUEUE,
-                                M_TO_FLASK_QUEUE, NC, ONION_CLOSE_QUEUE, PUB_KEY_CHECK_QUEUE, PUB_KEY_SEND_QUEUE,
-                                ONION_KEY_QUEUE, SRC_TO_RELAY_QUEUE, TOR_DATA_QUEUE, URL_TOKEN_QUEUE,
-                                USER_ACCOUNT_QUEUE)
+                                EXIT_QUEUE, F_TO_FLASK_QUEUE, GATEWAY_QUEUE, GUI_INPUT_QUEUE, GROUP_MGMT_QUEUE,
+                                GROUP_MSG_QUEUE, M_TO_FLASK_QUEUE, NC, ONION_CLOSE_QUEUE, PUB_KEY_CHECK_QUEUE,
+                                PUB_KEY_SEND_QUEUE, ONION_KEY_QUEUE, SRC_TO_RELAY_QUEUE, TOR_DATA_QUEUE,
+                                URL_TOKEN_QUEUE, USER_ACCOUNT_QUEUE)
 
 from src.relay.client   import c_req_manager, client_scheduler, g_msg_manager
 from src.relay.commands import relay_command
