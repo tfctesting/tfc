@@ -19,7 +19,7 @@ messaging system that relies on high assurance hardware architecture to protect 
 [passive collection](https://en.wikipedia.org/wiki/Upstream_collection), 
 [MITM attacks](https://en.wikipedia.org/wiki/Man-in-the-middle_attack)
 and most importantly,
-[remote exfiltration](https://www.youtube.com/watch?v=3euYBPlX9LM). 
+[remote key exfiltration](https://www.youtube.com/watch?v=3euYBPlX9LM). 
 TFC is designed for people with one of the toughest threat models: organized 
 crime groups and nation state hackers who bypass end-to-end encryption of traditional
 secure messaging apps by hacking their endpoints.  
