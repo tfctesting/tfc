@@ -27,7 +27,7 @@ apps by hacking the endpoint.
    
 #### State-of-the-art cryptography
 
-To protect messages and files sent to individual recipients and groups, TFC uses always-on
+To protect messages and files sent to individual recipients and groups, TFC uses
 [XChaCha20](https://cr.yp.to/chacha/chacha-20080128.pdf)-[Poly1305](https://cr.yp.to/mac/poly1305-20050329.pdf)
 [end-to-end encryption](https://en.wikipedia.org/wiki/End-to-end_encryption)
 with
