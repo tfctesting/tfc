@@ -71,7 +71,7 @@ All data is always encrypted with keys the user controls, and the databases neve
 users' devices.
 
 Using Onion Services also means no account registration is needed. During the 
-first launch TFC generates a random TFC account (Onion Service address) for the user, 
+first launch TFC generates a random TFC account (an Onion Service address) for the user, 
 e.g. `4sci35xrhp2d45gbm3qpta7ogfedonuw2mucmc36jxemucd7fmgzj3ad`. By knowing this TFC 
 account, anyone can send the user a contact request and connect to them without ever 
 learning their real life identity, IP-address, or geolocation. Protected geolocation makes 
