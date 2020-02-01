@@ -61,11 +61,12 @@ TFC routes all communication exclusively through the
 anonymity network. It uses the next generation
 ([v3](https://trac.torproject.org/projects/tor/wiki/doc/NextGenOnions))
 [Onion Services](https://2019.www.torproject.org/docs/onion-services)
-to enable P2P communication that never exits the anonymity network. This means that unlike 
+to enable P2P communication that never exits the Tor network. This means that unlike 
 (de)centralized messengers, there's no third party server eavesdropping on users' metadata 
-such as who is talking to who, when, and how much. The network architecture means TFC runs exclusively on the user's devices. There are no
-ads or tracking, and it collect no data whatsoever about the user. All data is always 
-encrypted with keys the user controls, and the databases never leave their devices.
+such as who is talking to who, when, and how much. The network architecture means TFC runs 
+exclusively on the user's devices. There are no ads or tracking, and it collects no data 
+whatsoever about the user. All data is always encrypted with keys the user controls, and 
+the databases never leave users' devices.
 
 Onion Service based messaging also means no registration process is needed. During the 
 first launch TFC generates a TFC account (The Onion Service address) for the user, 
