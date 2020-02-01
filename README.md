@@ -24,7 +24,7 @@ TFC is designed for people with one of the most complex threat models: organized
 groups and nation state hackers who bypass end-to-end encryption of traditional secure 
 messaging apps by hacking the endpoint.  
 
-   
+
 #### State-of-the-art cryptography
 
 TFC uses
@@ -49,7 +49,7 @@ based
 All persistent user data is encrypted locally using XChaCha20-Poly1305, the key 
 of which is derived from password and salt using 
 [Argon2id](https://github.com/P-H-C/phc-winner-argon2/blob/master/argon2-specs.pdf),
-the parameters of which are automatically tuned to maximize security according to best 
+the parameters of which are automatically tuned according to best 
 practices. Key generation of TFC relies on Linux kernel's 
 [getrandom()](https://manpages.debian.org/testing/manpages-dev/getrandom.2.en.html),
 a syscall for its ChaCha20 based 
@@ -59,16 +59,16 @@ a syscall for its ChaCha20 based
 #### Anonymous by design
 TFC routes all communication exclusively through the 
 [Tor](https://2019.www.torproject.org/about/overview.html.en) 
-anonymity network. It uses the next generation
+anonymity network. The next generation
 ([v3](https://trac.torproject.org/projects/tor/wiki/doc/NextGenOnions))
-[Onion Services](https://2019.www.torproject.org/docs/onion-services)
-to enable P2P communication that never exits the Tor network so it's hard for users to
-accidentally deanonymize themselves. It also means that unlike (de)centralized messengers, 
-there's no third party server eavesdropping on users' metadata such as who is talking to 
-who, when, and how much. The network architecture means TFC runs exclusively on the user's 
-devices. There are no ads or tracking, and it collects no data whatsoever about the user. 
-All data is always encrypted with keys the user controls, and the databases never leave 
-users' devices.
+[Tor Onion Services](https://2019.www.torproject.org/docs/onion-services)
+enable P2P communication that never exits the Tor network. This makes it hard for the 
+users to accidentally deanonymize themselves. It also means that unlike (de)centralized 
+messengers, there's no third party server with access to user metadata such as who is 
+talking to whom, when, and how much. The network architecture means TFC runs exclusively 
+on the user's devices. There are no ads or tracking, and it collects no data whatsoever 
+about the user. All data is always encrypted with keys the user controls, and the 
+databases never leave the user's device.
 
 Using Onion Services also means no account registration is needed. During the 
 first launch TFC generates a random TFC account (an Onion Service address) for the user, 
@@ -77,7 +77,7 @@ account, anyone can send the user a contact request and connect to them without 
 learning their real life identity, IP-address, or geolocation. Protected geolocation makes 
 physical attacks very difficult because the attacker doesn't know where the device is 
 located on the planet. At the same time it makes the communication censorship resistant. 
-Blocking TFC requires blocking Tor categorically, nation-wide.
+The app has no kill-switch: blocking TFC requires blocking Tor categorically, nation-wide.
 
 TFC also features a traffic masking mode that hides the type, quantity, and schedule of 
 communication, even if the network facing device of the user is hacked. To provide even
@@ -85,7 +85,7 @@ further metadata protection from hackers, the Internet-facing part of TFC can be
 [Tails](https://tails.boum.org/), a privacy and anonymity focused operating system that 
 contains no personal files of the user (which makes it hard to deduce to whom the endpoint
 belongs to), and that provides 
-[additional layers of protection](https://github.com/Whonix/onion-grater)  
+[additional layers of protection](https://github.com/Whonix/onion-grater)
 for their anonymity.
 
 
@@ -94,8 +94,9 @@ for their anonymity.
 TFC is designed to be used in hardware configuration that provides strong
 [endpoint security](https://en.wikipedia.org/wiki/Endpoint_security).
 This configuration uses three computers per endpoint: Encryption and decryption processes
-are separated on two isolated computers, the Source Computer, and the Destination Computer. 
-These two systems are are dedicated for TFC. This split [TCB](https://en.wikipedia.org/wiki/Trusted_computing_base)
+are separated from each other onto two isolated computers, the Source Computer, and the 
+Destination Computer. These two systems are are dedicated for TFC. This split 
+[TCB](https://en.wikipedia.org/wiki/Trusted_computing_base)
 interacts with the network via the user's daily computer, called the Networked Computer.
 
 Data moves from the Source Computer to the Networked Computer, and from the Networked 
@@ -103,6 +104,9 @@ Computer to the Destination Computer, unidirectionally. The unidirectionality of
 is enforced with a free hardware design
 [data diode](https://en.wikipedia.org/wiki/Unidirectional_network), 
 which is connected to the three computers using one USB-cable per computer.
+The Source and Destination Computers are not connected to the Internet, or to any device 
+other than the data diode.
+
 
 ![](https://www.cs.helsinki.fi/u/oottela/wiki/readme/data_diode.jpg)
 [TFC data diode](https://www.cs.helsinki.fi/u/oottela/wiki/readme/data_diode.jpg)
@@ -114,7 +118,7 @@ physics. This protection is so strong, the certified implementations of data dio
 typically found in critical infrastructure protection and government networks where 
 classification level of data varies between systems.
 
-In TFC the hardware datadiode ensures that neither of the TCB-halves can be accessed 
+In TFC the hardware data diode ensures that neither of the TCB-halves can be accessed 
 bidirectionally. Since the protection relies on physical limitations of the hardware's
 capabilities, no piece of malware, not even a 
 [zero-day exploit](https://en.wikipedia.org/wiki/Zero-day_(computing))
@@ -152,8 +156,8 @@ on her Destination Computer.
 
 The architecture described above simultaneously utilizes both
 [the classical and the alternative data diode models](https://en.wikipedia.org/wiki/Unidirectional_network#Applications) 
-to enable bidirectional communication while at the same time providing hardware enforced 
-endpoint security: 
+to enable bidirectional communication between two users, while at the same time providing 
+hardware enforced endpoint security: 
 
 1. The Destination Computer uses the classical data diode model. This means it can receive 
 data from the insecure Networked Computer, but is unable to send data back to the Networked 
