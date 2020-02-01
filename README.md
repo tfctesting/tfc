@@ -27,11 +27,12 @@ apps by hacking the endpoint.
    
 #### State-of-the-art cryptography
 
-To protect messages and files sent to individual recipients and groups, TFC uses
+TFC uses
 [XChaCha20](https://cr.yp.to/chacha/chacha-20080128.pdf)-[Poly1305](https://cr.yp.to/mac/poly1305-20050329.pdf)
 [end-to-end encryption](https://en.wikipedia.org/wiki/End-to-end_encryption)
 with
-[deniable authentication](https://en.wikipedia.org/wiki/Deniable_encryption#Deniable_authentication).
+[deniable authentication](https://en.wikipedia.org/wiki/Deniable_encryption#Deniable_authentication)
+to protect all messages and files sent to individual recipients and groups. 
 The symmetric keys are either
 [pre-shared](https://en.wikipedia.org/wiki/Pre-shared_key),
 or exchanged using
