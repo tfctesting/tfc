@@ -13,9 +13,8 @@
 [![Known Vulnerabilities](https://snyk.io/test/github/tfctesting/tfc/badge.svg)](https://snyk.io/test/github/tfctesting/tfc) 
 
 Tinfoil Chat (TFC) is a
-[FOSS](https://www.gnu.org/philosophy/free-sw.html)+[FHD](https://www.gnu.org/philosophy/free-hardware-designs.en.html) 
-synchronous, 
-[P2P](https://en.wikipedia.org/wiki/Peer-to-peer)
+[FOSS](https://www.gnu.org/philosophy/free-sw.html)+[FHD](https://www.gnu.org/philosophy/free-hardware-designs.en.html)  
+[peer-to-peer](https://en.wikipedia.org/wiki/Peer-to-peer)
  messaging system that relies on high assurance hardware 
 architecture to protect users from
 [passive eavesdropping](https://en.wikipedia.org/wiki/Upstream_collection), 
