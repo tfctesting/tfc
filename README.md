@@ -48,8 +48,9 @@ based
 [hash ratchet](https://www.youtube.com/watch?v=9sO2qdTci-s#t=1m34s).
 All persistent user data is encrypted locally using XChaCha20-Poly1305, the key 
 of which is derived from password and salt using 
-[Argon2id](https://github.com/P-H-C/phc-winner-argon2/blob/master/argon2-specs.pdf).
-Key generation of TFC relies on Linux kernel's 
+[Argon2id](https://github.com/P-H-C/phc-winner-argon2/blob/master/argon2-specs.pdf),
+the parameters of which are automatically tuned to maximize security according to best 
+practices. Key generation of TFC relies on Linux kernel's 
 [getrandom()](https://manpages.debian.org/testing/manpages-dev/getrandom.2.en.html),
 a syscall for its ChaCha20 based 
 [CSPRNG](https://en.wikipedia.org/wiki/Cryptographically_secure_pseudorandom_number_generator).
