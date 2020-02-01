@@ -70,7 +70,7 @@ devices. There are no ads or tracking, and it collects no data whatsoever about 
 All data is always encrypted with keys the user controls, and the databases never leave 
 users' devices.
 
-Onion Service based messaging also means no registration process is needed. During the 
+Onion Service based messaging also means no account registration. During the 
 first launch TFC generates a random TFC account (Onion Service address) for the user, 
 e.g. `4sci35xrhp2d45gbm3qpta7ogfedonuw2mucmc36jxemucd7fmgzj3ad`. By knowing this TFC 
 account, anyone can send the user a contact request and connect to them without ever 
