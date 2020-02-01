@@ -206,7 +206,7 @@ the Source or Destination Computer, the ciphertexts are of no value to the attac
 Hardware Data Diode<Br>
 &nbsp;&nbsp;&nbsp;&nbsp;[Breadboard version (Easy)](https://github.com/maqp/tfc/wiki/TTL-Data-Diode-(breadboard))<br>
 &nbsp;&nbsp;&nbsp;&nbsp;[Perfboard version (Intermediate)](https://github.com/maqp/tfc/wiki/TTL-Data-Diode-(perfboard))<br>
-&nbsp;&nbsp;&nbsp;&nbsp;[PCB version (Advanced)](https://github.com/tfctesting/tfc/wiki/PCB-Data-Diode-(Advanced))<br>
+&nbsp;&nbsp;&nbsp;&nbsp;[PCB version (Advanced)](https://github.com/maqp/tfc/wiki/PCB-Data-Diode-(Advanced))<br>
 
 How to use<br>
 &nbsp;&nbsp;&nbsp;&nbsp;[Installation](https://github.com/maqp/tfc/wiki/Installation)<br>
