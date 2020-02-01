@@ -1,6 +1,6 @@
 <img align="right" src="https://cs.helsinki.fi/u/oottela/tfc_logo.png" style="position: relative; top: 0; left: 0;">
 
-## Tinfoil Chat
+### Tinfoil Chat
 
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 [![Python 3.7](https://img.shields.io/badge/python-3.7-informational.svg)](https://www.python.org/downloads/release/python-370/)
