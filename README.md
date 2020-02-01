@@ -19,10 +19,10 @@ synchronous,
  messaging system that relies on high assurance hardware 
 architecture to protect users from
 [passive eavesdropping](https://en.wikipedia.org/wiki/Upstream_collection), 
-[active MITM attacks](https://en.wikipedia.org/wiki/Man-in-the-middle_attack)
+[MITM attacks](https://en.wikipedia.org/wiki/Man-in-the-middle_attack)
 and most importantly,
 [remote exfiltration attacks](https://www.youtube.com/watch?v=3euYBPlX9LM). 
-TFC is designed for people who have one of the toughest threat models out there: organized 
+TFC is designed for people with one of the toughest threat models out there: organized 
 cybercrime groups and nation state hackers who bypass end-to-end encryption of traditional
 secure messaging apps by hacking their endpoints.  
 
