@@ -81,9 +81,10 @@ TFC also features a traffic masking mode that hides the type, quantity, and sche
 communication, even if the network facing device of the user is hacked. To provide even
 further metadata protection from hackers, the Internet-facing part of TFC can be run on 
 [Tails](https://tails.boum.org/), a privacy and anonymity focused operating system that 
-contains no personal files of the user, and that provides 
-[additional layers of protection](https://github.com/Whonix/onion-grater) for their 
-anonymity.
+contains no personal files of the user (which makes it hard to deduce to whom the endpoint
+belongs to), and that provides
+ [additional layers of protection](https://github.com/Whonix/onion-grater)  
+for their anonymity.
 
 
 #### First messaging system with endpoint security
