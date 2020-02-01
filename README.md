@@ -73,7 +73,8 @@ Onion Service based messaging also means no registration process is needed. Duri
 first launch TFC generates a random TFC account (The Onion Service address) for the user, 
 e.g. `4sci35xrhp2d45gbm3qpta7ogfedonuw2mucmc36jxemucd7fmgzj3ad`. By knowing this TFC 
 account, anyone can send the user a contact request and connect to them without ever 
-learning their real life identity, IP-address, or geolocation.
+learning their real life identity, IP-address, or geolocation. This in turn makes the 
+communication censorship resistant. Blocking TFC requires blocking Tor nation-wide.
 
 TFC also features a traffic masking mode that hides the type, quantity, and schedule of 
 communication, even if the network facing device of the user is hacked. To provide even
