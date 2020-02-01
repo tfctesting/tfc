@@ -12,12 +12,6 @@
 [![Requirements Status](https://requires.io/github/tfctesting/tfc/requirements.svg?branch=master)](https://requires.io/github/tfctesting/tfc/requirements/?branch=master)
 [![Known Vulnerabilities](https://snyk.io/test/github/tfctesting/tfc/badge.svg)](https://snyk.io/test/github/tfctesting/tfc) 
 
-# Do not use this repository
-
-## The code in this repository is not stable and it is signed with an insecurely stored key
-
-## Use the [official repository](https://github.com/maqp/tfc/) instead
-
 Tinfoil Chat (TFC) is a
 [FOSS](https://www.gnu.org/philosophy/free-sw.html)+[FHD](https://www.gnu.org/philosophy/free-hardware-designs.en.html) 
 synchronous, 
@@ -28,10 +22,9 @@ architecture to protect users from
 [active MITM attacks](https://en.wikipedia.org/wiki/Man-in-the-middle_attack)
 and most importantly,
 [remote exfiltration attacks](https://www.youtube.com/watch?v=3euYBPlX9LM). 
-
-TFC is designed for people who face the one of the toughest threat models out there: 
-organized cybercrime groups and nation state hackers who bypass end-to-end encryption 
-of traditional secure messaging apps by hacking their endpoints.  
+TFC is designed for people who have one of the toughest threat models out there: organized 
+cybercrime groups and nation state hackers who bypass end-to-end encryption of traditional
+secure messaging apps by hacking their endpoints.  
 
    
 #### State-of-the-art cryptography
@@ -71,18 +64,15 @@ anonymity network. It uses the next generation
 [Onion Services](https://2019.www.torproject.org/docs/onion-services)
 to enable P2P communication that never exits the anonymity network. This means that unlike 
 (de)centralized messengers, there's no third party server eavesdropping on users' metadata 
-such as who is talking to who, when, and how much. 
-
-The network architecture means TFC runs exclusively on the user's devices. There are no
+such as who is talking to who, when, and how much. The network architecture means TFC runs exclusively on the user's devices. There are no
 ads or tracking, and it collect no data whatsoever about the user. All data is always 
 encrypted with keys the user controls, and the databases never leave their devices.
 
 Onion Service based messaging also means no registration process is needed. During the 
-first launch TFC generates a random TFC account (The Onion Service address) for the user, 
-e.g. `4sci35xrhp2d45gbm3qpta7ogfedonuw2mucmc36jxemucd7fmgzj3ad`. 
-
-By knowing this TFC account, anyone can send the user a contact request and connect to
-them without ever learning their real life identity, IP-address, or geolocation.
+first launch TFC generates a TFC account (The Onion Service address) for the user, 
+e.g. `4sci35xrhp2d45gbm3qpta7ogfedonuw2mucmc36jxemucd7fmgzj3ad`. By knowing this TFC 
+account, anyone can send the user a contact request and connect to them without ever 
+learning their real life identity, IP-address, or geolocation.
 
 TFC also features a traffic masking mode that hides the type, quantity, and schedule of 
 communication, even if the network facing device of the user is hacked. To provide even
@@ -102,11 +92,11 @@ are separated on two isolated computers, the Source Computer, and the Destinatio
 These two systems are are dedicated for TFC. This split [TCB](https://en.wikipedia.org/wiki/Trusted_computing_base)
 interacts with the network via the user's daily computer, called the Networked Computer.
 
-Data moves from Source Computer to Networked Computer, and from Networked Computer to
-Destination Computer, unidirectionally. The unidirectionality of data flow is enforced 
-with a free hardware design
-[data diode](https://en.wikipedia.org/wiki/Unidirectional_network), which is connected
-to the three computers using one USB-cable per computer.
+Data moves from the Source Computer to the Networked Computer, and from the Networked 
+Computer to the Destination Computer, unidirectionally. The unidirectionality of data flow 
+is enforced with a free hardware design
+[data diode](https://en.wikipedia.org/wiki/Unidirectional_network), 
+which is connected to the three computers using one USB-cable per computer.
 
 ![](https://www.cs.helsinki.fi/u/oottela/wiki/readme/data_diode.jpg)
 [TFC data diode](https://www.cs.helsinki.fi/u/oottela/wiki/readme/data_diode.jpg)
@@ -114,15 +104,15 @@ to the three computers using one USB-cable per computer.
 Optical repeater inside the
 [optocouplers](https://en.wikipedia.org/wiki/Opto-isolator)
 of the data diode enforce direction of data transmission with the fundamental laws of 
-physics. This protection is so effective, the certified implementations of data diodes are 
+physics. This protection is so strong, the certified implementations of data diodes are 
 typically found in critical infrastructure protection and government networks where 
 classification level of data varies between systems.
 
 In TFC the hardware datadiode ensures that neither of the TCB-halves can be accessed 
 bidirectionally. Since the protection relies on physical limitations of the hardware's
-capabilities, no piece of malware, not even a zero-day exploit can bypass the security 
-provided by the data diode.
-
+capabilities, no piece of malware, not even a 
+[zero-day exploit](https://en.wikipedia.org/wiki/Zero-day_(computing))
+can bypass the security provided by the data diode.
 
 
 ### How it works
@@ -206,7 +196,7 @@ the Source or Destination Computer, the ciphertexts are of no value to the attac
 Hardware Data Diode<Br>
 &nbsp;&nbsp;&nbsp;&nbsp;[Breadboard version (Easy)](https://github.com/maqp/tfc/wiki/TTL-Data-Diode-(breadboard))<br>
 &nbsp;&nbsp;&nbsp;&nbsp;[Perfboard version (Intermediate)](https://github.com/maqp/tfc/wiki/TTL-Data-Diode-(perfboard))<br>
-&nbsp;&nbsp;&nbsp;&nbsp;[PCB version (Advanced)](example.com))<br>
+&nbsp;&nbsp;&nbsp;&nbsp;[PCB version (Advanced)](https://github.com/tfctesting/tfc/wiki/PCB-Data-Diode-(Advanced))<br>
 
 How to use<br>
 &nbsp;&nbsp;&nbsp;&nbsp;[Installation](https://github.com/maqp/tfc/wiki/Installation)<br>
@@ -219,5 +209,3 @@ How to use<br>
 &nbsp;&nbsp;&nbsp;&nbsp;[Commands](https://github.com/maqp/tfc/wiki/Commands)<br>
 
 [Update log](https://github.com/maqp/tfc/wiki/Update-Log)<br>
-
-For the rest of the articles, see [TFC wiki](https://github.com/maqp/tfc/wiki).
