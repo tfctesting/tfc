@@ -313,8 +313,7 @@ function steps_before_network_kill {
 
 
 function install_qubes_tcb {
-    # Qubes installation configuration for TCB domains.
-
+    # Qubes TCB installation configuration for Debian 10 domains.
     sudo apt update
     sudo apt install libssl-dev python3-pip python3-tk --yes
 
@@ -467,6 +466,44 @@ function install_developer {
 }
 
 
+function install_qubes_relay {
+    # Qubes Relay Program installation configuration for Debian 10 domains.
+    sudo apt update
+    sudo apt install libssl-dev python3-pip python3-tk --yes
+
+    sudo git clone --depth 1 https://github.com/tfctesting/tfc.git /opt/tfc
+
+    sudo python3.7 -m pip download --no-cache-dir -r "/opt/tfc/requirements-venv.txt" --require-hashes --no-deps -d /opt/tfc/
+
+    verify_files
+    create_user_data_dir
+
+    install_virtualenv_qubes
+    sudo python3.7 -m virtualenv /opt/tfc/venv_relay --system-site-packages
+
+    . /opt/tfc/venv_relay/bin/activate
+    sudo python3.7 -m pip install -r /opt/tfc/requirements-relay.txt --require-hashes --no-deps
+    deactivate
+
+    sudo mv /opt/tfc/tfc.png                  /usr/share/pixmaps/
+    sudo mv /opt/tfc/launchers/TFC-RP.desktop /usr/share/applications/
+
+    # Remove unnecessary files
+    remove_common_files      "sudo"
+    process_tcb_dependencies "rm"
+    sudo rm -r "/opt/tfc/src/receiver/"
+    sudo rm -r "/opt/tfc/src/transmitter/"
+    sudo rm    "/opt/tfc/dd.py"
+    sudo rm    "/opt/tfc/tfc.py"
+    sudo rm    "/opt/tfc/tfc.yml"
+    sudo rm    "/opt/tfc/${VIRTUALENV}"
+
+    add_serial_permissions
+
+    install_complete "Installation of the TFC Relay configuration is now complete."
+}
+
+
 function install_relay_ubuntu {
     # Install TFC Relay configuration on Networked Computer.
     steps_before_network_kill
@@ -573,6 +610,14 @@ function install_virtualenv {
     # not. Install both to improve the chances of compatibility.
     sudo torsocks python3.7 -m pip install -r /opt/tfc/requirements-venv.txt --require-hashes --no-deps
     torsocks python3.7 -m pip install -r /opt/tfc/requirements-venv.txt --require-hashes --no-deps
+}
+
+
+function install_virtualenv_qubes {
+    # Some distros want virtualenv installed as sudo and other do
+    # not. Install both to improve the chances of compatibility.
+    sudo python3.7 -m pip install -r /opt/tfc/requirements-venv.txt --require-hashes --no-deps
+    python3.7 -m pip install -r /opt/tfc/requirements-venv.txt --require-hashes --no-deps
 }
 
 
