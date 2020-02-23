@@ -102,7 +102,7 @@ function verify_files {
     compare_digest 63451ece46802c1e4d0ddb591fda951c00b40ed2e0f37ffc9e5310adb687f0db4980d8593ce1ed5c7b5ca9274be33b2666ae9165aa002d99ecf69b0ec620cc1b src/common/ db_settings.py
     compare_digest 60fb4c922af286307865b29f0cadab53a5a575a9f820cd5ad99ea116c841b54dd1d1be1352bf7c3ab51d2fd223077217bcda1b442d44d2b9f1bf614e15c4a14d src/common/ encoding.py
     compare_digest ccd522408ad2e8e21f01038f5f49b9d82d5288717f1a1acf6cda278c421c05472827ee5928fbf56121c2dfc4f2cc49986e32c493e892bd6ae584be38ba381edd src/common/ exceptions.py
-    compare_digest 4600a059c6bdcc6de55f354a2a39e4dee2bac0f4ded8adf1886aa115fd8626eb2617ae8f5c3e29d7e6bb02bc2cbb5237df8dbcbee3a3a997e1f185822ad895a7 src/common/ gateway.py
+    compare_digest 2150c1495a03ada1d36be4127df00a39919185b2c949b8b8faf8dc0a032919da43d0dd0429a85497f54f3f365a91981c76c00e2f59a7d46fe1617590170d3535 src/common/ gateway.py
     compare_digest b01aa02c1985c7c1f7d95678d2422561a06342378306936c35c077938c133b8f60a63952bdc9005210d31e68addd88b86a45f82626c40beff07e785fdc2aa115 src/common/ input.py
     compare_digest a9528e955193050e073dccacea6045c3c31cfa783dc6b9d7982445599ccdd338424b8131eb7fad950901a0a4763f9a6e9ff6df3d12d7cd7a13883edd3d45a86f src/common/ misc.py
     compare_digest 8b479b3a7c1c4fdaf4c4f8d4a4436231933ebb1da47a5a07a596037b20db7d5aa7e8a1d107d4ec973603551f28833ff404c177b9977d654f3b38a915d16a33bb src/common/ output.py
@@ -328,7 +328,7 @@ function install_qubes_tcb {
     sudo python3.7 -m pip download --no-cache-dir -r "/opt/tfc/requirements-venv.txt" --require-hashes --no-deps -d /opt/tfc/
     sudo python3.7 -m pip download --no-cache-dir -r "/opt/tfc/requirements.txt"      --require-hashes --no-deps -d /opt/tfc/
 
-    kill_network
+    kill_network_qubes
 
     verify_files
 
@@ -675,6 +675,28 @@ function kill_network {
     c_echo "disabled network interfaces as the first line of defense."
     c_echo ''
     c_echo "Disconnect the Ethernet cable and press any key to continue."
+    read -n 1 -s -p ''
+    echo -e '\n'
+}
+
+
+function kill_network_qubes {
+    # Kill network interfaces to protect the TCB VM from remote compromise.
+    for interface in /sys/class/net/*; do
+        name=$(basename "${interface}")
+        if [[ $name != "lo" ]]; then
+            echo "Disabling network interface ${name}"
+            sudo ifconfig "${name}" down
+        fi
+    done
+
+    sleep 1
+    clear
+    c_echo ''
+    c_echo " This computer needs to be air gapped. The installer has "
+    c_echo "disabled network interfaces as the first line of defense."
+    c_echo ''
+    c_echo "Edit the sys-firewall rules and press any key to continue."
     read -n 1 -s -p ''
     echo -e '\n'
 }
