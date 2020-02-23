@@ -467,7 +467,7 @@ class GatewaySettings(object):
 
         Ensure that the serial interface is available before proceeding.
         """
-        if not self.local_testing_mode:
+        if not self.local_testing_mode and not self.qubes:
             name = {TX: TRANSMITTER, NC: RELAY, RX: RECEIVER}[self.software_operation]
 
             self.use_serial_usb_adapter = yes(f"Use USB-to-serial/TTL adapter for {name} Computer?", head=1, tail=1)

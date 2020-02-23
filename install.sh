@@ -78,6 +78,9 @@ function verify_files {
 
     compare_digest d4f503df2186db02641f54a545739d90974b6d9d920f76ad7e93fe1a38a68a85c167da6c19f7574d11fbb69e57d563845d174d420c55691bc2cd75a1a72806dc launchers/ terminator-config-local-test
     compare_digest 9a40d97bd9fe1324b5dd53079c49c535ae307cbb28a0bc1371067d03c72e67ddeed368c93352732c191c26dcdc9ac558868e1df9dfd43a9b01ba0a8681064ab3 launchers/ TFC-Local-test.desktop
+    compare_digest 62ada11d5513d2d196184b207a82dd14c7ad78af3f7b43c4de64162c8784c2996fa999f36fc6e2c7f1b823df43497725b05f0b52489e9a9e1d9bddbe2ce7910f launchers/ tfc-qubes-receiver
+    compare_digest 72e04fe07ac400ca70da59d196119db985d9e74b99b0fd735be20a534bd10084287a52aee46c6467703fe5e14609729db229112d53ce3156838c80b4f159df0a launchers/ tfc-qubes-relay
+    compare_digest 89e23c4d9e7d4402d7dde3d905fe0c3a3fd5ff8c09c33033f95d203ae9f1f53fa26d20c913820ff16764e9b6e0d558f8f332f9657b2e92eb77134576e683e1a9 launchers/ tfc-qubes-transmitter
     compare_digest c5dfa3e4c94c380b0fcf613f57b5879a0d57d593b9b369da3afde37609a9fb11051d71832285d3372f3df6c5dbe96d00a39734fbddf138ab0c04d0f1f752826f launchers/ TFC-RP.desktop
     compare_digest c7e9a6cf6c368907449b40763f02729f697ba524289b480cbe56a573ebb3ae688caad6b525fb60b0ecc31ed96de813bf6508f5332b65299039c0050525da2bdd launchers/ TFC-RP-Qubes.desktop
     compare_digest c5dfa3e4c94c380b0fcf613f57b5879a0d57d593b9b369da3afde37609a9fb11051d71832285d3372f3df6c5dbe96d00a39734fbddf138ab0c04d0f1f752826f launchers/ TFC-RP-Tails.desktop
@@ -99,7 +102,7 @@ function verify_files {
     compare_digest 63451ece46802c1e4d0ddb591fda951c00b40ed2e0f37ffc9e5310adb687f0db4980d8593ce1ed5c7b5ca9274be33b2666ae9165aa002d99ecf69b0ec620cc1b src/common/ db_settings.py
     compare_digest 60fb4c922af286307865b29f0cadab53a5a575a9f820cd5ad99ea116c841b54dd1d1be1352bf7c3ab51d2fd223077217bcda1b442d44d2b9f1bf614e15c4a14d src/common/ encoding.py
     compare_digest ccd522408ad2e8e21f01038f5f49b9d82d5288717f1a1acf6cda278c421c05472827ee5928fbf56121c2dfc4f2cc49986e32c493e892bd6ae584be38ba381edd src/common/ exceptions.py
-    compare_digest 31307439b50d0589e41ad99f2af32cff58b766ebb273067feb7d8c6b6c4c5934928fd1819edaa61a3ecad8154f08a6408cacbe0dddcf165bc62dcb955284038f src/common/ gateway.py
+    compare_digest f75b933d8dce6fba1725ac877cb45ac45df7d66433191e8410748986691f5c3f49a8b5a2309f63cbcdbde70346134bf69f421026694ebd58901195462bb7cac8 src/common/ gateway.py
     compare_digest b01aa02c1985c7c1f7d95678d2422561a06342378306936c35c077938c133b8f60a63952bdc9005210d31e68addd88b86a45f82626c40beff07e785fdc2aa115 src/common/ input.py
     compare_digest 8280fed36421503fed2c49bf6293b7d20866149047429a2d27c6ee34e619f3a473c93e62478cc1154d19ae8087ca5adc97c21f644433af0857290930a7551db0 src/common/ misc.py
     compare_digest 8b479b3a7c1c4fdaf4c4f8d4a4436231933ebb1da47a5a07a596037b20db7d5aa7e8a1d107d4ec973603551f28833ff404c177b9977d654f3b38a915d16a33bb src/common/ output.py
@@ -341,6 +344,8 @@ function install_qubes_tcb {
     sudo mv /opt/tfc/tfc.png                         /usr/share/pixmaps/
     sudo mv /opt/tfc/launchers/TFC-TxP-Qubes.desktop /usr/share/applications/
     sudo mv /opt/tfc/launchers/TFC-RxP-Qubes.desktop /usr/share/applications/
+    sudo mv /opt/tfc/launchers/tfc-qubes-transmitter /usr/bin/tfc-transmitter
+    sudo mv /opt/tfc/launchers/tfc-qubes-receiver    /usr/bin/tfc-receiver
 
     # Remove unnecessary files
     remove_common_files      "sudo"
@@ -351,7 +356,9 @@ function install_qubes_tcb {
     sudo rm    /opt/tfc/tfc.yml
     sudo rm    /opt/tfc/${VIRTUALENV}
 
-    add_serial_permissions
+    # Add alias
+    # echo -e "alias tfc-transmitter='cd /opt/tfc && source venv_tcb/bin/activate && python3.7 tfc.py -q'\n" >> $HOME/.bashrc
+    # echo -e "alias tfc-receiver='cd /opt/tfc && source venv_tcb/bin/activate && python3.7 tfc.py -r -q'\n" >> $HOME/.bashrc
 
     install_complete "Installation of TFC on this device is now complete."
 }
@@ -389,10 +396,6 @@ function install_tcb {
     sudo rm    /opt/tfc/relay.py
     sudo rm    /opt/tfc/tfc.yml
     sudo rm    /opt/tfc/${VIRTUALENV}
-
-    # Add alias
-    echo -e "alias tfc-transmitter='cd /opt/tfc && source venv_tcb/bin/activate && python3.7 tfc.py'\n" >> $HOME/.bashrc
-    echo -e "alias tfc-receiver='cd /opt/tfc && source venv_tcb/bin/activate && python3.7 tfc.py -r'\n" >> $HOME/.bashrc
 
     add_serial_permissions
 
@@ -494,6 +497,7 @@ function install_qubes_relay {
 
     sudo mv /opt/tfc/tfc.png                        /usr/share/pixmaps/
     sudo mv /opt/tfc/launchers/TFC-RP-Qubes.desktop /usr/share/applications/
+    sudo mv /opt/tfc/launchers/tfc-qubes-relay      /usr/bin/tfc-relay
 
     # Remove unnecessary files
     remove_common_files "sudo"
@@ -504,10 +508,8 @@ function install_qubes_relay {
     sudo rm    "/opt/tfc/tfc.yml"
     sudo rm    "/opt/tfc/${VIRTUALENV}"
 
-    add_serial_permissions
-
     # Add alias
-    echo -e "alias tfc-relay='cd /opt/tfc && source venv_relay/bin/activate && python3.7 relay.py'\n" >> $HOME/.bashrc
+    # echo -e "alias tfc-relay='cd /opt/tfc && source venv_relay/bin/activate && python3.7 relay.py -q'\n" >> $HOME/.bashrc
 
     install_complete "Installation of the TFC Relay configuration is now complete."
 }
