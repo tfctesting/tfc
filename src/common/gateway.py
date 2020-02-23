@@ -19,6 +19,7 @@ You should have received a copy of the GNU General Public License
 along with TFC. If not, see <https://www.gnu.org/licenses/>.
 """
 
+import base64
 import hashlib
 import json
 import multiprocessing.connection
@@ -38,14 +39,14 @@ from serial.serialutil import SerialException
 from src.common.exceptions   import CriticalError, graceful_exit, SoftError
 from src.common.input        import box_input, yes
 from src.common.misc         import calculate_race_condition_delay, ensure_dir, ignored, get_terminal_width
-from src.common.misc         import separate_trailer, validate_ip_address
+from src.common.misc         import separate_trailer, split_byte_string, validate_ip_address
 from src.common.output       import m_print, phase, print_on_previous_line
 from src.common.reed_solomon import ReedSolomonError, RSCodec
 from src.common.statics      import (BAUDS_PER_BYTE, DIR_USER_DATA, DONE, DST_DD_LISTEN_SOCKET, DST_LISTEN_SOCKET,
                                      GATEWAY_QUEUE, LOCALHOST, LOCAL_TESTING_PACKET_DELAY, MAX_INT, NC,
                                      QUBES_DST_LISTEN_SOCKET, QUBES_SRC_LISTEN_SOCKET, PACKET_CHECKSUM_LENGTH, RECEIVER,
                                      RELAY, RP_LISTEN_SOCKET, RX, SERIAL_RX_MIN_TIMEOUT, SETTINGS_INDENT,
-                                     SRC_DD_LISTEN_SOCKET, TRANSMITTER, TX)
+                                     SOCKET_BUFFER_SIZE, SRC_DD_LISTEN_SOCKET, TRANSMITTER, TX, US_BYTE)
 
 if typing.TYPE_CHECKING:
     from multiprocessing import Queue
@@ -150,6 +151,18 @@ class Gateway(object):
         except SerialException:
             raise CriticalError("SerialException. Ensure $USER is in the dialout group by restarting this computer.")
 
+    def write_udp_packet(self, packet: bytes) -> None:
+        """Split packet to smaller parts and transmit them over the socket."""
+        udp_port = QUBES_SRC_LISTEN_SOCKET if self.settings.software_operation == TX else QUBES_DST_LISTEN_SOCKET
+
+        packet  = base64.b85encode(packet)
+        packets = split_byte_string(packet, SOCKET_BUFFER_SIZE)
+
+        for p in packets:
+            self.txq_socket.sendto(p, (self.settings.rx_udp_ip, udp_port))
+            time.sleep(0.000001)
+        self.txq_socket.sendto(US_BYTE, (self.settings.rx_udp_ip, udp_port))
+
     def write(self, orig_packet: bytes) -> None:
         """Add error correction data and output data via socket/serial interface.
 
@@ -168,8 +181,7 @@ class Gateway(object):
                 raise CriticalError("Relay IPC server disconnected.", exit_code=0)
 
         elif self.txq_socket is not None:
-            udp_port = QUBES_SRC_LISTEN_SOCKET if self.settings.software_operation == TX else QUBES_DST_LISTEN_SOCKET
-            self.txq_socket.sendto(packet, (self.settings.rx_udp_ip, udp_port))
+            self.write_udp_packet(packet)
 
         elif self.tx_serial is not None:
             try:
@@ -198,7 +210,20 @@ class Gateway(object):
         """Read packet from Qubes' socket interface."""
         if self.rxq_socket is None:
             raise CriticalError("Socket interface has not been initialized.")
-        return self.rxq_socket.recvfrom(1024)[0]
+
+        while True:
+            try:
+                read_buffer = bytearray()
+
+                while True:
+                    read = self.rxq_socket.recv(SOCKET_BUFFER_SIZE)
+                    if read == US_BYTE:
+                        return read_buffer
+                    else:
+                        read_buffer.extend(read)
+
+            except (EOFError, KeyboardInterrupt):
+                pass
 
     def read_serial(self) -> bytes:
         """Read packet from serial interface.
@@ -254,8 +279,10 @@ class Gateway(object):
 
         If error correction is set to 0, errors are only detected. This
         is done by using a BLAKE2b based, 128-bit checksum.
+
+        If Qubes is used, Reed-Solomon is not used as it only slows down data transfer.
         """
-        if self.settings.session_serial_error_correction:
+        if self.settings.session_serial_error_correction and not self.settings.qubes:
             packet = self.rs.encode(packet)
         else:
             packet = packet + hashlib.blake2b(packet, digest_size=PACKET_CHECKSUM_LENGTH).digest()
@@ -263,7 +290,13 @@ class Gateway(object):
 
     def detect_errors(self, packet: bytes) -> bytes:
         """Handle received packet error detection and/or correction."""
-        if self.settings.session_serial_error_correction:
+        if self.settings.qubes:
+            try:
+                packet = base64.b85decode(packet)
+            except ValueError:
+                raise SoftError("Error: Received packet had invalid Base85 encoding.")
+
+        if self.settings.session_serial_error_correction and not self.settings.qubes:
             try:
                 packet, _ = self.rs.decode(packet)
                 return bytes(packet)
