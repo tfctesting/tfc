@@ -348,6 +348,8 @@ function install_qubes_tcb {
     sudo rm    /opt/tfc/tfc.yml
     sudo rm    /opt/tfc/${VIRTUALENV}
 
+    add_serial_permissions
+
     install_complete "Installation of TFC on this device is now complete."
 }
 
@@ -386,8 +388,8 @@ function install_tcb {
     sudo rm    /opt/tfc/${VIRTUALENV}
 
     # Add alias
-    echo "alias tfc-transmitter='cd /opt/tfc && source venv_tcb/bin/activate && python3.7 tfc.py'" >> $HOME/.bashrc
-    echo "alias tfc-receiver='cd /opt/tfc && source venv_tcb/bin/activate && python3.7 tfc.py -r'" >> $HOME/.bashrc
+    echo -e "alias tfc-transmitter='cd /opt/tfc && source venv_tcb/bin/activate && python3.7 tfc.py'\n" >> $HOME/.bashrc
+    echo -e "alias tfc-receiver='cd /opt/tfc && source venv_tcb/bin/activate && python3.7 tfc.py -r'\n" >> $HOME/.bashrc
 
     add_serial_permissions
 
@@ -498,6 +500,8 @@ function install_qubes_relay {
     sudo rm    "/opt/tfc/tfc.py"
     sudo rm    "/opt/tfc/tfc.yml"
     sudo rm    "/opt/tfc/${VIRTUALENV}"
+
+    add_serial_permissions
 
     # Add alias
     echo -e "alias tfc-relay='cd /opt/tfc && source venv_relay/bin/activate && python3.7 relay.py'\n" >> $HOME/.bashrc
