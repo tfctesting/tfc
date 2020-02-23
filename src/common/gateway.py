@@ -494,11 +494,9 @@ class GatewaySettings(object):
                     self.setup()
 
         if self.qubes and self.software_operation != RX:
-            rx_device      = 'Networked' if self.software_operation == TX else 'Destination'
-            self.rx_udp_ip = box_input(f"Enter the IP address of the {rx_device} Computer",
-                                       expected_len=49,
-                                       validator=validate_ip_address,
-                                       tail=1)
+            rx_device, short = ('Networked', 'NET') if self.software_operation == TX else ('Destination', 'DST')
+            m_print(f"Enter the IP address of the {rx_device} Computer", head=1, tail=1)
+            self.rx_udp_ip = box_input(f"{short} IP-address", expected_len=15, validator=validate_ip_address, tail=1)
 
     def store_settings(self) -> None:
         """Store serial settings in JSON format."""
