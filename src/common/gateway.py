@@ -314,7 +314,17 @@ class Gateway(object):
         """Establish Qubes' socket for incoming data."""
         udp_port = QUBES_SRC_LISTEN_SOCKET if self.settings.software_operation == NC else QUBES_DST_LISTEN_SOCKET
         self.rxq_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        self.rxq_socket.bind((self.settings.rx_udp_ip, udp_port))
+        self.rxq_socket.bind((self.get_local_ip_addr(), udp_port))
+
+    @staticmethod
+    def get_local_ip_addr() -> str:
+        """Get local IP address of the system."""
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        try:
+            s.connect(('192.0.0.8', 1027))
+        except socket.error:
+            raise CriticalError("Socket error")
+        return s.getsockname()[0]
 
     # Local testing
 
@@ -483,8 +493,8 @@ class GatewaySettings(object):
                     m_print(f"Error: Serial interface /dev/{self.built_in_serial_interface} not found.")
                     self.setup()
 
-        if self.qubes:
-            rx_device      = 'Source' if self.software_operation == TX else 'Destination'
+        if self.qubes and self.software_operation != RX:
+            rx_device      = 'Networked' if self.software_operation == TX else 'Destination'
             self.rx_udp_ip = box_input(f"Enter the IP address of the {rx_device} Computer",
                                        expected_len=49,
                                        validator=validate_ip_address,
