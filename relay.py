@@ -139,9 +139,9 @@ def main() -> None:
     ensure_dir(working_dir)
     os.chdir(working_dir)
 
-    _, local_test, data_diode_sockets = process_arguments()
+    _, local_test, data_diode_sockets, qubes = process_arguments()
 
-    gateway = Gateway(NC, local_test, data_diode_sockets)
+    gateway = Gateway(NC, local_test, data_diode_sockets, qubes)
 
     print_title(NC)
 
@@ -184,7 +184,7 @@ def main() -> None:
                     Process(target=flask_server,     args=(queues,          url_token_public_key )),
                     Process(target=onion_service,    args=(queues,                               )),
                     Process(target=relay_command,    args=(queues, gateway,                      )),
-                    Process(target=account_checker,  args=(queues,             sys.stdin.fileno())),
+                    Process(target=account_checker,  args=(queues,          sys.stdin.fileno()   )),
                     Process(target=pub_key_checker,  args=(queues,          local_test           ))]
 
     for p in process_list:

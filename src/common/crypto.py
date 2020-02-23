@@ -419,11 +419,11 @@ class X448(object):
         return blake2b(shared_secret, digest_size=SYMMETRIC_KEY_LENGTH)
 
     @staticmethod
-    def derive_keys(dh_shared_key:          bytes,
-                    tfc_public_key_user:    bytes,
-                    tfc_public_key_contact: bytes
-                    ) -> Tuple[bytes, bytes, bytes, bytes, bytes, bytes]:
-        """Create domain separated message and header keys and fingerprints from shared key.
+    def derive_subkeys(dh_shared_key:          bytes,
+                       tfc_public_key_user:    bytes,
+                       tfc_public_key_contact: bytes
+                       ) -> Tuple[bytes, bytes, bytes, bytes, bytes, bytes]:
+        """Create domain separated message and header subkeys and fingerprints from shared key.
 
         Domain separate unidirectional keys from shared key by using public
         keys as message and the context variable as personalization string.

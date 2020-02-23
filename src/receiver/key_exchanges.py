@@ -113,7 +113,7 @@ def decrypt_local_key(ts:            'datetime',
                       ) -> Tuple['datetime', bytes]:
     """Decrypt local key packet."""
     while True:
-        kdk = get_b58_key(B58_LOCAL_KEY, settings)
+        kdk      = get_b58_key(B58_LOCAL_KEY, settings)
         kdk_hash = blake2b(kdk)
 
         # Check if the key was an old one.

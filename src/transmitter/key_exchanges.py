@@ -319,7 +319,7 @@ def start_key_exchange(onion_pub_key: bytes,          # Public key of contact's 
         dh_shared_key = X448.shared_key(tfc_private_key_user, tfc_public_key_contact)
 
         tx_mk, rx_mk, tx_hk, rx_hk, tx_fp, rx_fp \
-            = X448.derive_keys(dh_shared_key, tfc_public_key_user, tfc_public_key_contact)
+            = X448.derive_subkeys(dh_shared_key, tfc_public_key_user, tfc_public_key_contact)
 
         kex_status = validate_contact_fingerprint(tx_fp, rx_fp)
 
@@ -577,10 +577,10 @@ def store_keys_on_removable_drive(ct_tag:        bytes,           # Encrypted PS
                                   settings:      'Settings',      # Settings object
                                   ) -> None:
     """Store keys for contact on a removable media."""
+    trunc_addr = pub_key_to_short_address(onion_pub_key)
     while True:
-        trunc_addr = pub_key_to_short_address(onion_pub_key)
-        store_d    = ask_path_gui(f"Select removable media for {nick}", settings)
-        f_name     = f"{store_d}/{onion_service.user_short_address}.psk - Give to {trunc_addr}"
+        store_d = ask_path_gui(f"Select removable media for {nick}", settings)
+        f_name  = f"{store_d}/{onion_service.user_short_address}.psk - Give to {trunc_addr}"
 
         try:
             with open(f_name, "wb+") as f:
@@ -624,4 +624,4 @@ def rxp_load_psk(window:       'TxWindow',
             print_on_previous_line(reps=4, delay=2)
 
         except (EOFError, KeyboardInterrupt):
-            raise SoftError("PSK verification aborted.", tail_clear=True, delay=1, head=2)
+            raise SoftError("PSK install verification aborted.", tail_clear=True, delay=1, head=2)

@@ -125,7 +125,7 @@ class TestBLAKE2bWrapper(unittest.TestCase):
     These tests ensure the BLAKE2b implementation detects invalid
     parameters.
     """
-    
+
     def setUp(self) -> None:
         """Pre-test actions."""
         self.test_string = b'test_string'
@@ -453,7 +453,7 @@ class TestX448(unittest.TestCase):
 
         # Test
         with self.assertRaises(SystemExit):
-            X448.derive_keys(shared_key, tx_public_key, tx_public_key)
+            X448.derive_subkeys(shared_key, tx_public_key, tx_public_key)
 
     def test_x448_key_derivation(self) -> None:
         # Setup
@@ -462,7 +462,7 @@ class TestX448(unittest.TestCase):
         rx_public_key = os.urandom(TFC_PUBLIC_KEY_LENGTH)
 
         # Test
-        key_set = X448.derive_keys(shared_key, tx_public_key, rx_public_key)
+        key_set = X448.derive_subkeys(shared_key, tx_public_key, rx_public_key)
 
         # Test that correct number of keys were returned
         self.assertEqual(len(key_set), 6)

@@ -27,6 +27,7 @@ import math
 import os
 import random
 import shutil
+import socket
 import subprocess
 import sys
 import time
@@ -276,7 +277,7 @@ def power_off_system() -> None:
     os.system(POWEROFF)
 
 
-def process_arguments() -> Tuple[str, bool, bool]:
+def process_arguments() -> Tuple[str, bool, bool, bool]:
     """Load program-specific settings from command line arguments.
 
     The arguments are determined by the desktop entries and in the
@@ -305,10 +306,16 @@ def process_arguments() -> Tuple[str, bool, bool]:
                         dest='data_diode_sockets',
                         help="use data diode simulator sockets during local testing mode")
 
+    parser.add_argument('-q',
+                        action='store_true',
+                        default=False,
+                        dest='qubes',
+                        help="run TFC in qubes")
+
     args      = parser.parse_args()
     operation = RX if args.operation else TX
 
-    return operation, args.local_test, args.data_diode_sockets
+    return operation, args.local_test, args.data_diode_sockets, args.qubes
 
 
 def readable_size(size: int) -> str:
@@ -477,6 +484,15 @@ def validate_group_name(group_name:   str,            # Name of the group
     return error_msg
 
 
+def validate_ip_address(ip_address: str) -> str:
+    """Validate IP address."""
+    try:
+        socket.inet_aton(ip_address)
+        return ''
+    except socket.error:
+        return 'Invalid IP address'
+
+
 def validate_key_exchange(key_ex: str,  # Key exchange selection to validate
                           *_: Any       # Unused arguments
                           ) -> str:     # Error message if validation failed, else empty string
@@ -530,6 +546,7 @@ def validate_nick(nick: str,                                      # Nick to vali
         error_msg = "Error: Nick cannot be a group name."
 
     return error_msg
+
 
 
 def same_contact_check(onion_pub_key: bytes,

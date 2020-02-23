@@ -217,7 +217,8 @@ def process_add_or_group_remove_member(ts:                'datetime',
                                        header_str:        str,
                                        group_id:          bytes,
                                        messages_to_flask: 'Queue[Tuple[Union[bytes, str], bytes]]',
-                                       remaining:         List[bytes], removable: List[bytes]
+                                       remaining:         List[bytes],
+                                       removable:         List[bytes]
                                        ) -> None:
     """Process group add or remove member packet."""
     packet_str = header_str + b85encode(group_id + b"".join(removable))

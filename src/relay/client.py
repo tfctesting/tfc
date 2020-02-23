@@ -407,8 +407,8 @@ def process_group_management_message(data:              bytes,
 
 def c_req_manager(queues: 'QueueDict', unit_test: bool = False) -> None:
     """Manage incoming contact requests."""
-    existing_contacts = []  # type: List[bytes]
-    contact_requests  = []  # type: List[bytes]
+    existing_contacts  = []  # type: List[bytes]
+    displayed_requests = []  # type: List[bytes]
 
     request_queue = queues[CONTACT_REQ_QUEUE]
     contact_queue = queues[C_REQ_MGMT_QUEUE]
@@ -431,7 +431,7 @@ def c_req_manager(queues: 'QueueDict', unit_test: bool = False) -> None:
                 onion_pub_key = onion_address_to_pub_key(purp_onion_address)
                 if onion_pub_key in existing_contacts:
                     continue
-                if onion_pub_key in contact_requests:
+                if onion_pub_key in displayed_requests:
                     continue
 
                 if show_requests:
@@ -439,7 +439,7 @@ def c_req_manager(queues: 'QueueDict', unit_test: bool = False) -> None:
                     m_print([f"{ts} - New contact request from an unknown TFC account:", purp_onion_address], box=True)
                     account_queue.put(purp_onion_address)
 
-                contact_requests.append(onion_pub_key)
+                displayed_requests.append(onion_pub_key)
 
             if unit_test and queues[UNIT_TEST_QUEUE].qsize() != 0:
                 break

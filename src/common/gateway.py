@@ -36,15 +36,16 @@ from typing   import Any, Dict, Optional, Tuple, Union
 from serial.serialutil import SerialException
 
 from src.common.exceptions   import CriticalError, graceful_exit, SoftError
-from src.common.input        import yes
+from src.common.input        import box_input, yes
 from src.common.misc         import calculate_race_condition_delay, ensure_dir, ignored, get_terminal_width
-from src.common.misc         import separate_trailer
+from src.common.misc         import separate_trailer, validate_ip_address
 from src.common.output       import m_print, phase, print_on_previous_line
 from src.common.reed_solomon import ReedSolomonError, RSCodec
 from src.common.statics      import (BAUDS_PER_BYTE, DIR_USER_DATA, DONE, DST_DD_LISTEN_SOCKET, DST_LISTEN_SOCKET,
                                      GATEWAY_QUEUE, LOCALHOST, LOCAL_TESTING_PACKET_DELAY, MAX_INT, NC,
-                                     PACKET_CHECKSUM_LENGTH, RECEIVER, RELAY, RP_LISTEN_SOCKET, RX,
-                                     SERIAL_RX_MIN_TIMEOUT, SETTINGS_INDENT, SRC_DD_LISTEN_SOCKET, TRANSMITTER, TX)
+                                     QUBES_DST_LISTEN_SOCKET, QUBES_SRC_LISTEN_SOCKET, PACKET_CHECKSUM_LENGTH, RECEIVER,
+                                     RELAY, RP_LISTEN_SOCKET, RX, SERIAL_RX_MIN_TIMEOUT, SETTINGS_INDENT,
+                                     SRC_DD_LISTEN_SOCKET, TRANSMITTER, TX)
 
 if typing.TYPE_CHECKING:
     from multiprocessing import Queue
@@ -81,14 +82,17 @@ class Gateway(object):
     def __init__(self,
                  operation:  str,
                  local_test: bool,
-                 dd_sockets: bool
+                 dd_sockets: bool,
+                 qubes:      bool,
                  ) -> None:
         """Create a new Gateway object."""
-        self.settings  = GatewaySettings(operation, local_test, dd_sockets)
-        self.tx_serial = None  # type: Optional[serial.Serial]
-        self.rx_serial = None  # type: Optional[serial.Serial]
-        self.rx_socket = None  # type: Optional[multiprocessing.connection.Connection]
-        self.tx_socket = None  # type: Optional[multiprocessing.connection.Connection]
+        self.settings   = GatewaySettings(operation, local_test, dd_sockets, qubes)
+        self.tx_serial  = None  # type: Optional[serial.Serial]
+        self.rx_serial  = None  # type: Optional[serial.Serial]
+        self.rx_socket  = None  # type: Optional[multiprocessing.connection.Connection]
+        self.tx_socket  = None  # type: Optional[multiprocessing.connection.Connection]
+        self.txq_socket = None  # type: Optional[socket.socket]
+        self.rxq_socket = None  # type: Optional[socket.socket]
 
         # Initialize Reed-Solomon erasure code handler
         self.rs = RSCodec(2 * self.settings.session_serial_error_correction)
@@ -102,6 +106,11 @@ class Gateway(object):
                 self.client_establish_socket()
             if self.settings.software_operation in [NC, RX]:
                 self.server_establish_socket()
+        elif qubes:
+            if self.settings.software_operation in [TX, NC]:
+                self.qubes_client_establish_socket()
+            if self.settings.software_operation in [NC, RX]:
+                self.qubes_server_establish_socket()
         else:
             self.establish_serial()
 
@@ -157,6 +166,11 @@ class Gateway(object):
                 time.sleep(LOCAL_TESTING_PACKET_DELAY)
             except BrokenPipeError:
                 raise CriticalError("Relay IPC server disconnected.", exit_code=0)
+
+        elif self.txq_socket is not None:
+            udp_port = QUBES_SRC_LISTEN_SOCKET if self.settings.software_operation == TX else QUBES_DST_LISTEN_SOCKET
+            self.txq_socket.sendto(packet, (self.settings.rx_udp_ip, udp_port))
+
         elif self.tx_serial is not None:
             try:
                 self.tx_serial.write(packet)
@@ -179,6 +193,12 @@ class Gateway(object):
                 pass
             except EOFError:
                 raise CriticalError("Relay IPC client disconnected.", exit_code=0)
+
+    def read_qubes_socket(self) -> bytes:
+        """Read packet from Qubes' socket interface."""
+        if self.rxq_socket is None:
+            raise CriticalError("Socket interface has not been initialized.")
+        return self.rxq_socket.recvfrom(1024)[0]
 
     def read_serial(self) -> bytes:
         """Read packet from serial interface.
@@ -215,8 +235,12 @@ class Gateway(object):
 
     def read(self) -> bytes:
         """Read data via socket/serial interface."""
-        data = (self.read_socket() if self.settings.local_testing_mode else self.read_serial())
-        return data
+        if self.settings.local_testing_mode:
+            return self.read_socket()
+        elif self.settings.qubes:
+            return self.read_qubes_socket()
+        else:
+            return self.read_serial()
 
     def add_error_correction(self, packet: bytes) -> bytes:
         """Add error correction to packet that will be output.
@@ -279,6 +303,18 @@ class Gateway(object):
             if self.settings.built_in_serial_interface in sorted(os.listdir('/dev/')):
                 return f'/dev/{self.settings.built_in_serial_interface}'
             raise CriticalError(f"Error: /dev/{self.settings.built_in_serial_interface} was not found.")
+
+    # Qubes
+
+    def qubes_client_establish_socket(self) -> None:
+        """Establish Qubes' socket for outgoing data."""
+        self.txq_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+
+    def qubes_server_establish_socket(self) -> None:
+        """Establish Qubes' socket for incoming data."""
+        udp_port = QUBES_SRC_LISTEN_SOCKET if self.settings.software_operation == NC else QUBES_DST_LISTEN_SOCKET
+        self.rxq_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        self.rxq_socket.bind((self.settings.rx_udp_ip, udp_port))
 
     # Local testing
 
@@ -366,7 +402,8 @@ class GatewaySettings(object):
     def __init__(self,
                  operation:  str,
                  local_test: bool,
-                 dd_sockets: bool
+                 dd_sockets: bool,
+                 qubes:      bool
                  ) -> None:
         """Create a new Settings object.
 
@@ -379,11 +416,13 @@ class GatewaySettings(object):
         self.serial_error_correction   = 5
         self.use_serial_usb_adapter    = True
         self.built_in_serial_interface = 'ttyS0'
+        self.rx_udp_ip                 = '0.0.0.0'
 
         self.software_operation = operation
         self.local_testing_mode = local_test
         self.data_diode_sockets = dd_sockets
 
+        self.qubes    = qubes
         self.all_keys = list(vars(self).keys())
         self.key_list = self.all_keys[:self.all_keys.index('software_operation')]
         self.defaults = {k: self.__dict__[k] for k in self.key_list}
@@ -443,6 +482,13 @@ class GatewaySettings(object):
                 if self.built_in_serial_interface not in sorted(os.listdir('/dev/')):
                     m_print(f"Error: Serial interface /dev/{self.built_in_serial_interface} not found.")
                     self.setup()
+
+        if self.qubes:
+            rx_device      = 'Source' if self.software_operation == TX else 'Destination'
+            self.rx_udp_ip = box_input(f"Enter the IP address of the {rx_device} Computer.",
+                                       expected_len=len('255.255.255.255'),
+                                       validator=validate_ip_address,
+                                       head=1, tail=1)
 
     def store_settings(self) -> None:
         """Store serial settings in JSON format."""
@@ -510,6 +556,14 @@ class GatewaySettings(object):
                     continue
                 if not any(json_dict[key] == f for f in os.listdir('/sys/class/tty')):
                     self.invalid_setting(key, json_dict)
+                    continue
+
+            elif key == 'rx_udp_ip' and self.qubes:
+                if not isinstance(json_dict[key], str):
+                    self.invalid_setting(key, json_dict)
+                    continue
+                if validate_ip_address(json_dict[key]) != '':
+                    self.setup()
                     continue
 
             setattr(self, key, json_dict[key])
