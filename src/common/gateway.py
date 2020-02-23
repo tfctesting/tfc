@@ -486,7 +486,7 @@ class GatewaySettings(object):
         if self.qubes:
             rx_device      = 'Source' if self.software_operation == TX else 'Destination'
             self.rx_udp_ip = box_input(f"Enter the IP address of the {rx_device} Computer.",
-                                       expected_len=len('255.255.255.255'),
+                                       expected_len=50,
                                        validator=validate_ip_address,
                                        head=1, tail=1)
 

@@ -484,7 +484,7 @@ def validate_group_name(group_name:   str,            # Name of the group
     return error_msg
 
 
-def validate_ip_address(ip_address: str) -> str:
+def validate_ip_address(ip_address: str, *_: Any) -> str:
     """Validate IP address."""
     try:
         socket.inet_aton(ip_address)
