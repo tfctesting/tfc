@@ -328,7 +328,7 @@ function install_qubes_tcb {
     sudo python3.7 -m pip download --no-cache-dir -r "/opt/tfc/requirements-venv.txt" --require-hashes --no-deps -d /opt/tfc/
     sudo python3.7 -m pip download --no-cache-dir -r "/opt/tfc/requirements.txt"      --require-hashes --no-deps -d /opt/tfc/
 
-    kill_network_qubes
+    advice_to_kill_internet
 
     verify_files
 
@@ -673,23 +673,12 @@ function kill_network {
 }
 
 
-function kill_network_qubes {
-    # Kill network interfaces to protect the TCB VM from remote compromise.
-    for interface in /sys/class/net/*; do
-        name=$(basename "${interface}")
-        if [[ $name != "lo" ]]; then
-            echo "Disabling network interface ${name}"
-            sudo ifconfig "${name}" down
-        fi
-    done
-
-    sleep 1
+function advice_to_kill_internet {
     clear
     c_echo ''
-    c_echo " This computer needs to be air gapped. The installer has "
-    c_echo "disabled network interfaces as the first line of defense."
+    c_echo " This VM needs to be cut from the Internet."
     c_echo ''
-    c_echo "Edit the sys-firewall rules and press any key to continue."
+    c_echo "Edit the sys-firewall VM rules as soon as possible. Press any key to continue."
     read -n 1 -s -p ''
     echo -e '\n'
 }
