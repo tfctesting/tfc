@@ -188,7 +188,7 @@ class MasterKey(object):
         while kd_time < MIN_KEY_DERIVATION_TIME:
             print_on_previous_line()
             phase(f"Trying time cost {time_cost+1}")
-            time_cost += 1
+            time_cost *= 2
             master_key, kd_time = self.timed_key_derivation(password, salt, time_cost, memory_cost, parallelism)
             phase(f"{kd_time:.1f}s", done=True)
 
