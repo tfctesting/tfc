@@ -356,11 +356,7 @@ function install_qubes_tcb {
     sudo rm    /opt/tfc/tfc.yml
     sudo rm    /opt/tfc/${VIRTUALENV}
 
-    # Add alias
-    # echo -e "alias tfc-transmitter='cd /opt/tfc && source venv_tcb/bin/activate && python3.7 tfc.py -q'\n" >> $HOME/.bashrc
-    # echo -e "alias tfc-receiver='cd /opt/tfc && source venv_tcb/bin/activate && python3.7 tfc.py -r -q'\n" >> $HOME/.bashrc
-
-    install_complete "Installation of TFC on this device is now complete."
+    install_complete_qubes "Installation of TFC on this device is now complete."
 }
 
 
@@ -508,10 +504,7 @@ function install_qubes_relay {
     sudo rm    "/opt/tfc/tfc.yml"
     sudo rm    "/opt/tfc/${VIRTUALENV}"
 
-    # Add alias
-    # echo -e "alias tfc-relay='cd /opt/tfc && source venv_relay/bin/activate && python3.7 relay.py -q'\n" >> $HOME/.bashrc
-
-    install_complete "Installation of the TFC Relay configuration is now complete."
+    install_complete_qubes "Installation of the TFC Relay configuration is now complete."
 }
 
 
@@ -791,6 +784,20 @@ function install_complete {
 
     kill -9 $PPID
 }
+
+function install_complete_qubes {
+    # Notify the user that the installation is complete.
+    clear
+    c_echo ''
+    c_echo "$*"
+    c_echo ''
+    c_echo "Press any key to close the installer."
+    read -n 1 -s -p ''
+    clear
+
+    exec bash
+}
+
 
 
 function dpkg_check {
