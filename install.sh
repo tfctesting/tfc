@@ -851,10 +851,11 @@ sudoer_check
 sudo_pwd=''
 
 case $1 in
-    tcb   ) install_tcb;;
-    qtcb  ) install_qubes_tcb;;
-    relay ) install_relay;;
-    local ) install_local_test;;
-    dev   ) install_developer;;
-    *     ) arg_error;;
+    tcb    ) install_tcb;;
+    qtcb   ) install_qubes_tcb;;
+    relay  ) install_relay;;
+    qrelay ) install_qubes_relay;;
+    local  ) install_local_test;;
+    dev    ) install_developer;;
+    *      ) arg_error;;
 esac
