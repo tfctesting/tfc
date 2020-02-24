@@ -82,12 +82,12 @@ function verify_files {
     compare_digest 72e04fe07ac400ca70da59d196119db985d9e74b99b0fd735be20a534bd10084287a52aee46c6467703fe5e14609729db229112d53ce3156838c80b4f159df0a launchers/ tfc-qubes-relay
     compare_digest 89e23c4d9e7d4402d7dde3d905fe0c3a3fd5ff8c09c33033f95d203ae9f1f53fa26d20c913820ff16764e9b6e0d558f8f332f9657b2e92eb77134576e683e1a9 launchers/ tfc-qubes-transmitter
     compare_digest c5dfa3e4c94c380b0fcf613f57b5879a0d57d593b9b369da3afde37609a9fb11051d71832285d3372f3df6c5dbe96d00a39734fbddf138ab0c04d0f1f752826f launchers/ TFC-RP.desktop
-    compare_digest c7e9a6cf6c368907449b40763f02729f697ba524289b480cbe56a573ebb3ae688caad6b525fb60b0ecc31ed96de813bf6508f5332b65299039c0050525da2bdd launchers/ TFC-RP-Qubes.desktop
+    compare_digest 676c5c8a566d2e5eb3d710d87754ac1328e96af01bb6d0777df2440daa0c5e387a2d0174354ac007018e2ee7a2e0aff992a7a1881f74616961f6ebfffc29fede launchers/ TFC-RP-Qubes.desktop
     compare_digest c5dfa3e4c94c380b0fcf613f57b5879a0d57d593b9b369da3afde37609a9fb11051d71832285d3372f3df6c5dbe96d00a39734fbddf138ab0c04d0f1f752826f launchers/ TFC-RP-Tails.desktop
     compare_digest d109dc200709d9565a076d7adcc666e6ca4b39a2ed9eff0bb7f0beff2d13b368cc008a0bbb9a639e27f6881b3f8a18a264861be98a5b96b67686904ba70e70f2 launchers/ TFC-RxP.desktop
-    compare_digest f302ef40a5bc8922e25efc6251a6b4d521b525eb36f97eb77285be68b1cd5c0df4084b2aa65ffbe7937f23c84cf75a3e1f1eaaf75b7a38fe656e41471630e0f8 launchers/ TFC-RxP-Qubes.desktop
+    compare_digest a3c39e047e25a761440b7159753a36dfde000468fb0a83ed877b78ed0f046b2800b6a91bc0a3a652c2491f7352f1e4007a6c088de1dbb0be531f7a20f559f8d0 launchers/ TFC-RxP-Qubes.desktop
     compare_digest aa1c23f195bcf158037c075157f12564d92090ed29d9b413688cf0382f016fad4f59cf9755f74408829c444cd1a2db56c481a1b938c6e3981e6a73745c65f406 launchers/ TFC-TxP.desktop
-    compare_digest 4e7e449d96ab7f436fec618ad9c0d4ba4b695a56d28c6628d92a1e8c1fc19b8ecdcbed8f61d31c1212f886a3b43bf15f4c890b91c6b80e952c78f082fb5e5a23 launchers/ TFC-TxP-Qubes.desktop
+    compare_digest 9baba6268546278bc60f3488256fb366c8eaf358a14d02343dacdce4463fcde4bbcdf419bcfcf054d170217467a6274dc215261200f0d08e5ced67c7da7ed20f launchers/ TFC-TxP-Qubes.desktop
 
     compare_digest 3ee90ee305382d80da801f047a6e58e5b763f9f6bc08dce531d5c620f2748c6bba59a1528eee5d721decb8e724f53b28fc7609f5b20472f679f554b78b5d4cc6 src/ __init__.py
     compare_digest 3ee90ee305382d80da801f047a6e58e5b763f9f6bc08dce531d5c620f2748c6bba59a1528eee5d721decb8e724f53b28fc7609f5b20472f679f554b78b5d4cc6 src/common/ __init__.py
@@ -318,17 +318,12 @@ function steps_before_network_kill {
 }
 
 
-function install_qubes_tcb {
-    # Qubes TCB installation configuration for Debian 10 domains.
-    sudo apt update
-    sudo apt install libssl-dev python3-pip python3-tk --yes
+function install_qubes_src {
+    # Qubes Source Computer VM installation configuration for Debian 10 domains.
 
-    sudo git clone --depth 1 https://github.com/tfctesting/tfc.git /opt/tfc
+    steps_before_network_kill
 
-    sudo python3.7 -m pip download --no-cache-dir -r "/opt/tfc/requirements-venv.txt" --require-hashes --no-deps -d /opt/tfc/
-    sudo python3.7 -m pip download --no-cache-dir -r "/opt/tfc/requirements.txt"      --require-hashes --no-deps -d /opt/tfc/
-
-    advice_to_kill_internet
+    qubes_src_firewall_config
 
     verify_files
 
@@ -343,8 +338,40 @@ function install_qubes_tcb {
 
     sudo mv /opt/tfc/tfc.png                         /usr/share/pixmaps/
     sudo mv /opt/tfc/launchers/TFC-TxP-Qubes.desktop /usr/share/applications/
-    sudo mv /opt/tfc/launchers/TFC-RxP-Qubes.desktop /usr/share/applications/
     sudo mv /opt/tfc/launchers/tfc-qubes-transmitter /usr/bin/tfc-transmitter
+
+    # Remove unnecessary files
+    remove_common_files      "sudo"
+    process_tcb_dependencies "rm"
+    sudo rm -r /opt/tfc/src/relay/
+    sudo rm    /opt/tfc/dd.py
+    sudo rm    /opt/tfc/relay.py
+    sudo rm    /opt/tfc/tfc.yml
+    sudo rm    /opt/tfc/${VIRTUALENV}
+
+    install_complete_qubes
+}
+
+
+function install_qubes_dst {
+    # Qubes Destination Computer VM installation configuration for Debian 10 domains.
+    steps_before_network_kill
+
+    qubes_dst_firewall_config
+
+    verify_files
+
+    create_user_data_dir
+
+    sudo python3.7 -m pip install "/opt/tfc/${VIRTUALENV}"
+    sudo python3.7 -m virtualenv  "/opt/tfc/venv_tcb" --system-site-packages --never-download
+
+    . /opt/tfc/venv_tcb/bin/activate
+    process_tcb_dependencies "python3.7 -m pip install"
+    deactivate
+
+    sudo mv /opt/tfc/tfc.png                         /usr/share/pixmaps/
+    sudo mv /opt/tfc/launchers/TFC-RxP-Qubes.desktop /usr/share/applications/
     sudo mv /opt/tfc/launchers/tfc-qubes-receiver    /usr/bin/tfc-receiver
 
     # Remove unnecessary files
@@ -356,7 +383,119 @@ function install_qubes_tcb {
     sudo rm    /opt/tfc/tfc.yml
     sudo rm    /opt/tfc/${VIRTUALENV}
 
-    install_complete_qubes "Installation of TFC on this device is now complete."
+    install_complete_qubes
+}
+
+
+function install_qubes_relay {
+    # Qubes Networked Computer VM installation configuration for Debian 10 domains.
+    steps_before_network_kill
+
+    verify_files
+    create_user_data_dir
+
+    install_virtualenv
+    sudo python3.7 -m virtualenv /opt/tfc/venv_relay --system-site-packages
+
+    . /opt/tfc/venv_relay/bin/activate
+    sudo torsocks python3.7 -m pip install -r /opt/tfc/requirements-relay.txt --require-hashes --no-deps
+    deactivate
+
+    sudo mv /opt/tfc/tfc.png                        /usr/share/pixmaps/
+    sudo mv /opt/tfc/launchers/TFC-RP-Qubes.desktop /usr/share/applications/
+    sudo mv /opt/tfc/launchers/tfc-qubes-relay      /usr/bin/tfc-relay
+
+    # Remove unnecessary files
+    remove_common_files "sudo"
+    sudo rm -r "/opt/tfc/src/receiver/"
+    sudo rm -r "/opt/tfc/src/transmitter/"
+    sudo rm    "/opt/tfc/dd.py"
+    sudo rm    "/opt/tfc/tfc.py"
+    sudo rm    "/opt/tfc/tfc.yml"
+    sudo rm    "/opt/tfc/${VIRTUALENV}"
+
+    install_complete_qubes
+}
+
+
+function get_ip {
+    # Get IP address from the user.
+    ip=$(zenity --entry --title="TFC Installer" --text="Enter the IP-address of the $1:")
+    if [[ ${ip} =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+      echo ${ip}
+      return
+    else
+      zenity --info --title='TFC installer' --text='Invalid IP'
+      get_ip
+    fi
+}
+
+
+function qubes_src_firewall_config {
+    # Edit Source Computer VM firewall rules to block all incoming connections, and to
+    # only allow UDP packets to Networked Computer's TFC port.
+
+    # Create backup of the current rc.config file just in case
+    mv /rw/config/rc.local{,.backup."$(date +%Y-%m-%d-%H_%M_%S)"}
+
+    net_ip=$(get_ip "Networked Computer VM")
+
+    # Add firewall rules that take effect immediately
+    iptables --flush
+    iptables -t filter -P INPUT DROP
+    iptables -t filter -P OUTPUT DROP
+    iptables -t filter -P FORWARD DROP
+    iptables -I OUTPUT -d ${net_ip} -p udp --dport 2063 -j ACCEPT
+
+    # Make firewall rules persistent
+    echo "iptables --flush"                                              | sudo tee -a /rw/config/rc.local
+    echo "iptables -t filter -P INPUT DROP"                              | sudo tee -a /rw/config/rc.local
+    echo "iptables -t filter -P OUTPUT DROP"                             | sudo tee -a /rw/config/rc.local
+    echo "iptables -t filter -P FORWARD DROP"                            | sudo tee -a /rw/config/rc.local
+    echo "iptables -I OUTPUT -d ${net_ip} -p udp --dport 2063 -j ACCEPT" | sudo tee -a /rw/config/rc.local
+}
+
+
+function qubes_dst_firewall_config {
+    # Edit Destination Computer VM's firewall rules to block all outgoing connections, and
+    # to only allow UDP packets from Networked Computer VM to Receiver Programs' port.
+
+    # Create backup of the current rc.config file just in case
+    mv /rw/config/rc.local{,.backup."$(date +%Y-%m-%d-%H_%M_%S)"}
+
+    net_ip=$(get_ip "Networked Computer VM")
+
+    # Add firewall rules that take effect immediately
+    iptables --flush
+    iptables -t filter -P INPUT DROP
+    iptables -t filter -P OUTPUT DROP
+    iptables -t filter -P FORWARD DROP
+    iptables -I INPUT -s ${net_ip} -p udp --dport 2064 -j ACCEPT
+
+    # Make firewall rules persistent
+    echo "iptables --flush"                                             | sudo tee -a /rw/config/rc.local
+    echo "iptables -t filter -P INPUT DROP"                             | sudo tee -a /rw/config/rc.local
+    echo "iptables -t filter -P OUTPUT DROP"                            | sudo tee -a /rw/config/rc.local
+    echo "iptables -t filter -P FORWARD DROP"                           | sudo tee -a /rw/config/rc.local
+    echo "iptables -I INPUT -s ${net_ip} -p udp --dport 2064 -j ACCEPT" | sudo tee -a /rw/config/rc.local
+}
+
+
+function qubes_net_firewall_config {
+    # Edit Networked Computer VM's firewall rules to accept UDP packets from Source
+    # Computer VM to the Relay Program's port.
+
+    # Create backup of the current rc.config file just in case
+    mv /rw/config/rc.local{,.backup."$(date +%Y-%m-%d-%H_%M_%S)"}
+
+    src_ip=$(get_ip "Source Computer VM")
+    net_ip=$(get_ip "Networked Computer VM")
+
+    # Add firewall rules that take effect immediately
+    iptables -I INPUT -s ${src_ip} -d ${net_ip} -p udp --dport 2063 -j ACCEPT
+
+    # Make firewall rules persistent
+    echo "iptables -I INPUT -s ${src_ip} -d ${net_ip} -p udp --dport 2063 -j ACCEPT" | sudo tee -a /rw/config/rc.local
 }
 
 
@@ -474,40 +613,6 @@ function install_developer {
 }
 
 
-function install_qubes_relay {
-    # Qubes Relay Program installation configuration for Debian 10 domains.
-    sudo apt update
-    sudo apt install libssl-dev python3-pip python3-tk --yes
-    sudo git clone --depth 1 https://github.com/tfctesting/tfc.git /opt/tfc
-    sudo python3.7 -m pip download --no-cache-dir -r "/opt/tfc/requirements-venv.txt" --require-hashes --no-deps -d /opt/tfc/
-
-    verify_files
-    create_user_data_dir
-
-    install_virtualenv_qubes
-    sudo python3.7 -m virtualenv /opt/tfc/venv_relay --system-site-packages
-
-    . /opt/tfc/venv_relay/bin/activate
-    sudo python3.7 -m pip install -r /opt/tfc/requirements-relay.txt --require-hashes --no-deps
-    deactivate
-
-    sudo mv /opt/tfc/tfc.png                        /usr/share/pixmaps/
-    sudo mv /opt/tfc/launchers/TFC-RP-Qubes.desktop /usr/share/applications/
-    sudo mv /opt/tfc/launchers/tfc-qubes-relay      /usr/bin/tfc-relay
-
-    # Remove unnecessary files
-    remove_common_files "sudo"
-    sudo rm -r "/opt/tfc/src/receiver/"
-    sudo rm -r "/opt/tfc/src/transmitter/"
-    sudo rm    "/opt/tfc/dd.py"
-    sudo rm    "/opt/tfc/tfc.py"
-    sudo rm    "/opt/tfc/tfc.yml"
-    sudo rm    "/opt/tfc/${VIRTUALENV}"
-
-    install_complete_qubes "Installation of the TFC Relay configuration is now complete."
-}
-
-
 function install_relay_ubuntu {
     # Install TFC Relay configuration on Networked Computer.
     steps_before_network_kill
@@ -617,14 +722,6 @@ function install_virtualenv {
 }
 
 
-function install_virtualenv_qubes {
-    # Some distros want virtualenv installed as sudo and other do
-    # not. Install both to improve the chances of compatibility.
-    sudo python3.7 -m pip install -r /opt/tfc/requirements-venv.txt --require-hashes --no-deps
-    python3.7 -m pip install -r /opt/tfc/requirements-venv.txt --require-hashes --no-deps
-}
-
-
 function read_sudo_pwd {
     # Cache the sudo password so that Debian doesn't keep asking for it
     # during the installation (it won't be stored on disk).
@@ -668,17 +765,6 @@ function kill_network {
     c_echo "disabled network interfaces as the first line of defense."
     c_echo ''
     c_echo "Disconnect the Ethernet cable and press any key to continue."
-    read -n 1 -s -p ''
-    echo -e '\n'
-}
-
-
-function advice_to_kill_internet {
-    clear
-    c_echo ''
-    c_echo " This VM needs to be cut from the Internet."
-    c_echo ''
-    c_echo "Edit the sys-firewall VM rules as soon as possible. Press any key to continue."
     read -n 1 -s -p ''
     echo -e '\n'
 }
@@ -774,11 +860,12 @@ function install_complete {
     kill -9 $PPID
 }
 
+
 function install_complete_qubes {
     # Notify the user that the installation is complete.
     clear
     c_echo ''
-    c_echo "$*"
+    c_echo "Installation of TFC on this Qube is now complete."
     c_echo ''
     c_echo "Press any key to close the installer."
     read -n 1 -s -p ''
@@ -786,7 +873,6 @@ function install_complete_qubes {
 
     exec bash
 }
-
 
 
 function dpkg_check {
@@ -819,6 +905,9 @@ function arg_error {
     echo    "  tcb      Install Transmitter/Receiver Program (*buntu 19.10+ / Debian 10 / PureOS 9.0+ )"
     echo    "  relay    Install Relay Program                (*buntu 19.10+ / Debian 10 / PureOS 9.0+ / Tails 4.0+)"
     echo -e "  local    Install insecure local testing mode  (*buntu 19.10+ / Debian 10 / PureOS 9.0+ )\n"
+    echo    "  qsrc     Install Transmitter Program          (Qubes 4.0.3)"
+    echo    "  qdst     Install Receiver Program             (Qubes 4.0.3)"
+    echo -e "  qnet     Install Relay Program                (Qubes 4.0.3)\n"
     exit 1
 }
 
@@ -881,10 +970,11 @@ sudo_pwd=''
 
 case $1 in
     tcb    ) install_tcb;;
-    qtcb   ) install_qubes_tcb;;
     relay  ) install_relay;;
-    qrelay ) install_qubes_relay;;
     local  ) install_local_test;;
+    qdst   ) install_qubes_src;;
+    qsrc   ) install_qubes_dst;;
+    qnet   ) install_qubes_relay;;
     dev    ) install_developer;;
     *      ) arg_error;;
 esac
