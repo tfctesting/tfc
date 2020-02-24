@@ -387,9 +387,11 @@ function install_qubes_dst {
 }
 
 
-function install_qubes_relay {
+function install_qubes_net {
     # Qubes Networked Computer VM installation configuration for Debian 10 domains.
     steps_before_network_kill
+
+    qubes_net_firewall_config
 
     verify_files
     create_user_data_dir
@@ -436,7 +438,7 @@ function qubes_src_firewall_config {
     # only allow UDP packets to Networked Computer's TFC port.
 
     # Create backup of the current rc.config file just in case
-    mv /rw/config/rc.local{,.backup."$(date +%Y-%m-%d-%H_%M_%S)"}
+    sudo mv /rw/config/rc.local{,.backup."$(date +%Y-%m-%d-%H_%M_%S)"}
 
     net_ip=$(get_ip "Networked Computer VM")
 
@@ -974,7 +976,7 @@ case $1 in
     local  ) install_local_test;;
     qdst   ) install_qubes_src;;
     qsrc   ) install_qubes_dst;;
-    qnet   ) install_qubes_relay;;
+    qnet   ) install_qubes_net;;
     dev    ) install_developer;;
     *      ) arg_error;;
 esac
