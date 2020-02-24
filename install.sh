@@ -320,13 +320,10 @@ function steps_before_network_kill {
 
 function install_qubes_src {
     # Qubes Source Computer VM installation configuration for Debian 10 domains.
-
     steps_before_network_kill
-
     qubes_src_firewall_config
 
     verify_files
-
     create_user_data_dir
 
     sudo python3.7 -m pip install "/opt/tfc/${VIRTUALENV}"
@@ -356,11 +353,9 @@ function install_qubes_src {
 function install_qubes_dst {
     # Qubes Destination Computer VM installation configuration for Debian 10 domains.
     steps_before_network_kill
-
     qubes_dst_firewall_config
 
     verify_files
-
     create_user_data_dir
 
     sudo python3.7 -m pip install "/opt/tfc/${VIRTUALENV}"
@@ -390,7 +385,6 @@ function install_qubes_dst {
 function install_qubes_net {
     # Qubes Networked Computer VM installation configuration for Debian 10 domains.
     steps_before_network_kill
-
     qubes_net_firewall_config
 
     verify_files
@@ -424,11 +418,11 @@ function get_ip {
     # Get IP address from the user.
     ip=$(zenity --entry --title="TFC Installer" --text="Enter the IP-address of the $1:")
     if [[ ${ip} =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-      echo ${ip}
-      return
+        echo ${ip}
+        return
     else
-      zenity --info --title='TFC installer' --text='Invalid IP'
-      get_ip
+        zenity --info --title='TFC installer' --text='Invalid IP'
+        get_ip
     fi
 }
 
