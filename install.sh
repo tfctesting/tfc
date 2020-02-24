@@ -455,6 +455,7 @@ function qubes_src_firewall_config {
     echo "iptables -t filter -P OUTPUT DROP"                             | sudo tee -a /rw/config/rc.local
     echo "iptables -t filter -P FORWARD DROP"                            | sudo tee -a /rw/config/rc.local
     echo "iptables -I OUTPUT -d ${net_ip} -p udp --dport 2063 -j ACCEPT" | sudo tee -a /rw/config/rc.local
+    sudo chmod a+x /rw/config/rc.local
 }
 
 
@@ -480,6 +481,7 @@ function qubes_dst_firewall_config {
     echo "iptables -t filter -P OUTPUT DROP"                            | sudo tee -a /rw/config/rc.local
     echo "iptables -t filter -P FORWARD DROP"                           | sudo tee -a /rw/config/rc.local
     echo "iptables -I INPUT -s ${net_ip} -p udp --dport 2064 -j ACCEPT" | sudo tee -a /rw/config/rc.local
+    sudo chmod a+x /rw/config/rc.local
 }
 
 
@@ -488,7 +490,7 @@ function qubes_net_firewall_config {
     # Computer VM to the Relay Program's port.
 
     # Create backup of the current rc.config file just in case
-    sudo mv /rw/config/rc.local{,.backup."$(date +%Y-%m-%d-%H_%M_%S)"}
+    sudo cp /rw/config/rc.local{,.backup."$(date +%Y-%m-%d-%H_%M_%S)"}
 
     src_ip=$(get_ip "Source Computer VM")
     net_ip=$(get_ip "Networked Computer VM")
@@ -498,6 +500,7 @@ function qubes_net_firewall_config {
 
     # Make firewall rules persistent
     echo "iptables -I INPUT -s ${src_ip} -d ${net_ip} -p udp --dport 2063 -j ACCEPT" | sudo tee -a /rw/config/rc.local
+    sudo chmod a+x /rw/config/rc.local
 }
 
 
