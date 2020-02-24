@@ -874,6 +874,7 @@ function install_complete_qubes {
     clear
 
     exec bash
+    cd $HOME
 }
 
 
