@@ -17,14 +17,18 @@
 # along with TFC. If not, see <https://www.gnu.org/licenses/>.
 
 # PIP dependency file names
+APPDIRS=appdirs-1.4.3-py2.py3-none-any.whl
 ARGON2=argon2_cffi-19.2.0-cp34-abi3-manylinux1_x86_64.whl
 CERTIFI=certifi-2019.11.28-py2.py3-none-any.whl
-CFFI=cffi-1.13.2-cp37-cp37m-manylinux1_x86_64.whl
+CFFI=cffi-1.14.0-cp37-cp37m-manylinux1_x86_64.whl
 CHARDET=chardet-3.0.4-py2.py3-none-any.whl
 CLICK=Click-7.0-py2.py3-none-any.whl
 CRYPTOGRAPHY=cryptography-2.8-cp34-abi3-manylinux1_x86_64.whl
+DISTLIB=distlib-0.3.0.zip
+FILELOCK=filelock-3.0.12-py3-none-any.whl
 FLASK=Flask-1.1.1-py2.py3-none-any.whl
-IDNA=idna-2.8-py2.py3-none-any.whl
+IDNA=idna-2.9-py2.py3-none-any.whl
+IMPORTLIB_METADATA=importlib_metadata-1.5.0-py2.py3-none-any.whl
 ITSDANGEROUS=itsdangerous-1.1.0-py2.py3-none-any.whl
 JINJA2=Jinja2-2.11.1-py2.py3-none-any.whl
 MARKUPSAFE=MarkupSafe-1.1.1-cp37-cp37m-manylinux1_x86_64.whl
@@ -32,13 +36,14 @@ PYCPARSER=pycparser-2.19.tar.gz
 PYNACL=PyNaCl-1.3.0-cp34-abi3-manylinux1_x86_64.whl
 PYSERIAL=pyserial-3.4-py2.py3-none-any.whl
 PYSOCKS=PySocks-1.7.1-py3-none-any.whl
-REQUESTS=requests-2.22.0-py2.py3-none-any.whl
-SETUPTOOLS=setuptools-45.1.0-py3-none-any.whl
+REQUESTS=requests-2.23.0-py2.py3-none-any.whl
+SETUPTOOLS=setuptools-45.2.0-py3-none-any.whl
 SIX=six-1.14.0-py2.py3-none-any.whl
 # STEM=stem-1.8.0.tar.gz
 URLLIB3=urllib3-1.25.8-py2.py3-none-any.whl
-VIRTUALENV=virtualenv-16.7.9-py2.py3-none-any.whl
-WERKZEUG=Werkzeug-0.16.1-py2.py3-none-any.whl
+VIRTUALENV=virtualenv-20.0.5-py2.py3-none-any.whl
+WERKZEUG=Werkzeug-1.0.0-py2.py3-none-any.whl
+ZIPP=zipp-3.0.0-py3-none-any.whl
 
 
 function compare_digest {
@@ -56,8 +61,8 @@ function compare_digest {
 function verify_tcb_requirements_files {
     # To minimize the time TCB installer configuration stays online, only
     # the requirements files are authenticated between downloads.
-    compare_digest 8cb58c52af4481bc0be13dcda4db00456f7522934f185c216dcfe3ded794e5a35ecf7fa3e6417d7cbb477c0b3c59606a1c858b0b17d46ba6453ed71522fd976e '' requirements.txt
-    compare_digest 4f7372efb604ca5d45f8f8d76d0b840f68c5e2401b09b9824d6a0fc34291ceffbd0ebf516735e2ac5244681628ed2bd6fca1405f0c6d463bf869061bd6f6cd29 '' requirements-venv.txt
+    compare_digest eca1997b9abf71010f4373e17e87b1131e72c7395d6d8a86182ffb52b208f4058b3d59f33f022023ce3e6c5f53884d682a985e9908ff2c2958817b3427cfd19d '' requirements.txt
+    compare_digest e84274ff60380fc7735c7c2756e7afa0300e1524d95dd5b5d8ec68ced2f79c5dc4fa9d9aafa09d7c4dbfa40a2db7cf7affc4861081aeda4f464172bce27cd788 '' requirements-venv.txt
 }
 
 
@@ -67,10 +72,10 @@ function verify_files {
     compare_digest d361e5e8201481c6346ee6a886592c51265112be550d5224f1a7a6e116255c2f1ab8788df579d9b8372ed7bfd19bac4b6e70e00b472642966ab5b319b99a2686 '' LICENSE
     compare_digest 4a239b91b2626375255fbf4202a4bf49ea248832b65d69e00530d7cec88e489466508aeb1ff8c8ef0f138819500c4fde2010207ebe3e289c36bc201df55d3c47 '' LICENSE-3RD-PARTY
     compare_digest a6dad2efad1390944c5f00249fba40ddaff244ffabc60e837344ce3587a91559a792ac78455fb1a1e3b516d95ffbbfebab7b2d2d878c3700c5eed8483bc9e994 '' relay.py
-    compare_digest 2bd7f8925af923c44b11ef1a1bdb530c0ee4098066b06cbf334680756332d83f1dcda2e5f6e377b839cc70202f8e32b6387201e42d2618c68453e7cbd66a7e64 '' requirements-dev.txt
-    compare_digest 89eb610ad4b41d36f4f02c892e40e35fbe6567ff1e5523511bc87c0bc0a0838bf463a58a87a6389f907bb9b5fffd289ad95a92854d52ded028f908e946db1824 '' requirements-relay.txt
-    compare_digest e8cd32a91370b6b4dd306391a3b78488f6a0f467dcd82387749d499cd6beb13b50ba01be9ceed2fe5620595640ecec3e43dbb192b8732e4943f7a5a43f601407 '' requirements-relay-tails.txt
-    compare_digest 89e82f1f1b1a4d9f3d1432c2988c00f70d2cc1b5e670f50666d189817115bac7b1e15331dc243d1f0364d7d283a9d25c9982ee7ba90563b29bdf41986e734b50 '' requirements-setuptools.txt
+    compare_digest 563f4acff5fd30e27cc3a318c1867d8d9cabe1d6ee48a369c31e55d8312ec69ccdd430b51f88cbc3e072a6bfc0681112c3b7001244cbbdd37ca33490d888916b '' requirements-dev.txt
+    compare_digest 038aacbab88ba9465d20995e5286734eb67c173a2b4166e26e267d55f41f834962a2d8d6365156637fafaed5e6e688c7cd2246210b336de215f73957d284127f '' requirements-relay.txt
+    compare_digest 5fd48bb377c826639d1a2f75cc72c5b34d6c2f5683a9e655878c049708a73471949847e0156f8524706d629bdb1d82998fa7f75819874949c34e5a3cc64f61e0 '' requirements-relay-tails.txt
+    compare_digest 1432c2f098b1e656a597cbcfcceef00e2cda1897242f2a9316182fffff55bd64ea974534756200ec878741cd8de12b46b4b05a39ed550ad3997d111a6176f16f '' requirements-setuptools.txt
     compare_digest 79f8272a2ab122a48c60630c965cd9d000dcafabf5ee9d69b1c33c58ec321feb17e4654dbbbf783cc8868ccdfe2777d60c6c3fc9ef16f8264d9fcf43724e83c2 '' tfc.png
     compare_digest 2e6be3bfab2aa1c46d5ea43ca0e4f9aac7b3f8bb0a2e09b733bd840729270d0b7f075df4cd23220590b4a9bdd6657ca3f4a8cf1542c584ae61df7c16913ae7b8 '' tfc.py
     compare_digest 7ae1c2a393d96761843bea90edd569244bfb4e0f9943e68a4549ee46d93180d26d4101c2471c1a37785ccdfaef45eedecf15057c0a9cc6c056460c5f9a69d37b '' tfc.yml
@@ -196,7 +201,14 @@ function process_tails_dependencies {
 
 function move_tails_dependencies {
     # Move Tails dependencies in batch.
-    t_sudo mv "$HOME/${VIRTUALENV}" "/opt/tfc/"
+    t_sudo mv "$HOME/${VIRTUALENV}"         "/opt/tfc/"
+    t_sudo mv "$HOME/${APPDIRS}"            "/opt/tfc/"
+    t_sudo mv "$HOME/${DISTLIB}"            "/opt/tfc/"
+    t_sudo mv "$HOME/${FILELOCK}"           "/opt/tfc/"
+    t_sudo mv "$HOME/${IMPORTLIB_METADATA}" "/opt/tfc/"
+    t_sudo mv "$HOME/${SIX}"                "/opt/tfc/"
+    t_sudo mv "$HOME/${ZIPP}"               "/opt/tfc/"
+
     t_sudo mv "$HOME/${PYSERIAL}"   "/opt/tfc/"
     # t_sudo mv "$HOME/${STEM}"       "/opt/tfc/"
     t_sudo mv "$HOME/${PYSOCKS}"    "/opt/tfc/"
@@ -232,19 +244,26 @@ function verify_tails_dependencies {
     # first download to $HOME, move the files to /opt/tfc, and then
     # perform additional hash verification
     compare_digest f4e7148f1de50fa2e69061e72db211085fc2f44007de4d18ee02a20d34bca30a00d2fe56ff6f3132e696c3f6efd4151863f26dac4c1d43e87b597c47a51c52ad '' ${VIRTUALENV}
+    compare_digest b79e9fa76eadee595fe47ea7efd35c4cc72f058a9ed16a95cfa4d91a52c330efba50df7a9926900bbced229cca7bbfb05bbf0a8ee1d46bac2362c98ab9a5154d '' ${APPDIRS}
+    compare_digest 6f910a9607569c9023a19aee35be15cf8521ec7c07c5d478e6d555a301d024a2ee1db48562707b238a72c631d75d9dc154d38b39ed51746b66c938ac40671e60 '' ${DISTLIB}
+    compare_digest a6e7e35921ce8f2f8e79a296ea79a9c3515ff6dd7e777d7892fe4988594f1b3a442a68ffb89cf64530b90a32ceeea00e4ab9069bb697629ab4eb7262c68d1b0f '' ${SIX}
+    compare_digest 53e51d4b75c1df19fcb6b32e57fa73ffcb00eede86fee7ac9634f02661360538a74d3546b65a641b68ee84c0d78293fe03d09b65cb85359780822b56f813b926 '' ${IMPORTLIB_METADATA}
+    compare_digest d13edd50779bca9842694e0da157ca1fdad9d28166771275049f41dea4b8d8466fc5604b610b6ad64552cdf4c1d3cada9977ca37c6b775c4cc92f333709e8ea3 '' ${FILELOCK}
+    compare_digest b1970b23f7c3f51da5e1b7825d4e6062b62bf2e908148f4b84eb70ba47e44b2873caba86536b23289fb986f04c9d617faa10541f5c25ad3885057d5920fdb98b '' ${ZIPP}
+
     compare_digest 8333ac2843fd136d5d0d63b527b37866f7d18afc3bb33c4938b63af077492aeb118eb32a89ac78547f14d59a2adb1e5d00728728275de62317da48dadf6cdff9 '' ${PYSERIAL}
     # compare_digest a275f59bba650cb5bb151cf53fb1dd820334f9abbeae1a25e64502adc854c7f54c51bc3d6c1656b595d142fc0695ffad53aab3c57bc285421c1f4f10c9c3db4c '' ${STEM}
     compare_digest 313b954102231d038d52ab58f41e3642579be29f827135b8dd92c06acb362effcb0a7fd5f35de9273372b92d9fe29f38381ae44f8b41aa90d2564d6dd07ecd12 '' ${PYSOCKS}
 
     # Requests
     compare_digest f7fd3b54b7c555c0e74eb445e543763d233b5c6f8021ccf46a45d452c334953276d43ecd8f3d0eafefa35103a7d1874e291216fc9a41362eb6f1250a2a670f16 '' ${URLLIB3}
-    compare_digest fb07dbec1de86efbad82a4f73d98123c59b083c1f1277445204bef75de99ca200377ad2f1db8924ae79b31b3dd984891c87d0a6344ec4d07a0ddbbbc655821a3 '' ${IDNA}
+    compare_digest be96b782728404acec374f446b11811f8e76d5ed42d4673a07e883220f5ba2a099a8124cda5898c3f5da7d92b87b36127e8fd42e9edb240b587a380ed73cce93 '' ${IDNA}
     compare_digest bfae58c8ea19c87cc9c9bf3d0b6146bfdb3630346bd954fe8e9f7da1f09da1fc0d6943ff04802798a665ea3b610ee2d65658ce84fe5a89f9e93625ea396a17f4 '' ${CHARDET}
     compare_digest fe5b05c29c1e1d9079150aaea28b09d84f0dd15907e276ccabb314433cfaac948a9615e10d6d01cbd537f99eed8072fbda7cb901e932fbab4f1286ae8c50471b '' ${CERTIFI}
-    compare_digest 9186ce4e39bb64f5931a205ffc9afac61657bc42078bc4754ed12a2b66a12b7a620583440849fc2e161d1061ac0750ddef4670f54916931ace1e9abd2a9fb09c '' ${REQUESTS}
+    compare_digest 98e4c9435434b8f63fc37a21133adbbfeb471bfb8b40d60f04bded5cbe328c14a22527d54ab2a55a81d93110d627bacc26943e55ec338b7bed8708b55e15fff3 '' ${REQUESTS}
 
     # Flask
-    compare_digest 4c982970fef39bf7cfbb4e516864fec0f8ec3f743ccb632d1659c6ee415597d98f4abd63b5c0fd999eb43fc0c89a97123f07625b01ea86b02ef51cb67a2b148d '' ${WERKZEUG}
+    compare_digest 82a0f1776820d07e929daa60bfa0a3e746464b0f2923376330f8ae5abf535bcb756c7384757b2ff8e0076f299fe85d96ef34b3a8eede21c11df9aba8cc58cb77 '' ${WERKZEUG}
     compare_digest 69e9b9c9ac4fdf3cfa1a3de23d14964b843989128f8cc6ea58617fc5d6ef937bcc3eae9cb32b5164b5f54b06f96bdff9bc249529f20671cc26adc9e6ce8f6bec '' ${MARKUPSAFE}
     compare_digest 461bbd517560f1c4dbf7309bdf0cf33b468938fddfa2c3385fab07343269732d8ce68d8827148645113267d48e7d67b03f1663cc64839dd1fcec723ea606aaf4 '' ${JINJA2}
     compare_digest 891c294867f705eb9c66274bd04ac5d93140d6e9beea6cbf9a44e7f9c13c0e2efa3554bdf56620712759a5cd579e112a782d25f3f91ba9419d60b2b4d2bc5b7c '' ${ITSDANGEROUS}
@@ -252,9 +271,8 @@ function verify_tails_dependencies {
     compare_digest bd49cb364307569480196289fa61fbb5493e46199620333f67617367278e1f56b20fc0d40fd540bef15642a8065e488c24e97f50535e8ec143875095157d8069 '' ${FLASK}
 
     # Cryptography
-    compare_digest a6e7e35921ce8f2f8e79a296ea79a9c3515ff6dd7e777d7892fe4988594f1b3a442a68ffb89cf64530b90a32ceeea00e4ab9069bb697629ab4eb7262c68d1b0f '' ${SIX}
     compare_digest 7f830e1c9066ee2d297a55e2bf6db4bf6447b6d9da0145d11a88c3bb98505755fb7986eafa6e06ae0b7680838f5e5d6a6d188245ca5ad45c2a727587bac93ab5 '' ${PYCPARSER}
-    compare_digest b8753a0435cc7a2176f8748badc074ec6ffab6698d6be42b1770c85871f85aa7cf60152a8be053c3031b234a286c5cef07267cb812accb704783d74a2675ed3b '' ${CFFI}
+    compare_digest 5b315a65fc8f40622ceef35466546620aaca9dd304f5491a845239659b4066469c5fb3f1683c382eb57f8975caf318e5d88852e3dbb049cde193c9189b88c9c0 '' ${CFFI}
     compare_digest 184003c89fee74892de25c3e5ec366faea7a5f1fcca3c82b0d5e5f9f797286671a820ca54da5266d6f879ab342c97e25bce9db366c5fb1178690cd5978d4d622 '' ${CRYPTOGRAPHY}  # manylinux1
     # compare_digest d8ddabe127ae8d7330d219e284de68b37fa450a27b4cf05334e9115388295b00148d9861c23b1a2e5ea9df0c33a2d27f3e4b25ce9abd3c334f1979920b19c902 '' ${CRYPTOGRAPHY}  # manylinux2010
 
@@ -267,7 +285,7 @@ function install_tails_setuptools {
     # Download setuptools package for Tails and then authenticate and install it.
     torsocks python3.7 -m pip download --no-cache-dir -r "/opt/tfc/requirements-setuptools.txt" --require-hashes --no-deps -d "${HOME}/"
     t_sudo mv "$HOME/${SETUPTOOLS}" "/opt/tfc/"
-    compare_digest 761e4c8df239b8d173513b08959b387c1059e3e023ba6b3f6250fade518d6ef29f287ab90dd35d02bb681b410a050b30b2ed44849638b6f98831f4290a4ccd15 '' ${SETUPTOOLS}
+    compare_digest de1ac45cb52e8a28322048e6a2b95015aa6826c49679349a1b579cb46b95cb2ffd62242c861c2fe3e059c0c55d4fdb4384c51b964ca2634b2843263543f8842a '' ${SETUPTOOLS}
     t_sudo python3.7 -m pip install "/opt/tfc/${SETUPTOOLS}"
     t_sudo -E rm "/opt/tfc/${SETUPTOOLS}"
 }
