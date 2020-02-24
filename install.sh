@@ -443,11 +443,11 @@ function qubes_src_firewall_config {
     net_ip=$(get_ip "Networked Computer VM")
 
     # Add firewall rules that take effect immediately
-    iptables --flush
-    iptables -t filter -P INPUT DROP
-    iptables -t filter -P OUTPUT DROP
-    iptables -t filter -P FORWARD DROP
-    iptables -I OUTPUT -d ${net_ip} -p udp --dport 2063 -j ACCEPT
+    sudo iptables --flush
+    sudo iptables -t filter -P INPUT DROP
+    sudo iptables -t filter -P OUTPUT DROP
+    sudo iptables -t filter -P FORWARD DROP
+    sudo iptables -I OUTPUT -d ${net_ip} -p udp --dport 2063 -j ACCEPT
 
     # Make firewall rules persistent
     echo "iptables --flush"                                              | sudo tee -a /rw/config/rc.local
@@ -468,11 +468,11 @@ function qubes_dst_firewall_config {
     net_ip=$(get_ip "Networked Computer VM")
 
     # Add firewall rules that take effect immediately
-    iptables --flush
-    iptables -t filter -P INPUT DROP
-    iptables -t filter -P OUTPUT DROP
-    iptables -t filter -P FORWARD DROP
-    iptables -I INPUT -s ${net_ip} -p udp --dport 2064 -j ACCEPT
+    sudo iptables --flush
+    sudo iptables -t filter -P INPUT DROP
+    sudo iptables -t filter -P OUTPUT DROP
+    sudo iptables -t filter -P FORWARD DROP
+    sudo iptables -I INPUT -s ${net_ip} -p udp --dport 2064 -j ACCEPT
 
     # Make firewall rules persistent
     echo "iptables --flush"                                             | sudo tee -a /rw/config/rc.local
@@ -494,7 +494,7 @@ function qubes_net_firewall_config {
     net_ip=$(get_ip "Networked Computer VM")
 
     # Add firewall rules that take effect immediately
-    iptables -I INPUT -s ${src_ip} -d ${net_ip} -p udp --dport 2063 -j ACCEPT
+    sudo iptables -I INPUT -s ${src_ip} -d ${net_ip} -p udp --dport 2063 -j ACCEPT
 
     # Make firewall rules persistent
     echo "iptables -I INPUT -s ${src_ip} -d ${net_ip} -p udp --dport 2063 -j ACCEPT" | sudo tee -a /rw/config/rc.local
