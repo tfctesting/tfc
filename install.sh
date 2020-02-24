@@ -974,8 +974,8 @@ case $1 in
     tcb    ) install_tcb;;
     relay  ) install_relay;;
     local  ) install_local_test;;
-    qdst   ) install_qubes_src;;
-    qsrc   ) install_qubes_dst;;
+    qsrc   ) install_qubes_src;;
+    qdst   ) install_qubes_dst;;
     qnet   ) install_qubes_net;;
     dev    ) install_developer;;
     *      ) arg_error;;
