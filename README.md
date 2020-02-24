@@ -22,7 +22,7 @@ and most importantly,
 [remote key exfiltration](https://www.youtube.com/watch?v=3euYBPlX9LM). 
 TFC is designed for people with one of the most complex threat models: organized crime 
 groups and nation state hackers who bypass end-to-end encryption of traditional secure 
-messaging apps by hacking the endpoint.  
+messaging apps by hacking the endpoint.
 
 
 #### State-of-the-art cryptography
@@ -39,8 +39,7 @@ or exchanged using
 [X448](https://eprint.iacr.org/2015/625.pdf),
 the base-10
 [fingerprints](https://en.wikipedia.org/wiki/Public_key_fingerprint)
-of which are verified via an out-of-band channel. TFC provides 
-per-message
+of which are verified via an out-of-band channel. TFC provides per-message
 [forward secrecy](https://en.wikipedia.org/wiki/Forward_secrecy)
 with
 [BLAKE2b](https://blake2.net/blake2.pdf) 
@@ -59,10 +58,10 @@ a syscall for its ChaCha20 based
 #### Anonymous by design
 TFC routes all communication exclusively through the 
 [Tor](https://2019.www.torproject.org/about/overview.html.en) 
-anonymity network. The next generation
+anonymity network. It uses the next generation
 ([v3](https://trac.torproject.org/projects/tor/wiki/doc/NextGenOnions))
 [Tor Onion Services](https://2019.www.torproject.org/docs/onion-services)
-enable P2P communication that never exits the Tor network. This makes it hard for the 
+to enable P2P communication that never exits the Tor network. This makes it hard for the 
 users to accidentally deanonymize themselves. It also means that unlike (de)centralized 
 messengers, there's no third party server with access to user metadata such as who is 
 talking to whom, when, and how much. The network architecture means TFC runs exclusively 
@@ -70,14 +69,14 @@ on the user's devices. There are no ads or tracking, and it collects no data wha
 about the user. All data is always encrypted with keys the user controls, and the 
 databases never leave the user's device.
 
-Using Onion Services also means no account registration is needed. During the 
-first launch TFC generates a random TFC account (an Onion Service address) for the user, 
-e.g. `4sci35xrhp2d45gbm3qpta7ogfedonuw2mucmc36jxemucd7fmgzj3ad`. By knowing this TFC 
-account, anyone can send the user a contact request and connect to them without ever 
-learning their real life identity, IP-address, or geolocation. Protected geolocation makes 
-physical attacks very difficult because the attacker doesn't know where the device is 
-located on the planet. At the same time it makes the communication censorship resistant. 
-The app has no kill-switch: blocking TFC requires blocking Tor categorically, nation-wide.
+Using Onion Services also means no account registration is needed. During the first launch 
+TFC generates a random TFC account (an Onion Service address) for the user, e.g.
+`4sci35xrhp2d45gbm3qpta7ogfedonuw2mucmc36jxemucd7fmgzj3ad`. By knowing this TFC account, 
+anyone can send the user a contact request and talk to them without ever learning their 
+real life identity, IP-address, or geolocation. Protected geolocation makes physical 
+attacks very difficult because the attacker doesn't know where the device is located on 
+the planet. At the same time it makes the communication censorship resistant: Blocking TFC 
+requires blocking Tor categorically, nation-wide.
 
 TFC also features a traffic masking mode that hides the type, quantity, and schedule of 
 communication, even if the network facing device of the user is hacked. To provide even
@@ -197,16 +196,16 @@ the Source or Destination Computer, the ciphertexts are of no value to the attac
 - PureOS 9.0
 - *buntu 19.10
 
- 
+
 ### More information
 [Threat model](https://github.com/maqp/tfc/wiki/Threat-model)<br>
 [FAQ](https://github.com/maqp/tfc/wiki/FAQ)<br>
 [Security design](https://github.com/maqp/tfc/wiki/Security-design)<br>
 
 Hardware Data Diode<Br>
-&nbsp;&nbsp;&nbsp;&nbsp;[Breadboard version (Easy)](https://github.com/maqp/tfc/wiki/TTL-Data-Diode-(breadboard))<br>
-&nbsp;&nbsp;&nbsp;&nbsp;[Perfboard version (Intermediate)](https://github.com/maqp/tfc/wiki/TTL-Data-Diode-(perfboard))<br>
-&nbsp;&nbsp;&nbsp;&nbsp;[PCB version (Advanced)](https://github.com/maqp/tfc/wiki/PCB-Data-Diode-(Advanced))<br>
+&nbsp;&nbsp;&nbsp;&nbsp;[Breadboard version](https://github.com/maqp/tfc/wiki/TTL-Data-Diode-(breadboard)) (Easy)<br> 
+&nbsp;&nbsp;&nbsp;&nbsp;[Perfboard version](https://github.com/maqp/tfc/wiki/TTL-Data-Diode-(perfboard)) (Intermediate)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;[PCB version](https://github.com/maqp/tfc/wiki/TTL-Data-Diode-(PCB)) (Advanced)<br>
 
 How to use<br>
 &nbsp;&nbsp;&nbsp;&nbsp;[Installation](https://github.com/maqp/tfc/wiki/Installation)<br>
