@@ -17,6 +17,7 @@
 # along with TFC. If not, see <https://www.gnu.org/licenses/>.
 
 # PIP dependency file names
+
 APPDIRS=appdirs-1.4.3-py2.py3-none-any.whl
 ARGON2=argon2_cffi-19.2.0-cp34-abi3-manylinux1_x86_64.whl
 CERTIFI=certifi-2019.11.28-py2.py3-none-any.whl
@@ -46,15 +47,57 @@ WERKZEUG=Werkzeug-1.0.0-py2.py3-none-any.whl
 ZIPP=zipp-3.0.0-py3-none-any.whl
 
 
-function compare_digest {
-    # Compare the SHA512 digest of TFC file against the digest pinned in
-    # this installer.
-    if sha512sum "/opt/tfc/${2}${3}" | grep -Eo '^\w+' | cmp -s <(echo "$1"); then
-        echo "OK - Pinned SHA512 hash matched file /opt/tfc/${2}${3}"
-    else
-        echo "Error: /opt/tfc/${2}${3} had an invalid SHA512 hash"
-        exit 1
-    fi
+# Functions with pinned hashes
+
+function verify_tails_dependencies {
+    # Tails doesn't allow downloading over PIP to /opt/tfc, so we
+    # first download to $HOME, move the files to /opt/tfc, and then
+    # perform the  hash verification
+    compare_digest f4e7148f1de50fa2e69061e72db211085fc2f44007de4d18ee02a20d34bca30a00d2fe56ff6f3132e696c3f6efd4151863f26dac4c1d43e87b597c47a51c52ad '' ${VIRTUALENV}
+    compare_digest b79e9fa76eadee595fe47ea7efd35c4cc72f058a9ed16a95cfa4d91a52c330efba50df7a9926900bbced229cca7bbfb05bbf0a8ee1d46bac2362c98ab9a5154d '' ${APPDIRS}
+    compare_digest 6f910a9607569c9023a19aee35be15cf8521ec7c07c5d478e6d555a301d024a2ee1db48562707b238a72c631d75d9dc154d38b39ed51746b66c938ac40671e60 '' ${DISTLIB}
+    compare_digest a6e7e35921ce8f2f8e79a296ea79a9c3515ff6dd7e777d7892fe4988594f1b3a442a68ffb89cf64530b90a32ceeea00e4ab9069bb697629ab4eb7262c68d1b0f '' ${SIX}
+    compare_digest 53e51d4b75c1df19fcb6b32e57fa73ffcb00eede86fee7ac9634f02661360538a74d3546b65a641b68ee84c0d78293fe03d09b65cb85359780822b56f813b926 '' ${IMPORTLIB_METADATA}
+    compare_digest d13edd50779bca9842694e0da157ca1fdad9d28166771275049f41dea4b8d8466fc5604b610b6ad64552cdf4c1d3cada9977ca37c6b775c4cc92f333709e8ea3 '' ${FILELOCK}
+    compare_digest b1970b23f7c3f51da5e1b7825d4e6062b62bf2e908148f4b84eb70ba47e44b2873caba86536b23289fb986f04c9d617faa10541f5c25ad3885057d5920fdb98b '' ${ZIPP}
+
+    compare_digest 8333ac2843fd136d5d0d63b527b37866f7d18afc3bb33c4938b63af077492aeb118eb32a89ac78547f14d59a2adb1e5d00728728275de62317da48dadf6cdff9 '' ${PYSERIAL}
+    # compare_digest a275f59bba650cb5bb151cf53fb1dd820334f9abbeae1a25e64502adc854c7f54c51bc3d6c1656b595d142fc0695ffad53aab3c57bc285421c1f4f10c9c3db4c '' ${STEM}
+    compare_digest 313b954102231d038d52ab58f41e3642579be29f827135b8dd92c06acb362effcb0a7fd5f35de9273372b92d9fe29f38381ae44f8b41aa90d2564d6dd07ecd12 '' ${PYSOCKS}
+
+    # Requests
+    compare_digest f7fd3b54b7c555c0e74eb445e543763d233b5c6f8021ccf46a45d452c334953276d43ecd8f3d0eafefa35103a7d1874e291216fc9a41362eb6f1250a2a670f16 '' ${URLLIB3}
+    compare_digest be96b782728404acec374f446b11811f8e76d5ed42d4673a07e883220f5ba2a099a8124cda5898c3f5da7d92b87b36127e8fd42e9edb240b587a380ed73cce93 '' ${IDNA}
+    compare_digest bfae58c8ea19c87cc9c9bf3d0b6146bfdb3630346bd954fe8e9f7da1f09da1fc0d6943ff04802798a665ea3b610ee2d65658ce84fe5a89f9e93625ea396a17f4 '' ${CHARDET}
+    compare_digest fe5b05c29c1e1d9079150aaea28b09d84f0dd15907e276ccabb314433cfaac948a9615e10d6d01cbd537f99eed8072fbda7cb901e932fbab4f1286ae8c50471b '' ${CERTIFI}
+    compare_digest 98e4c9435434b8f63fc37a21133adbbfeb471bfb8b40d60f04bded5cbe328c14a22527d54ab2a55a81d93110d627bacc26943e55ec338b7bed8708b55e15fff3 '' ${REQUESTS}
+
+    # Flask
+    compare_digest 82a0f1776820d07e929daa60bfa0a3e746464b0f2923376330f8ae5abf535bcb756c7384757b2ff8e0076f299fe85d96ef34b3a8eede21c11df9aba8cc58cb77 '' ${WERKZEUG}
+    compare_digest 69e9b9c9ac4fdf3cfa1a3de23d14964b843989128f8cc6ea58617fc5d6ef937bcc3eae9cb32b5164b5f54b06f96bdff9bc249529f20671cc26adc9e6ce8f6bec '' ${MARKUPSAFE}
+    compare_digest 461bbd517560f1c4dbf7309bdf0cf33b468938fddfa2c3385fab07343269732d8ce68d8827148645113267d48e7d67b03f1663cc64839dd1fcec723ea606aaf4 '' ${JINJA2}
+    compare_digest 891c294867f705eb9c66274bd04ac5d93140d6e9beea6cbf9a44e7f9c13c0e2efa3554bdf56620712759a5cd579e112a782d25f3f91ba9419d60b2b4d2bc5b7c '' ${ITSDANGEROUS}
+    compare_digest 6b30987349df7c45c5f41cff9076ed45b178b444fca1ab1965f4ae33d1631522ce0a2868392c736666e83672b8b20e9503ae9ce5016dce3fa8f77bc8a3674130 '' ${CLICK}
+    compare_digest bd49cb364307569480196289fa61fbb5493e46199620333f67617367278e1f56b20fc0d40fd540bef15642a8065e488c24e97f50535e8ec143875095157d8069 '' ${FLASK}
+
+    # Cryptography
+    compare_digest 7f830e1c9066ee2d297a55e2bf6db4bf6447b6d9da0145d11a88c3bb98505755fb7986eafa6e06ae0b7680838f5e5d6a6d188245ca5ad45c2a727587bac93ab5 '' ${PYCPARSER}
+    compare_digest 5b315a65fc8f40622ceef35466546620aaca9dd304f5491a845239659b4066469c5fb3f1683c382eb57f8975caf318e5d88852e3dbb049cde193c9189b88c9c0 '' ${CFFI}
+    compare_digest 184003c89fee74892de25c3e5ec366faea7a5f1fcca3c82b0d5e5f9f797286671a820ca54da5266d6f879ab342c97e25bce9db366c5fb1178690cd5978d4d622 '' ${CRYPTOGRAPHY}  # manylinux1
+    # compare_digest d8ddabe127ae8d7330d219e284de68b37fa450a27b4cf05334e9115388295b00148d9861c23b1a2e5ea9df0c33a2d27f3e4b25ce9abd3c334f1979920b19c902 '' ${CRYPTOGRAPHY}  # manylinux2010
+
+    # PyNaCl
+    compare_digest c4017c38b026a5c531b15839b8d61d1fae9907ba1960c2f97f4cd67fe0827729346d5186a6d6927ba84f64b4cbfdece12b287aa7750a039f4160831be871cea3 '' ${PYNACL}
+}
+
+
+function install_tails_setuptools {
+    # Download setuptools package for Tails and then authenticate and install it.
+    torsocks python3.7 -m pip download --no-cache-dir -r "/opt/tfc/requirements-setuptools.txt" --require-hashes --no-deps -d "${HOME}/"
+    t_sudo mv "$HOME/${SETUPTOOLS}" "/opt/tfc/"
+    compare_digest de1ac45cb52e8a28322048e6a2b95015aa6826c49679349a1b579cb46b95cb2ffd62242c861c2fe3e059c0c55d4fdb4384c51b964ca2634b2843263543f8842a '' ${SETUPTOOLS}
+    t_sudo python3.7 -m pip install "/opt/tfc/${SETUPTOOLS}"
+    t_sudo -E rm "/opt/tfc/${SETUPTOOLS}"
 }
 
 
@@ -151,9 +194,13 @@ function verify_files {
 }
 
 
+# ----------------------------------------------------------------------------------------
+
+# Dependency batch processing
+
 function process_tcb_dependencies {
-    # Manage TCB dependencies in batch. The command that uses the files
-    # is passed to the function as a parameter.
+    # Manage TCB dependencies in batch. The command that uses
+    # the files is passed to the function as a parameter.
     sudo $1 "/opt/tfc/${SIX}"
     sudo $1 "/opt/tfc/${PYCPARSER}"
     sudo $1 "/opt/tfc/${CFFI}"
@@ -162,6 +209,19 @@ function process_tcb_dependencies {
     sudo $1 "/opt/tfc/${PYNACL}"
     sudo $1 "/opt/tfc/${PYSERIAL}"
     sudo $1 "/opt/tfc/${CRYPTOGRAPHY}"
+}
+
+
+function process_virtualenv_dependencies {
+    # Manage Virtualenv dependencies in batch. The command that
+    # uses the files is passed to the function as a parameter.
+    sudo $1 "/opt/tfc/${ZIPP}"
+    sudo $1 "/opt/tfc/${FILELOCK}"
+    sudo $1 "/opt/tfc/${IMPORTLIB_METADATA}"
+    sudo $1 "/opt/tfc/${SIX}"
+    sudo $1 "/opt/tfc/${DISTLIB}"
+    sudo $1 "/opt/tfc/${APPDIRS}"
+    sudo $1 "/opt/tfc/${VIRTUALENV}"
 }
 
 
@@ -196,6 +256,18 @@ function process_tails_dependencies {
 
     # PyNaCl
     t_sudo -E $1 "/opt/tfc/${PYNACL}"
+}
+
+
+function process_tails_venv_dependencies {
+    # Process Tails Virtualenv dependencies in batch.
+    t_sudo -E $1 "/opt/tfc/${ZIPP}"
+    t_sudo -E $1 "/opt/tfc/${FILELOCK}"
+    t_sudo -E $1 "/opt/tfc/${IMPORTLIB_METADATA}"
+    t_sudo -E $1 "/opt/tfc/${SIX}"
+    t_sudo -E $1 "/opt/tfc/${DISTLIB}"
+    t_sudo -E $1 "/opt/tfc/${APPDIRS}"
+    t_sudo -E $1 "/opt/tfc/${VIRTUALENV}"
 }
 
 
@@ -239,57 +311,7 @@ function move_tails_dependencies {
 }
 
 
-function verify_tails_dependencies {
-    # Tails doesn't allow downloading over PIP to /opt/tfc, so we
-    # first download to $HOME, move the files to /opt/tfc, and then
-    # perform additional hash verification
-    compare_digest f4e7148f1de50fa2e69061e72db211085fc2f44007de4d18ee02a20d34bca30a00d2fe56ff6f3132e696c3f6efd4151863f26dac4c1d43e87b597c47a51c52ad '' ${VIRTUALENV}
-    compare_digest b79e9fa76eadee595fe47ea7efd35c4cc72f058a9ed16a95cfa4d91a52c330efba50df7a9926900bbced229cca7bbfb05bbf0a8ee1d46bac2362c98ab9a5154d '' ${APPDIRS}
-    compare_digest 6f910a9607569c9023a19aee35be15cf8521ec7c07c5d478e6d555a301d024a2ee1db48562707b238a72c631d75d9dc154d38b39ed51746b66c938ac40671e60 '' ${DISTLIB}
-    compare_digest a6e7e35921ce8f2f8e79a296ea79a9c3515ff6dd7e777d7892fe4988594f1b3a442a68ffb89cf64530b90a32ceeea00e4ab9069bb697629ab4eb7262c68d1b0f '' ${SIX}
-    compare_digest 53e51d4b75c1df19fcb6b32e57fa73ffcb00eede86fee7ac9634f02661360538a74d3546b65a641b68ee84c0d78293fe03d09b65cb85359780822b56f813b926 '' ${IMPORTLIB_METADATA}
-    compare_digest d13edd50779bca9842694e0da157ca1fdad9d28166771275049f41dea4b8d8466fc5604b610b6ad64552cdf4c1d3cada9977ca37c6b775c4cc92f333709e8ea3 '' ${FILELOCK}
-    compare_digest b1970b23f7c3f51da5e1b7825d4e6062b62bf2e908148f4b84eb70ba47e44b2873caba86536b23289fb986f04c9d617faa10541f5c25ad3885057d5920fdb98b '' ${ZIPP}
-
-    compare_digest 8333ac2843fd136d5d0d63b527b37866f7d18afc3bb33c4938b63af077492aeb118eb32a89ac78547f14d59a2adb1e5d00728728275de62317da48dadf6cdff9 '' ${PYSERIAL}
-    # compare_digest a275f59bba650cb5bb151cf53fb1dd820334f9abbeae1a25e64502adc854c7f54c51bc3d6c1656b595d142fc0695ffad53aab3c57bc285421c1f4f10c9c3db4c '' ${STEM}
-    compare_digest 313b954102231d038d52ab58f41e3642579be29f827135b8dd92c06acb362effcb0a7fd5f35de9273372b92d9fe29f38381ae44f8b41aa90d2564d6dd07ecd12 '' ${PYSOCKS}
-
-    # Requests
-    compare_digest f7fd3b54b7c555c0e74eb445e543763d233b5c6f8021ccf46a45d452c334953276d43ecd8f3d0eafefa35103a7d1874e291216fc9a41362eb6f1250a2a670f16 '' ${URLLIB3}
-    compare_digest be96b782728404acec374f446b11811f8e76d5ed42d4673a07e883220f5ba2a099a8124cda5898c3f5da7d92b87b36127e8fd42e9edb240b587a380ed73cce93 '' ${IDNA}
-    compare_digest bfae58c8ea19c87cc9c9bf3d0b6146bfdb3630346bd954fe8e9f7da1f09da1fc0d6943ff04802798a665ea3b610ee2d65658ce84fe5a89f9e93625ea396a17f4 '' ${CHARDET}
-    compare_digest fe5b05c29c1e1d9079150aaea28b09d84f0dd15907e276ccabb314433cfaac948a9615e10d6d01cbd537f99eed8072fbda7cb901e932fbab4f1286ae8c50471b '' ${CERTIFI}
-    compare_digest 98e4c9435434b8f63fc37a21133adbbfeb471bfb8b40d60f04bded5cbe328c14a22527d54ab2a55a81d93110d627bacc26943e55ec338b7bed8708b55e15fff3 '' ${REQUESTS}
-
-    # Flask
-    compare_digest 82a0f1776820d07e929daa60bfa0a3e746464b0f2923376330f8ae5abf535bcb756c7384757b2ff8e0076f299fe85d96ef34b3a8eede21c11df9aba8cc58cb77 '' ${WERKZEUG}
-    compare_digest 69e9b9c9ac4fdf3cfa1a3de23d14964b843989128f8cc6ea58617fc5d6ef937bcc3eae9cb32b5164b5f54b06f96bdff9bc249529f20671cc26adc9e6ce8f6bec '' ${MARKUPSAFE}
-    compare_digest 461bbd517560f1c4dbf7309bdf0cf33b468938fddfa2c3385fab07343269732d8ce68d8827148645113267d48e7d67b03f1663cc64839dd1fcec723ea606aaf4 '' ${JINJA2}
-    compare_digest 891c294867f705eb9c66274bd04ac5d93140d6e9beea6cbf9a44e7f9c13c0e2efa3554bdf56620712759a5cd579e112a782d25f3f91ba9419d60b2b4d2bc5b7c '' ${ITSDANGEROUS}
-    compare_digest 6b30987349df7c45c5f41cff9076ed45b178b444fca1ab1965f4ae33d1631522ce0a2868392c736666e83672b8b20e9503ae9ce5016dce3fa8f77bc8a3674130 '' ${CLICK}
-    compare_digest bd49cb364307569480196289fa61fbb5493e46199620333f67617367278e1f56b20fc0d40fd540bef15642a8065e488c24e97f50535e8ec143875095157d8069 '' ${FLASK}
-
-    # Cryptography
-    compare_digest 7f830e1c9066ee2d297a55e2bf6db4bf6447b6d9da0145d11a88c3bb98505755fb7986eafa6e06ae0b7680838f5e5d6a6d188245ca5ad45c2a727587bac93ab5 '' ${PYCPARSER}
-    compare_digest 5b315a65fc8f40622ceef35466546620aaca9dd304f5491a845239659b4066469c5fb3f1683c382eb57f8975caf318e5d88852e3dbb049cde193c9189b88c9c0 '' ${CFFI}
-    compare_digest 184003c89fee74892de25c3e5ec366faea7a5f1fcca3c82b0d5e5f9f797286671a820ca54da5266d6f879ab342c97e25bce9db366c5fb1178690cd5978d4d622 '' ${CRYPTOGRAPHY}  # manylinux1
-    # compare_digest d8ddabe127ae8d7330d219e284de68b37fa450a27b4cf05334e9115388295b00148d9861c23b1a2e5ea9df0c33a2d27f3e4b25ce9abd3c334f1979920b19c902 '' ${CRYPTOGRAPHY}  # manylinux2010
-
-    # PyNaCl
-    compare_digest c4017c38b026a5c531b15839b8d61d1fae9907ba1960c2f97f4cd67fe0827729346d5186a6d6927ba84f64b4cbfdece12b287aa7750a039f4160831be871cea3 '' ${PYNACL}
-}
-
-
-function install_tails_setuptools {
-    # Download setuptools package for Tails and then authenticate and install it.
-    torsocks python3.7 -m pip download --no-cache-dir -r "/opt/tfc/requirements-setuptools.txt" --require-hashes --no-deps -d "${HOME}/"
-    t_sudo mv "$HOME/${SETUPTOOLS}" "/opt/tfc/"
-    compare_digest de1ac45cb52e8a28322048e6a2b95015aa6826c49679349a1b579cb46b95cb2ffd62242c861c2fe3e059c0c55d4fdb4384c51b964ca2634b2843263543f8842a '' ${SETUPTOOLS}
-    t_sudo python3.7 -m pip install "/opt/tfc/${SETUPTOOLS}"
-    t_sudo -E rm "/opt/tfc/${SETUPTOOLS}"
-}
-
+# Common tasks
 
 function remove_common_files {
     # Remove files that become unnecessary after installation.
@@ -336,6 +358,136 @@ function steps_before_network_kill {
 }
 
 
+# ----------------------------------------------------------------------------------------
+
+# Installation configurations for Debian/PureOS/Ubuntu
+
+function install_tcb {
+    # Install TFC for Source/Destination Computer.
+    #
+    # The installer configuration first downloads all necessary files.
+    # It then disconnects the computer from network, before completing
+    # the rest of the installation steps.
+    steps_before_network_kill
+
+    kill_network
+
+    verify_files
+    create_user_data_dir
+
+    process_virtualenv_dependencies "python3.7 -m pip install"
+    sudo python3.7 -m virtualenv  "/opt/tfc/venv_tcb" --system-site-packages --never-download
+
+    . /opt/tfc/venv_tcb/bin/activate
+    process_tcb_dependencies "python3.7 -m pip install"
+    deactivate
+
+    sudo mv /opt/tfc/tfc.png                   /usr/share/pixmaps/
+    sudo mv /opt/tfc/launchers/TFC-TxP.desktop /usr/share/applications/
+    sudo mv /opt/tfc/launchers/TFC-RxP.desktop /usr/share/applications/
+
+    # Remove unnecessary files
+    remove_common_files             "sudo"
+    process_virtualenv_dependencies "rm"
+    process_tcb_dependencies        "rm"
+    sudo rm -r /opt/tfc/src/relay/
+    sudo rm    /opt/tfc/dd.py
+    sudo rm    /opt/tfc/relay.py
+    sudo rm    /opt/tfc/tfc.yml
+
+    add_serial_permissions
+
+    install_complete "Installation of TFC on this device is now complete."
+}
+
+
+function install_relay_ubuntu {
+    # Install TFC Relay configuration on Networked Computer.
+    steps_before_network_kill
+
+    verify_files
+    create_user_data_dir
+
+    install_virtualenv
+    sudo python3.7 -m virtualenv /opt/tfc/venv_relay --system-site-packages
+
+    . /opt/tfc/venv_relay/bin/activate
+    sudo torsocks python3.7 -m pip install -r /opt/tfc/requirements-relay.txt --require-hashes --no-deps
+    deactivate
+
+    sudo mv /opt/tfc/tfc.png                  /usr/share/pixmaps/
+    sudo mv /opt/tfc/launchers/TFC-RP.desktop /usr/share/applications/
+
+    # Remove unnecessary files
+    remove_common_files             "sudo"
+    process_virtualenv_dependencies "rm"
+    process_tcb_dependencies        "rm"
+    sudo rm -r "/opt/tfc/src/receiver/"
+    sudo rm -r "/opt/tfc/src/transmitter/"
+    sudo rm    "/opt/tfc/dd.py"
+    sudo rm    "/opt/tfc/tfc.py"
+    sudo rm    "/opt/tfc/tfc.yml"
+
+    add_serial_permissions
+
+    install_complete "Installation of the TFC Relay configuration is now complete."
+}
+
+
+# Installation configuration for Tails
+
+function install_relay_tails {
+    # Install TFC Relay configuration on Networked Computer running
+    # Tails live distro (https://tails.boum.org/).
+    read_sudo_pwd
+
+    # Apt dependencies
+    t_sudo apt update
+    t_sudo apt install git libssl-dev python3-pip python3-tk -y || true  # Ignore error in case packets can not be persistently installed
+
+    torsocks git clone --depth 1 https://github.com/tfctesting/tfc.git "${HOME}/tfc"
+    t_sudo mv "${HOME}/tfc/ /opt/tfc/"
+    t_sudo chown -R root /opt/tfc/
+
+    verify_tcb_requirements_files
+    verify_files
+
+    create_user_data_dir
+
+    install_tails_setuptools
+
+    torsocks python3.7 -m pip download --no-cache-dir -r "/opt/tfc/requirements-venv.txt"        --require-hashes --no-deps -d "${HOME}/"
+    torsocks python3.7 -m pip download --no-cache-dir -r "/opt/tfc/requirements-relay-tails.txt" --require-hashes --no-deps -d "${HOME}/"
+
+    move_tails_dependencies
+    verify_tails_dependencies
+
+    process_tails_venv_dependencies "python3.7 -m pip install"
+    t_sudo python3.7 -m virtualenv /opt/tfc/venv_relay --system-site-packages
+
+    . /opt/tfc/venv_relay/bin/activate
+    process_tails_dependencies "python3.7 -m pip install"
+    deactivate
+
+    # Complete setup
+    t_sudo mv /opt/tfc/tfc.png                        /usr/share/pixmaps/
+    t_sudo mv /opt/tfc/launchers/TFC-RP-Tails.desktop /usr/share/applications/
+    t_sudo mv /opt/tfc/tfc.yml                        /etc/onion-grater.d/
+
+    remove_common_files             "t_sudo"
+    process_tails_venv_dependencies "rm"
+    process_tails_dependencies      "rm"
+    t_sudo rm -r "/opt/tfc/src/receiver/"
+    t_sudo rm -r "/opt/tfc/src/transmitter/"
+    t_sudo rm    "/opt/tfc/dd.py"
+    t_sudo rm    "/opt/tfc/tfc.py"
+
+    install_complete "Installation of the TFC Relay configuration is now complete."
+}
+
+
+# Installation configurations for Qubes OS
+
 function install_qubes_src {
     # Qubes Source Computer VM installation configuration for Debian 10 domains.
     steps_before_network_kill
@@ -344,7 +496,7 @@ function install_qubes_src {
     verify_files
     create_user_data_dir
 
-    sudo python3.7 -m pip install "/opt/tfc/${VIRTUALENV}"
+    process_virtualenv_dependencies "python3.7 -m pip install"
     sudo python3.7 -m virtualenv  "/opt/tfc/venv_tcb" --system-site-packages --never-download
 
     . /opt/tfc/venv_tcb/bin/activate
@@ -356,8 +508,9 @@ function install_qubes_src {
     sudo mv /opt/tfc/launchers/tfc-qubes-transmitter /usr/bin/tfc-transmitter
 
     # Remove unnecessary files
-    remove_common_files      "sudo"
-    process_tcb_dependencies "rm"
+    remove_common_files             "sudo"
+    process_virtualenv_dependencies "rm"
+    process_tcb_dependencies        "rm"
     sudo rm -r /opt/tfc/src/relay/
     sudo rm    /opt/tfc/dd.py
     sudo rm    /opt/tfc/relay.py
@@ -376,7 +529,7 @@ function install_qubes_dst {
     verify_files
     create_user_data_dir
 
-    sudo python3.7 -m pip install "/opt/tfc/${VIRTUALENV}"
+    process_virtualenv_dependencies "python3.7 -m pip install"
     sudo python3.7 -m virtualenv  "/opt/tfc/venv_tcb" --system-site-packages --never-download
 
     . /opt/tfc/venv_tcb/bin/activate
@@ -388,8 +541,9 @@ function install_qubes_dst {
     sudo mv /opt/tfc/launchers/tfc-qubes-receiver    /usr/bin/tfc-receiver
 
     # Remove unnecessary files
-    remove_common_files      "sudo"
-    process_tcb_dependencies "rm"
+    remove_common_files             "sudo"
+    process_virtualenv_dependencies "rm"
+    process_tcb_dependencies        "rm"
     sudo rm -r /opt/tfc/src/relay/
     sudo rm    /opt/tfc/dd.py
     sudo rm    /opt/tfc/relay.py
@@ -408,7 +562,7 @@ function install_qubes_net {
     verify_files
     create_user_data_dir
 
-    install_virtualenv
+    process_virtualenv_dependencies "python3.7 -m pip install"
     sudo python3.7 -m virtualenv /opt/tfc/venv_relay --system-site-packages
 
     . /opt/tfc/venv_relay/bin/activate
@@ -420,7 +574,8 @@ function install_qubes_net {
     sudo mv /opt/tfc/launchers/tfc-qubes-relay      /usr/bin/tfc-relay
 
     # Remove unnecessary files
-    remove_common_files "sudo"
+    remove_common_files             "sudo"
+    process_virtualenv_dependencies "rm"
     sudo rm -r "/opt/tfc/src/receiver/"
     sudo rm -r "/opt/tfc/src/transmitter/"
     sudo rm    "/opt/tfc/dd.py"
@@ -432,18 +587,7 @@ function install_qubes_net {
 }
 
 
-function get_ip {
-    # Get IP address from the user.
-    ip=$(zenity --entry --title="TFC Installer" --text="Enter the IP-address of the $1:")
-    if [[ ${ip} =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-        echo ${ip}
-        return
-    else
-        zenity --info --title='TFC installer' --text='Invalid IP'
-        get_ip
-    fi
-}
-
+# Qubes firewall configurations
 
 function qubes_src_firewall_config {
     # Edit Source Computer VM firewall rules to block all incoming connections, and to
@@ -516,44 +660,7 @@ function qubes_net_firewall_config {
 }
 
 
-function install_tcb {
-    # Install TFC for Source/Destination Computer.
-    #
-    # The installer configuration first downloads all necessary files.
-    # It then disconnects the computer from network, before completing
-    # the rest of the installation steps.
-    steps_before_network_kill
-
-    kill_network
-
-    verify_files
-    create_user_data_dir
-
-    sudo python3.7 -m pip install "/opt/tfc/${VIRTUALENV}"
-    sudo python3.7 -m virtualenv  "/opt/tfc/venv_tcb" --system-site-packages --never-download
-
-    . /opt/tfc/venv_tcb/bin/activate
-    process_tcb_dependencies "python3.7 -m pip install"
-    deactivate
-
-    sudo mv /opt/tfc/tfc.png                   /usr/share/pixmaps/
-    sudo mv /opt/tfc/launchers/TFC-TxP.desktop /usr/share/applications/
-    sudo mv /opt/tfc/launchers/TFC-RxP.desktop /usr/share/applications/
-
-    # Remove unnecessary files
-    remove_common_files      "sudo"
-    process_tcb_dependencies "rm"
-    sudo rm -r /opt/tfc/src/relay/
-    sudo rm    /opt/tfc/dd.py
-    sudo rm    /opt/tfc/relay.py
-    sudo rm    /opt/tfc/tfc.yml
-    sudo rm    /opt/tfc/${VIRTUALENV}
-
-    add_serial_permissions
-
-    install_complete "Installation of TFC on this device is now complete."
-}
-
+# Tiling terminal emulator configurations for single OS
 
 function install_local_test {
     # Install TFC for local testing on a single computer.
@@ -630,88 +737,32 @@ function install_developer {
 }
 
 
-function install_relay_ubuntu {
-    # Install TFC Relay configuration on Networked Computer.
-    steps_before_network_kill
+# ----------------------------------------------------------------------------------------
 
-    verify_files
-    create_user_data_dir
+# Installation utilities
 
-    install_virtualenv
-    sudo python3.7 -m virtualenv /opt/tfc/venv_relay --system-site-packages
-
-    . /opt/tfc/venv_relay/bin/activate
-    sudo torsocks python3.7 -m pip install -r /opt/tfc/requirements-relay.txt --require-hashes --no-deps
-    deactivate
-
-    sudo mv /opt/tfc/tfc.png                  /usr/share/pixmaps/
-    sudo mv /opt/tfc/launchers/TFC-RP.desktop /usr/share/applications/
-
-    # Remove unnecessary files
-    remove_common_files      "sudo"
-    process_tcb_dependencies "rm"
-    sudo rm -r "/opt/tfc/src/receiver/"
-    sudo rm -r "/opt/tfc/src/transmitter/"
-    sudo rm    "/opt/tfc/dd.py"
-    sudo rm    "/opt/tfc/tfc.py"
-    sudo rm    "/opt/tfc/tfc.yml"
-    sudo rm    "/opt/tfc/${VIRTUALENV}"
-
-    add_serial_permissions
-
-    install_complete "Installation of the TFC Relay configuration is now complete."
+function compare_digest {
+    # Compare the SHA512 digest of TFC file against the digest pinned in
+    # this installer.
+    if sha512sum "/opt/tfc/${2}${3}" | grep -Eo '^\w+' | cmp -s <(echo "$1"); then
+        echo "OK - Pinned SHA512 hash matched file /opt/tfc/${2}${3}"
+    else
+        echo "Error: /opt/tfc/${2}${3} had an invalid SHA512 hash"
+        exit 1
+    fi
 }
 
 
-function install_relay_tails {
-    # Install TFC Relay configuration on Networked Computer running
-    # Tails live distro (https://tails.boum.org/).
-    check_tails_tor_version
-    read_sudo_pwd
-
-    # Apt dependencies
-    t_sudo apt update
-    t_sudo apt install git libssl-dev python3-pip python3-tk -y || true  # Ignore error in case packets can not be persistently installed
-
-    torsocks git clone --depth 1 https://github.com/tfctesting/tfc.git "${HOME}/tfc"
-    t_sudo mv "${HOME}/tfc/ /opt/tfc/"
-    t_sudo chown -R root /opt/tfc/
-
-    verify_tcb_requirements_files
-    verify_files
-
-    create_user_data_dir
-
-    install_tails_setuptools
-
-    torsocks python3.7 -m pip download --no-cache-dir -r "/opt/tfc/requirements-venv.txt"        --require-hashes --no-deps -d "${HOME}/"
-    torsocks python3.7 -m pip download --no-cache-dir -r "/opt/tfc/requirements-relay-tails.txt" --require-hashes --no-deps -d "${HOME}/"
-
-    move_tails_dependencies
-    verify_tails_dependencies
-
-    t_sudo python3.7 -m pip install /opt/tfc/${VIRTUALENV}
-    t_sudo python3.7 -m virtualenv /opt/tfc/venv_relay --system-site-packages
-
-    . /opt/tfc/venv_relay/bin/activate
-    process_tails_dependencies "python3.7 -m pip install"
-    deactivate
-
-    # Complete setup
-    t_sudo mv /opt/tfc/tfc.png                        /usr/share/pixmaps/
-    t_sudo mv /opt/tfc/launchers/TFC-RP-Tails.desktop /usr/share/applications/
-    t_sudo mv /opt/tfc/tfc.yml                        /etc/onion-grater.d/
-
-    remove_common_files        "t_sudo"
-    process_tails_dependencies "rm"
-
-    t_sudo rm    "/opt/tfc/${VIRTUALENV}"
-    t_sudo rm -r "/opt/tfc/src/receiver/"
-    t_sudo rm -r "/opt/tfc/src/transmitter/"
-    t_sudo rm    "/opt/tfc/dd.py"
-    t_sudo rm    "/opt/tfc/tfc.py"
-
-    install_complete "Installation of the TFC Relay configuration is now complete."
+function get_ip {
+    # Get IP address from the user.
+    ip=$(zenity --entry --title="TFC Installer" --text="Enter the IP-address of the $1:")
+    if [[ ${ip} =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+        echo ${ip}
+        return
+    else
+        zenity --info --title='TFC installer' --text='Invalid IP'
+        get_ip
+    fi
 }
 
 
@@ -749,19 +800,6 @@ function read_sudo_pwd {
         read -s -p "[sudo] password for ${USER}: " sudo_pwd
     done
     echo
-}
-
-
-function check_tails_tor_version {
-    # Check that the Tails distro is running Tor 0.3.5 or newer.
-    included=($(tor --version |awk '{print $3}' |head -c 5))
-    required="0.3.5"
-
-    if ! [[ "$(printf '%s\n' "$required" "$included" | sort -V | head -n1)" = "$required" ]]; then
-        clear
-        echo -e "\nError: This Tails includes Tor $included but Tor $required is required. Exiting.\n" 1>&2
-        exit 1
-    fi
 }
 
 
@@ -812,24 +850,6 @@ function add_serial_permissions {
 }
 
 
-function c_echo {
-    # Justify printed text to the center of the terminal.
-    printf "%*s\n" "$(( ( $(echo "${1}" | wc -c ) + 80 ) / 2 ))" "${1}"
-}
-
-
-function check_rm_existing_installation {
-    # Remove TFC installation directory if TFC is already installed.
-    if [[ -d "/opt/tfc" ]]; then
-        if [[ ${sudo_pwd} ]]; then
-            t_sudo rm -r /opt/tfc  # Tails
-        else
-            sudo rm -r /opt/tfc    # *buntu
-        fi
-    fi
-}
-
-
 function create_user_data_dir {
     # Backup TFC user data directory if it exists and has files in it.
     if [[ -d "$HOME/tfc" ]]; then
@@ -864,6 +884,24 @@ function get_screen_width {
 }
 
 
+# Printing functions
+
+function c_echo {
+    # Justify printed text to the center of the terminal.
+    printf "%*s\n" "$(( ( $(echo "${1}" | wc -c ) + 80 ) / 2 ))" "${1}"
+}
+
+
+function exit_with_message {
+    # Print error message and exit the installer with flag 1.
+    clear
+    echo ''
+    c_echo "Error: $* Exiting." 1>&2
+    echo ''
+    exit 1
+}
+
+
 function install_complete {
     # Notify the user that the installation is complete.
     clear
@@ -888,8 +926,37 @@ function install_complete_qubes {
     read -n 1 -s -p ''
     clear
 
-    cd $HOME
-    exec bash
+    kill -9 $PPID
+}
+
+
+function arg_error {
+    # Print help message if the user launches the installer with missing
+    # or invalid argument.
+    clear
+    echo -e "\nUsage: bash install.sh [OPTION]\n"
+    echo    "Mandatory arguments"
+    echo    "  tcb      Install Transmitter/Receiver Program (*buntu 19.10+ / Debian 10 / PureOS 9.0+ )"
+    echo    "  relay    Install Relay Program                (*buntu 19.10+ / Debian 10 / PureOS 9.0+ / Tails 4.0+)"
+    echo -e "  local    Install insecure local testing mode  (*buntu 19.10+ / Debian 10 / PureOS 9.0+ )\n"
+    echo    "  qsrc     Install Transmitter Program          (Qubes 4.0.3)"
+    echo    "  qdst     Install Receiver Program             (Qubes 4.0.3)"
+    echo -e "  qnet     Install Relay Program                (Qubes 4.0.3)\n"
+    exit 1
+}
+
+
+# Pre-install checks
+
+function check_rm_existing_installation {
+    # Remove TFC installation directory if TFC is already installed.
+    if [[ -d "/opt/tfc" ]]; then
+        if [[ ${sudo_pwd} ]]; then
+            t_sudo rm -r /opt/tfc  # Tails
+        else
+            sudo rm -r /opt/tfc    # *buntu
+        fi
+    fi
 }
 
 
@@ -914,19 +981,11 @@ function dpkg_check {
 }
 
 
-function arg_error {
-    # Print help message if the user launches the installer with missing
-    # or invalid argument.
-    clear
-    echo -e "\nUsage: bash install.sh [OPTION]\n"
-    echo    "Mandatory arguments"
-    echo    "  tcb      Install Transmitter/Receiver Program (*buntu 19.10+ / Debian 10 / PureOS 9.0+ )"
-    echo    "  relay    Install Relay Program                (*buntu 19.10+ / Debian 10 / PureOS 9.0+ / Tails 4.0+)"
-    echo -e "  local    Install insecure local testing mode  (*buntu 19.10+ / Debian 10 / PureOS 9.0+ )\n"
-    echo    "  qsrc     Install Transmitter Program          (Qubes 4.0.3)"
-    echo    "  qdst     Install Receiver Program             (Qubes 4.0.3)"
-    echo -e "  qnet     Install Relay Program                (Qubes 4.0.3)\n"
-    exit 1
+function architecture_check {
+    # Check that the OS is 64-bit, and not 32-bit.
+    if ! [[ "$(uname -m 2>/dev/null | grep x86_64)" ]]; then
+        exit_with_message "Invalid system architecture."
+    fi
 }
 
 
@@ -962,23 +1021,7 @@ function sudoer_check {
 }
 
 
-function architecture_check {
-    # Check that the OS is 64-bit, and not 32-bit.
-    if ! [[ "$(uname -m 2>/dev/null | grep x86_64)" ]]; then
-        exit_with_message "Invalid system architecture."
-    fi
-}
-
-
-function exit_with_message {
-    # Print error message and exit the installer with flag 1.
-    clear
-    echo ''
-    c_echo "Error: $* Exiting." 1>&2
-    echo ''
-    exit 1
-}
-
+# Main routine
 
 set -e
 architecture_check
