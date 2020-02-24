@@ -463,7 +463,7 @@ function qubes_dst_firewall_config {
     # to only allow UDP packets from Networked Computer VM to Receiver Programs' port.
 
     # Create backup of the current rc.config file just in case
-    mv /rw/config/rc.local{,.backup."$(date +%Y-%m-%d-%H_%M_%S)"}
+    sudo mv /rw/config/rc.local{,.backup."$(date +%Y-%m-%d-%H_%M_%S)"}
 
     net_ip=$(get_ip "Networked Computer VM")
 
@@ -488,7 +488,7 @@ function qubes_net_firewall_config {
     # Computer VM to the Relay Program's port.
 
     # Create backup of the current rc.config file just in case
-    mv /rw/config/rc.local{,.backup."$(date +%Y-%m-%d-%H_%M_%S)"}
+    sudo mv /rw/config/rc.local{,.backup."$(date +%Y-%m-%d-%H_%M_%S)"}
 
     src_ip=$(get_ip "Source Computer VM")
     net_ip=$(get_ip "Networked Computer VM")
