@@ -876,8 +876,8 @@ function install_complete_qubes {
     read -n 1 -s -p ''
     clear
 
-    exec bash
     cd $HOME
+    exec bash
 }
 
 
