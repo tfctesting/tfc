@@ -189,12 +189,14 @@ the Source or Destination Computer, the ciphertexts are of no value to the attac
 - Debian 10
 - PureOS 9.0
 - *buntu 19.10
+- Qubes 4 (Debian 10 VM)
 
 #### Networked Computer
 - Tails 4.0
 - Debian 10
 - PureOS 9.0
 - *buntu 19.10
+- Qubes 4 (Debian 10 VM)
 
 
 ### More information
