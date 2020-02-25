@@ -150,13 +150,13 @@ function verify_files {
     compare_digest 63451ece46802c1e4d0ddb591fda951c00b40ed2e0f37ffc9e5310adb687f0db4980d8593ce1ed5c7b5ca9274be33b2666ae9165aa002d99ecf69b0ec620cc1b src/common/ db_settings.py
     compare_digest 60fb4c922af286307865b29f0cadab53a5a575a9f820cd5ad99ea116c841b54dd1d1be1352bf7c3ab51d2fd223077217bcda1b442d44d2b9f1bf614e15c4a14d src/common/ encoding.py
     compare_digest ccd522408ad2e8e21f01038f5f49b9d82d5288717f1a1acf6cda278c421c05472827ee5928fbf56121c2dfc4f2cc49986e32c493e892bd6ae584be38ba381edd src/common/ exceptions.py
-    compare_digest 33b8c271b1ef959a04d8e411985175f3317e8f00cc0b8de8b3dcbd33044d5df7152b369bb30fab774cc1512acdf2c316c5463fc8fdde6334c77de756e72360eb src/common/ gateway.py
+    compare_digest 6267233a2f7228ede2a5bf922bfdcb711e5b1371f6537d072f66c407efbcfd294b895f3adaf991eb6d58f752d06db5528b013a9a80415ea45dbcef35fd7219f2 src/common/ gateway.py
     compare_digest b01aa02c1985c7c1f7d95678d2422561a06342378306936c35c077938c133b8f60a63952bdc9005210d31e68addd88b86a45f82626c40beff07e785fdc2aa115 src/common/ input.py
     compare_digest a9528e955193050e073dccacea6045c3c31cfa783dc6b9d7982445599ccdd338424b8131eb7fad950901a0a4763f9a6e9ff6df3d12d7cd7a13883edd3d45a86f src/common/ misc.py
     compare_digest 8b479b3a7c1c4fdaf4c4f8d4a4436231933ebb1da47a5a07a596037b20db7d5aa7e8a1d107d4ec973603551f28833ff404c177b9977d654f3b38a915d16a33bb src/common/ output.py
     compare_digest 08443cfe633bb552d6bb55e48d81423db4a4099f9febc73ec6ee85ee535bc543720f199ac8b600b718e9af7247fb96ef4b9991b0416cf7186fd75a149365dd36 src/common/ path.py
     compare_digest 39e48b0b55f4f1a48bc558f47b5f7c872583f3f3925fd829de28710024b000fcb03799cb36da3a31806143bc3cbb98e5d357a8d62674c23e1e8bf957aece79f6 src/common/ reed_solomon.py
-    compare_digest a23f7208f7e4a2bcb72af70a2c5ed9015979447244c67e1868bbbb4085c59dd39ecd295c1c025ef151cb670adea3c14702f55ff94cb866eb9a51d69bc03a1ecd src/common/ statics.py
+    compare_digest 87984fe52910166a1d10c416d5997dacef67cf4de764a7ca1615f37e858be713bf626553e9946d140b455a62fb09e574a209bd31290736ec99178707a8d72b2a src/common/ statics.py
     compare_digest a57d5525a570a78d15c75e79702289cf8571c1b3c142fae57f32bf3ed8bb784c7f63ce2e805d295b4a505fdeaf9d59094ebe67d8979c92dc11e2534474505b0e src/common/ word_list.py
 
     compare_digest 3ee90ee305382d80da801f047a6e58e5b763f9f6bc08dce531d5c620f2748c6bba59a1528eee5d721decb8e724f53b28fc7609f5b20472f679f554b78b5d4cc6 src/receiver/ __init__.py
@@ -489,11 +489,12 @@ function install_relay_tails {
 
 function install_qubes_src {
     # Qubes Source Computer VM installation configuration for Debian 10 domains.
+    create_user_data_dir
+
     steps_before_network_kill
     qubes_src_firewall_config
 
     verify_files
-    create_user_data_dir
 
     process_virtualenv_dependencies "python3.7 -m pip install"
     sudo python3.7 -m virtualenv "/opt/tfc/venv_tcb" --system-site-packages --never-download
@@ -521,11 +522,12 @@ function install_qubes_src {
 
 function install_qubes_dst {
     # Qubes Destination Computer VM installation configuration for Debian 10 domains.
+    create_user_data_dir
+
     steps_before_network_kill
     qubes_dst_firewall_config
 
     verify_files
-    create_user_data_dir
 
     process_virtualenv_dependencies "python3.7 -m pip install"
     sudo python3.7 -m virtualenv "/opt/tfc/venv_tcb" --system-site-packages --never-download
@@ -553,11 +555,12 @@ function install_qubes_dst {
 
 function install_qubes_net {
     # Qubes Networked Computer VM installation configuration for Debian 10 domains.
+    create_user_data_dir
+
     steps_before_network_kill
     qubes_net_firewall_config
 
     verify_files
-    create_user_data_dir
 
     process_virtualenv_dependencies "python3.7 -m pip install"
     sudo python3.7 -m virtualenv /opt/tfc/venv_relay --system-site-packages
@@ -600,6 +603,9 @@ function qubes_src_firewall_config {
     src_ip=$(sudo ifconfig eth0 | grep "inet" | cut -d: -f2 | awk '{print $2}')
     net_ip=$(get_ip "Networked Computer VM")
 
+    # Store Networked VM IP address so Transmitter Program can configure itself
+    echo ${net_ip} > $HOME/tfc/rx_ip_addr
+
     # Create backup of the current rc.config file (firewall rules)
     sudo mv /rw/config/rc.local{,.backup."$(date +%Y-%m-%d-%H_%M_%S)"}
 
@@ -638,6 +644,9 @@ function qubes_net_firewall_config {
     src_ip=$(get_ip "Source Computer VM")
     net_ip=$(sudo ifconfig eth0 | grep "inet" | cut -d: -f2 | awk '{print $2}')
     dst_ip=$(get_ip "Destination Computer VM")
+
+    # Store Destination VM IP address so Relay Program can configure itself
+    echo ${dst_ip} > $HOME/tfc/rx_ip_addr
 
     # Create backup of the current rc.config file (firewall rules)
     sudo cp /rw/config/rc.local{,.backup."$(date +%Y-%m-%d-%H_%M_%S)"}

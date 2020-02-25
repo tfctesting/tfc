@@ -44,9 +44,10 @@ from src.common.output       import m_print, phase, print_on_previous_line
 from src.common.reed_solomon import ReedSolomonError, RSCodec
 from src.common.statics      import (BAUDS_PER_BYTE, DIR_USER_DATA, DONE, DST_DD_LISTEN_SOCKET, DST_LISTEN_SOCKET,
                                      GATEWAY_QUEUE, LOCALHOST, LOCAL_TESTING_PACKET_DELAY, MAX_INT, NC,
-                                     QUBES_DST_LISTEN_SOCKET, QUBES_SRC_LISTEN_SOCKET, PACKET_CHECKSUM_LENGTH, RECEIVER,
-                                     RELAY, RP_LISTEN_SOCKET, RX, SERIAL_RX_MIN_TIMEOUT, SETTINGS_INDENT,
-                                     SOCKET_BUFFER_SIZE, SRC_DD_LISTEN_SOCKET, TRANSMITTER, TX, US_BYTE)
+                                     QUBES_DST_LISTEN_SOCKET, QUBES_RX_IP_ADDR_FILE, QUBES_SRC_LISTEN_SOCKET,
+                                     PACKET_CHECKSUM_LENGTH, RECEIVER, RELAY, RP_LISTEN_SOCKET, RX,
+                                     SERIAL_RX_MIN_TIMEOUT, SETTINGS_INDENT, SOCKET_BUFFER_SIZE, SRC_DD_LISTEN_SOCKET,
+                                     TRANSMITTER, TX, US_BYTE)
 
 if typing.TYPE_CHECKING:
     from multiprocessing import Queue
@@ -527,6 +528,17 @@ class GatewaySettings(object):
                     self.setup()
 
         if self.qubes and self.software_operation != RX:
+
+            # Check if IP address was stored by the installer.
+            if os.path.isfile(QUBES_RX_IP_ADDR_FILE):
+                cached_ip = open(QUBES_RX_IP_ADDR_FILE).read()
+                os.remove(QUBES_RX_IP_ADDR_FILE)
+
+                if validate_ip_address(cached_ip) == '':
+                    self.rx_udp_ip = cached_ip
+                    return
+
+            # If we reach this point, no cached IP was found, prompt for IP address from the user.
             rx_device, short = ('Networked', 'NET') if self.software_operation == TX else ('Destination', 'DST')
             m_print(f"Enter the IP address of the {rx_device} Computer", head=1, tail=1)
             self.rx_udp_ip = box_input(f"{short} IP-address", expected_len=15, validator=validate_ip_address, tail=1)
