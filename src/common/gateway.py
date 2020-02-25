@@ -531,7 +531,7 @@ class GatewaySettings(object):
 
             # Check if IP address was stored by the installer.
             if os.path.isfile(QUBES_RX_IP_ADDR_FILE):
-                cached_ip = open(QUBES_RX_IP_ADDR_FILE).read()
+                cached_ip = open(QUBES_RX_IP_ADDR_FILE).read().strip()
                 os.remove(QUBES_RX_IP_ADDR_FILE)
 
                 if validate_ip_address(cached_ip) == '':
