@@ -783,7 +783,7 @@ function get_tcb_ips {
         return
     else
         zenity --info --title='TFC installer' --text='Invalid IP'
-        get_ips
+        get_tcb_ips
     fi
 }
 
