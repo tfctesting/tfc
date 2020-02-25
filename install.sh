@@ -496,7 +496,7 @@ function install_qubes_src {
     create_user_data_dir
 
     process_virtualenv_dependencies "python3.7 -m pip install"
-    sudo python3.7 -m virtualenv  "/opt/tfc/venv_tcb" --system-site-packages --never-download
+    sudo python3.7 -m virtualenv "/opt/tfc/venv_tcb" --system-site-packages --never-download
 
     . /opt/tfc/venv_tcb/bin/activate
     process_tcb_dependencies "python3.7 -m pip install"
@@ -528,7 +528,7 @@ function install_qubes_dst {
     create_user_data_dir
 
     process_virtualenv_dependencies "python3.7 -m pip install"
-    sudo python3.7 -m virtualenv  "/opt/tfc/venv_tcb" --system-site-packages --never-download
+    sudo python3.7 -m virtualenv "/opt/tfc/venv_tcb" --system-site-packages --never-download
 
     . /opt/tfc/venv_tcb/bin/activate
     process_tcb_dependencies "python3.7 -m pip install"
@@ -588,7 +588,6 @@ function install_qubes_net {
 function qubes_src_firewall_config {
     # Edit Source Computer VM firewall rules to block all incoming connections, and to
     # only allow UDP packets to Networked Computer's TFC port.
-
     src_ip=$(sudo ifconfig eth0 | grep "inet" | cut -d: -f2 | awk '{print $2}')
     net_ip=$(get_ip "Networked Computer VM")
 
@@ -599,7 +598,7 @@ function qubes_src_firewall_config {
     sudo iptables -t filter -P FORWARD DROP
     sudo iptables -I OUTPUT -s ${src_ip} -d ${net_ip} -p udp --dport 2063 -j ACCEPT
 
-    # Create backup of the current rc.config file just in case
+    # Create backup of the current rc.config file (firewall rules)
     sudo mv /rw/config/rc.local{,.backup."$(date +%Y-%m-%d-%H_%M_%S)"}
 
     # Make firewall rules persistent
@@ -615,7 +614,6 @@ function qubes_src_firewall_config {
 function qubes_dst_firewall_config {
     # Edit Destination Computer VM's firewall rules to block all outgoing connections, and
     # to only allow UDP packets from Networked Computer VM to Receiver Programs' port.
-
     net_ip=$(get_ip "Networked Computer VM")
     dst_ip=$(sudo ifconfig eth0 | grep "inet" | cut -d: -f2 | awk '{print $2}')
 
@@ -626,7 +624,7 @@ function qubes_dst_firewall_config {
     sudo iptables -t filter -P FORWARD DROP
     sudo iptables -I INPUT -s ${net_ip} -d ${dst_ip} -p udp --dport 2064 -j ACCEPT
 
-    # Create backup of the current rc.config file just in case
+    # Create backup of the current rc.config file (firewall rules)
     sudo mv /rw/config/rc.local{,.backup."$(date +%Y-%m-%d-%H_%M_%S)"}
 
     # Make firewall rules persistent
@@ -642,7 +640,6 @@ function qubes_dst_firewall_config {
 function qubes_net_firewall_config {
     # Edit Networked Computer VM's firewall rules to accept UDP packets from Source
     # Computer VM to the Relay Program's port.
-
     src_ip=$(get_ip "Source Computer VM")
     net_ip=$(sudo ifconfig eth0 | grep "inet" | cut -d: -f2 | awk '{print $2}')
     dst_ip=$(get_ip "Destination Computer VM")
@@ -651,13 +648,13 @@ function qubes_net_firewall_config {
     sudo iptables -t filter -P INPUT DROP
     sudo iptables -t filter -P OUTPUT ACCEPT
     sudo iptables -t filter -P FORWARD DROP
-    sudo iptables -I INPUT -s ${src_ip} -d ${net_ip} -p udp --dport 2063 -j ACCEPT  # Whitelist UDP packets to Relay Program's port
-    sudo iptables -I OUTPUT -d ${dst_ip} -p udp ! --dport 2064 -j DROP              # Blacklist all UDP packets without destination port 2064
-    sudo iptables -I OUTPUT -d ${dst_ip} ! -p udp -j DROP                           # Blacklist all non-UDP packets to DST VM
+    sudo iptables -I INPUT -s ${src_ip} -d ${net_ip} -p udp --dport 2063 -j ACCEPT  # Whitelist UDP packets from SRC VM to NET VM's TFC port (2063)
+    sudo iptables -I OUTPUT -d ${dst_ip} -p udp ! --dport 2064 -j DROP              # Blacklist all UDP packets from NET VM to DST VM that don't have destination port 2064
+    sudo iptables -I OUTPUT -d ${dst_ip} ! -p udp -j DROP                           # Blacklist all non-UDP packets from NET VM to DST VM
     sudo iptables -I OUTPUT ! -s ${net_ip} -d ${dst_ip} -j DROP                     # Blacklist all packets to DST VM that do not originate from NET VM
     sudo iptables -I OUTPUT -d ${src_ip} -p all -j DROP                             # Blacklist all packets to SRC VM
 
-    # Create backup of the current rc.config file just in case
+    # Create backup of the current rc.config file (firewall rules)
     sudo cp /rw/config/rc.local{,.backup."$(date +%Y-%m-%d-%H_%M_%S)"}
 
     # Make firewall rules persistent
