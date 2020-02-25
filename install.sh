@@ -585,28 +585,30 @@ function install_qubes_net {
 
 # Qubes firewall configurations
 
+function add_fw_rule {
+    # Add a firewall rule that takes effect immediately
+    sudo ${1}
+
+    # Make the firewall rule persistent
+    echo "${1}" | sudo tee -a /rw/config/rc.local
+}
+
+
 function qubes_src_firewall_config {
     # Edit Source Computer VM firewall rules to block all incoming connections, and to
     # only allow UDP packets to Networked Computer's TFC port.
     src_ip=$(sudo ifconfig eth0 | grep "inet" | cut -d: -f2 | awk '{print $2}')
     net_ip=$(get_ip "Networked Computer VM")
 
-    # Add firewall rules that take effect immediately
-    sudo iptables --flush
-    sudo iptables -t filter -P INPUT DROP
-    sudo iptables -t filter -P OUTPUT DROP
-    sudo iptables -t filter -P FORWARD DROP
-    sudo iptables -I OUTPUT -s ${src_ip} -d ${net_ip} -p udp --dport 2063 -j ACCEPT
-
     # Create backup of the current rc.config file (firewall rules)
     sudo mv /rw/config/rc.local{,.backup."$(date +%Y-%m-%d-%H_%M_%S)"}
 
-    # Make firewall rules persistent
-    echo "iptables --flush"                                                           | sudo tee -a /rw/config/rc.local
-    echo "iptables -t filter -P INPUT DROP"                                           | sudo tee -a /rw/config/rc.local
-    echo "iptables -t filter -P OUTPUT DROP"                                          | sudo tee -a /rw/config/rc.local
-    echo "iptables -t filter -P FORWARD DROP"                                         | sudo tee -a /rw/config/rc.local
-    echo "iptables -I OUTPUT -s ${src_ip} -d ${net_ip} -p udp --dport 2063 -j ACCEPT" | sudo tee -a /rw/config/rc.local
+    # Add firewall rules
+    add_fw_rule "iptables --flush"
+    add_fw_rule "iptables -t filter -P INPUT DROP"
+    add_fw_rule "iptables -t filter -P OUTPUT DROP"
+    add_fw_rule "iptables -t filter -P FORWARD DROP"
+    add_fw_rule "iptables -I OUTPUT -s ${src_ip} -d ${net_ip} -p udp --dport 2063 -j ACCEPT"
     sudo chmod a+x /rw/config/rc.local
 }
 
@@ -617,22 +619,15 @@ function qubes_dst_firewall_config {
     net_ip=$(get_ip "Networked Computer VM")
     dst_ip=$(sudo ifconfig eth0 | grep "inet" | cut -d: -f2 | awk '{print $2}')
 
-    # Add firewall rules that take effect immediately
-    sudo iptables --flush
-    sudo iptables -t filter -P INPUT DROP
-    sudo iptables -t filter -P OUTPUT DROP
-    sudo iptables -t filter -P FORWARD DROP
-    sudo iptables -I INPUT -s ${net_ip} -d ${dst_ip} -p udp --dport 2064 -j ACCEPT
-
     # Create backup of the current rc.config file (firewall rules)
     sudo mv /rw/config/rc.local{,.backup."$(date +%Y-%m-%d-%H_%M_%S)"}
 
-    # Make firewall rules persistent
-    echo "iptables --flush"                                                          | sudo tee -a /rw/config/rc.local
-    echo "iptables -t filter -P INPUT DROP"                                          | sudo tee -a /rw/config/rc.local
-    echo "iptables -t filter -P OUTPUT DROP"                                         | sudo tee -a /rw/config/rc.local
-    echo "iptables -t filter -P FORWARD DROP"                                        | sudo tee -a /rw/config/rc.local
-    echo "iptables -I INPUT -s ${net_ip} -d ${dst_ip} -p udp --dport 2064 -j ACCEPT" | sudo tee -a /rw/config/rc.local
+    # Add firewall rules
+    add_fw_rule "iptables --flush"
+    add_fw_rule "iptables -t filter -P INPUT DROP"
+    add_fw_rule "iptables -t filter -P OUTPUT DROP"
+    add_fw_rule "iptables -t filter -P FORWARD DROP"
+    add_fw_rule "iptables -I INPUT -s ${net_ip} -d ${dst_ip} -p udp --dport 2064 -j ACCEPT"
     sudo chmod a+x /rw/config/rc.local
 }
 
@@ -644,28 +639,18 @@ function qubes_net_firewall_config {
     net_ip=$(sudo ifconfig eth0 | grep "inet" | cut -d: -f2 | awk '{print $2}')
     dst_ip=$(get_ip "Destination Computer VM")
 
-    # Add firewall rules that take effect immediately
-    sudo iptables -t filter -P INPUT DROP
-    sudo iptables -t filter -P OUTPUT ACCEPT
-    sudo iptables -t filter -P FORWARD DROP
-    sudo iptables -I INPUT -s ${src_ip} -d ${net_ip} -p udp --dport 2063 -j ACCEPT  # Whitelist UDP packets from SRC VM to NET VM's TFC port (2063)
-    sudo iptables -I OUTPUT -d ${dst_ip} -p udp ! --dport 2064 -j DROP              # Blacklist all UDP packets from NET VM to DST VM that don't have destination port 2064
-    sudo iptables -I OUTPUT -d ${dst_ip} ! -p udp -j DROP                           # Blacklist all non-UDP packets from NET VM to DST VM
-    sudo iptables -I OUTPUT ! -s ${net_ip} -d ${dst_ip} -j DROP                     # Blacklist all packets to DST VM that do not originate from NET VM
-    sudo iptables -I OUTPUT -d ${src_ip} -p all -j DROP                             # Blacklist all packets to SRC VM
-
     # Create backup of the current rc.config file (firewall rules)
     sudo cp /rw/config/rc.local{,.backup."$(date +%Y-%m-%d-%H_%M_%S)"}
 
-    # Make firewall rules persistent
-    echo "iptables -t filter -P INPUT DROP"                                          | sudo tee -a /rw/config/rc.local
-    echo "iptables -t filter -P OUTPUT ACCEPT"                                       | sudo tee -a /rw/config/rc.local
-    echo "iptables -t filter -P FORWARD DROP"                                        | sudo tee -a /rw/config/rc.local
-    echo "iptables -I INPUT -s ${src_ip} -d ${net_ip} -p udp --dport 2063 -j ACCEPT" | sudo tee -a /rw/config/rc.local
-    echo "iptables -I OUTPUT -d ${dst_ip} -p udp ! --dport 2064 -j DROP"             | sudo tee -a /rw/config/rc.local
-    echo "iptables -I OUTPUT -d ${dst_ip} ! -p udp -j DROP"                          | sudo tee -a /rw/config/rc.local
-    echo "iptables -I OUTPUT ! -s ${net_ip} -d ${dst_ip} -j DROP"                    | sudo tee -a /rw/config/rc.local
-    echo "iptables -I OUTPUT -d ${src_ip} -p all -j DROP"                            | sudo tee -a /rw/config/rc.local
+    # Add firewall rules that take effect immediately
+    add_fw_rule "iptables -t filter -P INPUT DROP"
+    add_fw_rule "iptables -t filter -P OUTPUT ACCEPT"
+    add_fw_rule "iptables -t filter -P FORWARD DROP"
+    add_fw_rule "iptables -I INPUT -s ${src_ip} -d ${net_ip} -p udp --dport 2063 -j ACCEPT"  # Whitelist UDP packets from SRC VM to NET VM's TFC port (2063)
+    add_fw_rule "iptables -I OUTPUT -d ${dst_ip} -p udp ! --dport 2064 -j DROP"              # Blacklist all UDP packets from NET VM to DST VM that don't have destination port 2064
+    add_fw_rule "iptables -I OUTPUT -d ${dst_ip} ! -p udp -j DROP"                           # Blacklist all non-UDP packets from NET VM to DST VM
+    add_fw_rule "iptables -I OUTPUT ! -s ${net_ip} -d ${dst_ip} -j DROP"                     # Blacklist all packets to DST VM that do not originate from NET VM
+    add_fw_rule "iptables -I OUTPUT -d ${src_ip} -p all -j DROP"                             # Blacklist all packets to SRC VM
     sudo chmod a+x /rw/config/rc.local
 }
 
