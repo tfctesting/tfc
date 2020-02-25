@@ -12,6 +12,9 @@
 [![Requirements Status](https://requires.io/github/tfctesting/tfc/requirements.svg?branch=master)](https://requires.io/github/tfctesting/tfc/requirements/?branch=master)
 [![Known Vulnerabilities](https://snyk.io/test/github/tfctesting/tfc/badge.svg)](https://snyk.io/test/github/tfctesting/tfc) 
 
+# THIS IS A TESTING REPOSITORY. THE CODE IS NOT STABLE AND IT IS SIGNED WITH AN INSECURELY STORE KEY!
+# DO NOT USE THIS CODE FOR ANYTHING SERIOUS. USE THE [OFFICIAL REPOSITORY](https://github.com/maqp/tfc) INSTEAD!
+
 Tinfoil Chat (TFC) is a
 [FOSS](https://www.gnu.org/philosophy/free-sw.html)+[FHD](https://www.gnu.org/philosophy/free-hardware-designs.en.html)
 [peer-to-peer](https://en.wikipedia.org/wiki/Peer-to-peer)
