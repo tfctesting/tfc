@@ -593,9 +593,6 @@ function qubes_src_firewall_config {
     # Edit Source Computer VM firewall rules to block all incoming connections, and to
     # only allow UDP packets to Networked Computer's TFC port.
 
-    # Create backup of the current rc.config file just in case
-    sudo mv /rw/config/rc.local{,.backup."$(date +%Y-%m-%d-%H_%M_%S)"}
-
     net_ip=$(get_ip "Networked Computer VM")
 
     # Add firewall rules that take effect immediately
@@ -604,6 +601,9 @@ function qubes_src_firewall_config {
     sudo iptables -t filter -P OUTPUT DROP
     sudo iptables -t filter -P FORWARD DROP
     sudo iptables -I OUTPUT -d ${net_ip} -p udp --dport 2063 -j ACCEPT
+
+    # Create backup of the current rc.config file just in case
+    sudo mv /rw/config/rc.local{,.backup."$(date +%Y-%m-%d-%H_%M_%S)"}
 
     # Make firewall rules persistent
     echo "iptables --flush"                                              | sudo tee -a /rw/config/rc.local
@@ -619,9 +619,6 @@ function qubes_dst_firewall_config {
     # Edit Destination Computer VM's firewall rules to block all outgoing connections, and
     # to only allow UDP packets from Networked Computer VM to Receiver Programs' port.
 
-    # Create backup of the current rc.config file just in case
-    sudo mv /rw/config/rc.local{,.backup."$(date +%Y-%m-%d-%H_%M_%S)"}
-
     net_ip=$(get_ip "Networked Computer VM")
 
     # Add firewall rules that take effect immediately
@@ -630,6 +627,9 @@ function qubes_dst_firewall_config {
     sudo iptables -t filter -P OUTPUT DROP
     sudo iptables -t filter -P FORWARD DROP
     sudo iptables -I INPUT -s ${net_ip} -p udp --dport 2064 -j ACCEPT
+
+    # Create backup of the current rc.config file just in case
+    sudo mv /rw/config/rc.local{,.backup."$(date +%Y-%m-%d-%H_%M_%S)"}
 
     # Make firewall rules persistent
     echo "iptables --flush"                                             | sudo tee -a /rw/config/rc.local
@@ -645,14 +645,14 @@ function qubes_net_firewall_config {
     # Edit Networked Computer VM's firewall rules to accept UDP packets from Source
     # Computer VM to the Relay Program's port.
 
-    # Create backup of the current rc.config file just in case
-    sudo cp /rw/config/rc.local{,.backup."$(date +%Y-%m-%d-%H_%M_%S)"}
-
     src_ip=$(get_ip "Source Computer VM")
     net_ip=$(get_ip "Networked Computer VM")
 
     # Add firewall rules that take effect immediately
     sudo iptables -I INPUT -s ${src_ip} -d ${net_ip} -p udp --dport 2063 -j ACCEPT
+
+    # Create backup of the current rc.config file just in case
+    sudo cp /rw/config/rc.local{,.backup."$(date +%Y-%m-%d-%H_%M_%S)"}
 
     # Make firewall rules persistent
     echo "iptables -I INPUT -s ${src_ip} -d ${net_ip} -p udp --dport 2063 -j ACCEPT" | sudo tee -a /rw/config/rc.local
