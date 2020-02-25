@@ -652,7 +652,7 @@ function qubes_net_firewall_config {
     sudo iptables -t filter -P OUTPUT ACCEPT
     sudo iptables -t filter -P FORWARD DROP
     sudo iptables -I INPUT -s ${src_ip} -d ${net_ip} -p udp --dport 2063 -j ACCEPT  # Whitelist UDP packets to Relay Program's port
-    sudo iptables -I OUTPUT -d ${dst_ip} -p udp ! --dport 2064 -j DROP              # Blacklist all packets without destination port 2064
+    sudo iptables -I OUTPUT -d ${dst_ip} -p udp ! --dport 2064 -j DROP              # Blacklist all UDP packets without destination port 2064
     sudo iptables -I OUTPUT -d ${dst_ip} ! -p udp -j DROP                           # Blacklist all non-UDP packets to DST VM
     sudo iptables -I OUTPUT ! -s ${net_ip} -d ${dst_ip} -j DROP                     # Blacklist all packets to DST VM that do not originate from NET VM
     sudo iptables -I OUTPUT -d ${src_ip} -p all -j DROP                             # Blacklist all packets to SRC VM
@@ -665,9 +665,9 @@ function qubes_net_firewall_config {
     echo "iptables -t filter -P OUTPUT ACCEPT"                                       | sudo tee -a /rw/config/rc.local
     echo "iptables -t filter -P FORWARD DROP"                                        | sudo tee -a /rw/config/rc.local
     echo "iptables -I INPUT -s ${src_ip} -d ${net_ip} -p udp --dport 2063 -j ACCEPT" | sudo tee -a /rw/config/rc.local
-    echo "iptables -I OUTPUT -d ${dst_ip} ! --dport 2064 -j DROP"                    | sudo tee -a /rw/config/rc.local
-    echo "iptables -I OUTPUT -d ${dst_ip} -p ! udp -j DROP"                          | sudo tee -a /rw/config/rc.local
-    echo "iptables -I OUTPUT -s ! ${net_ip} -d ${dst_ip} -j DROP"                    | sudo tee -a /rw/config/rc.local
+    echo "iptables -I OUTPUT -d ${dst_ip} -p udp ! --dport 2064 -j DROP"             | sudo tee -a /rw/config/rc.local
+    echo "iptables -I OUTPUT -d ${dst_ip} ! -p udp -j DROP"                          | sudo tee -a /rw/config/rc.local
+    echo "iptables -I OUTPUT ! -s ${net_ip} -d ${dst_ip} -j DROP"                    | sudo tee -a /rw/config/rc.local
     echo "iptables -I OUTPUT -d ${src_ip} -p all -j DROP"                            | sudo tee -a /rw/config/rc.local
     sudo chmod a+x /rw/config/rc.local
 }
