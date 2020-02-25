@@ -201,7 +201,6 @@ function verify_files {
 function process_tcb_dependencies {
     # Manage TCB dependencies in batch. The command that uses
     # the files is passed to the function as a parameter.
-    sudo $1 "/opt/tfc/${SIX}"
     sudo $1 "/opt/tfc/${PYCPARSER}"
     sudo $1 "/opt/tfc/${CFFI}"
     sudo $1 "/opt/tfc/${ARGON2}"
