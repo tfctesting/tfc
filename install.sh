@@ -641,9 +641,10 @@ function qubes_dst_firewall_config {
 function qubes_net_firewall_config {
     # Edit Networked Computer VM's firewall rules to accept UDP packets from Source
     # Computer VM to the Relay Program's port.
-    src_ip=$(get_ip "Source Computer VM")
     net_ip=$(sudo ifconfig eth0 | grep "inet" | cut -d: -f2 | awk '{print $2}')
-    dst_ip=$(get_ip "Destination Computer VM")
+    tcb_ips=$(get_tcb_ips)
+    src_ip=$(echo ${tcb_ips} | awk -F "|" '{print $1}')
+    dst_ip=$(echo ${tcb_ips} | awk -F "|" '{print $2}')
 
     # Store Destination VM IP address so Relay Program can configure itself
     echo ${dst_ip} > $HOME/tfc/rx_ip_addr
@@ -766,6 +767,23 @@ function get_ip {
     else
         zenity --info --title='TFC installer' --text='Invalid IP'
         get_ip
+    fi
+}
+
+
+function get_tcb_ips {
+    # Get Source and Destination VM IP-addresses from the user.
+    ips=$(zenity --forms --title="TFC Installer" --text="Enter IP-addresses of the TCBs" --add-entry="Source Computer IP" --add-entry="Destination Computer IP")
+
+    first_ip=$(echo $ips | awk -F "|" '{print $1}')
+    second_ip=$(echo $ips | awk -F "|" '{print $2}')
+
+    if [[ ${first_ip} =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]] && [[ ${second_ip} =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+        echo ${ips}
+        return
+    else
+        zenity --info --title='TFC installer' --text='Invalid IP'
+        get_ips
     fi
 }
 
