@@ -593,7 +593,7 @@ function qubes_src_firewall_config {
     # Edit Source Computer VM firewall rules to block all incoming connections, and to
     # only allow UDP packets to Networked Computer's TFC port.
 
-    src_ip=$(ifconfig eno1 | grep "inet" | cut -d: -f2 | awk '{print $2}')
+    src_ip=$(sudo ifconfig eno1 | grep "inet" | cut -d: -f2 | awk '{print $2}')
     net_ip=$(get_ip "Networked Computer VM")
 
     # Add firewall rules that take effect immediately
@@ -621,7 +621,7 @@ function qubes_dst_firewall_config {
     # to only allow UDP packets from Networked Computer VM to Receiver Programs' port.
 
     net_ip=$(get_ip "Networked Computer VM")
-    dst_ip=$(ifconfig eno1 | grep "inet" | cut -d: -f2 | awk '{print $2}')
+    dst_ip=$(sudo ifconfig eno1 | grep "inet" | cut -d: -f2 | awk '{print $2}')
 
     # Add firewall rules that take effect immediately
     sudo iptables --flush
@@ -648,7 +648,7 @@ function qubes_net_firewall_config {
     # Computer VM to the Relay Program's port.
 
     src_ip=$(get_ip "Source Computer VM")
-    net_ip=$(ifconfig eno1 | grep "inet" | cut -d: -f2 | awk '{print $2}')
+    net_ip=$(sudo ifconfig eno1 | grep "inet" | cut -d: -f2 | awk '{print $2}')
     dst_ip=$(get_ip "Destination Computer VM")
 
     # Add firewall rules that take effect immediately
