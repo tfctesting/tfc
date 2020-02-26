@@ -548,7 +548,6 @@ def validate_nick(nick: str,                                      # Nick to vali
     return error_msg
 
 
-
 def same_contact_check(onion_pub_key: bytes,
                        nick:          str,
                        contact_list:  'ContactList'

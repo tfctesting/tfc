@@ -369,7 +369,7 @@ class TestReceiverLoadPSK(TFCTestCase):
                                 contact=contact)
 
         # Test
-        self.assert_se("PSK verification aborted.", rxp_load_psk, window, contact_list, *self.args)
+        self.assert_se("PSK install verification aborted.", rxp_load_psk, window, contact_list, *self.args)
 
 
 if __name__ == '__main__':

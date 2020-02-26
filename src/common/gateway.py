@@ -159,10 +159,11 @@ class Gateway(object):
         packet  = base64.b85encode(packet)
         packets = split_byte_string(packet, SOCKET_BUFFER_SIZE)
 
-        for p in packets:
-            self.txq_socket.sendto(p, (self.settings.rx_udp_ip, udp_port))
-            time.sleep(0.000001)
-        self.txq_socket.sendto(US_BYTE, (self.settings.rx_udp_ip, udp_port))
+        if self.txq_socket is not None:
+            for p in packets:
+                self.txq_socket.sendto(p, (self.settings.rx_udp_ip, udp_port))
+                time.sleep(0.000001)
+            self.txq_socket.sendto(US_BYTE, (self.settings.rx_udp_ip, udp_port))
 
     def write(self, orig_packet: bytes) -> None:
         """Add error correction data and output data via socket/serial interface.
@@ -358,7 +359,9 @@ class Gateway(object):
             s.connect(('192.0.0.8', 1027))
         except socket.error:
             raise CriticalError("Socket error")
-        return s.getsockname()[0]
+        ip_address = s.getsockname()[0]  # type: str
+
+        return ip_address
 
     # Local testing
 
@@ -583,43 +586,74 @@ class GatewaySettings(object):
     def check_missing_settings(self, json_dict: Any) -> None:
         """Check for missing JSON fields and invalid values."""
         for key in self.key_list:
-            if key not in json_dict:
-                m_print([f"Error: Missing setting '{key}' in '{self.file_name}'.",
-                         f"The value has been set to default ({self.defaults[key]})."], head=1, tail=1)
-                setattr(self, key, self.defaults[key])
+            try:
+                self.check_key_in_key_list(key, json_dict)
+
+                if key == 'serial_baudrate':
+                    self.validate_serial_baudrate(key, json_dict)
+
+                elif key == 'serial_error_correction':
+                    self.validate_serial_error_correction(key, json_dict)
+
+                elif key == 'use_serial_usb_adapter':
+                    self.validate_serial_usb_adapter_value(key, json_dict)
+
+                elif key == 'built_in_serial_interface':
+                    self.validate_serial_interface_value(key, json_dict)
+
+                elif key == 'rx_udp_ip':
+                    json_dict[key] = self.validate_rx_udp_ip_address(key, json_dict)
+
+            except SoftError:
                 continue
-
-            # Closer inspection of each setting value
-            if key == 'serial_baudrate' and json_dict[key] not in serial.Serial().BAUDRATES:
-                self.invalid_setting(key, json_dict)
-                continue
-
-            elif key == 'serial_error_correction' and (not isinstance(json_dict[key], int) or json_dict[key] < 0):
-                self.invalid_setting(key, json_dict)
-                continue
-
-            elif key == 'use_serial_usb_adapter':
-                if not isinstance(json_dict[key], bool):
-                    self.invalid_setting(key, json_dict)
-                    continue
-
-            elif key == 'built_in_serial_interface':
-                if not isinstance(json_dict[key], str):
-                    self.invalid_setting(key, json_dict)
-                    continue
-                if not any(json_dict[key] == f for f in os.listdir('/sys/class/tty')):
-                    self.invalid_setting(key, json_dict)
-                    continue
-
-            elif key == 'rx_udp_ip' and self.qubes:
-                if not isinstance(json_dict[key], str):
-                    self.invalid_setting(key, json_dict)
-                    continue
-                if validate_ip_address(json_dict[key]) != '':
-                    self.setup()
-                    continue
 
             setattr(self, key, json_dict[key])
+
+    def check_key_in_key_list(self, key: str, json_dict: Any) -> None:
+        """Check if the setting's key value is in the setting dictionary."""
+        if key not in json_dict:
+            m_print([f"Error: Missing setting '{key}' in '{self.file_name}'.",
+                     f"The value has been set to default ({self.defaults[key]})."], head=1, tail=1)
+            setattr(self, key, self.defaults[key])
+            raise SoftError("Missing key", output=False)
+
+    def validate_serial_usb_adapter_value(self, key: str, json_dict: Any) -> None:
+        """Validate the serial usb adapter boolean value."""
+        if not isinstance(json_dict[key], bool):
+            self.invalid_setting(key, json_dict)
+            raise SoftError("Invalid value", output=False)
+
+    def validate_serial_baudrate(self, key: str, json_dict: Any) -> None:
+        """Validate the serial baudrate setting value."""
+        if json_dict[key] not in serial.Serial().BAUDRATES:
+            self.invalid_setting(key, json_dict)
+            raise SoftError("Invalid value", output=False)
+
+    def validate_serial_error_correction(self, key: str, json_dict: Any) -> None:
+        """Validate the serial error correction setting value."""
+        if not isinstance(json_dict[key], int) or json_dict[key] < 0:
+            self.invalid_setting(key, json_dict)
+            raise SoftError("Invalid value", output=False)
+
+    def validate_serial_interface_value(self, key: str, json_dict: Any) -> None:
+        """Validate the serial interface setting value."""
+        if not isinstance(json_dict[key], str):
+            self.invalid_setting(key, json_dict)
+            raise SoftError("Invalid value", output=False)
+
+        if not any(json_dict[key] == f for f in os.listdir('/sys/class/tty')):
+            self.invalid_setting(key, json_dict)
+            raise SoftError("Invalid value", output=False)
+
+    def validate_rx_udp_ip_address(self, key: str, json_dict: Any) -> str:
+        """Validate IP address of receiving Qubes VM."""
+        if self.qubes:
+            if not isinstance(json_dict[key], str) or validate_ip_address(json_dict[key]) != '':
+                self.setup()
+                return self.rx_udp_ip
+
+        rx_udp_ip = json_dict[key]  # type: str
+        return rx_udp_ip
 
     def change_setting(self, key: str, value_str: str) -> None:
         """Parse, update and store new setting value."""

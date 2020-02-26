@@ -216,7 +216,7 @@ class TestAddContact(unittest.TestCase):
     def test_add_contact(self) -> None:
         command = b''.join([nick_to_pub_key('Alice'), nick_to_pub_key('Bob')])
 
-        self.assertIsNone(add_contact(command, True, self.queues))
+        self.assertIsNone(add_contact(command, self.queues, True))
         self.assertEqual(self.queues[CONTACT_MGMT_QUEUE].qsize(), 1)
         for q in [GROUP_MGMT_QUEUE, C_REQ_MGMT_QUEUE]:
             command = self.queues[q].get()

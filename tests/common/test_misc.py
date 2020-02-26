@@ -37,8 +37,8 @@ from src.common.misc    import calculate_race_condition_delay, decompress, ensur
 from src.common.misc    import get_tab_completer, get_terminal_height, get_terminal_width, HideRunTime, ignored
 from src.common.misc    import monitor_processes, process_arguments, readable_size, reset_terminal, round_up
 from src.common.misc    import separate_header, separate_headers, separate_trailer, split_string, split_byte_string
-from src.common.misc    import split_to_substrings, terminal_width_check, validate_group_name, validate_key_exchange
-from src.common.misc    import validate_onion_addr, validate_nick
+from src.common.misc    import split_to_substrings, terminal_width_check, validate_group_name, validate_ip_address
+from src.common.misc    import validate_key_exchange, validate_onion_addr, validate_nick
 from src.common.statics import (DIR_RECV_FILES, DIR_USER_DATA, DUMMY_GROUP, ECDHE, EXIT, EXIT_QUEUE, LOCAL_ID,
                                 PADDING_LENGTH, RESET, RX, TAILS, TRAFFIC_MASKING, WIPE)
 
@@ -275,6 +275,7 @@ class TestProcessArguments(unittest.TestCase):
                 self.operation = True
                 self.local_test = True
                 self.data_diode_sockets = True
+                self.qubes              = False
 
         class MockParser(object):
             """MockParse object."""
@@ -298,7 +299,7 @@ class TestProcessArguments(unittest.TestCase):
         argparse.ArgumentParser = self.o_argparse
 
     def test_process_arguments(self) -> None:
-        self.assertEqual(process_arguments(), (RX, True, True))
+        self.assertEqual(process_arguments(), (RX, True, True, False))
 
 
 class TestReadableSize(unittest.TestCase):
@@ -497,6 +498,17 @@ class TestValidateGroupName(unittest.TestCase):
                          "Error: Group with name 'test_group' already exists.")
         self.assertEqual(validate_group_name('test_group2',                  self.contact_list, self.group_list),
                          '')
+
+
+class TestValidateIpAddress(unittest.TestCase):
+
+    def test_validate_ip_address(self) -> None:
+        self.assertEqual(validate_ip_address("0.0.0.0"),         '')
+        self.assertEqual(validate_ip_address("10.137.0.17"),     '')
+        self.assertEqual(validate_ip_address("10.137.0.255"),    '')
+        self.assertEqual(validate_ip_address("255.255.255.255"), '')
+        self.assertEqual(validate_ip_address("10.137.0.256"),    'Invalid IP address')
+        self.assertEqual(validate_ip_address("256.256.256.256"), 'Invalid IP address')
 
 
 class TestValidateKeyExchange(unittest.TestCase):

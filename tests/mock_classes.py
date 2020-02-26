@@ -304,6 +304,8 @@ class GatewaySettings(OrigGatewaySettings):
         self.local_testing_mode = False
         self.data_diode_sockets = False
 
+        self.qubes = False
+
         self.all_keys = list(vars(self).keys())
         self.key_list = self.all_keys[:self.all_keys.index('software_operation')]
         self.defaults = {k: self.__dict__[k] for k in self.key_list}
