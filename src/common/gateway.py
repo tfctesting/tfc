@@ -265,8 +265,7 @@ class Gateway(object):
             return self.read_socket()
         elif self.settings.qubes:
             return self.read_qubes_socket()
-        else:
-            return self.read_serial()
+        return self.read_serial()
 
     def add_error_correction(self, packet: bytes) -> bytes:
         """Add error correction to packet that will be output.
