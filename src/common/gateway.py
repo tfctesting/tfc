@@ -263,7 +263,7 @@ class Gateway(object):
         """Read data via socket/serial interface."""
         if self.settings.local_testing_mode:
             return self.read_socket()
-        elif self.settings.qubes:
+        if self.settings.qubes:
             return self.read_qubes_socket()
         return self.read_serial()
 
