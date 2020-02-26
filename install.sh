@@ -42,7 +42,7 @@ SETUPTOOLS=setuptools-45.2.0-py3-none-any.whl
 SIX=six-1.14.0-py2.py3-none-any.whl
 # STEM=stem-1.8.0.tar.gz
 URLLIB3=urllib3-1.25.8-py2.py3-none-any.whl
-VIRTUALENV=virtualenv-20.0.5-py2.py3-none-any.whl
+VIRTUALENV=virtualenv-20.0.6-py2.py3-none-any.whl
 WERKZEUG=Werkzeug-1.0.0-py2.py3-none-any.whl
 ZIPP=zipp-3.0.0-py3-none-any.whl
 
@@ -53,7 +53,7 @@ function verify_tails_dependencies {
     # Tails doesn't allow downloading over PIP to /opt/tfc, so we
     # first download to $HOME, move the files to /opt/tfc, and then
     # perform the  hash verification
-    compare_digest f4e7148f1de50fa2e69061e72db211085fc2f44007de4d18ee02a20d34bca30a00d2fe56ff6f3132e696c3f6efd4151863f26dac4c1d43e87b597c47a51c52ad '' ${VIRTUALENV}
+    compare_digest a89c56f55110323609e708bffba4e97b052d67dd0db6c534cd03ec8df4d35f5070197496b7b119f43ccb4c4fed427184f8017f4f9e283d637787b692710ab799 '' ${VIRTUALENV}
     compare_digest b79e9fa76eadee595fe47ea7efd35c4cc72f058a9ed16a95cfa4d91a52c330efba50df7a9926900bbced229cca7bbfb05bbf0a8ee1d46bac2362c98ab9a5154d '' ${APPDIRS}
     compare_digest 6f910a9607569c9023a19aee35be15cf8521ec7c07c5d478e6d555a301d024a2ee1db48562707b238a72c631d75d9dc154d38b39ed51746b66c938ac40671e60 '' ${DISTLIB}
     compare_digest a6e7e35921ce8f2f8e79a296ea79a9c3515ff6dd7e777d7892fe4988594f1b3a442a68ffb89cf64530b90a32ceeea00e4ab9069bb697629ab4eb7262c68d1b0f '' ${SIX}
@@ -105,7 +105,7 @@ function verify_tcb_requirements_files {
     # To minimize the time TCB installer configuration stays online, only
     # the requirements files are authenticated between downloads.
     compare_digest eca1997b9abf71010f4373e17e87b1131e72c7395d6d8a86182ffb52b208f4058b3d59f33f022023ce3e6c5f53884d682a985e9908ff2c2958817b3427cfd19d '' requirements.txt
-    compare_digest 90c71b5bb2728ca7054467e56f86ce2d0730d10e8e2be12fca613f74ccbf5af555d88b48d4089426bbd26f1a1dfb4cbe98585d937a7b90a9a701405c3ba4fb45 '' requirements-venv.txt
+    compare_digest 89325c06f95a65317058842d988566b6593bccf2d77c283909f2b017dce60026327ad4a0c6f87f3e5f962240c648af8831702f371f272a1d054d32372fcfaa43 '' requirements-venv.txt
 }
 
 
