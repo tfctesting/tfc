@@ -773,12 +773,17 @@ function get_ip {
 
 function get_tcb_ips {
     # Get Source and Destination VM IP-addresses from the user.
-    ips=$(zenity --forms --title="TFC Installer" --text="Enter IP-addresses of the TCBs" --add-entry="Source Computer IP" --add-entry="Destination Computer IP")
+    ips=$(zenity --forms \
+    --title="TFC Installer" \
+    --text="Enter the IP-addresses of the TCB VMs" \
+    --add-entry="Source Computer VM IP:" \
+    --add-entry="Destination Computer VM IP:")
 
     first_ip=$(echo $ips | awk -F "|" '{print $1}')
     second_ip=$(echo $ips | awk -F "|" '{print $2}')
 
-    if [[ ${first_ip} =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]] && [[ ${second_ip} =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+    if [[ ${first_ip}  =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]] \
+    && [[ ${second_ip} =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
         echo ${ips}
         return
     else
@@ -808,7 +813,7 @@ function install_virtualenv {
     # Some distros want virtualenv installed as sudo and other do
     # not. Install both to improve the chances of compatibility.
     sudo torsocks python3.7 -m pip install -r /opt/tfc/requirements-venv.txt --require-hashes --no-deps
-    torsocks python3.7 -m pip install -r /opt/tfc/requirements-venv.txt --require-hashes --no-deps
+    torsocks      python3.7 -m pip install -r /opt/tfc/requirements-venv.txt --require-hashes --no-deps
 }
 
 
