@@ -463,7 +463,7 @@ class GatewaySettings(object):
         self.serial_error_correction   = 5
         self.use_serial_usb_adapter    = True
         self.built_in_serial_interface = 'ttyS0'
-        self.rx_udp_ip                 = '0.0.0.0'
+        self.rx_udp_ip                 = ''
 
         self.software_operation = operation
         self.local_testing_mode = local_test

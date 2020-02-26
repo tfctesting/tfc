@@ -503,7 +503,6 @@ class TestValidateGroupName(unittest.TestCase):
 class TestValidateIpAddress(unittest.TestCase):
 
     def test_validate_ip_address(self) -> None:
-        self.assertEqual(validate_ip_address("0.0.0.0"),         '')
         self.assertEqual(validate_ip_address("10.137.0.17"),     '')
         self.assertEqual(validate_ip_address("10.137.0.255"),    '')
         self.assertEqual(validate_ip_address("255.255.255.255"), '')

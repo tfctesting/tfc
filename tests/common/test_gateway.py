@@ -344,7 +344,7 @@ class TestGatewaySettings(TFCTestCase):
     "serial_error_correction": 5,
     "use_serial_usb_adapter": true,
     "built_in_serial_interface": "ttyS0",
-    "rx_udp_ip": "0.0.0.0"
+    "rx_udp_ip": ""
 }"""
 
     def tearDown(self) -> None:
@@ -441,7 +441,7 @@ class TestGatewaySettings(TFCTestCase):
     "serial_error_correction": 5,
     "use_serial_usb_adapter": true,
     "built_in_serial_interface": "ttyS0",
-    "rx_udp_ip": "0.0.0.0"
+    "rx_udp_ip": ""
 }""")
         # Test
         settings = GatewaySettings(operation=TX, local_test=True, dd_sockets=True, qubes=False)
@@ -465,7 +465,7 @@ class TestGatewaySettings(TFCTestCase):
     "serial_error_correction": -1,
     "use_serial_usb_adapter": true,
     "built_in_serial_interface": "ttyS0",
-    "rx_udp_ip": "0.0.0.0"
+    "rx_udp_ip": ""
 }""")
         # Test
         settings = GatewaySettings(operation=TX, local_test=True, dd_sockets=True, qubes=False)
@@ -489,7 +489,7 @@ class TestGatewaySettings(TFCTestCase):
     "serial_error_correction": 5,
     "use_serial_usb_adapter": true,
     "built_in_serial_interface": "does_not_exist",
-    "rx_udp_ip": "0.0.0.0"
+    "rx_udp_ip": ""
 }""")
         # Test
         settings = GatewaySettings(operation=TX, local_test=True, dd_sockets=True, qubes=False)
@@ -555,7 +555,7 @@ class TestGatewaySettings(TFCTestCase):
     "serial_error_correction": "5",
     "use_serial_usb_adapter": "true",
     "built_in_serial_interface": true,
-    "rx_udp_ip": "0.0.0.0"
+    "rx_udp_ip": ""
 }""")
         # Test
         settings = GatewaySettings(operation=TX, local_test=True, dd_sockets=True, qubes=False)
