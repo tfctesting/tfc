@@ -25,8 +25,8 @@ import typing
 from typing import Iterable, Iterator, List, Optional, Sized
 
 from src.common.database   import TFCDatabase
-from src.common.encoding   import bool_to_bytes, pub_key_to_onion_address, str_to_bytes, pub_key_to_short_address
-from src.common.encoding   import bytes_to_bool, onion_address_to_pub_key, bytes_to_str
+from src.common.encoding   import (bool_to_bytes, pub_key_to_onion_address, str_to_bytes, pub_key_to_short_address,
+                                   bytes_to_bool, onion_address_to_pub_key, bytes_to_str)
 from src.common.exceptions import CriticalError
 from src.common.misc       import ensure_dir, get_terminal_width, separate_headers, split_byte_string
 from src.common.output     import clear_screen

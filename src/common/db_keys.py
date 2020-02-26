@@ -27,8 +27,7 @@ from typing import Any, Callable, Dict, List
 
 from src.common.crypto     import blake2b, csprng
 from src.common.database   import TFCDatabase
-from src.common.encoding   import int_to_bytes, onion_address_to_pub_key
-from src.common.encoding   import bytes_to_int
+from src.common.encoding   import bytes_to_int, int_to_bytes, onion_address_to_pub_key
 from src.common.exceptions import CriticalError
 from src.common.misc       import ensure_dir, separate_headers, split_byte_string
 from src.common.statics    import (DIR_USER_DATA, DUMMY_CONTACT, HARAC_LENGTH, INITIAL_HARAC, KDB_ADD_ENTRY_HEADER,

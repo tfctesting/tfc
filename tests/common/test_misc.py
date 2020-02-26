@@ -72,7 +72,7 @@ class TestDecompress(TFCTestCase):
         # Test
         self.assertEqual(decompress(compressed, self.settings.max_decompress_size), data)
 
-    def test_oversize_decompression_raises_se(self) -> None:
+    def test_oversize_decompression_raises_soft_error(self) -> None:
         # Setup
         data       = os.urandom(self.settings.max_decompress_size + 1)
         compressed = zlib.compress(data)

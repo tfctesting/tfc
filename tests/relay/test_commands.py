@@ -136,11 +136,11 @@ class TestChangeECRatio(TFCTestCase):
         """Pre-test actions."""
         self.gateway = Gateway()
 
-    def test_non_digit_value_raises_se(self) -> None:
+    def test_non_digit_value_raises_soft_error(self) -> None:
         self.assert_se("Error: Received invalid EC ratio value from Transmitter Program.",
                        change_ec_ratio, b'a', self.gateway)
 
-    def test_invalid_digit_value_raises_se(self) -> None:
+    def test_invalid_digit_value_raises_soft_error(self) -> None:
         self.assert_se("Error: Received invalid EC ratio value from Transmitter Program.",
                        change_ec_ratio, b'-1', self.gateway)
 
@@ -155,11 +155,11 @@ class TestChangeBaudrate(TFCTestCase):
         """Pre-test actions."""
         self.gateway = Gateway()
 
-    def test_non_digit_value_raises_se(self) -> None:
+    def test_non_digit_value_raises_soft_error(self) -> None:
         self.assert_se("Error: Received invalid baud rate value from Transmitter Program.",
                        change_baudrate, b'a', self.gateway)
 
-    def test_invalid_digit_value_raises_se(self) -> None:
+    def test_invalid_digit_value_raises_soft_error(self) -> None:
         self.assert_se("Error: Received invalid baud rate value from Transmitter Program.",
                        change_baudrate, b'1300', self.gateway)
 

@@ -72,7 +72,7 @@ class TestLocalKey(TFCTestCase):
         """Post-test actions."""
         tear_queues(self.queues)
 
-    def test_new_local_key_when_traffic_masking_is_enabled_raises_se(self) -> None:
+    def test_new_local_key_when_traffic_masking_is_enabled_raises_soft_error(self) -> None:
         self.settings.traffic_masking = True
         self.contact_list.contacts    = [create_contact(LOCAL_ID)]
         self.assert_se("Error: Command is disabled during traffic masking.", new_local_key, *self.args)
@@ -117,7 +117,7 @@ class TestLocalKey(TFCTestCase):
     @mock.patch('time.sleep',     return_value=None)
     @mock.patch('builtins.input', side_effect=KeyboardInterrupt)
     @mock.patch('os.getrandom',   lambda x, flags: x * b'a')
-    def test_keyboard_interrupt_raises_se(self, *_: Any) -> None:
+    def test_keyboard_interrupt_raises_soft_error(self, *_: Any) -> None:
         self.assert_se("Local key setup aborted.", new_local_key, *self.args)
 
 
@@ -147,12 +147,12 @@ class TestKeyExchange(TFCTestCase):
 
     @mock.patch('shutil.get_terminal_size', return_value=[200, 200])
     @mock.patch('builtins.input',           return_value=b58encode(bytes(TFC_PUBLIC_KEY_LENGTH), public_key=True))
-    def test_zero_public_key_raises_se(self, *_: Any) -> None:
+    def test_zero_public_key_raises_soft_error(self, *_: Any) -> None:
         self.assert_se("Error: Zero public key", start_key_exchange, nick_to_pub_key("Alice"), 'Alice', *self.args)
 
     @mock.patch('shutil.get_terminal_size', return_value=[200, 200])
     @mock.patch('builtins.input',           return_value=b58encode((TFC_PUBLIC_KEY_LENGTH-1)*b'a', public_key=True))
-    def test_invalid_public_key_length_raises_se(self, *_: Any) -> None:
+    def test_invalid_public_key_length_raises_soft_error(self, *_: Any) -> None:
         self.assert_se("Error: Invalid public key length",
                        start_key_exchange, nick_to_pub_key("Alice"), 'Alice', *self.args)
 
@@ -164,7 +164,7 @@ class TestKeyExchange(TFCTestCase):
                                                'No'])                           # Fingerprint mismatch)
     @mock.patch('time.sleep',               return_value=None)
     @mock.patch('shutil.get_terminal_size', return_value=[200, 200])
-    def test_fingerprint_mismatch_raises_se(self, *_: Any) -> None:
+    def test_fingerprint_mismatch_raises_soft_error(self, *_: Any) -> None:
         self.assert_se("Error: Fingerprint mismatch", start_key_exchange, nick_to_pub_key("Alice"), 'Alice', *self.args)
 
     @mock.patch('builtins.input', side_effect=['',                   # Resend public key
@@ -297,7 +297,7 @@ class TestPSK(TFCTestCase):
 
     @mock.patch('time.sleep',      return_value=None)
     @mock.patch('getpass.getpass', side_effect=KeyboardInterrupt)
-    def test_keyboard_interrupt_raises_se(self, *_: Any) -> None:
+    def test_keyboard_interrupt_raises_soft_error(self, *_: Any) -> None:
         self.assert_se("PSK generation aborted.", create_pre_shared_key, nick_to_pub_key("Alice"), 'Alice', *self.args)
 
 
@@ -320,14 +320,14 @@ class TestReceiverLoadPSK(TFCTestCase):
         # Test
         self.assert_se("Error: Command is disabled during traffic masking.", rxp_load_psk, None, None, *self.args)
 
-    def test_active_group_raises_se(self) -> None:
+    def test_active_group_raises_soft_error(self) -> None:
         # Setup
         window = TxWindow(type=WIN_TYPE_GROUP)
 
         # Test
         self.assert_se("Error: Group is selected.", rxp_load_psk, window, None, *self.args)
 
-    def test_ecdhe_key_raises_se(self) -> None:
+    def test_ecdhe_key_raises_soft_error(self) -> None:
         # Setup
         contact      = create_contact('Alice')
         contact_list = ContactList(contacts=[contact])
@@ -360,7 +360,7 @@ class TestReceiverLoadPSK(TFCTestCase):
 
     @mock.patch('time.sleep',     return_value=None)
     @mock.patch('builtins.input', side_effect=KeyboardInterrupt)
-    def test_keyboard_interrupt_raises_se(self, *_: Any) -> None:
+    def test_keyboard_interrupt_raises_soft_error(self, *_: Any) -> None:
         # Setup
         contact      = create_contact('Alice', kex_status=KEX_STATUS_NO_RX_PSK)
         contact_list = ContactList(contacts=[contact])

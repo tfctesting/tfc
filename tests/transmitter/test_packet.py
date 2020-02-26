@@ -106,14 +106,14 @@ class TestSendFile(TFCTestCase):
         cleanup(self.unit_test_dir)
         tear_queues(self.queues)
 
-    def test_traffic_masking_raises_se(self) -> None:
+    def test_traffic_masking_raises_soft_error(self) -> None:
         self.settings.traffic_masking = True
         self.assert_se("Error: Command is disabled during traffic masking.", send_file, "testfile.txt", *self.args)
 
-    def test_missing_file_raises_se(self) -> None:
+    def test_missing_file_raises_soft_error(self) -> None:
         self.assert_se("Error: File not found.", send_file, "testfile.txt", *self.args)
 
-    def test_empty_file_raises_se(self) -> None:
+    def test_empty_file_raises_soft_error(self) -> None:
         # Setup
         open('testfile.txt', 'wb+').close()
 
@@ -170,7 +170,7 @@ class TestQueueFile(TFCTestCase):
 
     @mock.patch('time.sleep',     return_value=None)
     @mock.patch('builtins.input', side_effect=file_list)
-    def test_tfc_database_raises_se(self, *_: Any) -> None:
+    def test_tfc_database_raises_soft_error(self, *_: Any) -> None:
         window   = TxWindow(name='Alice',
                             type=WIN_TYPE_CONTACT,
                             type_print='contact',
@@ -253,7 +253,7 @@ class TestQueueFile(TFCTestCase):
     @mock.patch('shutil.get_terminal_size', return_value=[150, 150])
     @mock.patch('time.sleep',               return_value=None)
     @mock.patch('builtins.input',           side_effect=['./testfile.txt', KeyboardInterrupt])
-    def test_keyboard_interrupt_raises_se(self, *_: Any) -> None:
+    def test_keyboard_interrupt_raises_soft_error(self, *_: Any) -> None:
         # Setup
         input_data = os.urandom(2000)
         with open('testfile.txt', 'wb+') as f:
@@ -344,7 +344,7 @@ class TestQueueAssemblyPackets(unittest.TestCase):
                                  log_messages=True)
         self.window.window_contacts = [create_contact('Alice')]
         self.args                   = self.settings, self.queues, self.window
-    
+
     def tearDown(self) -> None:
         """Post-test actions."""
         tear_queues(self.queues)

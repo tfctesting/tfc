@@ -27,11 +27,11 @@ from typing import Callable, Iterable, Iterator, List, Sized
 
 from src.common.database    import TFCDatabase
 from src.common.db_contacts import Contact
-from src.common.encoding    import b58encode, bool_to_bytes, int_to_bytes, str_to_bytes, onion_address_to_pub_key
-from src.common.encoding    import bytes_to_bool, bytes_to_int, bytes_to_str
+from src.common.encoding    import (bool_to_bytes, int_to_bytes, str_to_bytes, onion_address_to_pub_key,
+                                    bytes_to_bool, bytes_to_int, bytes_to_str, b58encode)
 from src.common.exceptions  import CriticalError
-from src.common.misc        import ensure_dir, get_terminal_width, round_up, separate_header, separate_headers
-from src.common.misc        import split_byte_string
+from src.common.misc        import (ensure_dir, get_terminal_width, round_up, separate_header, separate_headers,
+                                    split_byte_string)
 from src.common.statics     import (CONTACT_LIST_INDENT, DIR_USER_DATA, DUMMY_GROUP, DUMMY_MEMBER,
                                     ENCODED_BOOLEAN_LENGTH, ENCODED_INTEGER_LENGTH, GROUP_DB_HEADER_LENGTH,
                                     GROUP_ID_LENGTH, GROUP_STATIC_LENGTH, ONION_SERVICE_PUBLIC_KEY_LENGTH,
