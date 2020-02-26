@@ -221,8 +221,7 @@ class Gateway(object):
                     read = self.rxq_socket.recv(SOCKET_BUFFER_SIZE)
                     if read == US_BYTE:
                         return read_buffer
-                    else:
-                        read_buffer.extend(read)
+                    read_buffer.extend(read)
 
             except (EOFError, KeyboardInterrupt):
                 pass
