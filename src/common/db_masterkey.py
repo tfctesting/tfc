@@ -169,69 +169,21 @@ class MasterKey(object):
         """
         password  = MasterKey.new_password()
         salt      = csprng(ARGON2_SALT_LENGTH)
-        time_cost = ARGON2_MIN_TIME_COST
 
         # Determine the amount of memory used from the amount of free RAM in the system.
         memory_cost = self.get_available_memory()
 
-        # Determine the amount of threads to use
+        # Determine the number of threads to use
         parallelism = multiprocessing.cpu_count()
         if self.local_test:
             parallelism = max(ARGON2_MIN_PARALLELISM, parallelism // 2)
 
-        # Initial key derivation
-        phase("Deriving master key", head=2, offset=0)
-        master_key, kd_time = self.timed_key_derivation(password, salt, time_cost, memory_cost, parallelism)
-        phase("", done=True, tail=1)
+        # Determine time cost
+        time_cost, kd_time, master_key = self.determine_time_cost(password, salt, memory_cost, parallelism)
 
-        # If derivation was too fast, increase time_cost
-        while kd_time < MIN_KEY_DERIVATION_TIME:
-            print_on_previous_line()
-            phase(f"Trying time cost {time_cost+1}")
-            time_cost *= 2
-            master_key, kd_time = self.timed_key_derivation(password, salt, time_cost, memory_cost, parallelism)
-            phase(f"{kd_time:.1f}s", done=True)
-
-        # At this point time_cost may have value of 1 or it may have increased to e.g. 3, which might make it take
-        # longer than MAX_KEY_DERIVATION_TIME. If that's the case, it makes no sense to lower it back to 2 because even
-        # with all memory, time_cost=2 will still be too fast. We therefore accept the time_cost whatever it is.
-
-        # If the key derivation time is too long, we do a binary search on the amount
-        # of memory to use until we hit the desired key derivation time range.
-        middle = None
-
+        # Determine memory cost
         if kd_time > MAX_KEY_DERIVATION_TIME:
-
-            lower_bound = ARGON2_MIN_MEMORY_COST
-            upper_bound = memory_cost
-
-            while kd_time < MIN_KEY_DERIVATION_TIME or kd_time > MAX_KEY_DERIVATION_TIME:
-
-                middle = (lower_bound + upper_bound) // 2
-
-                print_on_previous_line()
-                phase(f"Trying memory cost {middle} KiB")
-                master_key, kd_time = self.timed_key_derivation(password, salt, time_cost, middle, parallelism)
-                phase(f"{kd_time:.1f}s", done=True)
-
-                # The search might fail e.g. if external CPU load causes delay in key derivation, which causes the
-                # search to continue into wrong branch. In such a situation the search is restarted. The binary search
-                # is problematic with tight key derivation time target ranges, so if the search keeps restarting,
-                # increasing MAX_KEY_DERIVATION_TIME (and thus expanding the range) will help finding suitable
-                # memory_cost value faster. Increasing MAX_KEY_DERIVATION_TIME slightly affects security (positively)
-                # and user experience (negatively).
-                if middle == lower_bound or middle == upper_bound:
-                    lower_bound = ARGON2_MIN_MEMORY_COST
-                    upper_bound = self.get_available_memory()
-                    continue
-
-                if kd_time < MIN_KEY_DERIVATION_TIME:
-                    lower_bound = middle
-
-                elif kd_time > MAX_KEY_DERIVATION_TIME:
-                    upper_bound = middle
-
-        memory_cost = middle if middle is not None else memory_cost
+            memory_cost, master_key = self.determine_memory_cost(password, salt, time_cost, memory_cost, parallelism)
 
         # Store values to database
         database_data = (salt
@@ -252,8 +204,165 @@ class MasterKey(object):
         print_on_previous_line(2)
         phase("Deriving master key")
         phase(DONE, delay=1)
+        time.sleep(5)
 
         return master_key
+
+    def determine_time_cost(self,
+                            password:    str,
+                            salt:        bytes,
+                            memory_cost: int,
+                            parallelism: int
+                            ) -> Tuple[int, float, bytes]:
+        """Find suitable time_cost value for Argon2id.
+
+        There are two acceptable time_cost values.
+
+        1. A time_cost value that together with all available memory sets the key
+           derivation time between MIN_KEY_DERIVATION_TIME and MAX_KEY_DERIVATION_TIME.
+           If during the search we find such suitable time_cost value, we accept it.
+
+        2. I a situation where no time_cost value is suitable alone, there will exist
+           some time_cost value `t` that makes key derivation too fast, and another
+           time_cost value `t+1` that makes key derivation too slow. In this case we
+           are interested in the latter value, as unlike `t`, the `t+1` can be fine-tuned
+           to suitable key derivation time range by adjusting the memory_cost parameter.
+
+        As time_cost has no upper limit, and as the amount of available memory has
+        tremendous effect on how long one round takes, it's difficult to determine the
+        upper limit for a time_cost binary search. We therefore start with single round,
+        and by benchmarking it, approximate how many rounds are needed to reach the
+        target zone. After every ry, we update our guess based on average time per round.
+        This value gets more accurate as time_cost is increased. If this formula isn't
+        able to suggest a larger value, we increase time_cost by one.
+
+        Every too small time_cost value is added a blacklist to make finding the
+        suitable value faster.
+
+        Once we exceed the key derivation time, if necessary, we can perform a binary
+        search between our current time_cost value and the largest known too small
+        time_cost value. This finds our `t+1` value quickly.
+
+        The search also keeps track of all the time_cost values that are too large,
+        this helps us find the `t+1` value slightly faster.
+        """
+        too_small_time_costs = []  # type: List[int]
+        too_large_time_costs = []  # type: List[int]
+
+        time_cost = ARGON2_MIN_TIME_COST
+
+        print(2*'\n')
+
+        while True:
+            print_on_previous_line()
+            phase(f"Trying time cost {time_cost}")
+            master_key, kd_time = self.timed_key_derivation(password, salt, time_cost, memory_cost, parallelism)
+            phase(f"{kd_time:.1f}s", done=True)
+
+            # If we found a suitable time_cost value, we accept the key and time_cost.
+            if MIN_KEY_DERIVATION_TIME < kd_time < MAX_KEY_DERIVATION_TIME:
+                break
+
+            # If the derivation time was too fast...
+            if kd_time < MIN_KEY_DERIVATION_TIME:
+
+                if too_large_time_costs:
+                    # (Note: This block's comment makes more sense after
+                    # you've read rest of the loop's comments first)
+                    #
+                    # If we have already exceeded max key derivation time, the
+                    # too_large_time_costs contains some too large time cost value.
+
+                    # If the smallest value in too_large_time_costs is one larger than
+                    # our current time_cost (which we know was too small), we know we
+                    # have found `t`. So we return `t+1`.
+                    if time_cost + 1 == min(too_large_time_costs):
+                        time_cost += 1
+                        break
+
+                # ...we add the time_cost value to "too small" black list.
+                too_small_time_costs.append(time_cost)
+
+                # We then update our guess on the time_cost candidate,
+                # based on a new estimation of average time per round.
+                avg_time_per_round  = kd_time / time_cost
+                time_cost_candidate = math.floor(MAX_KEY_DERIVATION_TIME / avg_time_per_round)
+
+                # We increase the time cost at least by 1. If our estimate is larger than 1,
+                # it will speed up the search (as we don't need to iterate values one by one).
+                time_cost = max(time_cost_candidate, time_cost+1)
+
+            elif kd_time > MAX_KEY_DERIVATION_TIME:
+
+                # If even a single round takes too long, it's the `t+1` we're looking for.
+                if time_cost == 1:
+                    break
+
+                # If the current time_cost value (that was too high) is one greater than
+                # some value on the "too small" blacklist, we know we have our `t+1`...
+                if too_small_time_costs and time_cost == max(too_small_time_costs) + 1:
+                    break
+
+                # We can speed up our search by adding the
+                # time_cost value to the "too large" black list.
+                too_large_time_costs.append(time_cost)
+
+                # ...otherwise we know we are at least two integers higher than `t`. Our
+                # best candidate for `t` is max(too_small_time_costs), so we do binary
+                # search and try the middle point between max(too_small_time_costs) and
+                # our current time_cost value.
+                time_cost = math.floor((time_cost + max(too_small_time_costs)) / 2)
+
+        return time_cost, kd_time, master_key
+
+    def determine_memory_cost(self,
+                              password: str,
+                              salt: bytes,
+                              time_cost: int,
+                              memory_cost: int,
+                              parallelism: int,
+                              ) -> Tuple[int, bytes]:
+        """Determine suitable memory_cost value for Argon2id.
+
+        At this point time_cost may have value of 1 or it may have increased to e.g. `t+1`, which might make it take
+        longer than MAX_KEY_DERIVATION_TIME. If that's the case, it makes no sense to lower it back to `t` because even
+        with all memory, `t` will still be too fast. We therefore accept the time_cost whatever it is.
+
+        If the key derivation time is too long, we do a binary search on the amount
+        of memory to use until we hit the desired key derivation time range.
+
+        """
+        lower_bound = ARGON2_MIN_MEMORY_COST
+        upper_bound = memory_cost
+
+        while True:
+            middle = (lower_bound + upper_bound) // 2
+
+            print_on_previous_line()
+            phase(f"Trying memory cost {middle} KiB")
+            master_key, kd_time = self.timed_key_derivation(password, salt, time_cost, middle, parallelism)
+            phase(f"{kd_time:.1f}s", done=True)
+
+            # If we found a suitable memory_cost value, we accept the key and memory_cost.
+            if MIN_KEY_DERIVATION_TIME < kd_time < MAX_KEY_DERIVATION_TIME:
+                return memory_cost, master_key
+
+            # The search might fail e.g. if external CPU load causes delay in key derivation, which causes the
+            # search to continue into wrong branch. In such a situation the search is restarted. The binary search
+            # is problematic with tight key derivation time target ranges, so if the search keeps restarting,
+            # increasing MAX_KEY_DERIVATION_TIME (and thus expanding the range) will help finding suitable
+            # memory_cost value faster. Increasing MAX_KEY_DERIVATION_TIME slightly affects security (positively)
+            # and user experience (negatively).
+            if middle == lower_bound or middle == upper_bound:
+                lower_bound = ARGON2_MIN_MEMORY_COST
+                upper_bound = self.get_available_memory()
+                continue
+
+            if kd_time < MIN_KEY_DERIVATION_TIME:
+                lower_bound = middle
+
+            elif kd_time > MAX_KEY_DERIVATION_TIME:
+                upper_bound = middle
 
     def replace_database_data(self) -> None:
         """Store cached database data into database."""
