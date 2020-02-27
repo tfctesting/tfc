@@ -312,6 +312,7 @@ class MasterKey(object):
 
                 # Sentinel: If even a single round takes too long, it's the `t+1` we're looking for.
                 if time_cost == 1:
+
                     break
 
                 # Sentinel: If the current time_cost value (that was too large) is one
@@ -336,45 +337,44 @@ class MasterKey(object):
                               ) -> Tuple[int, bytes]:
         """Determine suitable memory_cost value for Argon2id.
 
-        At this point time_cost may have value of 1 or it may have increased to e.g. `t+1`, which might make it take
-        longer than MAX_KEY_DERIVATION_TIME. If that's the case, it makes no sense to lower it back to `t` because even
-        with all memory, `t` will still be too fast. We therefore accept the time_cost whatever it is.
-
-        If the key derivation time is too long, we do a binary search on the amount
-        of memory to use until we hit the desired key derivation time range.
-
+        If we reached this function, it means we found a `t+1` value for
+        time_cost (explained in the `determine_time_cost` function). We
+        therefore do a binary search on the amount of memory to use
+        until we hit the desired key derivation time range.
         """
         lower_bound = ARGON2_MIN_MEMORY_COST
         upper_bound = memory_cost
 
         while True:
-            middle = (lower_bound + upper_bound) // 2
+            memory_cost = (lower_bound + upper_bound) // 2
 
             print_on_previous_line()
-            phase(f"Trying memory cost {middle} KiB")
-            master_key, kd_time = self.timed_key_derivation(password, salt, time_cost, middle, parallelism)
+            phase(f"Trying memory cost {memory_cost} KiB")
+            master_key, kd_time = self.timed_key_derivation(password, salt, time_cost, memory_cost, parallelism)
             phase(f"{kd_time:.1f}s", done=True)
 
-            # If we found a suitable memory_cost value, we accept the key and memory_cost.
+            # If we found a suitable memory_cost value, we accept the key and the memory_cost.
             if MIN_KEY_DERIVATION_TIME < kd_time < MAX_KEY_DERIVATION_TIME:
                 return memory_cost, master_key
 
-            # The search might fail e.g. if external CPU load causes delay in key derivation, which causes the
-            # search to continue into wrong branch. In such a situation the search is restarted. The binary search
-            # is problematic with tight key derivation time target ranges, so if the search keeps restarting,
-            # increasing MAX_KEY_DERIVATION_TIME (and thus expanding the range) will help finding suitable
-            # memory_cost value faster. Increasing MAX_KEY_DERIVATION_TIME slightly affects security (positively)
-            # and user experience (negatively).
-            if middle == lower_bound or middle == upper_bound:
+            # The search might fail e.g. if external CPU load causes delay in key
+            # derivation, which causes the search to continue into wrong branch. In
+            # such a situation the search is restarted. The binary search is problematic
+            # with tight key derivation time target ranges, so if the search keeps
+            # restarting, increasing MAX_KEY_DERIVATION_TIME (and thus expanding the
+            # range) will help finding suitable memory_cost value faster. Increasing
+            # MAX_KEY_DERIVATION_TIME slightly affects security (positively) and user
+            # experience (negatively).
+            if memory_cost == lower_bound or memory_cost == upper_bound:
                 lower_bound = ARGON2_MIN_MEMORY_COST
                 upper_bound = self.get_available_memory()
                 continue
 
             if kd_time < MIN_KEY_DERIVATION_TIME:
-                lower_bound = middle
+                lower_bound = memory_cost
 
             elif kd_time > MAX_KEY_DERIVATION_TIME:
-                upper_bound = middle
+                upper_bound = memory_cost
 
     def replace_database_data(self) -> None:
         """Store cached database data into database."""
