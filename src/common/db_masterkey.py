@@ -312,7 +312,6 @@ class MasterKey(object):
 
                 # Sentinel: If even a single round takes too long, it's the `t+1` we're looking for.
                 if time_cost == 1:
-
                     break
 
                 # Sentinel: If the current time_cost value (that was too large) is one
