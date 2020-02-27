@@ -263,7 +263,7 @@ class MasterKey(object):
 
             # Sentinel that checks if the binary search has ended,
             # and that restarts the search if kd_time repeats.
-            if upper_bound is not None and kd_time == lower_bound or kd_time == upper_bound:
+            if upper_bound is not None and kd_time in [lower_bound, upper_bound]:
                 lower_bound = ARGON2_MIN_TIME_COST
                 upper_bound = None
                 continue
