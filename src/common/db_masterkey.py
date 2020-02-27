@@ -267,47 +267,25 @@ class MasterKey(object):
                 upper_bound = None
                 continue
 
-            # If we found a suitable time_cost value, we accept the key and the time_cost.
             if MIN_KEY_DERIVATION_TIME < kd_time < MAX_KEY_DERIVATION_TIME:
                 break
 
-            # If the derivation time was too fast...
             if kd_time < MIN_KEY_DERIVATION_TIME:
-
-                # ...we update our binary search lower bound
                 lower_bound = time_cost
 
-                # If we have not yet determined an upper bound for the search...
                 if upper_bound is None:
-                    # ...we update our guess on the time_cost candidate,
-                    # based on a new value for the average time per round.
                     avg_time_per_round  = kd_time / time_cost
                     time_cost_candidate = math.floor(MAX_KEY_DERIVATION_TIME / avg_time_per_round)
+                    time_cost           = max(time_cost+1, time_cost_candidate)
 
-                    # If our candidate is larger than 1, it will speed up the search (as
-                    # we don't need to iterate values one by one). If the candidate is
-                    # less than 1, we increase the time_cost by 1 regardless to avoid an
-                    # Alderson loop and to eventually exceed the MAX_KEY_DERIVATION_TIME.
-                    time_cost = max(time_cost+1, time_cost_candidate)
-
-                # If on the other hand we have an upper bound...
                 else:
-                    # Sentinel: If the current time_cost is 1 smaller than the upper bound,
-                    # we know time_cost is at `t`, so we can set it to `t+1` and return.
                     if time_cost + 1 == upper_bound:
                         time_cost += 1
                         break
 
-                    # ...we switch to binary search and try the middle point next.
                     time_cost = math.floor((lower_bound + upper_bound) / 2)
 
-            # If on the other hand key derivation time was too slow...
             elif kd_time > MAX_KEY_DERIVATION_TIME:
-
-                # ...we have found an upper bound for the time_cost value.
-                # We can therefore switch our strategy to a binary search.
-
-                # We update the binary search upper bound.
                 upper_bound = time_cost
 
                 # Sentinel: If even a single round takes too long, it's the `t+1` we're looking for.
@@ -321,8 +299,7 @@ class MasterKey(object):
 
                 # Otherwise we know the current time_cost is at least two integers greater
                 # than `t`. Our best candidate for `t` is lower_bound, but for all we know,
-                # `t` might be a much greater value. So we continue our binary search
-                # strategy and look for `t+1` in the middle point between the two bounds.
+                # `t` might be a much greater value. So we continue binary search for `t+1`
                 time_cost = math.floor((lower_bound + upper_bound) / 2)
 
         return time_cost, kd_time, master_key
