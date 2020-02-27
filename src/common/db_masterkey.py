@@ -243,7 +243,7 @@ class MasterKey(object):
         time_cost by 1 anyway to avoid an Alderson loop.
 
         For every estimate, we update the lower bound so that once the
-        MAX_KEY_DERIVATION_TIME is reached (and thus, when an upper
+        MAX_KEY_DERIVATION_TIME is exceeded (and thus, when an upper
         bound is found), we can immediately switch our strategy to
         binary search that updates the lower bound and upper bound with
         every search and finds the suitable time_cost `t+1` in log(n)
@@ -262,7 +262,7 @@ class MasterKey(object):
             master_key, kd_time = self.timed_key_derivation(password, salt, time_cost, memory_cost, parallelism)
             phase(f"{kd_time:.1f}s", done=True)
 
-            # If we found a suitable time_cost value, we accept the key and time_cost.
+            # If we found a suitable time_cost value, we accept the key and the time_cost.
             if MIN_KEY_DERIVATION_TIME < kd_time < MAX_KEY_DERIVATION_TIME:
                 break
 
@@ -272,7 +272,7 @@ class MasterKey(object):
                 # ...we update our binary search lower bound
                 binary_search_lower_bound = time_cost
 
-                # If we have not yet determined upper bound for the search...
+                # If we have not yet determined an upper bound for the search...
                 if binary_search_upper_bound is None:
                     # ...we update our guess on the time_cost candidate,
                     # based on a new value for the average time per round.
@@ -314,8 +314,10 @@ class MasterKey(object):
                     break
 
                 # ...otherwise we know current time_cost is at least two integers greater
-                # than `t`. Our best candidate for `t` is binary_search_lower_bound, so we
-                # continue our binary search strategy and try the middle point next.
+                # than `t`. Our best candidate for `t` is binary_search_lower_bound, but
+                # for all we know `t` might be a much greater value. So we continue our
+                # binary search strategy and look for `t+1` in the middle point between
+                # the bounds.
                 time_cost = math.floor((binary_search_lower_bound + binary_search_upper_bound) / 2)
 
         return time_cost, kd_time, master_key
