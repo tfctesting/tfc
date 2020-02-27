@@ -246,10 +246,10 @@ class MasterKey(object):
         The search also keeps track of all the time_cost values that are too large,
         this helps us find the `t+1` value slightly faster.
         """
-        too_small_time_costs = []  # type: List[int]
-        too_large_time_costs = []  # type: List[int]
+        binary_search_lower_bound = ARGON2_MIN_TIME_COST  # type: int
+        binary_search_upper_bound = None                  # type: Optional[int]
 
-        time_cost = ARGON2_MIN_TIME_COST
+        time_cost = binary_search_lower_bound
 
         print(2*'\n')
 
@@ -266,52 +266,53 @@ class MasterKey(object):
             # If the derivation time was too fast...
             if kd_time < MIN_KEY_DERIVATION_TIME:
 
-                if too_large_time_costs:
-                    # (Note: This block's comment makes more sense after
-                    # you've read rest of the loop's comments first)
-                    #
-                    # If we have already exceeded max key derivation time, the
-                    # too_large_time_costs contains some too large time cost value.
+                # ...we update our binary search lower bound
+                binary_search_lower_bound = time_cost
 
-                    # If the smallest value in too_large_time_costs is one larger than
-                    # our current time_cost (which we know was too small), we know we
-                    # have found `t`. So we return `t+1`.
-                    if time_cost + 1 == min(too_large_time_costs):
+                # If we have not yet determined upper bound for the search...
+                if binary_search_upper_bound is None:
+                    # ...we update our guess on the time_cost candidate,
+                    # based on a new value for the average time per round.
+                    avg_time_per_round  = kd_time / time_cost
+                    time_cost_candidate = math.floor(MAX_KEY_DERIVATION_TIME / avg_time_per_round)
+
+                    # We increase the time cost by at least 1. If our candidate is larger than 1,
+                    # it will speed up the search (as we don't need to iterate values one by one).
+                    time_cost = max(time_cost_candidate, time_cost+1)
+
+                # If on the other hand we have an upper bound...
+                else:
+                    # Sentinel: If the current time cost is one smaller than the upper
+                    # bound, we know time_cost is at `t`, so we can set it to `t+1`.
+                    if time_cost + 1 == binary_search_upper_bound:
                         time_cost += 1
                         break
 
-                # ...we add the time_cost value to "too small" black list.
-                too_small_time_costs.append(time_cost)
+                    # ...we switch to binary search and try the middle point next.
+                    time_cost = math.floor((binary_search_lower_bound + binary_search_upper_bound) / 2)
 
-                # We then update our guess on the time_cost candidate,
-                # based on a new estimation of average time per round.
-                avg_time_per_round  = kd_time / time_cost
-                time_cost_candidate = math.floor(MAX_KEY_DERIVATION_TIME / avg_time_per_round)
-
-                # We increase the time cost at least by 1. If our estimate is larger than 1,
-                # it will speed up the search (as we don't need to iterate values one by one).
-                time_cost = max(time_cost_candidate, time_cost+1)
-
+            # If on the other hand key derivation time was too slow...
             elif kd_time > MAX_KEY_DERIVATION_TIME:
 
-                # If even a single round takes too long, it's the `t+1` we're looking for.
+                # ...we have found an upper bound for the time_cost value.
+                # We can therefore switch our strategy to a binary search.
+                binary_search_upper_bound = time_cost
+
+                # Sentinel: If even a single round takes too
+                # long, it's the `t+1` we're looking for.
                 if time_cost == 1:
                     break
 
-                # If the current time_cost value (that was too high) is one greater than
-                # some value on the "too small" blacklist, we know we have our `t+1`...
-                if too_small_time_costs and time_cost == max(too_small_time_costs) + 1:
+                # Sentinel: If the current time_cost value (that was too large) is one
+                # greater than the binary_search_lower_bound, we know we have found our
+                # `t+1`...
+                if time_cost == binary_search_lower_bound + 1:
                     break
 
-                # We can speed up our search by adding the
-                # time_cost value to the "too large" black list.
-                too_large_time_costs.append(time_cost)
-
-                # ...otherwise we know we are at least two integers higher than `t`. Our
-                # best candidate for `t` is max(too_small_time_costs), so we do binary
-                # search and try the middle point between max(too_small_time_costs) and
-                # our current time_cost value.
-                time_cost = math.floor((time_cost + max(too_small_time_costs)) / 2)
+                # ...otherwise we know current time_cost is at least two integers greater
+                # than `t`. Our best candidate for `t` is binary_search_lower_bound, so we
+                # continue our binary search strategy and try their middle point next.
+                time_cost = math.floor((binary_search_lower_bound + binary_search_upper_bound) / 2)
 
         return time_cost, kd_time, master_key
 
