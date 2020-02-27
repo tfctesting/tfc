@@ -237,7 +237,7 @@ class MasterKey(object):
         search. We therefore start with a single round, and by
         benchmarking it, estimate how many rounds are needed to reach
         the target zone. After every try, we update our time_cost
-        candidate based new a average time per round estimate, a value
+        candidate based on new average time per round estimate, a value
         that gets more accurate as the search progresses. If this
         method isn't able to suggest a value larger than 1, we increase
         time_cost by 1 anyway to avoid an Alderson loop.
