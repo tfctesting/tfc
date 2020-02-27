@@ -111,9 +111,9 @@ class MasterKey(object):
 
         The generated master key depends on a 256-bit salt and the
         password entered by the user. Additional computational strength
-        is added by the slow hash function (Argon2id). The more cores and
-        the faster each core is, and the more memory the system has, the
-        more secure TFC data is under the same password.
+        is added by the slow hash function (Argon2id). The more cores
+        andthe faster each core is, and the more memory the system has,
+        the more secure TFC data is under the same password.
 
         This method automatically tweaks the Argon2 time and memory cost
         parameters according to best practices as determined in
@@ -145,27 +145,27 @@ class MasterKey(object):
            share the same salt is just 10^(-18).*
             * https://en.wikipedia.org/wiki/Birthday_attack
 
-           The salt does not need additional protection as the security it
-           provides depends on the salt space in relation to the number of
-           attacked targets (i.e. if two or more physically compromised
-           systems happen to share the same salt, the attacker can speed up
-           the attack against those systems with time-memory-trade-off
-           attack).
+           The salt does not need additional protection as the security
+           it provides depends on the salt space in relation to the
+           number of attacked targets (i.e. if two or more physically
+           compromised systems happen to share the same salt, the
+           attacker can speed up the attack against those systems with
+           time-memory-trade-off attack).
 
-        6) The tag length isn't utilized. The result of the key derivation is
-           the master encryption key itself, which is set to 32 bytes for
-           use in XChaCha20-Poly1305.
+        6) The tag length isn't utilized. The result of the key
+           derivation is the master encryption key itself, which is set
+           to 32 bytes for use in XChaCha20-Poly1305.
 
         7) Memory wiping feature is not provided.
 
-        To recognize the password is correct, the BLAKE2b hash of the master
-        key is stored together with key derivation parameters into the
-        login database.
-            The preimage resistance of BLAKE2b prevents derivation of master
-        key from the stored hash, and Argon2id ensures brute force and
-        dictionary attacks against the master password are painfully
-        slow even with GPUs/ASICs/FPGAs, as long as the password is
-        sufficiently strong.
+        To recognize the password is correct, the BLAKE2b hash of the
+        master key is stored together with key derivation parameters
+        into the login database.
+            The preimage resistance of BLAKE2b prevents derivation of
+        master key from the stored hash, and Argon2id ensures brute
+        force and dictionary attacks against the master password are
+        painfully slow even with GPUs/ASICs/FPGAs, as long as the
+        password is sufficiently strong.
         """
         password  = MasterKey.new_password()
         salt      = csprng(ARGON2_SALT_LENGTH)
@@ -218,33 +218,35 @@ class MasterKey(object):
 
         There are two acceptable time_cost values.
 
-        1. A time_cost value that together with all available memory sets the key
-           derivation time between MIN_KEY_DERIVATION_TIME and MAX_KEY_DERIVATION_TIME.
-           If during the search we find such suitable time_cost value, we accept it.
+        1. A time_cost value that together with all available memory
+           sets the key derivation time between MIN_KEY_DERIVATION_TIME
+           and MAX_KEY_DERIVATION_TIME. If during the search we find
+           such suitable time_cost value, we accept it as such.
 
-        2. I a situation where no time_cost value is suitable alone, there will exist
-           some time_cost value `t` that makes key derivation too fast, and another
-           time_cost value `t+1` that makes key derivation too slow. In this case we
-           are interested in the latter value, as unlike `t`, the `t+1` can be fine-tuned
-           to suitable key derivation time range by adjusting the memory_cost parameter.
+        2. In a situation where no time_cost value is suitable alone,
+           there will exist some time_cost value `t` that makes key
+           derivation too fast, and another time_cost value `t+1` that
+           makes key derivation too slow. In this case we are interested
+           in the latter value, as unlike `t`, the value `t+1` can be
+           fine-tuned to suitable key derivation time range by adjusting
+           the memory_cost parameter.
 
-        As time_cost has no upper limit, and as the amount of available memory has
-        tremendous effect on how long one round takes, it's difficult to determine the
-        upper limit for a time_cost binary search. We therefore start with single round,
-        and by benchmarking it, approximate how many rounds are needed to reach the
-        target zone. After every ry, we update our guess based on average time per round.
-        This value gets more accurate as time_cost is increased. If this formula isn't
-        able to suggest a larger value, we increase time_cost by one.
+        As time_cost has no upper limit, and as the amount of available
+        memory has tremendous effect on how long one round takes, it's
+        difficult to determine the upper bound for a time_cost binary
+        search. We therefore start with a single round, and by
+        benchmarking it, estimate how many rounds are needed to reach
+        the target zone. After every try, we update our guess based on
+        average time per round. This value gets more accurate as
+        time_cost is increased. If this formula isn't able to suggest a
+        larger value than 1, we increase time_cost by 1 anyway.
 
-        Every too small time_cost value is added a blacklist to make finding the
-        suitable value faster.
-
-        Once we exceed the key derivation time, if necessary, we can perform a binary
-        search between our current time_cost value and the largest known too small
-        time_cost value. This finds our `t+1` value quickly.
-
-        The search also keeps track of all the time_cost values that are too large,
-        this helps us find the `t+1` value slightly faster.
+        For every estimate, we update the lower bound so that once the
+        MAX_KEY_DERIVATION_TIME is reached (and thus, when an upper
+        bound is found), we can immediately switch our strategy to
+        binary search that updates the lower bound and upper bound with
+        every search and finds the suitable time_cost `t+1` in log(n)
+        time.
         """
         binary_search_lower_bound = ARGON2_MIN_TIME_COST  # type: int
         binary_search_upper_bound = None                  # type: Optional[int]
@@ -318,9 +320,9 @@ class MasterKey(object):
         return time_cost, kd_time, master_key
 
     def determine_memory_cost(self,
-                              password: str,
-                              salt: bytes,
-                              time_cost: int,
+                              password:    str,
+                              salt:        bytes,
+                              time_cost:   int,
                               memory_cost: int,
                               parallelism: int,
                               ) -> Tuple[int, bytes]:
