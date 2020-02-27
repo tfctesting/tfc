@@ -288,7 +288,7 @@ class MasterKey(object):
 
                     # If our candidate is larger than 1, it will speed up the search (as
                     # we don't need to iterate values one by one). If the candidate is
-                    # less than 1, we increase the time cost by 1 regardless to avoid an
+                    # less than 1, we increase the time_cost by 1 regardless to avoid an
                     # Alderson loop and to eventually exceed the MAX_KEY_DERIVATION_TIME.
                     time_cost = max(time_cost_candidate, time_cost+1)
 
