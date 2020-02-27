@@ -201,10 +201,9 @@ class MasterKey(object):
             # the database data.
             self.database_data = database_data
 
-        print_on_previous_line(2)
+        print_on_previous_line()
         phase("Deriving master key")
         phase(DONE, delay=1)
-        time.sleep(5)
 
         return master_key
 
