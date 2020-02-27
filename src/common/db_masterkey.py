@@ -290,7 +290,7 @@ class MasterKey(object):
                     # we don't need to iterate values one by one). If the candidate is
                     # less than 1, we increase the time_cost by 1 regardless to avoid an
                     # Alderson loop and to eventually exceed the MAX_KEY_DERIVATION_TIME.
-                    time_cost = max(time_cost_candidate, time_cost+1)
+                    time_cost = max(time_cost+1, time_cost_candidate)
 
                 # If on the other hand we have an upper bound...
                 else:
