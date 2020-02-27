@@ -257,17 +257,17 @@ class MasterKey(object):
         print(2*'\n')
 
         while True:
+            print_on_previous_line()
+            phase(f"Trying time cost {time_cost}")
+            master_key, kd_time = self.timed_key_derivation(password, salt, time_cost, memory_cost, parallelism)
+            phase(f"{kd_time:.1f}s", done=True)
+
             # Sentinel that checks if the binary search has ended,
             # and that restarts the search if kd_time repeats.
             if upper_bound is not None and kd_time == lower_bound or kd_time == upper_bound:
                 lower_bound = ARGON2_MIN_TIME_COST
                 upper_bound = None
                 continue
-
-            print_on_previous_line()
-            phase(f"Trying time cost {time_cost}")
-            master_key, kd_time = self.timed_key_derivation(password, salt, time_cost, memory_cost, parallelism)
-            phase(f"{kd_time:.1f}s", done=True)
 
             # If we found a suitable time_cost value, we accept the key and the time_cost.
             if MIN_KEY_DERIVATION_TIME < kd_time < MAX_KEY_DERIVATION_TIME:
