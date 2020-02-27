@@ -283,7 +283,7 @@ class MasterKey(object):
                 # If on the other hand we have an upper bound...
                 else:
                     # Sentinel: If the current time cost is one smaller than the upper
-                    # bound, we know time_cost is at `t`, so we can set it to `t+1`.
+                    # bound, we know time_cost is at `t`, so we can set it to `t+1` and return.
                     if time_cost + 1 == binary_search_upper_bound:
                         time_cost += 1
                         break
@@ -296,22 +296,23 @@ class MasterKey(object):
 
                 # ...we have found an upper bound for the time_cost value.
                 # We can therefore switch our strategy to a binary search.
+
+                # We update the binary search upper bound.
                 binary_search_upper_bound = time_cost
 
-                # Sentinel: If even a single round takes too
-                # long, it's the `t+1` we're looking for.
+                # Sentinel: If even a single round takes too long, it's the `t+1` we're looking for.
                 if time_cost == 1:
                     break
 
                 # Sentinel: If the current time_cost value (that was too large) is one
-                # greater than the binary_search_lower_bound, we know we have found our
-                # `t+1`...
+                # greater than the binary_search_lower_bound, we know current time_cost
+                # is at `t+1`...
                 if time_cost == binary_search_lower_bound + 1:
                     break
 
                 # ...otherwise we know current time_cost is at least two integers greater
                 # than `t`. Our best candidate for `t` is binary_search_lower_bound, so we
-                # continue our binary search strategy and try their middle point next.
+                # continue our binary search strategy and try the middle point next.
                 time_cost = math.floor((binary_search_lower_bound + binary_search_upper_bound) / 2)
 
         return time_cost, kd_time, master_key
