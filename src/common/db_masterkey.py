@@ -240,7 +240,7 @@ class MasterKey(object):
         candidate based on new average time per round estimate, a value
         that gets more accurate as the search progresses. If this
         method isn't able to suggest a value larger than 1, we increase
-        time_cost by 1 anyway to avoid an Alderson loop.
+        time_cost by 1 anyway to prevent an Alderson loop.
 
         For every estimate, we update the lower bound so that once the
         MAX_KEY_DERIVATION_TIME is exceeded (and thus, when an upper
