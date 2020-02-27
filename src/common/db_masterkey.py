@@ -236,10 +236,11 @@ class MasterKey(object):
         difficult to determine the upper bound for a time_cost binary
         search. We therefore start with a single round, and by
         benchmarking it, estimate how many rounds are needed to reach
-        the target zone. After every try, we update our guess based on
-        average time per round. This value gets more accurate as
-        time_cost is increased. If this formula isn't able to suggest a
-        larger value than 1, we increase time_cost by 1 anyway.
+        the target zone. After every try, we update our time_cost
+        candidate based new a average time per round estimate, a value
+        that gets more accurate as the search progresses. If this
+        method isn't able to suggest a value larger than 1, we increase
+        time_cost by 1 anyway to avoid an Alderson loop.
 
         For every estimate, we update the lower bound so that once the
         MAX_KEY_DERIVATION_TIME is reached (and thus, when an upper
