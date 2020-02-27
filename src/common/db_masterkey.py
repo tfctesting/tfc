@@ -287,7 +287,7 @@ class MasterKey(object):
 
                     # We increase the time cost by at least 1. If our candidate is larger than 1,
                     # it will speed up the search (as we don't need to iterate values one by one).
-                    # This also avoids an Alderson loop.
+                    # This also prevents an Alderson loop.
                     time_cost = max(time_cost_candidate, time_cost+1)
 
                 # If on the other hand we have an upper bound...
