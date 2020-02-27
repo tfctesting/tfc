@@ -262,7 +262,8 @@ class MasterKey(object):
             phase(f"{kd_time:.1f}s", done=True)
 
             # Sentinel that checks if the binary search has ended,
-            # and that restarts the search if kd_time repeats.
+            # and that restarts the search if kd_time repeats. This
+            # prevents and Alderson loop.
             if upper_bound is not None and kd_time in [lower_bound, upper_bound]:
                 lower_bound = ARGON2_MIN_TIME_COST
                 upper_bound = None
