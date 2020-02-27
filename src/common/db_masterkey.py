@@ -315,8 +315,7 @@ class MasterKey(object):
                     break
 
                 # Sentinel: If the current time_cost value (that was too large) is one
-                # greater than the lower_bound, we know current time_cost
-                # is at `t+1`.
+                # greater than the lower_bound, we know current time_cost is at `t+1`.
                 if time_cost == lower_bound + 1:
                     break
 
