@@ -167,8 +167,8 @@ class MasterKey(object):
         painfully slow even with GPUs/ASICs/FPGAs, as long as the
         password is sufficiently strong.
         """
-        password  = MasterKey.new_password()
-        salt      = csprng(ARGON2_SALT_LENGTH)
+        password = MasterKey.new_password()
+        salt     = csprng(ARGON2_SALT_LENGTH)
 
         # Determine the amount of memory used from the amount of free RAM in the system.
         memory_cost = self.get_available_memory()
