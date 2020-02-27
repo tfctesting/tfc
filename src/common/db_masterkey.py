@@ -321,10 +321,9 @@ class MasterKey(object):
                     break
 
                 # Otherwise we know the current time_cost is at least two integers greater
-                # than `t`. Our best candidate for `t` is lower_bound, but
-                # for all we know `t` might be a much greater value. So we continue our
-                # binary search strategy and look for `t+1` in the middle point between
-                # the bounds.
+                # than `t`. Our best candidate for `t` is lower_bound, but for all we know,
+                # `t` might be a much greater value. So we continue our binary search
+                # strategy and look for `t+1` in the middle point between the two bounds.
                 time_cost = math.floor((lower_bound + upper_bound) / 2)
 
         return time_cost, kd_time, master_key
