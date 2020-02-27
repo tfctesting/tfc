@@ -292,8 +292,8 @@ class MasterKey(object):
 
                 # If on the other hand we have an upper bound...
                 else:
-                    # Sentinel: If the current time cost is one smaller than the upper
-                    # bound, we know time_cost is at `t`, so we can set it to `t+1` and return.
+                    # Sentinel: If the current time cost is 1 smaller than the upper bound,
+                    # we know time_cost is at `t`, so we can set it to `t+1` and return.
                     if time_cost + 1 == upper_bound:
                         time_cost += 1
                         break
