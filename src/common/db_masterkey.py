@@ -252,7 +252,6 @@ class MasterKey(object):
         lower_bound = ARGON2_MIN_TIME_COST  # type: int
         upper_bound = None                  # type: Optional[int]
         time_cost   = lower_bound
-        kd_time     = 0
 
         print(2*'\n')
 
