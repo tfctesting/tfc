@@ -212,7 +212,7 @@ def new_local_key(contact_list: 'ContactList',
                                           key, csprng(),
                                           hek, csprng()))
 
-        # Notify Receiver that confirmation code was successfully entered
+        # Notify Receiver Program that confirmation code was successfully entered
         queue_command(LOCAL_KEY_RDY, settings, queues)
 
         m_print("Successfully completed the local key exchange.", bold=True, tail_clear=True, delay=1, head=1)

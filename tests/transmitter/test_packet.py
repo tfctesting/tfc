@@ -35,11 +35,11 @@ from src.common.statics import (ASSEMBLY_PACKET_LENGTH, COMMAND, COMMAND_PACKET_
                                 TM_COMMAND_PACKET_QUEUE, TM_FILE_PACKET_QUEUE, TM_MESSAGE_PACKET_QUEUE,
                                 WIN_TYPE_CONTACT, WIN_TYPE_GROUP)
 
-from src.transmitter.packet import cancel_packet, queue_command, queue_file, queue_message, queue_assembly_packets
-from src.transmitter.packet import send_file, send_packet, split_to_assembly_packets
+from src.transmitter.packet import (cancel_packet, queue_command, queue_file, queue_message, queue_assembly_packets,
+                                    send_file, send_packet, split_to_assembly_packets)
 
-from tests.mock_classes import create_contact, create_group, create_keyset, Gateway, ContactList, KeyList
-from tests.mock_classes import nick_to_pub_key, OnionService, Settings, TxWindow, UserInput
+from tests.mock_classes import (create_contact, create_group, create_keyset, Gateway, ContactList, KeyList,
+                                nick_to_pub_key, OnionService, Settings, TxWindow, UserInput)
 from tests.utils        import cd_unit_test, cleanup, gen_queue_dict, tear_queue, tear_queues, TFCTestCase
 
 

@@ -33,12 +33,12 @@ from src.common.statics  import (COMMAND_PACKET_QUEUE, CONFIRM_CODE_LENGTH, ECDH
                                  LOCAL_PUBKEY, RELAY_PACKET_QUEUE, SYMMETRIC_KEY_LENGTH, TFC_PUBLIC_KEY_LENGTH,
                                  WIN_TYPE_CONTACT, WIN_TYPE_GROUP, XCHACHA20_NONCE_LENGTH)
 
-from src.transmitter.key_exchanges import create_pre_shared_key, export_onion_service_data, new_local_key
-from src.transmitter.key_exchanges import rxp_load_psk, start_key_exchange, verify_fingerprints
+from src.transmitter.key_exchanges import (create_pre_shared_key, export_onion_service_data, new_local_key,
+                                           rxp_load_psk, start_key_exchange, verify_fingerprints)
 
 from tests.mock_classes import ContactList, create_contact, Gateway, OnionService, Settings, TxWindow
-from tests.utils        import cd_unit_test, cleanup, gen_queue_dict, ignored, nick_to_pub_key
-from tests.utils        import nick_to_short_address, tear_queues, TFCTestCase, VALID_ECDHE_PUB_KEY
+from tests.utils        import (cd_unit_test, cleanup, gen_queue_dict, ignored, nick_to_pub_key, nick_to_short_address,
+                                tear_queues, TFCTestCase, VALID_ECDHE_PUB_KEY)
 
 
 class TestOnionService(TFCTestCase):

@@ -30,13 +30,13 @@ from src.common.statics import (COMMAND_PACKET_QUEUE, CONFIRM_CODE_LENGTH, FINGE
                                 KEY_MANAGEMENT_QUEUE, LOCAL_ID, LOG_SETTING_QUEUE, RELAY_PACKET_QUEUE,
                                 TM_COMMAND_PACKET_QUEUE, WIN_TYPE_CONTACT, WIN_TYPE_GROUP)
 
-from src.transmitter.contact import add_new_contact, change_nick, contact_setting, get_onion_address_from_user
-from src.transmitter.contact import remove_contact
+from src.transmitter.contact import (add_new_contact, change_nick, contact_setting, get_onion_address_from_user,
+                                     remove_contact)
 
-from tests.mock_classes import ContactList, create_contact, create_group, Group, GroupList, MasterKey, OnionService
-from tests.mock_classes import Settings, TxWindow, UserInput
-from tests.utils        import cd_unit_test, cleanup, gen_queue_dict, group_name_to_group_id, ignored
-from tests.utils        import nick_to_onion_address, nick_to_pub_key, tear_queues, TFCTestCase, VALID_ECDHE_PUB_KEY
+from tests.mock_classes import (ContactList, create_contact, create_group, Group, GroupList, MasterKey, OnionService,
+                                Settings, TxWindow, UserInput)
+from tests.utils        import (cd_unit_test, cleanup, gen_queue_dict, group_name_to_group_id, ignored,
+                                nick_to_onion_address, nick_to_pub_key, tear_queues, TFCTestCase, VALID_ECDHE_PUB_KEY)
 
 
 class TestAddNewContact(TFCTestCase):

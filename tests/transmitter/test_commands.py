@@ -28,9 +28,9 @@ from unittest        import mock
 from unittest.mock   import MagicMock
 from typing          import Any
 
-from src.common.database import TFCDatabase, MessageLog
-from src.common.db_logs  import write_log_entry
-from src.common.encoding import bool_to_bytes
+from src.common.database     import TFCDatabase, MessageLog
+from src.common.db_logs      import write_log_entry
+from src.common.encoding     import bool_to_bytes
 from src.common.db_masterkey import MasterKey as OrigMasterKey
 from src.common.statics      import (BOLD_ON, CLEAR_ENTIRE_SCREEN, COMMAND_PACKET_QUEUE, CURSOR_LEFT_UP_CORNER,
                                      DIR_USER_DATA, KEY_MGMT_ACK_QUEUE, KEX_STATUS_NO_RX_PSK, KEX_STATUS_UNVERIFIED,
@@ -41,16 +41,16 @@ from src.common.statics      import (BOLD_ON, CLEAR_ENTIRE_SCREEN, COMMAND_PACKE
                                      UNENCRYPTED_WIPE_COMMAND, VERSION, WIN_TYPE_CONTACT, WIN_TYPE_GROUP,
                                      KDB_HALT_ACK_HEADER, KDB_M_KEY_CHANGE_HALT_HEADER)
 
-from src.transmitter.commands import change_master_key, change_setting, clear_screens, exit_tfc, log_command
-from src.transmitter.commands import print_about, print_help, print_recipients, print_settings, process_command
-from src.transmitter.commands import remove_log, rxp_display_unread, rxp_show_sys_win, send_onion_service_key, verify
-from src.transmitter.commands import whisper, whois, wipe
+from src.transmitter.commands import (change_master_key, change_setting, clear_screens, exit_tfc, log_command,
+                                      print_about, print_help, print_recipients, print_settings, process_command,
+                                      remove_log, rxp_display_unread, rxp_show_sys_win, send_onion_service_key,
+                                      verify, whisper, whois, wipe)
 from src.transmitter.packet   import split_to_assembly_packets
 
-from tests.mock_classes import ContactList, create_contact, Gateway, GroupList, MasterKey, OnionService, Settings
-from tests.mock_classes import TxWindow, UserInput
-from tests.utils        import assembly_packet_creator, cd_unit_test, cleanup, group_name_to_group_id
-from tests.utils        import gen_queue_dict, nick_to_onion_address, nick_to_pub_key, tear_queues, TFCTestCase
+from tests.mock_classes import (ContactList, create_contact, Gateway, GroupList, MasterKey, OnionService, Settings,
+                                TxWindow, UserInput)
+from tests.utils        import (assembly_packet_creator, cd_unit_test, cleanup, group_name_to_group_id, gen_queue_dict,
+                                nick_to_onion_address, nick_to_pub_key, tear_queues, TFCTestCase)
 
 
 class TestProcessCommand(TFCTestCase):

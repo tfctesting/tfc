@@ -33,8 +33,8 @@ from src.transmitter.windows import select_window, TxWindow
 
 
 from tests.mock_classes import ContactList, create_contact, Gateway, GroupList, OnionService, Settings, UserInput
-from tests.utils        import gen_queue_dict, group_name_to_group_id, nick_to_onion_address, nick_to_pub_key
-from tests.utils        import tear_queues, TFCTestCase, VALID_ECDHE_PUB_KEY
+from tests.utils        import (gen_queue_dict, group_name_to_group_id, nick_to_onion_address, nick_to_pub_key,
+                                tear_queues, TFCTestCase, VALID_ECDHE_PUB_KEY)
 
 
 class TestTxWindow(TFCTestCase):
