@@ -581,7 +581,7 @@ class TestChangeMasterKey(TFCTestCase):
     @mock.patch('getpass.getpass', side_effect=['test_password', 'a', 'a'])
     @mock.patch('time.sleep',      return_value=None)
     @mock.patch('src.common.db_masterkey.MIN_KEY_DERIVATION_TIME', 0.01)
-    def test_transmitter_command_raises_system_exit_if_key_database_returns_invalid_master_key(self, *_: Any) -> None:
+    def test_transmitter_command_raises_critical_error_if_key_database_returns_invalid_master_key(self, *_: Any) -> None:
         # Setup
         def mock_sender_loop() -> None:
             """Mock sender loop key management functionality."""

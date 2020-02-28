@@ -328,7 +328,7 @@ class TestGatewaySerial(TFCTestCase):
     @mock.patch('time.sleep', return_value=None)
     @mock.patch('builtins.input', side_effect=['10.137.0.17'])
     @mock.patch('socket.socket', MagicMock(return_value=MagicMock(connect=MagicMock(side_effect=[socket.error]))))
-    def test_socket_error_raises_system_exit(self, *_: Any) -> None:
+    def test_socket_error_raises_critical_error(self, *_: Any) -> None:
         gateway = Gateway(operation=TX, local_test=False, dd_sockets=False, qubes=True)
         with self.assertRaises(SystemExit):
             gateway.get_local_ip_addr()
