@@ -40,8 +40,8 @@ from src.common.statics    import (ARGON2_SALT_LENGTH, BOLD_ON, CLEAR_ENTIRE_SCR
 from src.receiver.key_exchanges import key_ex_ecdhe, key_ex_psk_rx, key_ex_psk_tx, local_key_rdy, process_local_key
 
 from tests.mock_classes import Contact, ContactList, KeyList, KeySet, Settings, WindowList
-from tests.utils        import cd_unit_test, cleanup, nick_to_short_address, nick_to_pub_key, tear_queue, TFCTestCase
-from tests.utils        import UNDECODABLE_UNICODE
+from tests.utils        import (cd_unit_test, cleanup, nick_to_short_address, nick_to_pub_key, tear_queue, TFCTestCase,
+                                UNDECODABLE_UNICODE)
 
 
 class TestProcessLocalKey(TFCTestCase):

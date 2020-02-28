@@ -240,6 +240,7 @@ class TestProcessFile(TFCTestCase):
     def test_invalid_key_raises_soft_error(self) -> None:
         self.file_key = SYMMETRIC_KEY_LENGTH * b'f'
         self.args     = self.file_key, self.contact_list, self.window_list, self.settings
+
         self.assert_se("Error: Decryption key for file from Alice was invalid.",
                        process_file, self.ts, self.account, self.file_ct, *self.args)
 

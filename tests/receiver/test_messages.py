@@ -38,8 +38,8 @@ from src.receiver.packet   import PacketList
 from src.receiver.windows  import WindowList
 
 from tests.mock_classes import ContactList, GroupList, KeyList, MasterKey, Settings
-from tests.utils        import assembly_packet_creator, cd_unit_test, cleanup, group_name_to_group_id
-from tests.utils        import nick_to_pub_key, TFCTestCase
+from tests.utils        import (assembly_packet_creator, cd_unit_test, cleanup, group_name_to_group_id,
+                                nick_to_pub_key, TFCTestCase)
 
 
 class TestProcessMessagePacket(TFCTestCase):

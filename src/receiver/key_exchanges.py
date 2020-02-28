@@ -77,7 +77,7 @@ def protect_kdk(kdk: bytes) -> None:
 def process_local_key_buffer(kdk:     bytes,
                              l_queue: 'local_key_queue'
                              ) -> Tuple[datetime, bytes]:
-    """Check if the kdk was for a packet further ahead in the queue."""
+    """Check if the KDK was for a packet further ahead in the queue."""
     buffer = []  # type: List[Tuple[datetime, bytes]]
     while l_queue.qsize() > 0:
         tup = l_queue.get()  # type: Tuple[datetime, bytes]

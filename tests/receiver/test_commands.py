@@ -36,14 +36,14 @@ from src.common.statics  import (CH_FILE_RECV, CH_LOGGING, CH_NOTIFY, CLEAR_ENTI
                                  LOCAL_PUBKEY, MESSAGE, ORIGIN_CONTACT_HEADER, PADDING_LENGTH, RESET, RX,
                                  SYMMETRIC_KEY_LENGTH, US_BYTE, WIN_TYPE_CONTACT, WIN_TYPE_GROUP, WIN_UID_FILE, WIPE)
 
+from src.receiver.commands import (ch_contact_s, ch_master_key, ch_nick, ch_setting, contact_rem, exit_tfc, log_command,
+                                   process_command, remove_log, reset_screen, win_activity, win_select, wipe)
 from src.receiver.packet   import PacketList
-from src.receiver.commands import ch_contact_s, ch_master_key, ch_nick, ch_setting, contact_rem, exit_tfc, log_command
-from src.receiver.commands import process_command, remove_log, reset_screen, win_activity, win_select, wipe
 
-from tests.mock_classes import ContactList, Gateway, group_name_to_group_id, GroupList, KeyList, MasterKey
-from tests.mock_classes import nick_to_pub_key, RxWindow, Settings, WindowList
-from tests.utils        import assembly_packet_creator, cd_unit_test, cleanup, ignored, nick_to_short_address
-from tests.utils        import tear_queue, TFCTestCase
+from tests.mock_classes import (ContactList, Gateway, group_name_to_group_id, GroupList, KeyList, MasterKey,
+                                nick_to_pub_key, RxWindow, Settings, WindowList)
+from tests.utils        import (assembly_packet_creator, cd_unit_test, cleanup, ignored, nick_to_short_address,
+                                tear_queue, TFCTestCase)
 
 
 class TestProcessCommand(TFCTestCase):

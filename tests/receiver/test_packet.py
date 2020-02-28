@@ -38,8 +38,8 @@ from src.transmitter.packet import split_to_assembly_packets
 from src.receiver.packet import decrypt_assembly_packet, Packet, PacketList
 
 from tests.mock_classes import ContactList, create_contact, KeyList, Settings, WindowList
-from tests.utils        import assembly_packet_creator, cd_unit_test, cleanup, nick_to_pub_key, TFCTestCase
-from tests.utils        import UNDECODABLE_UNICODE
+from tests.utils        import (assembly_packet_creator, cd_unit_test, cleanup, nick_to_pub_key, TFCTestCase,
+                                UNDECODABLE_UNICODE)
 
 
 class TestDecryptAssemblyPacket(TFCTestCase):
