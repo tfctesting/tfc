@@ -153,8 +153,7 @@ class TestMasterKey(TFCTestCase):
                                       +     [(KL*b'a',  4.1)]
                                       +     [(KL*b'a',  0.1)]  # Test3: Complete binary search with search end
                                       +     [(KL*b'a',  6.0)]
-                                      + 7 * [(KL*b'a',  2.5)]
-                          ))
+                                      + 7 * [(KL*b'a',  2.5)]))
     @mock.patch('os.popen',        return_value=MagicMock(
         read=MagicMock(return_value=MagicMock(splitlines=MagicMock(return_value=["MemAvailable 10240"])))))
     @mock.patch('getpass.getpass', side_effect=['generate'])
