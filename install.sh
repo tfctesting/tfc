@@ -692,8 +692,8 @@ function install_local_test {
     # Remove unnecessary files
     remove_common_files      "sudo"
     process_tcb_dependencies "rm"
+    process_virtualenv_dependencies "rm"
     sudo rm /opt/tfc/tfc.yml
-    sudo rm /opt/tfc/${VIRTUALENV}
 
     install_complete "Installation of TFC for local testing is now complete."
 }
