@@ -103,7 +103,7 @@ def main() -> None:
 
     master_key   = MasterKey(              operation, local_test)
     gateway      = Gateway(                operation, local_test, data_diode_sockets, qubes)
-    settings     = Settings(   master_key, operation, local_test)
+    settings     = Settings(   master_key, operation, local_test,                     qubes)
     contact_list = ContactList(master_key, settings)
     key_list     = KeyList(    master_key, settings)
     group_list   = GroupList(  master_key, settings, contact_list)

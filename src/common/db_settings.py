@@ -53,6 +53,7 @@ class Settings(object):
                  master_key: 'MasterKey',  # MasterKey object
                  operation:  str,          # Operation mode of the program (Tx or Rx)
                  local_test: bool,         # Local testing setting from command-line argument
+                 qubes:      bool = False  # Qubes setting from command-line argument
                  ) -> None:
         """Create a new Settings object.
 
@@ -91,6 +92,7 @@ class Settings(object):
         self.master_key         = master_key
         self.software_operation = operation
         self.local_testing_mode = local_test
+        self.qubes              = qubes
 
         self.file_name = f'{DIR_USER_DATA}{operation}_settings'
         self.database  = TFCDatabase(self.file_name, master_key)

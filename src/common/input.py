@@ -149,7 +149,7 @@ def get_b58_key(key_type:      str,         # The type of Base58 key to be enter
         raise CriticalError("Invalid key type")
 
     while True:
-        rx_pk = box_input(box_msg, key_type=key_type, guide=not settings.local_testing_mode)
+        rx_pk = box_input(box_msg, key_type=key_type, guide=not (settings.local_testing_mode or settings.qubes))
         rx_pk = ''.join(rx_pk.split())
 
         if key_type == B58_PUBLIC_KEY and rx_pk == '':
