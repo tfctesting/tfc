@@ -38,7 +38,7 @@ class TestFlaskServer(unittest.TestCase):
         url_token_public_key  = X448.derive_public_key(url_token_private_key).hex()
         url_token             = 'a450987345098723459870234509827340598273405983274234098723490285'
         url_token_old         = 'a450987345098723459870234509827340598273405983274234098723490286'
-        url_token_invalid     = 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'
+        url_token_invalid     = 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaä'
         onion_pub_key         = nick_to_pub_key('Alice')
         onion_address         = nick_to_onion_address('Alice')
         packet1               = "packet1"

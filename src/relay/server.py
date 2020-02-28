@@ -67,7 +67,10 @@ def validate_url_token(purp_url_token: str,
         # True if a matching shared secret was found in pub_key_dict.
         valid_url_token = False
         for url_token in pub_key_dict:
-            valid_url_token |= secrets.compare_digest(purp_url_token, url_token)
+            try:
+                valid_url_token |= secrets.compare_digest(purp_url_token, url_token)
+            except TypeError:
+                return False
 
     return valid_url_token
 
