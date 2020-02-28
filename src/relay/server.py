@@ -70,7 +70,7 @@ def validate_url_token(purp_url_token: str,
             try:
                 valid_url_token |= secrets.compare_digest(purp_url_token, url_token)
             except TypeError:
-                return False
+                valid_url_token |= False
 
     return valid_url_token
 
