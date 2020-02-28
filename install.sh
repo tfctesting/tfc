@@ -42,7 +42,7 @@ SETUPTOOLS=setuptools-45.2.0-py3-none-any.whl
 SIX=six-1.14.0-py2.py3-none-any.whl
 # STEM=stem-1.8.0.tar.gz
 URLLIB3=urllib3-1.25.8-py2.py3-none-any.whl
-VIRTUALENV=virtualenv-20.0.6-py2.py3-none-any.whl
+VIRTUALENV=virtualenv-20.0.7-py2.py3-none-any.whl
 WERKZEUG=Werkzeug-1.0.0-py2.py3-none-any.whl
 ZIPP=zipp-3.0.0-py3-none-any.whl
 
@@ -105,7 +105,7 @@ function verify_tcb_requirements_files {
     # To minimize the time TCB installer configuration stays online, only
     # the requirements files are authenticated between downloads.
     compare_digest eca1997b9abf71010f4373e17e87b1131e72c7395d6d8a86182ffb52b208f4058b3d59f33f022023ce3e6c5f53884d682a985e9908ff2c2958817b3427cfd19d '' requirements.txt
-    compare_digest 89325c06f95a65317058842d988566b6593bccf2d77c283909f2b017dce60026327ad4a0c6f87f3e5f962240c648af8831702f371f272a1d054d32372fcfaa43 '' requirements-venv.txt
+    compare_digest ffc85decf98dda20f72a2e7fa61b5279302b26edb20c8f6babe3dc385dab60e2962aac7427744c314785e87372a62c4aefa19aaaac91233f176e4ef7ee816edb '' requirements-venv.txt
 }
 
 
