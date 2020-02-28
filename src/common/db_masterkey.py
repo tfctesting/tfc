@@ -262,12 +262,12 @@ class MasterKey(object):
 
             # Sentinel that checks if the binary search has ended, and that restarts
             # the search if kd_time repeats. This prevents an Alderson loop.
-            if upper_bound is not None and kd_time in [lower_bound, upper_bound]:
+            if upper_bound is not None and time_cost in [lower_bound, upper_bound]:  # pragma: no cover
                 lower_bound = ARGON2_MIN_TIME_COST
                 upper_bound = None
                 continue
 
-            if MIN_KEY_DERIVATION_TIME < kd_time < MAX_KEY_DERIVATION_TIME:
+            if MIN_KEY_DERIVATION_TIME <= kd_time <= MAX_KEY_DERIVATION_TIME:
                 break
 
             if kd_time < MIN_KEY_DERIVATION_TIME:
