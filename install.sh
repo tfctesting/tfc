@@ -248,7 +248,6 @@ function process_tails_dependencies {
     t_sudo -E $1 "/opt/tfc/${FLASK}"
 
     # Cryptography
-    t_sudo -E $1 "/opt/tfc/${SIX}"
     t_sudo -E $1 "/opt/tfc/${PYCPARSER}"
     t_sudo -E $1 "/opt/tfc/${CFFI}"
     t_sudo -E $1 "/opt/tfc/${CRYPTOGRAPHY}"
@@ -300,7 +299,6 @@ function move_tails_dependencies {
     t_sudo mv "$HOME/${FLASK}"        "/opt/tfc/"
 
     # Cryptography
-    t_sudo mv "$HOME/${SIX}"          "/opt/tfc/"
     t_sudo mv "$HOME/${PYCPARSER}"    "/opt/tfc/"
     t_sudo mv "$HOME/${CFFI}"         "/opt/tfc/"
     t_sudo mv "$HOME/${CRYPTOGRAPHY}" "/opt/tfc/"
