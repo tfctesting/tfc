@@ -24,8 +24,7 @@ import typing
 
 from typing import Any, Dict, List, Tuple, Union
 
-from src.common.encoding   import bytes_to_int, pub_key_to_short_address
-from src.common.encoding   import int_to_bytes, b85encode
+from src.common.encoding   import b85encode, bytes_to_int, int_to_bytes, pub_key_to_short_address
 from src.common.exceptions import SoftError
 from src.common.misc       import ignored, separate_header, split_byte_string
 from src.common.output     import rp_print
