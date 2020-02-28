@@ -112,7 +112,7 @@ class MasterKey(object):
         The generated master key depends on a 256-bit salt and the
         password entered by the user. Additional computational strength
         is added by the slow hash function (Argon2id). The more cores
-        andthe faster each core is, and the more memory the system has,
+        and the faster each core is, and the more memory the system has,
         the more secure TFC data is under the same password.
 
         This method automatically tweaks the Argon2 time and memory cost
