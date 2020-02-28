@@ -702,7 +702,7 @@ class TestCSPRNG(unittest.TestCase):
         https://github.com/smuellerDD/lrng/tree/master/test
 
     The report on the statistical tests of the LRNG can be found from
-    Chapter 3 (pp.30-46) of the whitepaper:
+    Chapter 3 (pp.30-46) of the white paper:
         https://www.chronox.de/lrng/doc/lrng.pdf
 
     Further analysis of the LRNG can be found from Chapters 4-8
@@ -732,7 +732,7 @@ class TestCSPRNG(unittest.TestCase):
         with self.assertRaises(SystemExit):
             csprng()
 
-    def test_subceeding_hash_function_min_digest_size_raises_critical_error(self) -> None:
+    def test_subceding_hash_function_min_digest_size_raises_critical_error(self) -> None:
         with self.assertRaises(SystemExit):
             csprng(BLAKE2_DIGEST_LENGTH_MIN-1)
 

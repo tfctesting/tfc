@@ -114,7 +114,7 @@ function verify_files {
     compare_digest 1d9ee816a00eb66a96cf2a6484f37037e90eb8865d68b02de9c01d7ee6fa735cbbd2279099fe8adfb4dda5d9c0a2da649a5f530dba1f0c44471838995abcebb2 '' dd.py
     compare_digest d361e5e8201481c6346ee6a886592c51265112be550d5224f1a7a6e116255c2f1ab8788df579d9b8372ed7bfd19bac4b6e70e00b472642966ab5b319b99a2686 '' LICENSE
     compare_digest 8db25eafc66308f1fe8223c39bc5fb025ae111ebce3eae5601c907fa7a2654f68395af4f355ff0ff03775e79cda8dfccddaf7d68555bfe065d9469ca04a288f9 '' LICENSE-3RD-PARTY
-    compare_digest a6dad2efad1390944c5f00249fba40ddaff244ffabc60e837344ce3587a91559a792ac78455fb1a1e3b516d95ffbbfebab7b2d2d878c3700c5eed8483bc9e994 '' relay.py
+    compare_digest 7cad2202e4cc940627e31577162c38f44022ddb138a51f52d0ac3747e264e065919df2b646020851d8973cc76a2873a72ceabcbe93c39911ebbfa7c867f01675 '' relay.py
     compare_digest 563f4acff5fd30e27cc3a318c1867d8d9cabe1d6ee48a369c31e55d8312ec69ccdd430b51f88cbc3e072a6bfc0681112c3b7001244cbbdd37ca33490d888916b '' requirements-dev.txt
     compare_digest 038aacbab88ba9465d20995e5286734eb67c173a2b4166e26e267d55f41f834962a2d8d6365156637fafaed5e6e688c7cd2246210b336de215f73957d284127f '' requirements-relay.txt
     compare_digest 5fd48bb377c826639d1a2f75cc72c5b34d6c2f5683a9e655878c049708a73471949847e0156f8524706d629bdb1d82998fa7f75819874949c34e5a3cc64f61e0 '' requirements-relay-tails.txt
@@ -145,9 +145,9 @@ function verify_files {
     compare_digest 7c0214208857174b43092eaf61d14c16e60d6ebb68ba25b260f84546ce39f1fed8b21aceb58833920c8d939304b313c0ad95c554210ae3d5d0547143f7dd704c src/common/ db_groups.py
     compare_digest c49231429824d8133de7efad667c2bdde694a6c7a2e34e3b015ddb8cf59a150574cdd7099aaad02a4993a1669cd631f5af4cc611fac7d538d3ecd141d9295d0d src/common/ db_keys.py
     compare_digest 04e0c0d53bcfc71476410bbdfcacee2ba3df6d7761d02111aca69a56cac848e4fb0178ee572b181b1a925bd45aae005b31b9e2afcce7416f7bd8c5dad96bc615 src/common/ db_logs.py
-    compare_digest ac2819c18bf715e2bfcd669e9f28e5deef01453f394983a12518737e0294cddabf6f0a4159877bfa03314ead21c1a993bae5987d2b3ef4cf74d0b4153ecd1a1e src/common/ db_masterkey.py
+    compare_digest eaeda280758ba59c36fdb025b7c93fef6b72cd5bc60a36c486aa0a45f06d4bd9ffb4bb8e37f992927e69112c49ccc6a3469460faf307f4e908a3c13d0fe6b767 src/common/ db_masterkey.py
     compare_digest 325298cd6cb7e68d27681c18f29e635f46222e34015ba3c8fe55e6718e6907b4257bbe12d71fd344b557aff302ae9d7fca2b581b4208e59ac7923e57aca23fe5 src/common/ db_onion.py
-    compare_digest 65505ee6d6f1edad1a81cd60f07729f113368b10d9eec1fe50ad4a8fdb118b1fbf9c9a36d4681451939ba1ee14bf28ac4b73ed0e1b13fe3b3456cf6d30c1058a src/common/ db_settings.py
+    compare_digest 4ef757ba877ee6b74632af3a0d3567c9483a62b9063ec0e7fe7b6abc7e82b490ec52279198f0be22866595dae1948bb1ef9ef556c88b3c320c5316fd59fc0743 src/common/ db_settings.py
     compare_digest 60fb4c922af286307865b29f0cadab53a5a575a9f820cd5ad99ea116c841b54dd1d1be1352bf7c3ab51d2fd223077217bcda1b442d44d2b9f1bf614e15c4a14d src/common/ encoding.py
     compare_digest ccd522408ad2e8e21f01038f5f49b9d82d5288717f1a1acf6cda278c421c05472827ee5928fbf56121c2dfc4f2cc49986e32c493e892bd6ae584be38ba381edd src/common/ exceptions.py
     compare_digest 16d3d0fb692bb4b7dcdd0905327ea6c39177309383e42952e08d7a3807a3361ba2e90a10b4660db4dc146bdd81990d347e6246b22f7120b0a437795d202c538e src/common/ gateway.py
@@ -166,7 +166,7 @@ function verify_files {
     compare_digest acfa0b7ac684b5a2747e1db315386ada28cf077c5fbedfc13a89d9912682b5020ae8da98fc65aef7fcbe3e3180184a7f787eba10b5617666bc43f4e4ba40231c src/receiver/ key_exchanges.py
     compare_digest 6ebd6c0638525997949783b7623ce9a78683169e95f572ea65dcec52da150b0473a25e928862cab34eac44b0e0991a0969c5252c03cf4dc8f49d1aa9809b43bd src/receiver/ messages.py
     compare_digest eabe1695cd0fe04346e49ed91b64a11ad74ff60b636333140f9a3c6745b9c408d77aae8f45256b5d74b241324a5d429249b2be6c732205ab729a38049b8631f7 src/receiver/ output_loop.py
-    compare_digest 25b49765e149f5e072df2aa70c125478d1c9621886527201bf0d7718db557f2991823d980274f53abf93269f5aa1096b3e56fae94ecaa974ef31b0cb7907fde7 src/receiver/ packet.py
+    compare_digest afcc1ccc9fe680f1c3ede5427e8794711547563aa40cac0e6d740416250ceb07cc2b58cc3069f203eed1083640877bed7f31d8486a9ed5e439773a977501e61f src/receiver/ packet.py
     compare_digest 002c960023393bec10da3de6d9a218c8e2c27da1635fd1a7f99e02a9a28792428a2c0e6cd030d1cc1fac1124c58f397f63d60b7af4c384367a8c293978125539 src/receiver/ receiver_loop.py
     compare_digest da8ff22a1ece42c780328c84722ae42c2dced69dd87f2fb2d09fd517d3ee98f3777c448922b2b06a5839347e075a5598e6c770a544fdf801e664ba5ad06b684d src/receiver/ windows.py
 
@@ -779,8 +779,8 @@ function get_tcb_ips {
     --add-entry="Source Computer VM IP:" \
     --add-entry="Destination Computer VM IP:")
 
-    first_ip=$(echo $ips | awk -F "|" '{print $1}')
-    second_ip=$(echo $ips | awk -F "|" '{print $2}')
+    first_ip=$(echo ${ips} | awk -F "|" '{print $1}')
+    second_ip=$(echo ${ips} | awk -F "|" '{print $2}')
 
     if [[ ${first_ip}  =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]] \
     && [[ ${second_ip} =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
@@ -834,7 +834,7 @@ function kill_network {
     # Kill network interfaces to protect the TCB from remote compromise.
     for interface in /sys/class/net/*; do
         name=$(basename "${interface}")
-        if [[ $name != "lo" ]]; then
+        if [[ ${name} != "lo" ]]; then
             echo "Disabling network interface ${name}"
             sudo ifconfig "${name}" down
         fi

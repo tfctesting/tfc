@@ -89,7 +89,7 @@ class TestGatewaySerial(TFCTestCase):
     @mock.patch('serial.Serial',  side_effect=SerialException)
     @mock.patch('os.listdir',     side_effect=[['ttyUSB0'], ['ttyUSB0']])
     @mock.patch('builtins.input', side_effect=['Yes'])
-    def test_serialexception_during_establish_exists(self, *_: Any) -> None:
+    def test_serial_exception_during_establish_exists(self, *_: Any) -> None:
         with self.assertRaises(SystemExit):
             Gateway(operation=RX, local_test=False, dd_sockets=False, qubes=False)
 
@@ -293,7 +293,7 @@ class TestGatewaySerial(TFCTestCase):
     @mock.patch('time.sleep', return_value=None)
     @mock.patch('socket.socket', MagicMock(return_value=MagicMock(
         recv=MagicMock(side_effect=[EOFError, b'data', US_BYTE]))))
-    def test_qubes_socket_server_raises_critical_error_if_inteface_is_not_initialized(self, *_: Any) -> None:
+    def test_qubes_socket_server_raises_critical_error_if_interface_is_not_initialized(self, *_: Any) -> None:
         # Setup
         gateway            = Gateway(operation=RX, local_test=False, dd_sockets=False, qubes=True)
         gateway.rxq_socket = None
@@ -312,7 +312,7 @@ class TestGatewaySerial(TFCTestCase):
 
     @mock.patch('time.sleep', return_value=None)
     @mock.patch('socket.socket', MagicMock())
-    def test_qubes_autoconfig_from_file(self, *_: Any) -> None:
+    def test_qubes_auto_config_from_file(self, *_: Any) -> None:
         # Setup
         test_ip = '10.137.0.17'
         open(QUBES_RX_IP_ADDR_FILE, 'w+').write(test_ip)

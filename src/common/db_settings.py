@@ -201,7 +201,7 @@ class Settings(object):
         Settings.validate_max_number_of_groups(key, value, group_list)
         Settings.validate_max_number_of_contacts(key, value, contact_list)
         Settings.validate_new_message_notify_duration(key, value)
-        Settings.validate_traffic_maskig_delay(key, value, contact_list)
+        Settings.validate_traffic_masking_delay(key, value, contact_list)
 
     @staticmethod
     def validate_database_limit(key: str, value: 'SettingType') -> None:
@@ -250,10 +250,10 @@ class Settings(object):
             raise SoftError("Error: Too small value for message notify duration.", head_clear=True)
 
     @staticmethod
-    def validate_traffic_maskig_delay(key:          str,
-                                      value:        'SettingType',
-                                      contact_list: 'ContactList'
-                                      ) -> None:
+    def validate_traffic_masking_delay(key:          str,
+                                       value:        'SettingType',
+                                       contact_list: 'ContactList'
+                                       ) -> None:
         """Validate setting value for traffic masking delays."""
         if key in ["tm_static_delay", "tm_random_delay"]:
 

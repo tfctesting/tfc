@@ -167,7 +167,7 @@ def main() -> None:
          ONION_KEY_QUEUE:     Queue(),  # Onion Service private key   from `relay_command`         to `onion_service`
          TOR_DATA_QUEUE:      Queue(),  # Open port for Tor           from `onion_service`         to `client_scheduler`
          EXIT_QUEUE:          Queue(),  # EXIT/WIPE signal            from `relay_command`         to `main`
-         ACCOUNT_CHECK_QUEUE: Queue(),  # Incorrectly typed accounts  from `src_incomfing`         to `account_checker`
+         ACCOUNT_CHECK_QUEUE: Queue(),  # Incorrectly typed accounts  from `src_incoming`          to `account_checker`
          ACCOUNT_SEND_QUEUE:  Queue(),  # Contact requests            from `flask_server`          to `account_checker`
          USER_ACCOUNT_QUEUE:  Queue(),  # User's public key           from `onion_service`         to `account_checker`
          PUB_KEY_CHECK_QUEUE: Queue(),  # Typed public keys           from `src_incoming`          to `pub_key_checker`

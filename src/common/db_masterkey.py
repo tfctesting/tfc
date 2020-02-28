@@ -322,7 +322,7 @@ class MasterKey(object):
         upper_bound = memory_cost
 
         while True:
-            memory_cost = round((lower_bound + upper_bound) // 2, -3)
+            memory_cost = int(round((lower_bound + upper_bound) // 2, -3))
 
             print_on_previous_line()
             phase(f"Trying memory cost {memory_cost} KiB")
