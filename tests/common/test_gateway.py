@@ -35,8 +35,8 @@ from src.common.crypto       import blake2b
 from src.common.gateway      import gateway_loop, Gateway, GatewaySettings
 from src.common.misc         import ensure_dir
 from src.common.reed_solomon import RSCodec
-from src.common.statics      import DIR_USER_DATA, GATEWAY_QUEUE, NC, PACKET_CHECKSUM_LENGTH, QUBES_RX_IP_ADDR_FILE
-from src.common.statics      import RX, TX, US_BYTE
+from src.common.statics      import (DIR_USER_DATA, GATEWAY_QUEUE, NC, PACKET_CHECKSUM_LENGTH, QUBES_RX_IP_ADDR_FILE,
+                                     RX, TX, US_BYTE)
 
 from tests.mock_classes import Settings
 from tests.utils        import cd_unit_test, cleanup, gen_queue_dict, tear_queues, TFCTestCase
@@ -203,14 +203,14 @@ class TestGatewaySerial(TFCTestCase):
 
         # Test with B58 encoding
         gateway.settings.qubes = True
-        packet_w_ec = base64.b85encode(gateway.add_error_correction(packet))
-        self.assertEqual(gateway.detect_errors(packet_w_ec), packet)
+        packet_with_error_correction = base64.b85encode(gateway.add_error_correction(packet))
+        self.assertEqual(gateway.detect_errors(packet_with_error_correction), packet)
 
         # Test invalid B85 encoding raises SoftError
-        packet_w_ec = base64.b85encode(gateway.add_error_correction(packet))
-        packet_w_ec += b'\x00'
+        packet_with_error_correction = base64.b85encode(gateway.add_error_correction(packet))
+        packet_with_error_correction += b'\x00'
         self.assert_se("Error: Received packet had invalid Base85 encoding.",
-                       gateway.detect_errors, packet_w_ec)
+                       gateway.detect_errors, packet_with_error_correction)
         gateway.settings.qubes = False
 
     @mock.patch('time.sleep',     return_value=None)
@@ -268,7 +268,6 @@ class TestGatewaySerial(TFCTestCase):
     def test_local_testing_read(self, *_: Any) -> None:
         gateway = Gateway(operation=RX, local_test=True, dd_sockets=False, qubes=False)
         self.assertEqual(gateway.read(), b'data')
-
         with self.assertRaises(SystemExit):
             gateway.read()
 
@@ -277,7 +276,6 @@ class TestGatewaySerial(TFCTestCase):
         send=MagicMock(side_effect=[None, BrokenPipeError])))
     def test_local_testing_write(self, *_: Any) -> None:
         gateway = Gateway(operation=TX, local_test=True, dd_sockets=False, qubes=False)
-
         self.assertIsNone(gateway.write(b'data'))
 
         with self.assertRaises(SystemExit):

@@ -26,8 +26,8 @@ import typing
 from typing import Union
 
 from src.common.database   import TFCDatabase
-from src.common.encoding   import bool_to_bytes, double_to_bytes, int_to_bytes
-from src.common.encoding   import bytes_to_bool, bytes_to_double, bytes_to_int
+from src.common.encoding   import (bool_to_bytes, double_to_bytes, int_to_bytes,
+                                   bytes_to_bool, bytes_to_double, bytes_to_int)
 from src.common.exceptions import CriticalError, SoftError
 from src.common.input      import yes
 from src.common.misc       import ensure_dir, get_terminal_width, round_up

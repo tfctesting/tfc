@@ -175,8 +175,8 @@ def nc_bypass_msg(key: str, settings: 'Settings') -> None:
     key. Without the ciphertext, e.g. a visually collected local key
     decryption key is useless.
     """
-    m = {NC_BYPASS_START: "Bypass Networked Computer if needed. Press <Enter> to send local key.",
-         NC_BYPASS_STOP:  "Remove bypass of Networked Computer. Press <Enter> to continue."}
+    m = {NC_BYPASS_START: "Bypass the Networked Computer if needed. Press <Enter> to send local key.",
+         NC_BYPASS_STOP:  "Remove bypass of the Networked Computer. Press <Enter> to continue."}
 
     if settings.nc_bypass_messages:
         m_print(m[key], manual_proceed=True, box=True, head=(1 if key == NC_BYPASS_STOP else 0))

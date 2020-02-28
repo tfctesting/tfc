@@ -33,18 +33,18 @@ from typing          import Any, NoReturn
 
 from unittest.mock import MagicMock
 
-from src.common.misc    import calculate_race_condition_delay, decompress, ensure_dir, get_tab_complete_list
-from src.common.misc    import get_tab_completer, get_terminal_height, get_terminal_width, HideRunTime, ignored
-from src.common.misc    import monitor_processes, process_arguments, readable_size, reset_terminal, round_up
-from src.common.misc    import separate_header, separate_headers, separate_trailer, split_string, split_byte_string
-from src.common.misc    import split_to_substrings, terminal_width_check, validate_group_name, validate_ip_address
-from src.common.misc    import validate_key_exchange, validate_onion_addr, validate_nick
+from src.common.misc    import (calculate_race_condition_delay, decompress, ensure_dir, get_tab_complete_list,
+                                get_tab_completer, get_terminal_height, get_terminal_width, HideRunTime, ignored,
+                                monitor_processes, process_arguments, readable_size, reset_terminal, round_up,
+                                separate_header, separate_headers, separate_trailer, split_string, split_byte_string,
+                                split_to_substrings, terminal_width_check, validate_group_name, validate_ip_address,
+                                validate_key_exchange, validate_onion_addr, validate_nick)
 from src.common.statics import (DIR_RECV_FILES, DIR_USER_DATA, DUMMY_GROUP, ECDHE, EXIT, EXIT_QUEUE, LOCAL_ID,
                                 PADDING_LENGTH, RESET, RX, TAILS, TRAFFIC_MASKING, WIPE)
 
 from tests.mock_classes import ContactList, Gateway, GroupList, Settings
-from tests.utils        import cd_unit_test, cleanup, gen_queue_dict, nick_to_onion_address
-from tests.utils        import nick_to_pub_key, tear_queues, TFCTestCase
+from tests.utils        import (cd_unit_test, cleanup, gen_queue_dict, nick_to_onion_address, nick_to_pub_key,
+                                tear_queues, TFCTestCase)
 
 
 class TestCalculateRaceConditionDelay(unittest.TestCase):
@@ -272,8 +272,8 @@ class TestProcessArguments(unittest.TestCase):
 
             def __init__(self) -> None:
                 """Create new Args mock object."""
-                self.operation = True
-                self.local_test = True
+                self.operation          = True
+                self.local_test         = True
                 self.data_diode_sockets = True
                 self.qubes              = False
 

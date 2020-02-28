@@ -38,8 +38,8 @@ from serial.serialutil import SerialException
 
 from src.common.exceptions   import CriticalError, graceful_exit, SoftError
 from src.common.input        import box_input, yes
-from src.common.misc         import calculate_race_condition_delay, ensure_dir, ignored, get_terminal_width
-from src.common.misc         import separate_trailer, split_byte_string, validate_ip_address
+from src.common.misc         import (calculate_race_condition_delay, ensure_dir, ignored, get_terminal_width,
+                                     separate_trailer, split_byte_string, validate_ip_address)
 from src.common.output       import m_print, phase, print_on_previous_line
 from src.common.reed_solomon import ReedSolomonError, RSCodec
 from src.common.statics      import (BAUDS_PER_BYTE, DIR_USER_DATA, DONE, DST_DD_LISTEN_SOCKET, DST_LISTEN_SOCKET,
@@ -62,9 +62,10 @@ def gateway_loop(queues:    Dict[bytes, 'Queue[Tuple[datetime, bytes]]'],
 
     Also place the current timestamp to queue to be delivered to the
     Receiver Program. The timestamp is used both to notify when the sent
-    message was received by Relay Program, and as part of a commitment
-    scheme: For more information, see the section on "Covert channel
-    based on user interaction" under TFC's Security Design wiki article.
+    message was received by the Relay Program, and as part of a
+    commitment scheme: For more information, see the section on "Covert
+    channel based on user interaction" under TFC's Security Design wiki
+    article.
     """
     queue = queues[GATEWAY_QUEUE]
 
@@ -435,13 +436,13 @@ class GatewaySettings(object):
     unencrypted JSON database.
 
     The reason these settings are in plaintext is it protects the system
-    from inconsistent state of serial settings: Would the user reconfigure
-    their serial settings, and would the setting altering packet to
-    Receiver Program drop, Relay Program could in some situations no
-    longer communicate with the Receiver Program.
+    from an inconsistent serial setting state: Would the user change one
+    or more settings of their serial interfaces, and would the setting
+    adjusting packet to Receiver Program drop, Relay Program could in
+    some situations no longer communicate with the Receiver Program.
 
     Serial interface settings are not sensitive enough to justify the
-    inconvenience of encrypting the setting values.
+    inconveniences that would result from encrypting the setting values.
     """
 
     def __init__(self,

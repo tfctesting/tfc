@@ -61,13 +61,13 @@ def calculate_race_condition_delay(serial_error_correction: int,
     Calculate the delay required to prevent Relay Program race condition.
 
     When Transmitter Program outputs a command to exit or wipe data,
-    Relay program will also receive a copy of the command. If Relay
-    Program acts on the command too early, Receiver Program will not
+    Relay program will also receive a copy of the command. If the Relay
+    Program acts on the command too early, the Receiver Program will not
     receive the exit/wipe command at all.
 
-    This program calculates the delay Transmitter Program should wait
-    before outputting command for Relay Program, to ensure Receiver
-    Program has received the encrypted command.
+    This function calculates the delay Transmitter Program should wait
+    before outputting command to the Relay Program, to ensure the
+    Receiver Program has received its encrypted command.
     """
     rs             = RSCodec(2 * serial_error_correction)
     message_length = PACKET_LENGTH + ONION_ADDRESS_LENGTH
@@ -310,7 +310,7 @@ def process_arguments() -> Tuple[str, bool, bool, bool]:
                         action='store_true',
                         default=False,
                         dest='qubes',
-                        help="run TFC in qubes")
+                        help="output data as UDP packets. Allows running TFC in qubes")
 
     args      = parser.parse_args()
     operation = RX if args.operation else TX
@@ -485,7 +485,7 @@ def validate_group_name(group_name:   str,            # Name of the group
 
 
 def validate_ip_address(ip_address: str, *_: Any) -> str:
-    """Validate IP address."""
+    """Validate the IP address."""
     try:
         socket.inet_aton(ip_address)
         return ''
