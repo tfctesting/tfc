@@ -118,7 +118,7 @@ class MasterKey(object):
         This method automatically tweaks the Argon2 time and memory cost
         parameters according to best practices as determined in
 
-            https://tools.ietf.org/html/draft-irtf-cfrg-argon2-04#section-4
+            https://tools.ietf.org/html/draft-irtf-cfrg-argon2-09#section-8.4
 
         1) For Argon2 type (y), Argon2id was selected because the
            adversary might be able to run arbitrary code on Destination
