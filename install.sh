@@ -759,7 +759,7 @@ function compare_digest {
 
 
 function get_ip {
-    # Get IP address from the user.
+    # Get the IP-address of the Networker VM from the user.
     ip=$(zenity --entry --title="TFC Installer" --text="Enter the IP-address of the $1:")
     if [[ ${ip} =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
         echo ${ip}
@@ -772,7 +772,7 @@ function get_ip {
 
 
 function get_tcb_ips {
-    # Get Source and Destination VM IP-addresses from the user.
+    # Get the Source and Destination VM IP-addresses from the user.
     ips=$(zenity --forms \
     --title="TFC Installer" \
     --text="Enter the IP-addresses of the TCB VMs" \
@@ -889,7 +889,7 @@ function create_user_data_dir {
 
 
 function modify_terminator_font_size {
-    # Adjust terminator font size for local testing configurations.
+    # Adjust terminator font size for tiling terminal emulator configurations.
     #
     # The default font sizes in terminator config file are for 1920px
     # wide screens. The lowest resolution (width) supported is 1366px.
