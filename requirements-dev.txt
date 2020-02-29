@@ -9,6 +9,8 @@ pytest>=5.3.5
 pytest-cov>=2.8.1
 pytest-xdist>=1.31.0
 
+virtualenv==16.7.10
+
 # TFC dependencies (note: not authenticated with hashes)
 
 # pyserial
