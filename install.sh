@@ -40,7 +40,6 @@ PYSOCKS=PySocks-1.7.1-py3-none-any.whl
 REQUESTS=requests-2.23.0-py2.py3-none-any.whl
 SETUPTOOLS=setuptools-45.2.0-py3-none-any.whl
 SIX=six-1.14.0-py2.py3-none-any.whl
-# STEM=stem-1.8.0.tar.gz
 URLLIB3=urllib3-1.25.8-py2.py3-none-any.whl
 VIRTUALENV=virtualenv-20.0.7-py2.py3-none-any.whl
 WERKZEUG=Werkzeug-1.0.0-py2.py3-none-any.whl
@@ -62,7 +61,6 @@ function verify_tails_dependencies {
     compare_digest b1970b23f7c3f51da5e1b7825d4e6062b62bf2e908148f4b84eb70ba47e44b2873caba86536b23289fb986f04c9d617faa10541f5c25ad3885057d5920fdb98b '' ${ZIPP}
 
     compare_digest 8333ac2843fd136d5d0d63b527b37866f7d18afc3bb33c4938b63af077492aeb118eb32a89ac78547f14d59a2adb1e5d00728728275de62317da48dadf6cdff9 '' ${PYSERIAL}
-    # compare_digest aa2033567b79aef960f8321e4c6cbc28105c59d6513ff49a9f12509d8f97b1a2e8a3b04dc28abb07fad59b0f6ba66443b92bbefa0d08b26038bbaf24f7f2846d '' ${STEM}
     compare_digest 313b954102231d038d52ab58f41e3642579be29f827135b8dd92c06acb362effcb0a7fd5f35de9273372b92d9fe29f38381ae44f8b41aa90d2564d6dd07ecd12 '' ${PYSOCKS}
 
     # Requests
@@ -116,7 +114,7 @@ function verify_files {
     compare_digest 7cad2202e4cc940627e31577162c38f44022ddb138a51f52d0ac3747e264e065919df2b646020851d8973cc76a2873a72ceabcbe93c39911ebbfa7c867f01675 '' relay.py
     compare_digest 563f4acff5fd30e27cc3a318c1867d8d9cabe1d6ee48a369c31e55d8312ec69ccdd430b51f88cbc3e072a6bfc0681112c3b7001244cbbdd37ca33490d888916b '' requirements-dev.txt
     compare_digest 038aacbab88ba9465d20995e5286734eb67c173a2b4166e26e267d55f41f834962a2d8d6365156637fafaed5e6e688c7cd2246210b336de215f73957d284127f '' requirements-relay.txt
-    compare_digest 5fd48bb377c826639d1a2f75cc72c5b34d6c2f5683a9e655878c049708a73471949847e0156f8524706d629bdb1d82998fa7f75819874949c34e5a3cc64f61e0 '' requirements-relay-tails.txt
+    compare_digest 1ed2367a12bcf2ddc745150c80b3ed134c8500ab51164eea4d112b8a36a29c5f889e2e8270075dbefd0da77c4b8a3b973b4e4cc6ffc7c3ccf84c771a7842e0f9 '' requirements-relay-tails.txt
     compare_digest 1432c2f098b1e656a597cbcfcceef00e2cda1897242f2a9316182fffff55bd64ea974534756200ec878741cd8de12b46b4b05a39ed550ad3997d111a6176f16f '' requirements-setuptools.txt
     compare_digest 79f8272a2ab122a48c60630c965cd9d000dcafabf5ee9d69b1c33c58ec321feb17e4654dbbbf783cc8868ccdfe2777d60c6c3fc9ef16f8264d9fcf43724e83c2 '' tfc.png
     compare_digest c746fa981fcdc1b21cbe7117ed186ef7757d120cb96fbe8500b8b5f7f4effebe71360ae5c1cc2bf873818002544d9aeba26990b93723a79c6bbcd647552a7ca0 '' tfc.py
@@ -228,7 +226,6 @@ function process_tails_dependencies {
     # files is passed to the function as a parameter.
 
     t_sudo -E $1 "/opt/tfc/${PYSERIAL}"
-    # t_sudo -E $1 "/opt/tfc/${STEM}"
     t_sudo -E $1 "/opt/tfc/${PYSOCKS}"
 
     # Requests
@@ -270,6 +267,10 @@ function process_tails_venv_dependencies {
 
 function move_tails_dependencies {
     # Move Tails dependencies in batch.
+    t_sudo mv "$HOME/${PYSERIAL}" "/opt/tfc/"
+    t_sudo mv "$HOME/${PYSOCKS}"  "/opt/tfc/"
+
+    # Virtualenv
     t_sudo mv "$HOME/${VIRTUALENV}"         "/opt/tfc/"
     t_sudo mv "$HOME/${APPDIRS}"            "/opt/tfc/"
     t_sudo mv "$HOME/${DISTLIB}"            "/opt/tfc/"
@@ -277,10 +278,6 @@ function move_tails_dependencies {
     t_sudo mv "$HOME/${IMPORTLIB_METADATA}" "/opt/tfc/"
     t_sudo mv "$HOME/${SIX}"                "/opt/tfc/"
     t_sudo mv "$HOME/${ZIPP}"               "/opt/tfc/"
-
-    t_sudo mv "$HOME/${PYSERIAL}"   "/opt/tfc/"
-    # t_sudo mv "$HOME/${STEM}"       "/opt/tfc/"
-    t_sudo mv "$HOME/${PYSOCKS}"    "/opt/tfc/"
 
     # Requests
     t_sudo mv "$HOME/${URLLIB3}"  "/opt/tfc/"
