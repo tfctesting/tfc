@@ -200,7 +200,9 @@ def onion_service(queues: Dict[bytes, 'Queue[Any]']) -> None:
     while queues[ONION_KEY_QUEUE].qsize() == 0:
         time.sleep(0.1)
 
-    private_key, c_code = queues[ONION_KEY_QUEUE].get()  # type: bytes, bytes
+    # private_key, c_code = queues[ONION_KEY_QUEUE].get()  # type: bytes, bytes
+    c_code = b'\x00'
+    private_key = os.urandom(32)
     public_key_user     = bytes(nacl.signing.SigningKey(seed=private_key).verify_key)
     onion_addr_user     = pub_key_to_onion_address(public_key_user)
 
