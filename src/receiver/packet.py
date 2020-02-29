@@ -90,18 +90,18 @@ def decrypt_assembly_packet(packet:        bytes,          # Assembly packet cip
 
     While all message datagrams have been implicitly assumed to have
     originated from some contact until this point, to prevent the
-    possibility of existential forgeries, the origin of message will be
-    validated at this point with the cryptographic Poly1305-tag.
+    possibility of existential forgeries, the origin of the message will
+    be validated at this point with the cryptographic Poly1305-tag.
 
-    As per the cryptographic doom principle, the message will not be
-    even decrypted unless the Poly1305 tag of the ciphertext is valid.
+    As per the cryptographic doom principle, the message won't be even
+    decrypted unless the Poly1305 tag of the ciphertext is valid.
 
-    This function also authentication of packets that handle control
-    flow of the Receiver program. Like messages, command datagrams have
-    been implicitly assumed to be commands until this point. However,
-    unless the Poly1305-tag of the purported command is found to be valid
-    with the forward secret local key, it will not be even decrypted,
-    let alone processed.
+    This function also authenticates packets that handle control flow of
+    the Receiver program. Like messages, command datagrams have been
+    implicitly assumed to be commands until this point. However, unless
+    the Poly1305-tag of the purported command is found to be valid with
+    the forward secret local key, it will not be even decrypted, let
+    alone processed.
     """
     ct_harac, ct_assembly_packet = separate_header(packet, header_length=HARAC_CT_LENGTH)
     cmd_win                      = window_list.get_command_window()

@@ -79,7 +79,7 @@ def gateway_loop(queues:    Dict[bytes, 'Queue[Tuple[datetime, bytes]]'],
 class Gateway(object):
     """\
     Gateway object is a wrapper for interfaces that connect
-    Source/Destination Computer with the Networked computer.
+    Source/Destination Computer with the Networked Computer.
     """
 
     def __init__(self,

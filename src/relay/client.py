@@ -404,7 +404,7 @@ def process_group_management_message(data:              bytes,
 
 
 def c_req_manager(queues: 'QueueDict', unit_test: bool = False) -> None:
-    """Manage incoming contact requests."""
+    """Manage displayed contact requests."""
     existing_contacts  = []  # type: List[bytes]
     displayed_requests = []  # type: List[bytes]
 
