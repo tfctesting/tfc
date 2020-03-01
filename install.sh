@@ -679,7 +679,7 @@ function configure_qubes_sys_fw {
     dst_ip=$(echo ${all_ips} | awk -F "|" '{print $3}')
 
     # Add firewall rules
-    add_fw_rule "iptables -t filter -P FORWARD DROP"
+    add_sys_fw_rule "iptables -t filter -P FORWARD DROP"
 
     add_sys_fw_rule "iptables -I FORWARD 2 -d ${dst_ip} -p all -j DROP"
     add_sys_fw_rule "iptables -I FORWARD 2 -s ${dst_ip} -p all -j DROP"
