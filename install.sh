@@ -594,39 +594,45 @@ function add_fw_rule {
 function qubes_src_firewall_config {
     # Edit Source Computer VM firewall rules to block all incoming connections, and to
     # only allow UDP packets to Networked Computer's TFC port.
-    src_ip=$(sudo ifconfig eth0 | grep "inet" | cut -d: -f2 | awk '{print $2}')
-    net_ip=$(get_net_ip)
-
-    # Store Networked VM IP address so Transmitter Program can configure itself
-    echo ${net_ip} > $HOME/tfc/rx_ip_addr
 
     # Create backup of the current rc.config file (firewall rules)
     sudo mv /rw/config/rc.local{,.backup."$(date +%Y-%m-%d-%H_%M_%S)"}
 
-    # Add firewall rules
+    # Add firewall rules that block all connections
     add_fw_rule "iptables --flush"
     add_fw_rule "iptables -t filter -P INPUT DROP"
     add_fw_rule "iptables -t filter -P OUTPUT DROP"
     add_fw_rule "iptables -t filter -P FORWARD DROP"
+
+    src_ip=$(sudo ifconfig eth0 | grep "inet" | cut -d: -f2 | awk '{print $2}')
+    net_ip=$(get_net_ip)
+
+    # Allow export of data to the Networked VM
     add_fw_rule "iptables -I OUTPUT -s ${src_ip} -d ${net_ip} -p udp --dport 2063 -j ACCEPT"
     sudo chmod a+x /rw/config/rc.local
+
+    # Store Networked VM IP address so Transmitter Program can configure itself
+    echo ${net_ip} > $HOME/tfc/rx_ip_addr
 }
 
 
 function qubes_dst_firewall_config {
     # Edit Destination Computer VM's firewall rules to block all outgoing connections, and
     # to only allow UDP packets from Networked Computer VM to Receiver Programs' port.
-    net_ip=$(get_net_ip)
-    dst_ip=$(sudo ifconfig eth0 | grep "inet" | cut -d: -f2 | awk '{print $2}')
 
     # Create backup of the current rc.config file (firewall rules)
     sudo mv /rw/config/rc.local{,.backup."$(date +%Y-%m-%d-%H_%M_%S)"}
 
-    # Add firewall rules
+    # Add firewall rules that block all connections
     add_fw_rule "iptables --flush"
     add_fw_rule "iptables -t filter -P INPUT DROP"
     add_fw_rule "iptables -t filter -P OUTPUT DROP"
     add_fw_rule "iptables -t filter -P FORWARD DROP"
+
+    net_ip=$(get_net_ip)
+    dst_ip=$(sudo ifconfig eth0 | grep "inet" | cut -d: -f2 | awk '{print $2}')
+
+    # Allow import of data from the Networked VM
     add_fw_rule "iptables -I INPUT -s ${net_ip} -d ${dst_ip} -p udp --dport 2064 -j ACCEPT"
     sudo chmod a+x /rw/config/rc.local
 }
