@@ -762,7 +762,7 @@ function compare_digest {
 
 
 function valid_ip() {
-    # Validate IP-address
+    # Validate an IP-address.
     local ip=$1
     local valid=1
 
