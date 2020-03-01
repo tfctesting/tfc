@@ -590,12 +590,20 @@ function add_fw_rule {
     echo "${1}" | sudo tee -a /rw/config/rc.local
 }
 
+function add_sys_fw_rule {
+    # Add a firewall rule that takes effect immediately
+    sudo ${1}
+
+    # Make the firewall rule persistent
+    echo "${1}" | sudo tee -a /rw/config/qubes-firewall-user-script
+}
+
 
 function qubes_src_firewall_config {
     # Edit Source Computer VM firewall rules to block all incoming connections, and to
     # only allow UDP packets to Networked Computer's TFC port.
     src_ip=$(sudo ifconfig eth0 | grep "inet" | cut -d: -f2 | awk '{print $2}')
-    net_ip=$(get_ip "Networked Computer VM")
+    net_ip=$(get_net_ip)
 
     # Store Networked VM IP address so Transmitter Program can configure itself
     echo ${net_ip} > $HOME/tfc/rx_ip_addr
@@ -616,7 +624,7 @@ function qubes_src_firewall_config {
 function qubes_dst_firewall_config {
     # Edit Destination Computer VM's firewall rules to block all outgoing connections, and
     # to only allow UDP packets from Networked Computer VM to Receiver Programs' port.
-    net_ip=$(get_ip "Networked Computer VM")
+    net_ip=$(get_net_ip)
     dst_ip=$(sudo ifconfig eth0 | grep "inet" | cut -d: -f2 | awk '{print $2}')
 
     # Create backup of the current rc.config file (firewall rules)
@@ -646,7 +654,7 @@ function qubes_net_firewall_config {
     # Create backup of the current rc.config file (firewall rules)
     sudo cp /rw/config/rc.local{,.backup."$(date +%Y-%m-%d-%H_%M_%S)"}
 
-    # Add firewall rules that take effect immediately
+    # Add firewall rules
     add_fw_rule "iptables -t filter -P INPUT DROP"
     add_fw_rule "iptables -t filter -P OUTPUT ACCEPT"
     add_fw_rule "iptables -t filter -P FORWARD DROP"
@@ -656,6 +664,36 @@ function qubes_net_firewall_config {
     add_fw_rule "iptables -I OUTPUT ! -s ${net_ip} -d ${dst_ip} -j DROP"                     # Blacklist all packets to DST VM that do not originate from NET VM
     add_fw_rule "iptables -I OUTPUT -d ${src_ip} -p all -j DROP"                             # Blacklist all packets to SRC VM
     sudo chmod a+x /rw/config/rc.local
+}
+
+
+function configure_qubes_sys_fw {
+    # Configure Qubes' sys-firewall for use of TFC.
+
+    # Create backup of the current rc.config file (firewall rules)
+    sudo cp /rw/config/rc.local{,.backup."$(date +%Y-%m-%d-%H_%M_%S)"}
+
+    all_ips=$(get_all_ips)
+    src_ip=$(echo ${all_ips} | awk -F "|" '{print $1}')
+    net_ip=$(echo ${all_ips} | awk -F "|" '{print $2}')
+    dst_ip=$(echo ${all_ips} | awk -F "|" '{print $3}')
+
+    # Add firewall rules
+    add_fw_rule "iptables -t filter -P FORWARD DROP"
+
+    add_sys_fw_rule "iptables -I FORWARD 2 -d ${dst_ip} - p all -j DROP"
+    add_sys_fw_rule "iptables -I FORWARD 2 -s ${dst_ip} - p all -j DROP"
+
+    add_sys_fw_rule "iptables -I FORWARD 2 -d ${src_ip} - p all -j DROP"
+    add_sys_fw_rule "iptables -I FORWARD 2 -s ${src_ip} - p all -j DROP"
+
+    add_sys_fw_rule "iptables -I FORWARD 2 -s ${net_ip} -d ${dst_ip} -p udp --dport 2064 -j ACCEPT"
+    add_sys_fw_rule "iptables -I FORWARD 2 -s ${src_ip} -d ${net_ip} -p udp --dport 2063 -j ACCEPT"
+
+    # Remove unnecessary files.
+    sudo rm -f /opt/install.sh
+    sudo rm -f /opt/install.sh.asc
+    sudo rm -f /opt/pubkey.asc
 }
 
 
@@ -752,15 +790,15 @@ function compare_digest {
 }
 
 
-function get_ip {
+function get_net_ip {
     # Get the IP-address of the Networker VM from the user.
-    ip=$(zenity --entry --title="TFC Installer" --text="Enter the IP-address of the $1:")
+    ip=$(zenity --entry --title="TFC Installer" --text="Enter the IP-address of the Networked Computer VM:")
     if [[ ${ip} =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
         echo ${ip}
         return
     else
-        zenity --info --title='TFC installer' --text='Invalid IP'
-        get_ip
+        zenity --info --title='TFC installer' --text='Error: Invalid IP'
+        get_net_ip
     fi
 }
 
@@ -781,8 +819,32 @@ function get_tcb_ips {
         echo ${ips}
         return
     else
-        zenity --info --title='TFC installer' --text='Invalid IP'
+        zenity --info --title='TFC installer' --text='Error: Invalid IP'
         get_tcb_ips
+    fi
+}
+
+function get_all_ips {
+    # Get the Source, Networker, and Destination VM IP-addresses from the user.
+    ips=$(zenity --forms \
+    --title="TFC Installer" \
+    --text="Enter the IP-addresses of the TCB VMs" \
+    --add-entry="Source Computer VM IP:" \
+    --add-entry="Networked Computer VM IP:" \
+    --add-entry="Destination Computer VM IP:")
+
+    src_ip=$(echo ${ips} | awk -F "|" '{print $1}')
+    net_ip=$(echo ${ips} | awk -F "|" '{print $2}')
+    dst_ip=$(echo ${ips} | awk -F "|" '{print $3}')
+
+    if [[ ${src_ip} =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]] \
+    && [[ ${net_ip} =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]] \
+    && [[ ${dst_ip} =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+        echo ${ips}
+        return
+    else
+        zenity --info --title='TFC installer' --text='Error: Invalid IP'
+        get_all_ips
     fi
 }
 
@@ -1057,6 +1119,7 @@ case $1 in
     qsrc   ) install_qubes_src;;
     qdst   ) install_qubes_dst;;
     qnet   ) install_qubes_net;;
+    qfw    ) configure_qubes_sys_fw;;
     dev    ) install_developer;;
     *      ) arg_error;;
 esac
