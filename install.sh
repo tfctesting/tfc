@@ -681,11 +681,11 @@ function configure_qubes_sys_fw {
     # Add firewall rules
     add_fw_rule "iptables -t filter -P FORWARD DROP"
 
-    add_sys_fw_rule "iptables -I FORWARD 2 -d ${dst_ip} - p all -j DROP"
-    add_sys_fw_rule "iptables -I FORWARD 2 -s ${dst_ip} - p all -j DROP"
+    add_sys_fw_rule "iptables -I FORWARD 2 -d ${dst_ip} -p all -j DROP"
+    add_sys_fw_rule "iptables -I FORWARD 2 -s ${dst_ip} -p all -j DROP"
 
-    add_sys_fw_rule "iptables -I FORWARD 2 -d ${src_ip} - p all -j DROP"
-    add_sys_fw_rule "iptables -I FORWARD 2 -s ${src_ip} - p all -j DROP"
+    add_sys_fw_rule "iptables -I FORWARD 2 -d ${src_ip} -p all -j DROP"
+    add_sys_fw_rule "iptables -I FORWARD 2 -s ${src_ip} -p all -j DROP"
 
     add_sys_fw_rule "iptables -I FORWARD 2 -s ${net_ip} -d ${dst_ip} -p udp --dport 2064 -j ACCEPT"
     add_sys_fw_rule "iptables -I FORWARD 2 -s ${src_ip} -d ${net_ip} -p udp --dport 2063 -j ACCEPT"
