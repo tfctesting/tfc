@@ -482,7 +482,7 @@ function install_relay_tails {
 # Installation configurations for Qubes OS
 
 function install_qubes_src {
-    # Qubes Source Computer VM installation configuration for Debian 10 domains.
+    # Qubes Source VM installation configuration for Debian 10 domains.
     create_user_data_dir
 
     steps_before_network_kill
@@ -515,7 +515,7 @@ function install_qubes_src {
 
 
 function install_qubes_dst {
-    # Qubes Destination Computer VM installation configuration for Debian 10 domains.
+    # Qubes Destination VM installation configuration for Debian 10 domains.
     create_user_data_dir
 
     steps_before_network_kill
@@ -548,7 +548,7 @@ function install_qubes_dst {
 
 
 function install_qubes_net {
-    # Qubes Networked Computer VM installation configuration for Debian 10 domains.
+    # Qubes Networked VM installation configuration for Debian 10 domains.
     create_user_data_dir
 
     steps_before_network_kill
@@ -592,13 +592,13 @@ function add_fw_rule {
 
 
 function qubes_src_firewall_config {
-    # Edit Source Computer VM firewall rules to block all incoming connections, and to
-    # only allow UDP packets to Networked Computer's TFC port.
+    # Edit Source VM firewall rules to block all incoming connections, and to only allow
+    # UDP packets to Networked VM's TFC port.
 
-    # Create backup of the current rc.config file (firewall rules)
+    # Create backup of the current rc.local file (firewall rules)
     sudo mv /rw/config/rc.local{,.backup."$(date +%Y-%m-%d-%H_%M_%S)"}
 
-    # Add firewall rules that block all connections
+    # Add firewall rules that block all incoming/outgoing connections
     add_fw_rule "iptables --flush"
     add_fw_rule "iptables -t filter -P INPUT DROP"
     add_fw_rule "iptables -t filter -P OUTPUT DROP"
@@ -617,10 +617,10 @@ function qubes_src_firewall_config {
 
 
 function qubes_dst_firewall_config {
-    # Edit Destination Computer VM's firewall rules to block all outgoing connections, and
-    # to only allow UDP packets from Networked Computer VM to Receiver Programs' port.
+    # Edit Destination VM's firewall rules to block all outgoing connections, and to only
+    # allow UDP packets from Networked VM to Receiver Programs' port.
 
-    # Create backup of the current rc.config file (firewall rules)
+    # Create backup of the current rc.local file (firewall rules)
     sudo mv /rw/config/rc.local{,.backup."$(date +%Y-%m-%d-%H_%M_%S)"}
 
     # Add firewall rules that block all connections
@@ -639,8 +639,8 @@ function qubes_dst_firewall_config {
 
 
 function qubes_net_firewall_config {
-    # Edit Networked Computer VM's firewall rules to accept UDP packets from Source
-    # Computer VM to the Relay Program's port.
+    # Edit Networked VM's firewall rules to accept UDP packets from Source VM to the Relay
+    # Program's port.
     net_ip=$(sudo ifconfig eth0 | grep "inet" | cut -d: -f2 | awk '{print $2}')
     tcb_ips=$(get_tcb_ips)
     src_ip=$(echo ${tcb_ips} | awk -F "|" '{print $1}')
@@ -656,11 +656,11 @@ function qubes_net_firewall_config {
     add_fw_rule "iptables -t filter -P INPUT DROP"
     add_fw_rule "iptables -t filter -P OUTPUT ACCEPT"
     add_fw_rule "iptables -t filter -P FORWARD DROP"
-    add_fw_rule "iptables -I INPUT -s ${src_ip} -d ${net_ip} -p udp --dport 2063 -j ACCEPT"  # Whitelist UDP packets from SRC VM to NET VM's TFC port (2063)
-    add_fw_rule "iptables -I OUTPUT -d ${dst_ip} -p udp ! --dport 2064 -j DROP"              # Blacklist all UDP packets from NET VM to DST VM that don't have destination port 2064
-    add_fw_rule "iptables -I OUTPUT -d ${dst_ip} ! -p udp -j DROP"                           # Blacklist all non-UDP packets from NET VM to DST VM
-    add_fw_rule "iptables -I OUTPUT ! -s ${net_ip} -d ${dst_ip} -j DROP"                     # Blacklist all packets to DST VM that do not originate from NET VM
-    add_fw_rule "iptables -I OUTPUT -d ${src_ip} -p all -j DROP"                             # Blacklist all packets to SRC VM
+    add_fw_rule "iptables -I INPUT -s ${src_ip} -d ${net_ip} -p udp --dport 2063 -j ACCEPT"  # 5. Whitelist UDP packets from SRC VM to NET VM's TFC port (2063)
+    add_fw_rule "iptables -I OUTPUT -d ${dst_ip} -p udp ! --dport 2064 -j DROP"              # 4. Blacklist all UDP packets from NET VM to DST VM that don't have destination port 2064
+    add_fw_rule "iptables -I OUTPUT -d ${dst_ip} ! -p udp -j DROP"                           # 3. Blacklist all non-UDP packets from NET VM to DST VM
+    add_fw_rule "iptables -I OUTPUT ! -s ${net_ip} -d ${dst_ip} -j DROP"                     # 2. Blacklist all packets to DST VM that do not originate from NET VM
+    add_fw_rule "iptables -I OUTPUT -d ${src_ip} -p all -j DROP"                             # 1. Blacklist all packets to SRC VM
     sudo chmod a+x /rw/config/rc.local
 }
 
@@ -747,21 +747,41 @@ function install_developer {
 # Installation utilities
 
 function compare_digest {
-    # Compare the SHA512 digest of TFC file against the digest pinned in
-    # this installer.
-    if sha512sum "/opt/tfc/${2}${3}" | grep -Eo '^\w+' | cmp -s <(echo "$1"); then
+    # Compare the SHA512 digest of TFC file against the digest pinned in this installer.
+    purp_digest=$(sha512sum "/opt/tfc/${2}${3}" | awk '{print $1}')
+    if echo ${purp_digest} | cmp -s <(echo "$1"); then
         echo "OK - Pinned SHA512 hash matched file /opt/tfc/${2}${3}"
     else
-        echo "Error: /opt/tfc/${2}${3} had an invalid SHA512 hash"
+        echo "Error: /opt/tfc/${2}${3} had an invalid SHA512 hash:"
+        echo "${purp_digest}"
+        echo "Expected following hash:"
+        echo "${1}"
         exit 1
     fi
+}
+
+
+function valid_ip() {
+    # Validate IP-address
+    local ip=$1
+    local valid=1
+
+    if [[ ${ip} =~ ^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$ ]]; then
+        OIFS=$IFS
+        IFS='.'
+        ip=(${ip})
+        IFS=${OIFS}
+        [[ ${ip[0]} -le 255 && ${ip[1]} -le 255 && ${ip[2]} -le 255 && ${ip[3]} -le 255 ]]
+        valid=$?
+    fi
+    return ${valid}
 }
 
 
 function get_net_ip {
     # Get the IP-address of the Networker VM from the user.
     ip=$(zenity --entry --title="TFC Installer" --text="Enter the IP-address of the Networked Computer VM:")
-    if [[ ${ip} =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+    if valid_ip ${ip}; then
         echo ${ip}
         return
     else
@@ -782,8 +802,7 @@ function get_tcb_ips {
     first_ip=$(echo ${ips} | awk -F "|" '{print $1}')
     second_ip=$(echo ${ips} | awk -F "|" '{print $2}')
 
-    if [[ ${first_ip}  =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]] \
-    && [[ ${second_ip} =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+    if valid_ip ${first_ip} && valid_ip ${second_ip}; then
         echo ${ips}
         return
     else
