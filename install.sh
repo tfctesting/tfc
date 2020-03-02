@@ -112,7 +112,7 @@ function verify_files {
     compare_digest d361e5e8201481c6346ee6a886592c51265112be550d5224f1a7a6e116255c2f1ab8788df579d9b8372ed7bfd19bac4b6e70e00b472642966ab5b319b99a2686 '' LICENSE
     compare_digest 8db25eafc66308f1fe8223c39bc5fb025ae111ebce3eae5601c907fa7a2654f68395af4f355ff0ff03775e79cda8dfccddaf7d68555bfe065d9469ca04a288f9 '' LICENSE-3RD-PARTY
     compare_digest 7cad2202e4cc940627e31577162c38f44022ddb138a51f52d0ac3747e264e065919df2b646020851d8973cc76a2873a72ceabcbe93c39911ebbfa7c867f01675 '' relay.py
-    compare_digest 563f4acff5fd30e27cc3a318c1867d8d9cabe1d6ee48a369c31e55d8312ec69ccdd430b51f88cbc3e072a6bfc0681112c3b7001244cbbdd37ca33490d888916b '' requirements-dev.txt
+    compare_digest 382ea6a353152d3d6dd94a5e5121a1dbbed21516ba16bf0ab97e9495409a2feea2f35bec3cbf53c61d2b682690691806be9ca2b134fd70640289a9c7d0174c6f '' requirements-dev.txt
     compare_digest 038aacbab88ba9465d20995e5286734eb67c173a2b4166e26e267d55f41f834962a2d8d6365156637fafaed5e6e688c7cd2246210b336de215f73957d284127f '' requirements-relay.txt
     compare_digest 1ed2367a12bcf2ddc745150c80b3ed134c8500ab51164eea4d112b8a36a29c5f889e2e8270075dbefd0da77c4b8a3b973b4e4cc6ffc7c3ccf84c771a7842e0f9 '' requirements-relay-tails.txt
     compare_digest 1432c2f098b1e656a597cbcfcceef00e2cda1897242f2a9316182fffff55bd64ea974534756200ec878741cd8de12b46b4b05a39ed550ad3997d111a6176f16f '' requirements-setuptools.txt
@@ -353,7 +353,7 @@ function steps_before_network_kill {
 
 # ----------------------------------------------------------------------------------------
 
-# Installation configurations for Debian/PureOS/Ubuntu
+# Installation configurations for Debian/PureOS/Ubuntu/LMDE
 
 function install_tcb {
     # Install TFC for Source/Destination Computer.
@@ -982,9 +982,9 @@ function arg_error {
     clear
     echo -e "\nUsage: bash install.sh [OPTION]\n"
     echo    "Mandatory arguments"
-    echo    "  tcb      Install Transmitter/Receiver Program (*buntu 19.10+ / Debian 10 / PureOS 9.0+ )"
-    echo    "  relay    Install Relay Program                (*buntu 19.10+ / Debian 10 / PureOS 9.0+ / Tails 4.0+)"
-    echo -e "  local    Install insecure local testing mode  (*buntu 19.10+ / Debian 10 / PureOS 9.0+ )\n"
+    echo    "  tcb      Install Transmitter/Receiver Program (*buntu 19.10+ / Debian 10 / PureOS 9.0+ / LMDE 4)"
+    echo    "  relay    Install Relay Program                (*buntu 19.10+ / Debian 10 / PureOS 9.0+ / LMDE 4 / Tails 4.0+)"
+    echo -e "  local    Install insecure local testing mode  (*buntu 19.10+ / Debian 10 / PureOS 9.0+ / LMDE 4)\n"
     echo    "  qsrc     Install Transmitter Program          (Qubes 4.0.3)"
     echo    "  qdst     Install Receiver Program             (Qubes 4.0.3)"
     echo -e "  qnet     Install Relay Program                (Qubes 4.0.3)\n"

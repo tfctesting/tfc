@@ -9,6 +9,14 @@ pytest>=5.3.5
 pytest-cov>=2.8.1
 pytest-xdist>=1.31.0
 
+# PyLama
+pylama>=7.7.1
+snowballstemmer>=2.0.0
+pyflakes>=2.1.1
+pydocstyle>=5.0.2
+pycodestyle>=2.5.0
+mccabe>=0.6.1
+
 # TFC dependencies (note: not authenticated with hashes)
 
 # pyserial
@@ -47,11 +55,3 @@ itsdangerous>=1.1.0
 jinja2>=2.11.1
 markupsafe>=1.1.1
 werkzeug>=1.0.0
-
-# PyLama
-pylama>=7.7.1
-snowballstemmer>=2.0.0
-pyflakes>=2.1.1
-pydocstyle>=5.0.2
-pycodestyle>=2.5.0
-mccabe>=0.6.1
