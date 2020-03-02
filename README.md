@@ -189,18 +189,17 @@ the Source or Destination Computer, the ciphertexts are of no value to the attac
 
 ### Qubes-isolated intermediate solution
 
-Sometimes the
+For some users the
 [APTs](https://en.wikipedia.org/wiki/Advanced_persistent_threat) 
-of the modern world are not part of the user's threat model, and for some users the 
-requirement of having to build the data diode themselves is a deal breaker. Yet, storing
-the private keys on a networked device is still a security risk for these people.
+of the modern world are not part of the threat model, and for others, the 
+requirement of having to build the data diode themselves is a deal breaker. Yet, for all of them, storing private keys on a networked device is still a security risk.
 
 To meet these users' needs, TFC can also be run in three dedicated 
 [Qubes](https://www.qubes-os.org/)
 virtual machines. With the Qubes configuration, the isolation is provided by the 
 [Xen hypervisor](https://xenproject.org/users/security/), 
 and the unidirectionality of data flow between the VMs is enforced with strict firewall 
-rules. This intermediate isolation mechanism means no hardware data diode is needed. 
+rules. This intermediate isolation mechanism runs on a single computer which means no hardware data diode is needed. 
 
 
 ### Supported Operating Systems
