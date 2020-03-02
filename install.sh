@@ -51,7 +51,7 @@ ZIPP=zipp-3.0.0-py3-none-any.whl
 function verify_tails_dependencies {
     # Tails doesn't allow downloading over PIP to /opt/tfc, so we
     # first download to $HOME, move the files to /opt/tfc, and then
-    # perform the  hash verification
+    # perform the hash verification
     compare_digest 523a3b4820794f37784f3681bc8bd22502f2141fb70441bd017ff22bd8fa8d3ace47adc948b650c1ac7eaf3e9dbb511fb20f281259fe8e48e3a03dd043dbed24 '' ${VIRTUALENV}
     compare_digest b79e9fa76eadee595fe47ea7efd35c4cc72f058a9ed16a95cfa4d91a52c330efba50df7a9926900bbced229cca7bbfb05bbf0a8ee1d46bac2362c98ab9a5154d '' ${APPDIRS}
     compare_digest 6f910a9607569c9023a19aee35be15cf8521ec7c07c5d478e6d555a301d024a2ee1db48562707b238a72c631d75d9dc154d38b39ed51746b66c938ac40671e60 '' ${DISTLIB}
