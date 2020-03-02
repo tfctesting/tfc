@@ -428,7 +428,6 @@ function install_relay_tails {
     # running Tails live distro (https://tails.boum.org/).
     read_sudo_pwd
 
-    # Apt dependencies
     t_sudo apt update
     t_sudo apt install git libssl-dev python3-pip python3-tk -y || true  # Ignore error in case packets can not be persistently installed
 
@@ -456,11 +455,11 @@ function install_relay_tails {
     process_tails_dependencies "python3.7 -m pip install"
     deactivate
 
-    # Complete setup
     t_sudo mv /opt/tfc/tfc.png                        /usr/share/pixmaps/
     t_sudo mv /opt/tfc/launchers/TFC-RP-Tails.desktop /usr/share/applications/
     t_sudo mv /opt/tfc/tfc.yml                        /etc/onion-grater.d/
 
+    # Remove unnecessary files
     remove_common_files             "t_sudo"
     process_tails_venv_dependencies "rm"
     process_tails_dependencies      "rm"
@@ -684,9 +683,9 @@ function install_local_test {
     modify_terminator_font_size "sudo" "/opt/tfc/terminator-config-local-test"
 
     # Remove unnecessary files
-    remove_common_files      "sudo"
-    process_tcb_dependencies "rm"
+    remove_common_files             "sudo"
     process_virtualenv_dependencies "rm"
+    process_tcb_dependencies        "rm"
     sudo rm /opt/tfc/tfc.yml
 
     install_complete "Installation of TFC for local testing is now complete."
