@@ -820,8 +820,8 @@ function install_virtualenv {
 
 
 function read_sudo_pwd {
-    # Cache the sudo password so that Debian doesn't keep asking for it
-    # during the installation (it won't be stored on disk).
+    # Cache the sudo password so that Debian doesn't keep asking
+    # for it during the installation (it won't be stored on disk).
     read -s -p "[sudo] password for ${USER}: " sudo_pwd
     until (t_sudo echo '' 2>/dev/null)
     do
@@ -960,8 +960,8 @@ function install_complete_qubes {
 
 
 function arg_error {
-    # Print help message if the user launches the installer with missing
-    # or invalid argument.
+    # Print help message if the user launches the
+    # installer with missing or invalid argument.
     clear
     echo -e "\nUsage: bash install.sh [OPTION]\n"
     echo    "Mandatory arguments"
