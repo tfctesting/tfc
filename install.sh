@@ -758,7 +758,7 @@ function compare_digest {
 
 
 function valid_ip() {
-    # Validate an IP-address.
+    # Validate an IP-address. (Borrowed from https://www.linuxjournal.com/content/validating-ip-address-bash-script)
     local ip=$1
     local valid=1
 
