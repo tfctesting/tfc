@@ -475,7 +475,7 @@ function install_relay_tails {
 }
 
 
-# Installation configurations for Qubes OS
+# Installation configurations for Qubes OS (https://www.qubes-os.org/)
 
 function install_qubes_src {
     # Qubes Source VM installation configuration for Debian 10 domains.
