@@ -815,8 +815,8 @@ function t_sudo {
 
 
 function install_virtualenv {
-    # Some distros want virtualenv installed as sudo and other do
-    # not. Install both to improve the chances of compatibility.
+    # Some distros want virtualenv installed as sudo and other don't.
+    # Install as both users to improve the chances of compatibility.
     sudo torsocks python3.7 -m pip install -r ${INSTALL_DIR}/requirements-venv.txt --require-hashes --no-deps
     torsocks      python3.7 -m pip install -r ${INSTALL_DIR}/requirements-venv.txt --require-hashes --no-deps
 }
