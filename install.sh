@@ -89,7 +89,8 @@ function verify_tails_dependencies {
 
 
 function install_tails_setuptools {
-    # Download setuptools package for Tails and then authenticate and install it.
+    # Download setuptools package for Tails
+    # and then authenticate and install it.
     torsocks python3.7 -m pip download --no-cache-dir -r "/opt/tfc/requirements-setuptools.txt" --require-hashes --no-deps -d "${HOME}/"
     t_sudo mv "$HOME/${SETUPTOOLS}" "/opt/tfc/"
     compare_digest de1ac45cb52e8a28322048e6a2b95015aa6826c49679349a1b579cb46b95cb2ffd62242c861c2fe3e059c0c55d4fdb4384c51b964ca2634b2843263543f8842a '' ${SETUPTOOLS}
@@ -99,8 +100,8 @@ function install_tails_setuptools {
 
 
 function verify_tcb_requirements_files {
-    # To minimize the time TCB installer configuration stays online, only
-    # the requirements files are authenticated between downloads.
+    # To minimize the time TCB installer configuration stays online,
+    # only the requirements files are authenticated between downloads.
     compare_digest eca1997b9abf71010f4373e17e87b1131e72c7395d6d8a86182ffb52b208f4058b3d59f33f022023ce3e6c5f53884d682a985e9908ff2c2958817b3427cfd19d '' requirements.txt
     compare_digest ffc85decf98dda20f72a2e7fa61b5279302b26edb20c8f6babe3dc385dab60e2962aac7427744c314785e87372a62c4aefa19aaaac91233f176e4ef7ee816edb '' requirements-venv.txt
 }
@@ -195,22 +196,8 @@ function verify_files {
 
 # Dependency batch processing
 
-function process_tcb_dependencies {
-    # Manage TCB dependencies in batch. The command that uses
-    # the files is passed to the function as a parameter.
-    sudo $1 "/opt/tfc/${PYCPARSER}"
-    sudo $1 "/opt/tfc/${CFFI}"
-    sudo $1 "/opt/tfc/${ARGON2}"
-    sudo $1 "/opt/tfc/${SETUPTOOLS}"
-    sudo $1 "/opt/tfc/${PYNACL}"
-    sudo $1 "/opt/tfc/${PYSERIAL}"
-    sudo $1 "/opt/tfc/${CRYPTOGRAPHY}"
-}
-
-
 function process_virtualenv_dependencies {
-    # Manage Virtualenv dependencies in batch. The command that
-    # uses the files is passed to the function as a parameter.
+    # Manage Virtualenv dependencies in batch.
     sudo $1 "/opt/tfc/${ZIPP}"
     sudo $1 "/opt/tfc/${FILELOCK}"
     sudo $1 "/opt/tfc/${IMPORTLIB_METADATA}"
@@ -221,10 +208,32 @@ function process_virtualenv_dependencies {
 }
 
 
-function process_tails_dependencies {
-    # Manage Tails dependencies in batch. The command that uses the
-    # files is passed to the function as a parameter.
+function process_tails_venv_dependencies {
+    # Process Tails Virtualenv dependencies in batch.
+    t_sudo -E $1 "/opt/tfc/${ZIPP}"
+    t_sudo -E $1 "/opt/tfc/${FILELOCK}"
+    t_sudo -E $1 "/opt/tfc/${IMPORTLIB_METADATA}"
+    t_sudo -E $1 "/opt/tfc/${SIX}"
+    t_sudo -E $1 "/opt/tfc/${DISTLIB}"
+    t_sudo -E $1 "/opt/tfc/${APPDIRS}"
+    t_sudo -E $1 "/opt/tfc/${VIRTUALENV}"
+}
 
+
+function process_tcb_dependencies {
+    # Manage TCB dependencies in batch.
+    sudo $1 "/opt/tfc/${PYCPARSER}"
+    sudo $1 "/opt/tfc/${CFFI}"
+    sudo $1 "/opt/tfc/${ARGON2}"
+    sudo $1 "/opt/tfc/${SETUPTOOLS}"
+    sudo $1 "/opt/tfc/${PYNACL}"
+    sudo $1 "/opt/tfc/${PYSERIAL}"
+    sudo $1 "/opt/tfc/${CRYPTOGRAPHY}"
+}
+
+
+function process_tails_dependencies {
+    # Manage Tails dependencies in batch.
     t_sudo -E $1 "/opt/tfc/${PYSERIAL}"
     t_sudo -E $1 "/opt/tfc/${PYSOCKS}"
 
@@ -250,18 +259,6 @@ function process_tails_dependencies {
 
     # PyNaCl
     t_sudo -E $1 "/opt/tfc/${PYNACL}"
-}
-
-
-function process_tails_venv_dependencies {
-    # Process Tails Virtualenv dependencies in batch.
-    t_sudo -E $1 "/opt/tfc/${ZIPP}"
-    t_sudo -E $1 "/opt/tfc/${FILELOCK}"
-    t_sudo -E $1 "/opt/tfc/${IMPORTLIB_METADATA}"
-    t_sudo -E $1 "/opt/tfc/${SIX}"
-    t_sudo -E $1 "/opt/tfc/${DISTLIB}"
-    t_sudo -E $1 "/opt/tfc/${APPDIRS}"
-    t_sudo -E $1 "/opt/tfc/${VIRTUALENV}"
 }
 
 
@@ -394,7 +391,7 @@ function install_tcb {
 }
 
 
-function install_relay_ubuntu {
+function install_relay {
     # Install TFC Relay configuration on Networked Computer.
     steps_before_network_kill
 
@@ -592,8 +589,8 @@ function add_fw_rule {
 
 
 function qubes_src_firewall_config {
-    # Edit Source VM firewall rules to block all incoming connections, and to only allow
-    # UDP packets to Networked VM's TFC port.
+    # Edit Source VM's firewall rules to block all incoming connections,
+    # and to only allow UDP packets to Networked VM's TFC port.
 
     # Create backup of the current rc.local file (firewall rules)
     sudo mv /rw/config/rc.local{,.backup."$(date +%Y-%m-%d-%H_%M_%S)"}
@@ -617,8 +614,8 @@ function qubes_src_firewall_config {
 
 
 function qubes_dst_firewall_config {
-    # Edit Destination VM's firewall rules to block all outgoing connections, and to only
-    # allow UDP packets from Networked VM to Receiver Programs' port.
+    # Edit Destination VM's firewall rules to block all outgoing connections,
+    # and to only allow UDP packets from Networked VM to Receiver Programs' port.
 
     # Create backup of the current rc.local file (firewall rules)
     sudo mv /rw/config/rc.local{,.backup."$(date +%Y-%m-%d-%H_%M_%S)"}
@@ -639,8 +636,8 @@ function qubes_dst_firewall_config {
 
 
 function qubes_net_firewall_config {
-    # Edit Networked VM's firewall rules to accept UDP packets from Source VM to the Relay
-    # Program's port.
+    # Edit Networked VM's firewall rules to accept UDP
+    # packets from Source VM to the Relay Program's port.
     net_ip=$(sudo ifconfig eth0 | grep "inet" | cut -d: -f2 | awk '{print $2}')
     tcb_ips=$(get_tcb_ips)
     src_ip=$(echo ${tcb_ips} | awk -F "|" '{print $1}')
@@ -815,16 +812,6 @@ function get_tcb_ips {
 function t_sudo {
     # Execute command as root on Tails.
     echo "${sudo_pwd}" | sudo -S $@
-}
-
-
-function install_relay {
-    # Determine the Networked Computer OS for Relay Program installation.
-    if [[ $(grep "Tails" /etc/os-release 2>/dev/null) ]]; then
-        install_relay_tails
-    else
-        install_relay_ubuntu
-    fi
 }
 
 
@@ -1078,6 +1065,7 @@ sudo_pwd=''
 case $1 in
     tcb    ) install_tcb;;
     relay  ) install_relay;;
+    tails  ) install_relay_tails;;
     local  ) install_local_test;;
     qsrc   ) install_qubes_src;;
     qdst   ) install_qubes_dst;;
