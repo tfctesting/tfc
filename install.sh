@@ -92,8 +92,8 @@ function verify_tails_dependencies {
 
 
 function install_tails_setuptools {
-    # Download setuptools package for Tails
-    # and then authenticate and install it.
+    # Download setuptools package for Tails, and move it to /opt/tfc so it can't be edited.
+    # Once the package has been authenticated, install it and then remove the install file.
     torsocks python3.7 -m pip download --no-cache-dir -r "${INSTALL_DIR}/requirements-setuptools.txt" --require-hashes --no-deps -d "${HOME}/"
     t_sudo mv "$HOME/${SETUPTOOLS}" "${INSTALL_DIR}/"
     compare_digest de1ac45cb52e8a28322048e6a2b95015aa6826c49679349a1b579cb46b95cb2ffd62242c861c2fe3e059c0c55d4fdb4384c51b964ca2634b2843263543f8842a '' ${SETUPTOOLS}
