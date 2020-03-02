@@ -329,7 +329,7 @@ class MasterKey(object):
             phase(f"{kd_time:.1f}s", done=True)
 
             # If we found a suitable memory_cost value, we accept the key and the memory_cost.
-            if MIN_KEY_DERIVATION_TIME < kd_time < MAX_KEY_DERIVATION_TIME:
+            if MIN_KEY_DERIVATION_TIME <= kd_time <= MAX_KEY_DERIVATION_TIME:
                 return memory_cost, master_key
 
             # The search might fail e.g. if external CPU load causes delay in key
