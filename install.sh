@@ -54,9 +54,6 @@ ZIPP=zipp-3.0.0-py3-none-any.whl
 # Functions with pinned hashes
 
 function verify_tails_dependencies {
-    # Tails doesn't allow downloading over PIP to /opt/tfc, so we
-    # first download to $HOME, move the files to /opt/tfc, and then
-    # perform the hash verification
     compare_digest 8333ac2843fd136d5d0d63b527b37866f7d18afc3bb33c4938b63af077492aeb118eb32a89ac78547f14d59a2adb1e5d00728728275de62317da48dadf6cdff9 '' ${PYSERIAL}
     compare_digest 313b954102231d038d52ab58f41e3642579be29f827135b8dd92c06acb362effcb0a7fd5f35de9273372b92d9fe29f38381ae44f8b41aa90d2564d6dd07ecd12 '' ${PYSOCKS}
 
@@ -447,9 +444,10 @@ function install_relay_tails {
 
     install_tails_setuptools
 
+    # Tails doesn't allow downloading over PIP to /opt/tfc, so we first download
+    # to $HOME, move the files to /opt/tfc, and then perform the hash verification
     torsocks python3.7 -m pip download --no-cache-dir -r "${INSTALL_DIR}/requirements-venv.txt"        --require-hashes --no-deps -d "${HOME}/"
     torsocks python3.7 -m pip download --no-cache-dir -r "${INSTALL_DIR}/requirements-relay-tails.txt" --require-hashes --no-deps -d "${HOME}/"
-
     move_tails_dependencies
     verify_tails_dependencies
 
