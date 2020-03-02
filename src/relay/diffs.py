@@ -196,7 +196,7 @@ def show_value_diffs(value_type: str,
                      purp_value: str,
                      local_test: bool
                      ) -> None:
-    """Compare purported value with correct value."""
+    """Show differences between purported value and correct value."""
     # Pad with underscores to denote missing chars
     while len(purp_value) < ENCODED_B58_PUB_KEY_LENGTH:
         purp_value += '_'

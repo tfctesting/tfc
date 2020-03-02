@@ -341,11 +341,11 @@ class Gateway(object):
     # Qubes
 
     def qubes_client_establish_socket(self) -> None:
-        """Establish Qubes' socket for outgoing data."""
+        """Establish Qubes socket for outgoing data."""
         self.txq_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
     def qubes_server_establish_socket(self) -> None:
-        """Establish Qubes' socket for incoming data."""
+        """Establish Qubes socket for incoming data."""
         udp_port = QUBES_SRC_LISTEN_SOCKET if self.settings.software_operation == NC else QUBES_DST_LISTEN_SOCKET
         self.rxq_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.rxq_socket.bind((self.get_local_ip_addr(), udp_port))
@@ -617,7 +617,7 @@ class GatewaySettings(object):
             raise SoftError("Missing key", output=False)
 
     def validate_serial_usb_adapter_value(self, key: str, json_dict: Any) -> None:
-        """Validate the serial usb adapter boolean value."""
+        """Validate the serial usb adapter setting value."""
         if not isinstance(json_dict[key], bool):
             self.invalid_setting(key, json_dict)
             raise SoftError("Invalid value", output=False)

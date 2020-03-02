@@ -62,8 +62,6 @@ class TestMasterKey(TFCTestCase):
         self.assertGreaterEqual(bit_strength, PASSWORD_MIN_BIT_STRENGTH)
         self.assertEqual(len(password.split(' ')), 10)
 
-    # ---
-
     @mock.patch('time.sleep', return_value=None)
     def test_invalid_data_in_db_raises_critical_error(self, _: Any) -> None:
         for delta in [-1, 1]:
@@ -78,8 +76,6 @@ class TestMasterKey(TFCTestCase):
             with self.assertRaises(SystemExit):
                 _ = MasterKey(self.operation, local_test=False)
 
-    # ---
-
     @mock.patch('time.sleep', return_value=None)
     def test_load_master_key_with_invalid_data_raises_critical_error(self, _: Any) -> None:
         # Setup
@@ -91,8 +87,6 @@ class TestMasterKey(TFCTestCase):
         # Test
         with self.assertRaises(SystemExit):
             _ = MasterKey(self.operation, local_test=False)
-
-    # ---
 
     @mock.patch('src.common.db_masterkey.MIN_KEY_DERIVATION_TIME', 0.01)
     @mock.patch('src.common.db_masterkey.MAX_KEY_DERIVATION_TIME', 0.1)
@@ -113,8 +107,6 @@ class TestMasterKey(TFCTestCase):
         self.assertIsInstance(master_key2.master_key, bytes)
         self.assertEqual(master_key.master_key, master_key2.master_key)
 
-    # ---
-
     @mock.patch('src.common.db_masterkey.MIN_KEY_DERIVATION_TIME', 0.01)
     @mock.patch('src.common.db_masterkey.MAX_KEY_DERIVATION_TIME', 0.1)
     @mock.patch('os.popen',        return_value=MagicMock(
@@ -130,8 +122,6 @@ class TestMasterKey(TFCTestCase):
         self.assertIsNone(master_key.database_data)
         self.assertTrue(os.path.isfile(self.file_name))
 
-    # ---
-
     @mock.patch('src.common.db_masterkey.MIN_KEY_DERIVATION_TIME', 0.01)
     @mock.patch('src.common.db_masterkey.MAX_KEY_DERIVATION_TIME', 0.1)
     @mock.patch('os.popen',        return_value=MagicMock(
@@ -143,8 +133,6 @@ class TestMasterKey(TFCTestCase):
     def test_password_generation(self, *_: Any) -> None:
         master_key = MasterKey(self.operation, local_test=True)
         self.assertIsInstance(master_key.master_key, bytes)
-
-    # ---
 
     @mock.patch('src.common.db_masterkey.MasterKey.timed_key_derivation',
                 MagicMock(side_effect=      [(KL*b'a',  3.5)]  # Early exit to create the object.
@@ -178,8 +166,6 @@ class TestMasterKey(TFCTestCase):
         self.assertEqual(time_cost, 40)
         self.assertEqual(kd_time,   2.5)
 
-    # ---
-
     @mock.patch('src.common.db_masterkey.MasterKey.timed_key_derivation',
                 MagicMock(side_effect=        [(KL*b'a',  4.1)]
                                       +       [(KL*b'a',  3.5)]
@@ -196,8 +182,6 @@ class TestMasterKey(TFCTestCase):
     def test_determine_memory_cost(self, *_: Any) -> None:
         master_key = MasterKey(self.operation, local_test=True)
         master_key.determine_memory_cost("password", 8*b'salt', time_cost=1, memory_cost=1024, parallelism=1)
-
-    # ---
 
     @mock.patch('src.common.db_masterkey.MIN_KEY_DERIVATION_TIME', 0.01)
     @mock.patch('src.common.db_masterkey.MAX_KEY_DERIVATION_TIME', 0.1)

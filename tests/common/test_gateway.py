@@ -160,17 +160,14 @@ class TestGatewaySerial(TFCTestCase):
 
         # Test BLAKE2b based checksum
         gateway.settings.session_serial_error_correction = 0
-        self.assertEqual(
-            gateway.add_error_correction(packet),
-            packet + blake2b(packet, digest_size=PACKET_CHECKSUM_LENGTH),
-        )
+        self.assertEqual(gateway.add_error_correction(packet),
+                         packet + blake2b(packet, digest_size=PACKET_CHECKSUM_LENGTH))
 
         # Test Reed-Solomon erasure code
         gateway.settings.session_serial_error_correction = 5
         gateway.rs = RSCodec(gateway.settings.session_serial_error_correction)
-        self.assertEqual(
-            gateway.add_error_correction(packet), gateway.rs.encode(packet)
-        )
+        self.assertEqual(gateway.add_error_correction(packet),
+                         gateway.rs.encode(packet))
 
     @mock.patch('time.sleep',     return_value=None)
     @mock.patch('serial.Serial',  return_value=MagicMock())
