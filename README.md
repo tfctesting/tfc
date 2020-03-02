@@ -97,15 +97,16 @@ TFC is designed to be used in hardware configuration that provides strong
 [endpoint security](https://en.wikipedia.org/wiki/Endpoint_security).
 This configuration uses three computers per endpoint: Encryption and decryption processes
 are separated from each other onto two isolated computers, the Source Computer, and the 
-Destination Computer. These two systems are are dedicated for TFC. This split 
+Destination Computer. These two devices are are dedicated for TFC. This split 
 [TCB](https://en.wikipedia.org/wiki/Trusted_computing_base)
 interacts with the network via the user's daily computer, called the Networked Computer.
 
 Data moves from the Source Computer to the Networked Computer, and from the Networked 
-Computer to the Destination Computer, unidirectionally. The unidirectionality of data flow 
-is enforced with a free hardware design
+Computer to the Destination Computer, unidirectionally. The unidirectionality of data
+flow is enforced, as the data is passed from one device to another only through a free 
+hardware design
 [data diode](https://en.wikipedia.org/wiki/Unidirectional_network), 
-which is connected to the three computers using one USB-cable per computer.
+that is connected to the three computers using one USB-cable per device.
 The Source and Destination Computers are not connected to the Internet, or to any device 
 other than the data diode.
 
@@ -184,6 +185,22 @@ the Source or Destination Computer, the ciphertexts are of no value to the attac
 
 ![](https://www.cs.helsinki.fi/u/oottela/wiki/readme/attacks.png)
 [Exfiltration security](https://www.cs.helsinki.fi/u/oottela/wiki/readme/attacks.png)
+
+
+### Qubes-isolated intermediate solution
+
+Sometimes the
+[APTs](https://en.wikipedia.org/wiki/Advanced_persistent_threat) 
+of the modern world are not part of the user's threat model, and for some users the 
+requirement of having to build the data diode themselves is a deal breaker. Yet, storing
+the private keys on a networked device is still a security risk for these people.
+
+To meet these users' needs, TFC can also be run in three dedicated 
+[Qubes](https://www.qubes-os.org/)
+virtual machines. With the Qubes configuration, the isolation is provided by the 
+[Xen hypervisor](https://xenproject.org/users/security/), 
+and the unidirectionality of data flow between the VMs is enforced with strict firewall 
+rules. This intermediate isolation mechanism means no hardware data diode is needed. 
 
 
 ### Supported Operating Systems
