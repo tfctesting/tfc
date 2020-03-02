@@ -118,8 +118,11 @@ Optical repeater inside the
 [optocouplers](https://en.wikipedia.org/wiki/Opto-isolator)
 of the data diode enforce direction of data transmission with the fundamental laws of 
 physics. This protection is so strong, the certified implementations of data diodes are 
-typically found in critical infrastructure protection and government networks where 
-classification level of data varies between systems.
+typically found in critical infrastructure protection. A data diode might e.g. allow 
+access to a nuclear power plant's safety system readings, while preventing attackers from
+exploiting these critical systems. An alternative use case is to allow importing data from 
+less secure systems to systems connected to government networks, while at the same time 
+protecting exfiltration of classified documents from the more secure network.
 
 In TFC the hardware data diode ensures that neither of the TCB-halves can be accessed 
 bidirectionally. Since the protection relies on physical limitations of the hardware's
