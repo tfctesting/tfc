@@ -101,7 +101,7 @@ Destination Computer. These two devices are are dedicated for TFC. This split
 [TCB](https://en.wikipedia.org/wiki/Trusted_computing_base)
 interacts with the network via the user's daily computer, called the Networked Computer.
 
-In TFC the data moves from the Source Computer to the Networked Computer, and from the Networked 
+In TFC data moves from the Source Computer to the Networked Computer, and from the Networked 
 Computer to the Destination Computer, unidirectionally. The unidirectionality of data
 flow is enforced, as the data is passed from one device to another only through a free 
 hardware design
