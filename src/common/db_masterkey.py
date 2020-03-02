@@ -241,12 +241,11 @@ class MasterKey(object):
         method isn't able to suggest a value larger than 1, we increase
         time_cost by 1 anyway to prevent an Alderson loop.
 
-        For every estimate, we update the lower bound so that once the
-        MAX_KEY_DERIVATION_TIME is exceeded (and thus, when an upper
-        bound is found), we can immediately switch our strategy to
-        binary search that updates the lower bound and upper bound with
-        every search and finds the suitable time_cost `t+1` in log(n)
-        time.
+        For every estimate, we update the lower bound to narrow the
+        search space of the binary search we can switch to immediately,
+        once the MAX_KEY_DERIVATION_TIME is exceeded (i.e. once an upper
+        bound is found). At that point, the time_cost `t+1` can be found
+        in log(n) time.
         """
         lower_bound = ARGON2_MIN_TIME_COST  # type: int
         upper_bound = None                  # type: Optional[int]
