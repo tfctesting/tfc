@@ -968,9 +968,9 @@ function arg_error {
     clear
     echo -e "\nUsage: bash install.sh [OPTION]\n"
     echo    "Mandatory arguments"
-    echo    "  tcb      Install Transmitter/Receiver Program (*buntu 19.10+ / Debian 10 / PureOS 9.0+ / LMDE 4)"
-    echo    "  relay    Install Relay Program                (*buntu 19.10+ / Debian 10 / PureOS 9.0+ / LMDE 4 / Tails 4.0+)"
-    echo -e "  local    Install insecure local testing mode  (*buntu 19.10+ / Debian 10 / PureOS 9.0+ / LMDE 4)\n"
+    echo    "  tcb      Install Transmitter/Receiver Program (Debian 10 / PureOS 9.0+ *buntu 19.10+ / LMDE 4)"
+    echo    "  relay    Install Relay Program                (Debian 10 / PureOS 9.0+ *buntu 19.10+ / LMDE 4 / Tails 4.0+)"
+    echo -e "  local    Install insecure local testing mode  (Debian 10 / PureOS 9.0+ *buntu 19.10+ / LMDE 4)\n"
     echo    "  qsrc     Install Transmitter Program          (Qubes 4.0.3)"
     echo    "  qdst     Install Receiver Program             (Qubes 4.0.3)"
     echo -e "  qnet     Install Relay Program                (Qubes 4.0.3)\n"
@@ -986,7 +986,7 @@ function check_rm_existing_installation {
         if [[ ${sudo_pwd} ]]; then
             t_sudo rm -r ${INSTALL_DIR}  # Tails
         else
-            sudo rm -r ${INSTALL_DIR}    # *buntu
+            sudo rm -r ${INSTALL_DIR}    # Debian etc.
         fi
     fi
 }
