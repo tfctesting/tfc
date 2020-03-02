@@ -16,6 +16,11 @@
 # You should have received a copy of the GNU General Public License
 # along with TFC. If not, see <https://www.gnu.org/licenses/>.
 
+# Installer configuration
+
+INSTALL_DIR="/opt/tfc"
+
+
 # PIP dependency file names
 
 APPDIRS=appdirs-1.4.3-py2.py3-none-any.whl
@@ -92,11 +97,11 @@ function verify_tails_dependencies {
 function install_tails_setuptools {
     # Download setuptools package for Tails
     # and then authenticate and install it.
-    torsocks python3.7 -m pip download --no-cache-dir -r "/opt/tfc/requirements-setuptools.txt" --require-hashes --no-deps -d "${HOME}/"
-    t_sudo mv "$HOME/${SETUPTOOLS}" "/opt/tfc/"
+    torsocks python3.7 -m pip download --no-cache-dir -r "${INSTALL_DIR}/requirements-setuptools.txt" --require-hashes --no-deps -d "${HOME}/"
+    t_sudo mv "$HOME/${SETUPTOOLS}" "${INSTALL_DIR}/"
     compare_digest de1ac45cb52e8a28322048e6a2b95015aa6826c49679349a1b579cb46b95cb2ffd62242c861c2fe3e059c0c55d4fdb4384c51b964ca2634b2843263543f8842a '' ${SETUPTOOLS}
-    t_sudo python3.7 -m pip install "/opt/tfc/${SETUPTOOLS}"
-    t_sudo -E rm "/opt/tfc/${SETUPTOOLS}"
+    t_sudo python3.7 -m pip install "${INSTALL_DIR}/${SETUPTOOLS}"
+    t_sudo -E rm "${INSTALL_DIR}/${SETUPTOOLS}"
 }
 
 
@@ -199,106 +204,106 @@ function verify_files {
 
 function process_virtualenv_dependencies {
     # Manage Virtualenv dependencies in batch.
-    sudo $1 "/opt/tfc/${ZIPP}"
-    sudo $1 "/opt/tfc/${FILELOCK}"
-    sudo $1 "/opt/tfc/${IMPORTLIB_METADATA}"
-    sudo $1 "/opt/tfc/${SIX}"
-    sudo $1 "/opt/tfc/${DISTLIB}"
-    sudo $1 "/opt/tfc/${APPDIRS}"
-    sudo $1 "/opt/tfc/${VIRTUALENV}"
+    sudo $1 "${INSTALL_DIR}/${ZIPP}"
+    sudo $1 "${INSTALL_DIR}/${FILELOCK}"
+    sudo $1 "${INSTALL_DIR}/${IMPORTLIB_METADATA}"
+    sudo $1 "${INSTALL_DIR}/${SIX}"
+    sudo $1 "${INSTALL_DIR}/${DISTLIB}"
+    sudo $1 "${INSTALL_DIR}/${APPDIRS}"
+    sudo $1 "${INSTALL_DIR}/${VIRTUALENV}"
 }
 
 
 function process_tails_venv_dependencies {
     # Process Tails Virtualenv dependencies in batch.
-    t_sudo -E $1 "/opt/tfc/${ZIPP}"
-    t_sudo -E $1 "/opt/tfc/${FILELOCK}"
-    t_sudo -E $1 "/opt/tfc/${IMPORTLIB_METADATA}"
-    t_sudo -E $1 "/opt/tfc/${SIX}"
-    t_sudo -E $1 "/opt/tfc/${DISTLIB}"
-    t_sudo -E $1 "/opt/tfc/${APPDIRS}"
-    t_sudo -E $1 "/opt/tfc/${VIRTUALENV}"
+    t_sudo -E $1 "${INSTALL_DIR}/${ZIPP}"
+    t_sudo -E $1 "${INSTALL_DIR}/${FILELOCK}"
+    t_sudo -E $1 "${INSTALL_DIR}/${IMPORTLIB_METADATA}"
+    t_sudo -E $1 "${INSTALL_DIR}/${SIX}"
+    t_sudo -E $1 "${INSTALL_DIR}/${DISTLIB}"
+    t_sudo -E $1 "${INSTALL_DIR}/${APPDIRS}"
+    t_sudo -E $1 "${INSTALL_DIR}/${VIRTUALENV}"
 }
 
 
 function process_tcb_dependencies {
     # Manage TCB dependencies in batch.
-    sudo $1 "/opt/tfc/${PYCPARSER}"
-    sudo $1 "/opt/tfc/${CFFI}"
-    sudo $1 "/opt/tfc/${ARGON2}"
-    sudo $1 "/opt/tfc/${SETUPTOOLS}"
-    sudo $1 "/opt/tfc/${PYNACL}"
-    sudo $1 "/opt/tfc/${PYSERIAL}"
-    sudo $1 "/opt/tfc/${CRYPTOGRAPHY}"
+    sudo $1 "${INSTALL_DIR}/${PYCPARSER}"
+    sudo $1 "${INSTALL_DIR}/${CFFI}"
+    sudo $1 "${INSTALL_DIR}/${ARGON2}"
+    sudo $1 "${INSTALL_DIR}/${SETUPTOOLS}"
+    sudo $1 "${INSTALL_DIR}/${PYNACL}"
+    sudo $1 "${INSTALL_DIR}/${PYSERIAL}"
+    sudo $1 "${INSTALL_DIR}/${CRYPTOGRAPHY}"
 }
 
 
 function process_tails_dependencies {
     # Manage Tails dependencies in batch.
-    t_sudo -E $1 "/opt/tfc/${PYSERIAL}"
-    t_sudo -E $1 "/opt/tfc/${PYSOCKS}"
+    t_sudo -E $1 "${INSTALL_DIR}/${PYSERIAL}"
+    t_sudo -E $1 "${INSTALL_DIR}/${PYSOCKS}"
 
     # Requests
-    t_sudo -E $1 "/opt/tfc/${URLLIB3}"
-    t_sudo -E $1 "/opt/tfc/${IDNA}"
-    t_sudo -E $1 "/opt/tfc/${CHARDET}"
-    t_sudo -E $1 "/opt/tfc/${CERTIFI}"
-    t_sudo -E $1 "/opt/tfc/${REQUESTS}"
+    t_sudo -E $1 "${INSTALL_DIR}/${URLLIB3}"
+    t_sudo -E $1 "${INSTALL_DIR}/${IDNA}"
+    t_sudo -E $1 "${INSTALL_DIR}/${CHARDET}"
+    t_sudo -E $1 "${INSTALL_DIR}/${CERTIFI}"
+    t_sudo -E $1 "${INSTALL_DIR}/${REQUESTS}"
 
     # Flask
-    t_sudo -E $1 "/opt/tfc/${WERKZEUG}"
-    t_sudo -E $1 "/opt/tfc/${MARKUPSAFE}"
-    t_sudo -E $1 "/opt/tfc/${JINJA2}"
-    t_sudo -E $1 "/opt/tfc/${ITSDANGEROUS}"
-    t_sudo -E $1 "/opt/tfc/${CLICK}"
-    t_sudo -E $1 "/opt/tfc/${FLASK}"
+    t_sudo -E $1 "${INSTALL_DIR}/${WERKZEUG}"
+    t_sudo -E $1 "${INSTALL_DIR}/${MARKUPSAFE}"
+    t_sudo -E $1 "${INSTALL_DIR}/${JINJA2}"
+    t_sudo -E $1 "${INSTALL_DIR}/${ITSDANGEROUS}"
+    t_sudo -E $1 "${INSTALL_DIR}/${CLICK}"
+    t_sudo -E $1 "${INSTALL_DIR}/${FLASK}"
 
     # Cryptography
-    t_sudo -E $1 "/opt/tfc/${PYCPARSER}"
-    t_sudo -E $1 "/opt/tfc/${CFFI}"
-    t_sudo -E $1 "/opt/tfc/${CRYPTOGRAPHY}"
+    t_sudo -E $1 "${INSTALL_DIR}/${PYCPARSER}"
+    t_sudo -E $1 "${INSTALL_DIR}/${CFFI}"
+    t_sudo -E $1 "${INSTALL_DIR}/${CRYPTOGRAPHY}"
 
     # PyNaCl
-    t_sudo -E $1 "/opt/tfc/${PYNACL}"
+    t_sudo -E $1 "${INSTALL_DIR}/${PYNACL}"
 }
 
 
 function move_tails_dependencies {
     # Move Tails dependencies in batch.
-    t_sudo mv "$HOME/${PYSERIAL}" "/opt/tfc/"
-    t_sudo mv "$HOME/${PYSOCKS}"  "/opt/tfc/"
+    t_sudo mv "$HOME/${PYSERIAL}" "${INSTALL_DIR}/"
+    t_sudo mv "$HOME/${PYSOCKS}"  "${INSTALL_DIR}/"
 
     # Virtualenv
-    t_sudo mv "$HOME/${VIRTUALENV}"         "/opt/tfc/"
-    t_sudo mv "$HOME/${APPDIRS}"            "/opt/tfc/"
-    t_sudo mv "$HOME/${DISTLIB}"            "/opt/tfc/"
-    t_sudo mv "$HOME/${FILELOCK}"           "/opt/tfc/"
-    t_sudo mv "$HOME/${IMPORTLIB_METADATA}" "/opt/tfc/"
-    t_sudo mv "$HOME/${SIX}"                "/opt/tfc/"
-    t_sudo mv "$HOME/${ZIPP}"               "/opt/tfc/"
+    t_sudo mv "$HOME/${VIRTUALENV}"         "${INSTALL_DIR}/"
+    t_sudo mv "$HOME/${APPDIRS}"            "${INSTALL_DIR}/"
+    t_sudo mv "$HOME/${DISTLIB}"            "${INSTALL_DIR}/"
+    t_sudo mv "$HOME/${FILELOCK}"           "${INSTALL_DIR}/"
+    t_sudo mv "$HOME/${IMPORTLIB_METADATA}" "${INSTALL_DIR}/"
+    t_sudo mv "$HOME/${SIX}"                "${INSTALL_DIR}/"
+    t_sudo mv "$HOME/${ZIPP}"               "${INSTALL_DIR}/"
 
     # Requests
-    t_sudo mv "$HOME/${URLLIB3}"  "/opt/tfc/"
-    t_sudo mv "$HOME/${IDNA}"     "/opt/tfc/"
-    t_sudo mv "$HOME/${CHARDET}"  "/opt/tfc/"
-    t_sudo mv "$HOME/${CERTIFI}"  "/opt/tfc/"
-    t_sudo mv "$HOME/${REQUESTS}" "/opt/tfc/"
+    t_sudo mv "$HOME/${URLLIB3}"  "${INSTALL_DIR}/"
+    t_sudo mv "$HOME/${IDNA}"     "${INSTALL_DIR}/"
+    t_sudo mv "$HOME/${CHARDET}"  "${INSTALL_DIR}/"
+    t_sudo mv "$HOME/${CERTIFI}"  "${INSTALL_DIR}/"
+    t_sudo mv "$HOME/${REQUESTS}" "${INSTALL_DIR}/"
 
     # Flask
-    t_sudo mv "$HOME/${WERKZEUG}"     "/opt/tfc/"
-    t_sudo mv "$HOME/${MARKUPSAFE}"   "/opt/tfc/"
-    t_sudo mv "$HOME/${JINJA2}"       "/opt/tfc/"
-    t_sudo mv "$HOME/${ITSDANGEROUS}" "/opt/tfc/"
-    t_sudo mv "$HOME/${CLICK}"        "/opt/tfc/"
-    t_sudo mv "$HOME/${FLASK}"        "/opt/tfc/"
+    t_sudo mv "$HOME/${WERKZEUG}"     "${INSTALL_DIR}/"
+    t_sudo mv "$HOME/${MARKUPSAFE}"   "${INSTALL_DIR}/"
+    t_sudo mv "$HOME/${JINJA2}"       "${INSTALL_DIR}/"
+    t_sudo mv "$HOME/${ITSDANGEROUS}" "${INSTALL_DIR}/"
+    t_sudo mv "$HOME/${CLICK}"        "${INSTALL_DIR}/"
+    t_sudo mv "$HOME/${FLASK}"        "${INSTALL_DIR}/"
 
     # Cryptography
-    t_sudo mv "$HOME/${PYCPARSER}"    "/opt/tfc/"
-    t_sudo mv "$HOME/${CFFI}"         "/opt/tfc/"
-    t_sudo mv "$HOME/${CRYPTOGRAPHY}" "/opt/tfc/"
+    t_sudo mv "$HOME/${PYCPARSER}"    "${INSTALL_DIR}/"
+    t_sudo mv "$HOME/${CFFI}"         "${INSTALL_DIR}/"
+    t_sudo mv "$HOME/${CRYPTOGRAPHY}" "${INSTALL_DIR}/"
 
     # PyNaCl
-    t_sudo mv "$HOME/${PYNACL}" "/opt/tfc/"
+    t_sudo mv "$HOME/${PYNACL}" "${INSTALL_DIR}/"
 }
 
 
@@ -306,22 +311,22 @@ function move_tails_dependencies {
 
 function remove_common_files {
     # Remove files that become unnecessary after installation.
-    $1 rm -r /opt/tfc/.git/
-    $1 rm -r /opt/tfc/launchers/
-    $1 rm -r /opt/tfc/tests/
-    $1 rm    /opt/tfc/.coveragerc
-    $1 rm    /opt/tfc/.travis.yml
-    $1 rm    /opt/tfc/install.sh
-    $1 rm    /opt/tfc/install.sh.asc
-    $1 rm    /opt/tfc/pubkey.asc
-    $1 rm    /opt/tfc/pytest.ini
-    $1 rm    /opt/tfc/README.md
-    $1 rm    /opt/tfc/requirements.txt
-    $1 rm    /opt/tfc/requirements-dev.txt
-    $1 rm    /opt/tfc/requirements-relay.txt
-    $1 rm    /opt/tfc/requirements-relay-tails.txt
-    $1 rm    /opt/tfc/requirements-setuptools.txt
-    $1 rm    /opt/tfc/requirements-venv.txt
+    $1 rm -r ${INSTALL_DIR}/.git/
+    $1 rm -r ${INSTALL_DIR}/launchers/
+    $1 rm -r ${INSTALL_DIR}/tests/
+    $1 rm    ${INSTALL_DIR}/.coveragerc
+    $1 rm    ${INSTALL_DIR}/.travis.yml
+    $1 rm    ${INSTALL_DIR}/install.sh
+    $1 rm    ${INSTALL_DIR}/install.sh.asc
+    $1 rm    ${INSTALL_DIR}/pubkey.asc
+    $1 rm    ${INSTALL_DIR}/pytest.ini
+    $1 rm    ${INSTALL_DIR}/README.md
+    $1 rm    ${INSTALL_DIR}/requirements.txt
+    $1 rm    ${INSTALL_DIR}/requirements-dev.txt
+    $1 rm    ${INSTALL_DIR}/requirements-relay.txt
+    $1 rm    ${INSTALL_DIR}/requirements-relay-tails.txt
+    $1 rm    ${INSTALL_DIR}/requirements-setuptools.txt
+    $1 rm    ${INSTALL_DIR}/requirements-venv.txt
     $1 rm -f /opt/install.sh
     $1 rm -f /opt/install.sh.asc
     $1 rm -f /opt/pubkey.asc
@@ -341,11 +346,11 @@ function steps_before_network_kill {
 
     sudo torsocks apt update
     sudo torsocks apt install git gnome-terminal libssl-dev python3-pip python3-tk net-tools -y
-    sudo torsocks git clone --depth 1 https://github.com/tfctesting/tfc.git /opt/tfc
+    sudo torsocks git clone --depth 1 https://github.com/tfctesting/tfc.git ${INSTALL_DIR}
 
     verify_tcb_requirements_files
-    sudo torsocks python3.7 -m pip download --no-cache-dir -r "/opt/tfc/requirements-venv.txt" --require-hashes --no-deps -d /opt/tfc/
-    sudo torsocks python3.7 -m pip download --no-cache-dir -r "/opt/tfc/requirements.txt"      --require-hashes --no-deps -d /opt/tfc/
+    sudo torsocks python3.7 -m pip download --no-cache-dir -r "${INSTALL_DIR}/requirements-venv.txt" --require-hashes --no-deps -d ${INSTALL_DIR}/
+    sudo torsocks python3.7 -m pip download --no-cache-dir -r "${INSTALL_DIR}/requirements.txt"      --require-hashes --no-deps -d ${INSTALL_DIR}/
 }
 
 
@@ -363,24 +368,24 @@ function install_tcb {
     create_user_data_dir
 
     process_virtualenv_dependencies "python3.7 -m pip install"
-    sudo python3.7 -m virtualenv  "/opt/tfc/venv_tcb" --system-site-packages --never-download
+    sudo python3.7 -m virtualenv  "${INSTALL_DIR}/venv_tcb" --system-site-packages --never-download
 
-    . /opt/tfc/venv_tcb/bin/activate
+    . ${INSTALL_DIR}/venv_tcb/bin/activate
     process_tcb_dependencies "python3.7 -m pip install"
     deactivate
 
-    sudo mv /opt/tfc/tfc.png                   /usr/share/pixmaps/
-    sudo mv /opt/tfc/launchers/TFC-TxP.desktop /usr/share/applications/
-    sudo mv /opt/tfc/launchers/TFC-RxP.desktop /usr/share/applications/
+    sudo mv ${INSTALL_DIR}/tfc.png                   /usr/share/pixmaps/
+    sudo mv ${INSTALL_DIR}/launchers/TFC-TxP.desktop /usr/share/applications/
+    sudo mv ${INSTALL_DIR}/launchers/TFC-RxP.desktop /usr/share/applications/
 
     # Remove unnecessary files
     remove_common_files             "sudo"
     process_virtualenv_dependencies "rm"
     process_tcb_dependencies        "rm"
-    sudo rm -r /opt/tfc/src/relay/
-    sudo rm    /opt/tfc/dd.py
-    sudo rm    /opt/tfc/relay.py
-    sudo rm    /opt/tfc/tfc.yml
+    sudo rm -r ${INSTALL_DIR}/src/relay/
+    sudo rm    ${INSTALL_DIR}/dd.py
+    sudo rm    ${INSTALL_DIR}/relay.py
+    sudo rm    ${INSTALL_DIR}/tfc.yml
 
     add_serial_permissions
 
@@ -396,24 +401,24 @@ function install_relay {
     create_user_data_dir
 
     install_virtualenv
-    sudo python3.7 -m virtualenv /opt/tfc/venv_relay --system-site-packages
+    sudo python3.7 -m virtualenv ${INSTALL_DIR}/venv_relay --system-site-packages
 
-    . /opt/tfc/venv_relay/bin/activate
-    sudo torsocks python3.7 -m pip install -r /opt/tfc/requirements-relay.txt --require-hashes --no-deps
+    . ${INSTALL_DIR}/venv_relay/bin/activate
+    sudo torsocks python3.7 -m pip install -r ${INSTALL_DIR}/requirements-relay.txt --require-hashes --no-deps
     deactivate
 
-    sudo mv /opt/tfc/tfc.png                  /usr/share/pixmaps/
-    sudo mv /opt/tfc/launchers/TFC-RP.desktop /usr/share/applications/
+    sudo mv ${INSTALL_DIR}/tfc.png                  /usr/share/pixmaps/
+    sudo mv ${INSTALL_DIR}/launchers/TFC-RP.desktop /usr/share/applications/
 
     # Remove unnecessary files
     remove_common_files             "sudo"
     process_virtualenv_dependencies "rm"
     process_tcb_dependencies        "rm"
-    sudo rm -r "/opt/tfc/src/receiver/"
-    sudo rm -r "/opt/tfc/src/transmitter/"
-    sudo rm    "/opt/tfc/dd.py"
-    sudo rm    "/opt/tfc/tfc.py"
-    sudo rm    "/opt/tfc/tfc.yml"
+    sudo rm -r "${INSTALL_DIR}/src/receiver/"
+    sudo rm -r "${INSTALL_DIR}/src/transmitter/"
+    sudo rm    "${INSTALL_DIR}/dd.py"
+    sudo rm    "${INSTALL_DIR}/tfc.py"
+    sudo rm    "${INSTALL_DIR}/tfc.yml"
 
     add_serial_permissions
 
@@ -432,8 +437,8 @@ function install_relay_tails {
     t_sudo apt install git libssl-dev python3-pip python3-tk -y || true  # Ignore error in case packets can not be persistently installed
 
     torsocks git clone --depth 1 https://github.com/tfctesting/tfc.git "${HOME}/tfc"
-    t_sudo mv "${HOME}/tfc/ /opt/tfc/"
-    t_sudo chown -R root /opt/tfc/
+    t_sudo mv "${HOME}/tfc/ ${INSTALL_DIR}/"
+    t_sudo chown -R root ${INSTALL_DIR}/
 
     verify_tcb_requirements_files
     verify_files
@@ -442,31 +447,31 @@ function install_relay_tails {
 
     install_tails_setuptools
 
-    torsocks python3.7 -m pip download --no-cache-dir -r "/opt/tfc/requirements-venv.txt"        --require-hashes --no-deps -d "${HOME}/"
-    torsocks python3.7 -m pip download --no-cache-dir -r "/opt/tfc/requirements-relay-tails.txt" --require-hashes --no-deps -d "${HOME}/"
+    torsocks python3.7 -m pip download --no-cache-dir -r "${INSTALL_DIR}/requirements-venv.txt"        --require-hashes --no-deps -d "${HOME}/"
+    torsocks python3.7 -m pip download --no-cache-dir -r "${INSTALL_DIR}/requirements-relay-tails.txt" --require-hashes --no-deps -d "${HOME}/"
 
     move_tails_dependencies
     verify_tails_dependencies
 
     process_tails_venv_dependencies "python3.7 -m pip install"
-    t_sudo python3.7 -m virtualenv /opt/tfc/venv_relay --system-site-packages
+    t_sudo python3.7 -m virtualenv ${INSTALL_DIR}/venv_relay --system-site-packages
 
-    . /opt/tfc/venv_relay/bin/activate
+    . ${INSTALL_DIR}/venv_relay/bin/activate
     process_tails_dependencies "python3.7 -m pip install"
     deactivate
 
-    t_sudo mv /opt/tfc/tfc.png                        /usr/share/pixmaps/
-    t_sudo mv /opt/tfc/launchers/TFC-RP-Tails.desktop /usr/share/applications/
-    t_sudo mv /opt/tfc/tfc.yml                        /etc/onion-grater.d/
+    t_sudo mv ${INSTALL_DIR}/tfc.png                        /usr/share/pixmaps/
+    t_sudo mv ${INSTALL_DIR}/launchers/TFC-RP-Tails.desktop /usr/share/applications/
+    t_sudo mv ${INSTALL_DIR}/tfc.yml                        /etc/onion-grater.d/
 
     # Remove unnecessary files
     remove_common_files             "t_sudo"
     process_tails_venv_dependencies "rm"
     process_tails_dependencies      "rm"
-    t_sudo rm -r "/opt/tfc/src/receiver/"
-    t_sudo rm -r "/opt/tfc/src/transmitter/"
-    t_sudo rm    "/opt/tfc/dd.py"
-    t_sudo rm    "/opt/tfc/tfc.py"
+    t_sudo rm -r "${INSTALL_DIR}/src/receiver/"
+    t_sudo rm -r "${INSTALL_DIR}/src/transmitter/"
+    t_sudo rm    "${INSTALL_DIR}/dd.py"
+    t_sudo rm    "${INSTALL_DIR}/tfc.py"
 
     install_complete "Installation of the TFC Relay configuration is now complete."
 }
@@ -484,24 +489,24 @@ function install_qubes_src {
     verify_files
 
     process_virtualenv_dependencies "python3.7 -m pip install"
-    sudo python3.7 -m virtualenv "/opt/tfc/venv_tcb" --system-site-packages --never-download
+    sudo python3.7 -m virtualenv "${INSTALL_DIR}/venv_tcb" --system-site-packages --never-download
 
-    . /opt/tfc/venv_tcb/bin/activate
+    . ${INSTALL_DIR}/venv_tcb/bin/activate
     process_tcb_dependencies "python3.7 -m pip install"
     deactivate
 
-    sudo mv /opt/tfc/tfc.png                         /usr/share/pixmaps/
-    sudo mv /opt/tfc/launchers/TFC-TxP-Qubes.desktop /usr/share/applications/
-    sudo mv /opt/tfc/launchers/tfc-qubes-transmitter /usr/bin/tfc-transmitter
+    sudo mv ${INSTALL_DIR}/tfc.png                         /usr/share/pixmaps/
+    sudo mv ${INSTALL_DIR}/launchers/TFC-TxP-Qubes.desktop /usr/share/applications/
+    sudo mv ${INSTALL_DIR}/launchers/tfc-qubes-transmitter /usr/bin/tfc-transmitter
 
     # Remove unnecessary files
     remove_common_files             "sudo"
     process_virtualenv_dependencies "rm"
     process_tcb_dependencies        "rm"
-    sudo rm -r /opt/tfc/src/relay/
-    sudo rm    /opt/tfc/dd.py
-    sudo rm    /opt/tfc/relay.py
-    sudo rm    /opt/tfc/tfc.yml
+    sudo rm -r ${INSTALL_DIR}/src/relay/
+    sudo rm    ${INSTALL_DIR}/dd.py
+    sudo rm    ${INSTALL_DIR}/relay.py
+    sudo rm    ${INSTALL_DIR}/tfc.yml
 
     install_complete_qubes
 }
@@ -517,24 +522,24 @@ function install_qubes_dst {
     verify_files
 
     process_virtualenv_dependencies "python3.7 -m pip install"
-    sudo python3.7 -m virtualenv "/opt/tfc/venv_tcb" --system-site-packages --never-download
+    sudo python3.7 -m virtualenv "${INSTALL_DIR}/venv_tcb" --system-site-packages --never-download
 
-    . /opt/tfc/venv_tcb/bin/activate
+    . ${INSTALL_DIR}/venv_tcb/bin/activate
     process_tcb_dependencies "python3.7 -m pip install"
     deactivate
 
-    sudo mv /opt/tfc/tfc.png                         /usr/share/pixmaps/
-    sudo mv /opt/tfc/launchers/TFC-RxP-Qubes.desktop /usr/share/applications/
-    sudo mv /opt/tfc/launchers/tfc-qubes-receiver    /usr/bin/tfc-receiver
+    sudo mv ${INSTALL_DIR}/tfc.png                         /usr/share/pixmaps/
+    sudo mv ${INSTALL_DIR}/launchers/TFC-RxP-Qubes.desktop /usr/share/applications/
+    sudo mv ${INSTALL_DIR}/launchers/tfc-qubes-receiver    /usr/bin/tfc-receiver
 
     # Remove unnecessary files
     remove_common_files             "sudo"
     process_virtualenv_dependencies "rm"
     process_tcb_dependencies        "rm"
-    sudo rm -r /opt/tfc/src/relay/
-    sudo rm    /opt/tfc/dd.py
-    sudo rm    /opt/tfc/relay.py
-    sudo rm    /opt/tfc/tfc.yml
+    sudo rm -r ${INSTALL_DIR}/src/relay/
+    sudo rm    ${INSTALL_DIR}/dd.py
+    sudo rm    ${INSTALL_DIR}/relay.py
+    sudo rm    ${INSTALL_DIR}/tfc.yml
 
     install_complete_qubes
 }
@@ -550,24 +555,24 @@ function install_qubes_net {
     verify_files
 
     process_virtualenv_dependencies "python3.7 -m pip install"
-    sudo python3.7 -m virtualenv /opt/tfc/venv_relay --system-site-packages
+    sudo python3.7 -m virtualenv ${INSTALL_DIR}/venv_relay --system-site-packages
 
-    . /opt/tfc/venv_relay/bin/activate
-    sudo torsocks python3.7 -m pip install -r /opt/tfc/requirements-relay.txt --require-hashes --no-deps
+    . ${INSTALL_DIR}/venv_relay/bin/activate
+    sudo torsocks python3.7 -m pip install -r ${INSTALL_DIR}/requirements-relay.txt --require-hashes --no-deps
     deactivate
 
-    sudo mv /opt/tfc/tfc.png                        /usr/share/pixmaps/
-    sudo mv /opt/tfc/launchers/TFC-RP-Qubes.desktop /usr/share/applications/
-    sudo mv /opt/tfc/launchers/tfc-qubes-relay      /usr/bin/tfc-relay
+    sudo mv ${INSTALL_DIR}/tfc.png                        /usr/share/pixmaps/
+    sudo mv ${INSTALL_DIR}/launchers/TFC-RP-Qubes.desktop /usr/share/applications/
+    sudo mv ${INSTALL_DIR}/launchers/tfc-qubes-relay      /usr/bin/tfc-relay
 
     # Remove unnecessary files
     remove_common_files             "sudo"
     process_virtualenv_dependencies "rm"
-    sudo rm -r "/opt/tfc/src/receiver/"
-    sudo rm -r "/opt/tfc/src/transmitter/"
-    sudo rm    "/opt/tfc/dd.py"
-    sudo rm    "/opt/tfc/tfc.py"
-    sudo rm    "/opt/tfc/tfc.yml"
+    sudo rm -r "${INSTALL_DIR}/src/receiver/"
+    sudo rm -r "${INSTALL_DIR}/src/transmitter/"
+    sudo rm    "${INSTALL_DIR}/dd.py"
+    sudo rm    "${INSTALL_DIR}/tfc.py"
+    sudo rm    "${INSTALL_DIR}/tfc.yml"
 
     install_complete_qubes
 }
@@ -670,23 +675,23 @@ function install_local_test {
     sudo torsocks apt install terminator -y
 
     install_virtualenv
-    sudo python3.7 -m virtualenv /opt/tfc/venv_tfc --system-site-packages
+    sudo python3.7 -m virtualenv ${INSTALL_DIR}/venv_tfc --system-site-packages
 
-    . /opt/tfc/venv_tfc/bin/activate
-    sudo torsocks python3.7 -m pip install -r /opt/tfc/requirements.txt       --require-hashes --no-deps
-    sudo torsocks python3.7 -m pip install -r /opt/tfc/requirements-relay.txt --require-hashes --no-deps
+    . ${INSTALL_DIR}/venv_tfc/bin/activate
+    sudo torsocks python3.7 -m pip install -r ${INSTALL_DIR}/requirements.txt       --require-hashes --no-deps
+    sudo torsocks python3.7 -m pip install -r ${INSTALL_DIR}/requirements-relay.txt --require-hashes --no-deps
     deactivate
 
-    sudo mv /opt/tfc/tfc.png                                /usr/share/pixmaps/
-    sudo mv /opt/tfc/launchers/TFC-Local-test.desktop       /usr/share/applications/
-    sudo mv /opt/tfc/launchers/terminator-config-local-test /opt/tfc/
-    modify_terminator_font_size "sudo" "/opt/tfc/terminator-config-local-test"
+    sudo mv ${INSTALL_DIR}/tfc.png                                /usr/share/pixmaps/
+    sudo mv ${INSTALL_DIR}/launchers/TFC-Local-test.desktop       /usr/share/applications/
+    sudo mv ${INSTALL_DIR}/launchers/terminator-config-local-test ${INSTALL_DIR}/
+    modify_terminator_font_size "sudo" "${INSTALL_DIR}/terminator-config-local-test"
 
     # Remove unnecessary files
     remove_common_files             "sudo"
     process_virtualenv_dependencies "rm"
     process_tcb_dependencies        "rm"
-    sudo rm /opt/tfc/tfc.yml
+    sudo rm ${INSTALL_DIR}/tfc.yml
 
     install_complete "Installation of TFC for local testing is now complete."
 }
@@ -741,11 +746,11 @@ function install_developer {
 
 function compare_digest {
     # Compare the SHA512 digest of TFC file against the digest pinned in this installer.
-    purp_digest=$(sha512sum "/opt/tfc/${2}${3}" | awk '{print $1}')
+    purp_digest=$(sha512sum "${INSTALL_DIR}/${2}${3}" | awk '{print $1}')
     if echo ${purp_digest} | cmp -s <(echo "$1"); then
-        echo "OK - Pinned SHA512 hash matched file /opt/tfc/${2}${3}"
+        echo "OK - Pinned SHA512 hash matched file ${INSTALL_DIR}/${2}${3}"
     else
-        echo "Error: /opt/tfc/${2}${3} had an invalid SHA512 hash:"
+        echo "Error: ${INSTALL_DIR}/${2}${3} had an invalid SHA512 hash:"
         echo "${purp_digest}"
         echo "Expected following hash:"
         echo "${1}"
@@ -814,8 +819,8 @@ function t_sudo {
 function install_virtualenv {
     # Some distros want virtualenv installed as sudo and other do
     # not. Install both to improve the chances of compatibility.
-    sudo torsocks python3.7 -m pip install -r /opt/tfc/requirements-venv.txt --require-hashes --no-deps
-    torsocks      python3.7 -m pip install -r /opt/tfc/requirements-venv.txt --require-hashes --no-deps
+    sudo torsocks python3.7 -m pip install -r ${INSTALL_DIR}/requirements-venv.txt --require-hashes --no-deps
+    torsocks      python3.7 -m pip install -r ${INSTALL_DIR}/requirements-venv.txt --require-hashes --no-deps
 }
 
 
@@ -979,11 +984,11 @@ function arg_error {
 
 function check_rm_existing_installation {
     # Remove TFC installation directory if TFC is already installed.
-    if [[ -d "/opt/tfc" ]]; then
+    if [[ -d "${INSTALL_DIR}" ]]; then
         if [[ ${sudo_pwd} ]]; then
-            t_sudo rm -r /opt/tfc  # Tails
+            t_sudo rm -r ${INSTALL_DIR}  # Tails
         else
-            sudo rm -r /opt/tfc    # *buntu
+            sudo rm -r ${INSTALL_DIR}    # *buntu
         fi
     fi
 }
