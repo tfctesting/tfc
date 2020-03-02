@@ -354,10 +354,6 @@ function steps_before_network_kill {
 
 function install_tcb {
     # Install TFC for Source/Destination Computer.
-    #
-    # The installer configuration first downloads all necessary files.
-    # It then disconnects the computer from network, before completing
-    # the rest of the installation steps.
     steps_before_network_kill
 
     kill_network
@@ -427,8 +423,8 @@ function install_relay {
 # Installation configuration for Tails
 
 function install_relay_tails {
-    # Install TFC Relay configuration on Networked Computer running
-    # Tails live distro (https://tails.boum.org/).
+    # Install TFC Relay configuration on Networked Computer
+    # running Tails live distro (https://tails.boum.org/).
     read_sudo_pwd
 
     # Apt dependencies
@@ -994,8 +990,7 @@ function check_rm_existing_installation {
 
 
 function dpkg_check {
-    # Check if the software manager is busy, and if, wait until it
-    # completes.
+    # Check if the software manager is busy, and if, wait until it completes.
     i=0
     tput sc
     while sudo fuser /var/lib/dpkg/lock >/dev/null 2>&1 ; do
