@@ -703,7 +703,7 @@ function install_developer {
     # Note that it also means, that any malicious program with
     # user-level privileges is also able to modify the source files. For
     # more secure use on a single computer, select the local testing
-    # install configuration.
+    # install configuration, or preferably use the Qubes configuration.
     dpkg_check
 
     create_user_data_dir
