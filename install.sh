@@ -48,7 +48,7 @@ SIX=six-1.14.0-py2.py3-none-any.whl
 URLLIB3=urllib3-1.25.8-py2.py3-none-any.whl
 VIRTUALENV=virtualenv-20.0.7-py2.py3-none-any.whl
 WERKZEUG=Werkzeug-1.0.0-py2.py3-none-any.whl
-ZIPP=zipp-3.0.0-py3-none-any.whl
+ZIPP=zipp-3.1.0-py3-none-any.whl
 
 
 # Functions with pinned hashes
@@ -64,7 +64,7 @@ function verify_tails_dependencies {
     compare_digest a6e7e35921ce8f2f8e79a296ea79a9c3515ff6dd7e777d7892fe4988594f1b3a442a68ffb89cf64530b90a32ceeea00e4ab9069bb697629ab4eb7262c68d1b0f '' ${SIX}
     compare_digest 53e51d4b75c1df19fcb6b32e57fa73ffcb00eede86fee7ac9634f02661360538a74d3546b65a641b68ee84c0d78293fe03d09b65cb85359780822b56f813b926 '' ${IMPORTLIB_METADATA}
     compare_digest d13edd50779bca9842694e0da157ca1fdad9d28166771275049f41dea4b8d8466fc5604b610b6ad64552cdf4c1d3cada9977ca37c6b775c4cc92f333709e8ea3 '' ${FILELOCK}
-    compare_digest b1970b23f7c3f51da5e1b7825d4e6062b62bf2e908148f4b84eb70ba47e44b2873caba86536b23289fb986f04c9d617faa10541f5c25ad3885057d5920fdb98b '' ${ZIPP}
+    compare_digest 89170b91cfdc0ef4d85b5316b484c8d6e01985f19bb9f545b11d648e122392efa68d40c66e056b8998fb69af49f4e18707f783be8d500b8957ce3a885662d27c '' ${ZIPP}
 
     # Requests
     compare_digest f7fd3b54b7c555c0e74eb445e543763d233b5c6f8021ccf46a45d452c334953276d43ecd8f3d0eafefa35103a7d1874e291216fc9a41362eb6f1250a2a670f16 '' ${URLLIB3}
@@ -106,7 +106,7 @@ function verify_tcb_requirements_files {
     # To minimize the time TCB installer configuration stays online,
     # only the requirements files are authenticated between downloads.
     compare_digest eca1997b9abf71010f4373e17e87b1131e72c7395d6d8a86182ffb52b208f4058b3d59f33f022023ce3e6c5f53884d682a985e9908ff2c2958817b3427cfd19d '' requirements.txt
-    compare_digest ffc85decf98dda20f72a2e7fa61b5279302b26edb20c8f6babe3dc385dab60e2962aac7427744c314785e87372a62c4aefa19aaaac91233f176e4ef7ee816edb '' requirements-venv.txt
+    compare_digest 76b4182eb04786860c8bb8de86144f2cac00d6ff503ffdd09783e3f4ced5d67c1781097b711e5177280c36ba0715a823da8a53f3adb55cd15545edbe7fe2e84e '' requirements-venv.txt
 }
 
 
@@ -151,7 +151,7 @@ function verify_files {
     compare_digest 4ef757ba877ee6b74632af3a0d3567c9483a62b9063ec0e7fe7b6abc7e82b490ec52279198f0be22866595dae1948bb1ef9ef556c88b3c320c5316fd59fc0743 src/common/ db_settings.py
     compare_digest 60fb4c922af286307865b29f0cadab53a5a575a9f820cd5ad99ea116c841b54dd1d1be1352bf7c3ab51d2fd223077217bcda1b442d44d2b9f1bf614e15c4a14d src/common/ encoding.py
     compare_digest ccd522408ad2e8e21f01038f5f49b9d82d5288717f1a1acf6cda278c421c05472827ee5928fbf56121c2dfc4f2cc49986e32c493e892bd6ae584be38ba381edd src/common/ exceptions.py
-    compare_digest 79af3e8f628883c7bf2ede50976f6185b14f8ef77be09bd7188c2b50ad61bca9e9e9f3b14e25216d689ea4b0ce248653f0746c95df861f36fb5bd960cc22907b src/common/ gateway.py
+    compare_digest 6a0b92cc259f7f0b4d1b65663ea633cc49590ff3562e1fedb096b59b49eddcbffa5e1892a6a5873a879f13b666192d3986f2c010de2e994ae7f6f6119b49ab60 src/common/ gateway.py
     compare_digest d4021175fba75649fa1b8b65116b0acc98cedccd2a012986037a78e799908329694ee6f4c50617f92f5df279cfe5e719e38cada5f3775a8ea912a541f1dbf438 src/common/ input.py
     compare_digest 159d192376b243fb48f02449e0db2b5576b4bb46a1c43bd0e7a641ae401e489af668171e4c771005114ac40c7951023b087f32b0d6eec3fa78559ed0a1408a8a src/common/ misc.py
     compare_digest 6329bbdc9d24c1342d0996009a8cd4d852d5a800cbf6a582c047c0fc13e6ca9be28251b783325adffca100d2a372616088cedff2441cc103b8c18540828445ef src/common/ output.py
@@ -174,7 +174,7 @@ function verify_files {
     compare_digest 3ee90ee305382d80da801f047a6e58e5b763f9f6bc08dce531d5c620f2748c6bba59a1528eee5d721decb8e724f53b28fc7609f5b20472f679f554b78b5d4cc6 src/relay/ __init__.py
     compare_digest 0ab86ddcfc7a28e7945e302918e384c2570d8b19942bb7c1b300d5913f77b184aae36612819ec85f0ef5b4a3b21d22aa710f218fc229c1317f04a11782e832e5 src/relay/ client.py
     compare_digest c7457a0b21383c9d803f3854bbbd616943132a775641d8cada0c5fbd0d756910679d44a748b79291149758e2650e1bee4450b0c51ceb9f8bd680cfc6a5635407 src/relay/ commands.py
-    compare_digest b41faf02d99f523556c54ec3c5a23396ec43a660814aa5af73cf577695a6fe528b0d165259fed494a18bfc7234fdd73a3edc8f27bf4d6245268b8e4a6bbc708a src/relay/ diffs.py
+    compare_digest 10229a8a8869b1c27e0f23733e9680ef3826831490be8c81553f0735ecfb93c0776cf976de2107c1d5822caa1b7dcacb7d1f090a9ff73df18ec2500fcd930089 src/relay/ diffs.py
     compare_digest 0bc1912af4d45ff72fbd7c43a09ab48ea3a780bb096226011525924820ba0ba1f396937fb191e5e18ec87dee14ccd3b505192e16e835d46088e4b50c941125f5 src/relay/ onion.py
     compare_digest 42acbe9557c848eea66ea6b9db71b3c3ac5b2da7710f7dc79f70f8b4952e582c8953d8fb38eab82be9b8b15db6a3f3fc882ef8d65adbe5ccdf26f55ef54d4758 src/relay/ server.py
     compare_digest ee0bdbf39053e34d5e6597004ffc4a3831835238631368d29e301094a45551c6ff64b4d8cd9a8e8f7b6cf3fcfddd21e3dd275c0dee7cbc0503584b6991f923f5 src/relay/ tcb.py
