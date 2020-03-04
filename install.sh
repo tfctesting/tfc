@@ -1083,6 +1083,7 @@ if [[ $2="travis" ]]; then
     INSTALL_DIR="/${HOME}/tfc_installation_test/"
     TORSOCKS=''  # Don't anonymize downloads when testing in Travis
     PYTHON_INTERPRETER="python3"
+    python3 -m pip install importlib-resources
 fi
 
 case $1 in
