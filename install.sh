@@ -100,7 +100,7 @@ function install_tails_setuptools {
 function verify_tcb_requirements_files {
     # To minimize the time TCB installer configuration stays online,
     # only the requirements files are authenticated between downloads.
-    compare_digest cdd82461abf779041fb27f886fa44afea614572c40ad21a0c081c499c83da81d524a450b287ac7b19748c505fafe9a96584f7ec85f6c8fa3a4eb7b0dc33cf93e '' requirements.txt
+    compare_digest 25766cbc2dcb33ab5c33e5295a3ec3bc1642c21b8cb6bdad6024b253f2bf5fbd94c2ec702e3e36ac77f22d357e90332356f6f4ca6fa71699187e93221bf3242d '' requirements.txt
     compare_digest 76b4182eb04786860c8bb8de86144f2cac00d6ff503ffdd09783e3f4ced5d67c1781097b711e5177280c36ba0715a823da8a53f3adb55cd15545edbe7fe2e84e '' requirements-venv.txt
 }
 
