@@ -1067,7 +1067,6 @@ set -e
 architecture_check
 root_check
 sudoer_check
-travis_check
 sudo_pwd=''
 
 # Check Travis testing
