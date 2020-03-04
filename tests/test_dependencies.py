@@ -39,27 +39,27 @@ class TestDependencyHashes(unittest.TestCase):
 
     def test_requirements(self):
         file_name = 'requirements.txt'
-        self.assertEqual(0, subprocess.Popen(f"wget --no-cache {REPOSITORY}/{file_name}",                                                      shell=True).wait())
+        self.assertEqual(0, subprocess.Popen(f"wget --no-cache {REPOSITORY}/{file_name}",                                           shell=True).wait())
         self.assertEqual(0, subprocess.Popen(f"python3.7 -m pip download --no-deps --no-cache-dir -r {file_name} --require-hashes", shell=True).wait())
 
     def test_requirements_relay(self):
         file_name = 'requirements-relay.txt'
-        self.assertEqual(0, subprocess.Popen(f"wget --no-cache {REPOSITORY}/{file_name}",                                                      shell=True).wait())
+        self.assertEqual(0, subprocess.Popen(f"wget --no-cache {REPOSITORY}/{file_name}",                                           shell=True).wait())
         self.assertEqual(0, subprocess.Popen(f"python3.7 -m pip download --no-deps --no-cache-dir -r {file_name} --require-hashes", shell=True).wait())
 
     def test_requirements_relay_tails(self):
         file_name = 'requirements-relay-tails.txt'
-        self.assertEqual(0, subprocess.Popen(f"wget --no-cache {REPOSITORY}/{file_name}",                                                      shell=True).wait())
+        self.assertEqual(0, subprocess.Popen(f"wget --no-cache {REPOSITORY}/{file_name}",                                           shell=True).wait())
         self.assertEqual(0, subprocess.Popen(f"python3.7 -m pip download --no-deps --no-cache-dir -r {file_name} --require-hashes", shell=True).wait())
 
     def test_requirements_setuptools(self):
         file_name = 'requirements-setuptools.txt'
-        self.assertEqual(0, subprocess.Popen(f"wget --no-cache {REPOSITORY}/{file_name}",                                                      shell=True).wait())
+        self.assertEqual(0, subprocess.Popen(f"wget --no-cache {REPOSITORY}/{file_name}",                                           shell=True).wait())
         self.assertEqual(0, subprocess.Popen(f"python3.7 -m pip download --no-deps --no-cache-dir -r {file_name} --require-hashes", shell=True).wait())
 
     def test_requirements_venv(self):
         file_name = 'requirements-venv.txt'
-        self.assertEqual(0, subprocess.Popen(f"wget --no-cache {REPOSITORY}/{file_name}",                                                      shell=True).wait())
+        self.assertEqual(0, subprocess.Popen(f"wget --no-cache {REPOSITORY}/{file_name}",                                           shell=True).wait())
         self.assertEqual(0, subprocess.Popen(f"python3.7 -m pip download --no-deps --no-cache-dir -r {file_name} --require-hashes", shell=True).wait())
 
 
