@@ -41,28 +41,28 @@ class TestDependencyHashes(unittest.TestCase):
         """Post-test actions."""
         cleanup(self.unit_test_dir)
 
-    @unittest.skipIf("TRAVIS" not in os.environ and os.environ["TRAVIS"] != "true",
+    @unittest.skipIf("TRAVIS" not in os.environ or os.environ["TRAVIS"] != "true",
                      "Skipping this test on local system.")
     def test_tcb_installation(self):
         configuration = 'tcb'
         self.assertEqual(0, subprocess.Popen(f"wget --no-cache {REPOSITORY}/{self.file_name}", shell=True).wait())
         self.assertEqual(0, subprocess.Popen(f"bash {self.file_name} {configuration} travis",  shell=True).wait())
 
-    @unittest.skipIf("TRAVIS" not in os.environ and os.environ["TRAVIS"] != "true",
+    @unittest.skipIf("TRAVIS" not in os.environ or os.environ["TRAVIS"] != "true",
                      "Skipping this test on local system.")
     def test_relay_installation(self):
         configuration = 'relay'
         self.assertEqual(0, subprocess.Popen(f"wget --no-cache {REPOSITORY}/{self.file_name}", shell=True).wait())
         self.assertEqual(0, subprocess.Popen(f"bash {self.file_name} {configuration} travis",  shell=True).wait())
 
-    @unittest.skipIf("TRAVIS" not in os.environ and os.environ["TRAVIS"] != "true",
+    @unittest.skipIf("TRAVIS" not in os.environ or os.environ["TRAVIS"] != "true",
                      "Skipping this test on local system.")
     def test_local_testing_installation(self):
         configuration = 'local'
         self.assertEqual(0, subprocess.Popen(f"wget --no-cache {REPOSITORY}/{self.file_name}", shell=True).wait())
         self.assertEqual(0, subprocess.Popen(f"bash {self.file_name} {configuration} travis",  shell=True).wait())
 
-    @unittest.skipIf("TRAVIS" not in os.environ and os.environ["TRAVIS"] != "true",
+    @unittest.skipIf("TRAVIS" not in os.environ or os.environ["TRAVIS"] != "true",
                      "Skipping this test on local system.")
     def test_dev_installation(self):
         configuration = 'dev'
