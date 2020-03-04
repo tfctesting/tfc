@@ -901,7 +901,10 @@ function modify_terminator_font_size {
     #
     # The default font sizes in terminator config file are for 1920px
     # wide screens. The lowest resolution (width) supported is 1366px.
-    width=$(get_screen_width)
+    width=1920
+    if [[ "$travis" = false ]]; then
+        width=$(get_screen_width)
+    fi
 
     if (( width < 1600 )); then
         $1 sed -i -e 's/font                = Monospace 11/font                = Monospace 8/g'     "${2}"  # Normal config
