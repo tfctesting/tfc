@@ -26,7 +26,7 @@ import subprocess
 from tests.utils import cd_unit_test, cleanup
 
 
-REPOSITORY  = "https://raw.github.com/tfctesting/tfc/master/"
+REPOSITORY  = "https://raw.githubusercontent.com/tfctesting/tfc/master/"
 INSTALL_DIR = f'{os.getenv("HOME")}/tfc_installation_test'
 
 
