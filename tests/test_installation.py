@@ -48,26 +48,26 @@ class TestDependencyHashes(unittest.TestCase):
         self.assertEqual(0, subprocess.Popen(f"wget --no-cache {REPOSITORY}/{self.file_name}", shell=True).wait())
         self.assertEqual(0, subprocess.Popen(f"bash {self.file_name} {configuration} travis",  shell=True).wait())
 
-    @unittest.skipIf("TRAVIS" not in os.environ or os.environ["TRAVIS"] != "true",
-                     "Skipping this test on local system.")
-    def test_relay_installation(self):
-        configuration = 'relay'
-        self.assertEqual(0, subprocess.Popen(f"wget --no-cache {REPOSITORY}/{self.file_name}", shell=True).wait())
-        self.assertEqual(0, subprocess.Popen(f"bash {self.file_name} {configuration} travis",  shell=True).wait())
-
-    @unittest.skipIf("TRAVIS" not in os.environ or os.environ["TRAVIS"] != "true",
-                     "Skipping this test on local system.")
-    def test_local_testing_installation(self):
-        configuration = 'local'
-        self.assertEqual(0, subprocess.Popen(f"wget --no-cache {REPOSITORY}/{self.file_name}", shell=True).wait())
-        self.assertEqual(0, subprocess.Popen(f"bash {self.file_name} {configuration} travis",  shell=True).wait())
-
-    @unittest.skipIf("TRAVIS" not in os.environ or os.environ["TRAVIS"] != "true",
-                     "Skipping this test on local system.")
-    def test_dev_installation(self):
-        configuration = 'dev'
-        self.assertEqual(0, subprocess.Popen(f"wget --no-cache {REPOSITORY}/{self.file_name}", shell=True).wait())
-        self.assertEqual(0, subprocess.Popen(f"bash {self.file_name} {configuration} travis",  shell=True).wait())
+    # @unittest.skipIf("TRAVIS" not in os.environ or os.environ["TRAVIS"] != "true",
+    #                  "Skipping this test on local system.")
+    # def test_relay_installation(self):
+    #     configuration = 'relay'
+    #     self.assertEqual(0, subprocess.Popen(f"wget --no-cache {REPOSITORY}/{self.file_name}", shell=True).wait())
+    #     self.assertEqual(0, subprocess.Popen(f"bash {self.file_name} {configuration} travis",  shell=True).wait())
+    #
+    # @unittest.skipIf("TRAVIS" not in os.environ or os.environ["TRAVIS"] != "true",
+    #                  "Skipping this test on local system.")
+    # def test_local_testing_installation(self):
+    #     configuration = 'local'
+    #     self.assertEqual(0, subprocess.Popen(f"wget --no-cache {REPOSITORY}/{self.file_name}", shell=True).wait())
+    #     self.assertEqual(0, subprocess.Popen(f"bash {self.file_name} {configuration} travis",  shell=True).wait())
+    #
+    # @unittest.skipIf("TRAVIS" not in os.environ or os.environ["TRAVIS"] != "true",
+    #                  "Skipping this test on local system.")
+    # def test_dev_installation(self):
+    #     configuration = 'dev'
+    #     self.assertEqual(0, subprocess.Popen(f"wget --no-cache {REPOSITORY}/{self.file_name}", shell=True).wait())
+    #     self.assertEqual(0, subprocess.Popen(f"bash {self.file_name} {configuration} travis",  shell=True).wait())
 
 
 if __name__ == '__main__':

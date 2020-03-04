@@ -19,7 +19,7 @@ install:
   - pip install -r requirements-dev.txt
 
 script:
-  - py.test --cov=src tests/
+  - py.test --cov=src tests/test_installation.py
 
 after_success:
   - coveralls
