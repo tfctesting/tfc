@@ -25,7 +25,7 @@ pyserial>=3.4
 # argon2_cffi
 argon2_cffi>=19.2.0
 cffi>=1.14.0
-pycparser>=2.19
+pycparser>=2.20
 six>=1.14.0
 
 # pyca/pynacl

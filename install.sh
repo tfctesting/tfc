@@ -33,7 +33,7 @@ IMPORTLIB_METADATA=importlib_metadata-1.5.0-py2.py3-none-any.whl
 ITSDANGEROUS=itsdangerous-1.1.0-py2.py3-none-any.whl
 JINJA2=Jinja2-2.11.1-py2.py3-none-any.whl
 MARKUPSAFE=MarkupSafe-1.1.1-cp37-cp37m-manylinux1_x86_64.whl
-PYCPARSER=pycparser-2.19.tar.gz
+PYCPARSER=pycparser-2.20-py2.py3-none-any.whl
 PYNACL=PyNaCl-1.3.0-cp34-abi3-manylinux1_x86_64.whl
 PYSERIAL=pyserial-3.4-py2.py3-none-any.whl
 PYSOCKS=PySocks-1.7.1-py3-none-any.whl
@@ -77,7 +77,7 @@ function verify_tails_dependencies {
     compare_digest bd49cb364307569480196289fa61fbb5493e46199620333f67617367278e1f56b20fc0d40fd540bef15642a8065e488c24e97f50535e8ec143875095157d8069 '' ${FLASK}
 
     # Cryptography
-    compare_digest 7f830e1c9066ee2d297a55e2bf6db4bf6447b6d9da0145d11a88c3bb98505755fb7986eafa6e06ae0b7680838f5e5d6a6d188245ca5ad45c2a727587bac93ab5 '' ${PYCPARSER}
+    compare_digest 06dc9cefdcde6b97c96d0452a77db42a629c48ee545edd7ab241763e50e3b3c56d21f9fcce4e206817aa1a597763d948a10ccc73572490d739c89eea7fede0a1 '' ${PYCPARSER}
     compare_digest 5b315a65fc8f40622ceef35466546620aaca9dd304f5491a845239659b4066469c5fb3f1683c382eb57f8975caf318e5d88852e3dbb049cde193c9189b88c9c0 '' ${CFFI}
     compare_digest 184003c89fee74892de25c3e5ec366faea7a5f1fcca3c82b0d5e5f9f797286671a820ca54da5266d6f879ab342c97e25bce9db366c5fb1178690cd5978d4d622 '' ${CRYPTOGRAPHY}
 
@@ -100,7 +100,7 @@ function install_tails_setuptools {
 function verify_tcb_requirements_files {
     # To minimize the time TCB installer configuration stays online,
     # only the requirements files are authenticated between downloads.
-    compare_digest 25766cbc2dcb33ab5c33e5295a3ec3bc1642c21b8cb6bdad6024b253f2bf5fbd94c2ec702e3e36ac77f22d357e90332356f6f4ca6fa71699187e93221bf3242d '' requirements.txt
+    compare_digest fe68165a14abacbb35e4afd697c3498ae28079b9a50628e14e18af2012f8f844b002a76bdcf4c4be412e535c670ac69010d8d778a5c44c8cccc0a20ffcf8c94b '' requirements.txt
     compare_digest 76b4182eb04786860c8bb8de86144f2cac00d6ff503ffdd09783e3f4ced5d67c1781097b711e5177280c36ba0715a823da8a53f3adb55cd15545edbe7fe2e84e '' requirements-venv.txt
 }
 
@@ -111,9 +111,9 @@ function verify_files {
     compare_digest d361e5e8201481c6346ee6a886592c51265112be550d5224f1a7a6e116255c2f1ab8788df579d9b8372ed7bfd19bac4b6e70e00b472642966ab5b319b99a2686 '' LICENSE
     compare_digest 8db25eafc66308f1fe8223c39bc5fb025ae111ebce3eae5601c907fa7a2654f68395af4f355ff0ff03775e79cda8dfccddaf7d68555bfe065d9469ca04a288f9 '' LICENSE-3RD-PARTY
     compare_digest 7cad2202e4cc940627e31577162c38f44022ddb138a51f52d0ac3747e264e065919df2b646020851d8973cc76a2873a72ceabcbe93c39911ebbfa7c867f01675 '' relay.py
-    compare_digest 382ea6a353152d3d6dd94a5e5121a1dbbed21516ba16bf0ab97e9495409a2feea2f35bec3cbf53c61d2b682690691806be9ca2b134fd70640289a9c7d0174c6f '' requirements-dev.txt
-    compare_digest b502d109fddcafa726663fb5efc9c9b446cd2c58913519574d1e11856ef51b32e71f0ea162fff1842579e2878a1bba14ba25b3f280f2bfca9bd82ec5a4eadcf1 '' requirements-relay.txt
-    compare_digest c5732dfb4fa505c00d4cc0b2bb76527b854dff3cdd931199f69bbba519c5be3cbb0dd659cea3ea2e377bb1d6dbd80d2bb6f0932806846fd324743c949971b7db '' requirements-relay-tails.txt
+    compare_digest 5ade26df9f732a20f9a8816a9821840cf91b3247fe37d9a10974ae846dd333bff47f044b8928e407be73d80ba1323556423116afa4aa8ae68ea8a227fd2317aa '' requirements-dev.txt
+    compare_digest d28a3855a1592dba7f06939108c578f76b56ebfda1ac4ac260d66663bbb131e5603c150fa5eb2cb70bccd171234d322f48643b1ef5a1aeea689cc5efb611e736 '' requirements-relay.txt
+    compare_digest e572b642c9cf71c05c0612b8f17bc20b46fa103bd7f25cf20c5c8179e1de757910eb02c8f88228366e32205cd9b28a75afd77a2db50377f3f54c41350a90be9c '' requirements-relay-tails.txt
     compare_digest 1432c2f098b1e656a597cbcfcceef00e2cda1897242f2a9316182fffff55bd64ea974534756200ec878741cd8de12b46b4b05a39ed550ad3997d111a6176f16f '' requirements-setuptools.txt
     compare_digest 79f8272a2ab122a48c60630c965cd9d000dcafabf5ee9d69b1c33c58ec321feb17e4654dbbbf783cc8868ccdfe2777d60c6c3fc9ef16f8264d9fcf43724e83c2 '' tfc.png
     compare_digest c746fa981fcdc1b21cbe7117ed186ef7757d120cb96fbe8500b8b5f7f4effebe71360ae5c1cc2bf873818002544d9aeba26990b93723a79c6bbcd647552a7ca0 '' tfc.py
