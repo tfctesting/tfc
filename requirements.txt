@@ -15,5 +15,6 @@ setuptools==45.2.0  --hash=sha512:de1ac45cb52e8a28322048e6a2b95015aa6826c4967934
 # Duplicate sub-dependencies: cffi, pycparser, six
 
 # Cryptography (Handles TCB-side X448 key exchange)
-cryptography==2.8   --hash=sha512:184003c89fee74892de25c3e5ec366faea7a5f1fcca3c82b0d5e5f9f797286671a820ca54da5266d6f879ab342c97e25bce9db366c5fb1178690cd5978d4d622
+cryptography==2.8   --hash=sha512:184003c89fee74892de25c3e5ec366faea7a5f1fcca3c82b0d5e5f9f797286671a820ca54da5266d6f879ab342c97e25bce9db366c5fb1178690cd5978d4d622 \
+                    --hash=sha512:d8ddabe127ae8d7330d219e284de68b37fa450a27b4cf05334e9115388295b00148d9861c23b1a2e5ea9df0c33a2d27f3e4b25ce9abd3c334f1979920b19c902  # Manylinux2010
 # Duplicate sub-dependencies: cffi, pycparser, six
