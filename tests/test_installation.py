@@ -47,7 +47,7 @@ class TestDependencyHashes(unittest.TestCase):
         configuration = 'tcb'
         cwd = os.getcwd()
         self.assertEqual(0, subprocess.Popen(f"wget --no-cache {REPOSITORY}/{self.file_name}", shell=True).wait())
-        self.assertEqual(0, subprocess.Popen(f"bash {self.file_name} {configuration} travis {cwd}",  shell=True).wait())
+        self.assertEqual(0, subprocess.Popen(f"bash {self.file_name} {configuration} travis {cwd}/",  shell=True).wait())
 
     # @unittest.skipIf("TRAVIS" not in os.environ or os.environ["TRAVIS"] != "true",
     #                  "Skipping this test on local system.")
