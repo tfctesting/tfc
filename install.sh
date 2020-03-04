@@ -16,11 +16,6 @@
 # You should have received a copy of the GNU General Public License
 # along with TFC. If not, see <https://www.gnu.org/licenses/>.
 
-# Installer configuration
-
-INSTALL_DIR="/opt/tfc"
-
-
 # PIP dependency file names
 
 APPDIRS=appdirs-1.4.3-py2.py3-none-any.whl
@@ -837,6 +832,10 @@ function read_sudo_pwd {
 
 function kill_network {
     # Kill network interfaces to protect the TCB from remote compromise.
+    if [[ "$travis" = true ]]; then
+        return
+    fi
+
     for interface in /sys/class/net/*; do
         name=$(basename "${interface}")
         if [[ ${name} != "lo" ]]; then
@@ -852,7 +851,7 @@ function kill_network {
     c_echo "disabled network interfaces as the first line of defense."
     c_echo ''
     c_echo "Disconnect the Ethernet cable and press any key to continue."
-    read -n 1 -s -p ''
+
     echo -e '\n'
 }
 
@@ -863,7 +862,11 @@ function add_serial_permissions {
     c_echo ''
     c_echo "Setting serial permissions. If available, please connect the"
     c_echo "USB-to-serial/TTL adapter now and press any key to continue."
-    read -n 1 -s -p ''
+
+    if [[ "$travis" = false ]]; then
+        read -n 1 -s -p ''
+    fi
+
     echo -e '\n'
     sleep 3  # Wait for USB serial interfaces to register
 
@@ -941,9 +944,12 @@ function install_complete {
     c_echo "$*"
     c_echo ''
     c_echo "Press any key to close the installer."
-    read -n 1 -s -p ''
-    echo ''
 
+    if [[ "$travis" = false ]]; then
+        read -n 1 -s -p ''
+    fi
+
+    echo ''
     kill -9 $PPID
 }
 
@@ -955,9 +961,12 @@ function install_complete_qubes {
     c_echo "Installation of TFC on this Qube is now complete."
     c_echo ''
     c_echo "Press any key to close the installer."
-    read -n 1 -s -p ''
-    clear
 
+    if [[ "$travis" = false ]]; then
+        read -n 1 -s -p ''
+    fi
+
+    clear
     kill -9 $PPID
 }
 
@@ -1058,7 +1067,17 @@ set -e
 architecture_check
 root_check
 sudoer_check
+travis_check
 sudo_pwd=''
+
+# Check Travis testing
+travis=false
+INSTALL_DIR="/opt/tfc"
+
+if [[ $2="travis" ]]; then
+    travis=true
+    INSTALL_DIR="/${HOME}/tfc_installation_test/"
+fi
 
 case $1 in
     tcb    ) install_tcb;;
