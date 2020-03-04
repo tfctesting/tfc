@@ -1080,7 +1080,7 @@ PYTHON_INTERPRETER="python3.7"
 
 if [[ $2="travis" ]]; then
     travis=true
-    INSTALL_DIR="/${HOME}/tfc_installation_test/"
+    INSTALL_DIR="${3}/"
     TORSOCKS=''  # Don't anonymize downloads when testing in Travis
     PYTHON_INTERPRETER="python3"
     python3 -m pip install importlib-resources
