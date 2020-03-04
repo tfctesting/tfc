@@ -43,22 +43,34 @@ class TestDependencyHashes(unittest.TestCase):
     @unittest.skipIf("TRAVIS" not in os.environ and os.environ["TRAVIS"] != "true",
                      "Skipping this test on local system.")
     def test_tcb_installation(self):
-        self.assertEqual(0, subprocess.Popen(f"bash install.sh tcb travis", shell=True).wait())
+        file_name     = 'install.sh'
+        configuration = 'tcb'
+        self.assertEqual(0, subprocess.Popen(f"wget --no-cache {REPOSITORY}/{file_name}", shell=True).wait())
+        self.assertEqual(0, subprocess.Popen(f"bash {file_name} {configuration} travis",  shell=True).wait())
 
     @unittest.skipIf("TRAVIS" not in os.environ and os.environ["TRAVIS"] != "true",
                      "Skipping this test on local system.")
     def test_relay_installation(self):
-        self.assertEqual(0, subprocess.Popen(f"bash install.sh relay travis", shell=True).wait())
+        file_name     = 'install.sh'
+        configuration = 'relay'
+        self.assertEqual(0, subprocess.Popen(f"wget --no-cache {REPOSITORY}/{file_name}", shell=True).wait())
+        self.assertEqual(0, subprocess.Popen(f"bash {file_name} {configuration} travis",  shell=True).wait())
 
     @unittest.skipIf("TRAVIS" not in os.environ and os.environ["TRAVIS"] != "true",
                      "Skipping this test on local system.")
-    def test_local_installation(self):
-        self.assertEqual(0, subprocess.Popen(f"bash install.sh local travis", shell=True).wait())
+    def test_local_testing_installation(self):
+        file_name     = 'install.sh'
+        configuration = 'local'
+        self.assertEqual(0, subprocess.Popen(f"wget --no-cache {REPOSITORY}/{file_name}", shell=True).wait())
+        self.assertEqual(0, subprocess.Popen(f"bash {file_name} {configuration} travis",  shell=True).wait())
 
     @unittest.skipIf("TRAVIS" not in os.environ and os.environ["TRAVIS"] != "true",
                      "Skipping this test on local system.")
     def test_dev_installation(self):
-        self.assertEqual(0, subprocess.Popen(f"bash install.sh dev travis", shell=True).wait())
+        file_name     = 'install.sh'
+        configuration = 'dev'
+        self.assertEqual(0, subprocess.Popen(f"wget --no-cache {REPOSITORY}/{file_name}", shell=True).wait())
+        self.assertEqual(0, subprocess.Popen(f"bash {file_name} {configuration} travis",  shell=True).wait())
 
 
 if __name__ == '__main__':
