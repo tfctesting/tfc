@@ -1079,7 +1079,7 @@ if [[ $2="travis" ]]; then
     travis=true
     INSTALL_DIR="/${HOME}/tfc_installation_test/"
     TORSOCKS=''  # don't anonymize testing
-    PYTHON_INTERPRETER="python3.6"
+    PYTHON_INTERPRETER="python3"
 fi
 
 case $1 in
