@@ -1076,6 +1076,7 @@ INSTALL_DIR="/opt/tfc"
 if [[ $2="travis" ]]; then
     travis=true
     INSTALL_DIR="/${HOME}/tfc_installation_test/"
+    torsocks=torify
 fi
 
 case $1 in
