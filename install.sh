@@ -89,7 +89,7 @@ function verify_tails_dependencies {
 function install_tails_setuptools {
     # Download setuptools package for Tails, and move it to /opt/tfc so it can't be edited.
     # Once the package has been authenticated, install it and then remove the install file.
-    torsocks python3.7 -m pip download --no-cache-dir -r "${INSTALL_DIR}/requirements-setuptools.txt" --require-hashes --no-deps -d "${HOME}/"
+    ${TORSOCKS} python3.7 -m pip download --no-cache-dir -r "${INSTALL_DIR}/requirements-setuptools.txt" --require-hashes --no-deps -d "${HOME}/"
     t_sudo mv "$HOME/${SETUPTOOLS}" "${INSTALL_DIR}/"
     compare_digest de1ac45cb52e8a28322048e6a2b95015aa6826c49679349a1b579cb46b95cb2ffd62242c861c2fe3e059c0c55d4fdb4384c51b964ca2634b2843263543f8842a '' ${SETUPTOOLS}
     t_sudo python3.7 -m pip install "${INSTALL_DIR}/${SETUPTOOLS}"
@@ -336,13 +336,13 @@ function steps_before_network_kill {
     dpkg_check
     check_rm_existing_installation
 
-    sudo torsocks apt update
-    sudo torsocks apt install git gnome-terminal libssl-dev python3-pip python3-tk net-tools -y
-    sudo torsocks git clone --depth 1 https://github.com/tfctesting/tfc.git ${INSTALL_DIR}
+    sudo ${TORSOCKS} apt update
+    sudo ${TORSOCKS} apt install git gnome-terminal libssl-dev python3-pip python3-tk net-tools -y
+    sudo ${TORSOCKS} git clone --depth 1 https://github.com/tfctesting/tfc.git ${INSTALL_DIR}
 
     verify_tcb_requirements_files
-    sudo torsocks python3.7 -m pip download --no-cache-dir -r "${INSTALL_DIR}/requirements-venv.txt" --require-hashes --no-deps -d ${INSTALL_DIR}/
-    sudo torsocks python3.7 -m pip download --no-cache-dir -r "${INSTALL_DIR}/requirements.txt"      --require-hashes --no-deps -d ${INSTALL_DIR}/
+    sudo ${TORSOCKS} python3.7 -m pip download --no-cache-dir -r "${INSTALL_DIR}/requirements-venv.txt" --require-hashes --no-deps -d ${INSTALL_DIR}/
+    sudo ${TORSOCKS} python3.7 -m pip download --no-cache-dir -r "${INSTALL_DIR}/requirements.txt"      --require-hashes --no-deps -d ${INSTALL_DIR}/
 }
 
 
@@ -396,7 +396,7 @@ function install_relay {
     sudo python3.7 -m virtualenv ${INSTALL_DIR}/venv_relay --system-site-packages
 
     . ${INSTALL_DIR}/venv_relay/bin/activate
-    sudo torsocks python3.7 -m pip install -r ${INSTALL_DIR}/requirements-relay.txt --require-hashes --no-deps
+    sudo ${TORSOCKS} python3.7 -m pip install -r ${INSTALL_DIR}/requirements-relay.txt --require-hashes --no-deps
     deactivate
 
     sudo mv ${INSTALL_DIR}/tfc.png                  /usr/share/pixmaps/
@@ -428,7 +428,7 @@ function install_relay_tails {
     t_sudo apt update
     t_sudo apt install git libssl-dev python3-pip python3-tk -y || true  # Ignore error in case packets can not be persistently installed
 
-    torsocks git clone --depth 1 https://github.com/tfctesting/tfc.git "${HOME}/tfc"
+    ${TORSOCKS} git clone --depth 1 https://github.com/tfctesting/tfc.git "${HOME}/tfc"
     t_sudo mv "${HOME}/tfc/ ${INSTALL_DIR}/"
     t_sudo chown -R root ${INSTALL_DIR}/
 
@@ -441,8 +441,8 @@ function install_relay_tails {
 
     # Tails doesn't allow downloading over PIP to /opt/tfc, so we first download
     # to $HOME, move the files to /opt/tfc, and then perform the hash verification
-    torsocks python3.7 -m pip download --no-cache-dir -r "${INSTALL_DIR}/requirements-venv.txt"        --require-hashes --no-deps -d "${HOME}/"
-    torsocks python3.7 -m pip download --no-cache-dir -r "${INSTALL_DIR}/requirements-relay-tails.txt" --require-hashes --no-deps -d "${HOME}/"
+    ${TORSOCKS} python3.7 -m pip download --no-cache-dir -r "${INSTALL_DIR}/requirements-venv.txt"        --require-hashes --no-deps -d "${HOME}/"
+    ${TORSOCKS} python3.7 -m pip download --no-cache-dir -r "${INSTALL_DIR}/requirements-relay-tails.txt" --require-hashes --no-deps -d "${HOME}/"
     move_tails_dependencies
     verify_tails_dependencies
 
@@ -551,7 +551,7 @@ function install_qubes_net {
     sudo python3.7 -m virtualenv ${INSTALL_DIR}/venv_relay --system-site-packages
 
     . ${INSTALL_DIR}/venv_relay/bin/activate
-    sudo torsocks python3.7 -m pip install -r ${INSTALL_DIR}/requirements-relay.txt --require-hashes --no-deps
+    sudo ${TORSOCKS} python3.7 -m pip install -r ${INSTALL_DIR}/requirements-relay.txt --require-hashes --no-deps
     deactivate
 
     sudo mv ${INSTALL_DIR}/tfc.png                        /usr/share/pixmaps/
@@ -665,14 +665,14 @@ function install_local_test {
     verify_files
     create_user_data_dir
 
-    sudo torsocks apt install terminator -y
+    sudo ${TORSOCKS} apt install terminator -y
 
     install_virtualenv
     sudo python3.7 -m virtualenv ${INSTALL_DIR}/venv_tfc --system-site-packages
 
     . ${INSTALL_DIR}/venv_tfc/bin/activate
-    sudo torsocks python3.7 -m pip install -r ${INSTALL_DIR}/requirements.txt       --require-hashes --no-deps
-    sudo torsocks python3.7 -m pip install -r ${INSTALL_DIR}/requirements-relay.txt --require-hashes --no-deps
+    sudo ${TORSOCKS} python3.7 -m pip install -r ${INSTALL_DIR}/requirements.txt       --require-hashes --no-deps
+    sudo ${TORSOCKS} python3.7 -m pip install -r ${INSTALL_DIR}/requirements-relay.txt --require-hashes --no-deps
     deactivate
 
     sudo mv ${INSTALL_DIR}/tfc.png                                /usr/share/pixmaps/
@@ -703,17 +703,17 @@ function install_developer {
 
     create_user_data_dir
 
-    sudo torsocks apt update
-    sudo torsocks apt install git libssl-dev python3-pip python3-tk terminator -y
+    sudo ${TORSOCKS} apt update
+    sudo ${TORSOCKS} apt install git libssl-dev python3-pip python3-tk terminator -y
 
-    torsocks git clone https://github.com/tfctesting/tfc.git "${HOME}/tfc"
+    ${TORSOCKS} git clone https://github.com/tfctesting/tfc.git "${HOME}/tfc"
 
-    torsocks python3.7 -m pip install -r "${HOME}/tfc/requirements-venv.txt" --require-hashes --no-deps
+    ${TORSOCKS} python3.7 -m pip install -r "${HOME}/tfc/requirements-venv.txt" --require-hashes --no-deps
 
     python3.7 -m virtualenv "${HOME}/tfc/venv_tfc" --system-site-packages
 
     . "${HOME}/tfc/venv_tfc/bin/activate"
-    torsocks python3.7 -m pip install -r "${HOME}/tfc/requirements-dev.txt"
+    ${TORSOCKS} python3.7 -m pip install -r "${HOME}/tfc/requirements-dev.txt"
     deactivate
 
     sudo cp "${HOME}/tfc/tfc.png"                   "/usr/share/pixmaps/"
@@ -812,8 +812,8 @@ function t_sudo {
 function install_virtualenv {
     # Some distros want virtualenv installed as sudo and other don't.
     # Install as both users to improve the chances of compatibility.
-    sudo torsocks python3.7 -m pip install -r ${INSTALL_DIR}/requirements-venv.txt --require-hashes --no-deps
-    torsocks      python3.7 -m pip install -r ${INSTALL_DIR}/requirements-venv.txt --require-hashes --no-deps
+    sudo ${TORSOCKS} python3.7 -m pip install -r ${INSTALL_DIR}/requirements-venv.txt --require-hashes --no-deps
+    ${TORSOCKS}      python3.7 -m pip install -r ${INSTALL_DIR}/requirements-venv.txt --require-hashes --no-deps
 }
 
 
@@ -1072,11 +1072,12 @@ sudo_pwd=''
 # Check Travis testing
 travis=false
 INSTALL_DIR="/opt/tfc"
+TORSOCKS="torsocks"
 
 if [[ $2="travis" ]]; then
     travis=true
     INSTALL_DIR="/${HOME}/tfc_installation_test/"
-    torsocks=torify
+    TORSOCKS='torify'
 fi
 
 case $1 in
