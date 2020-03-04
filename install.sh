@@ -645,7 +645,7 @@ function qubes_net_firewall_config {
     # Store Destination VM IP address so Relay Program can configure itself
     echo ${dst_ip} > $HOME/tfc/rx_ip_addr
 
-    # Create backup of the current rc.config file (firewall rules)
+    # Create backup of the current rc.local file (firewall rules)
     sudo cp /rw/config/rc.local{,.backup."$(date +%Y-%m-%d-%H_%M_%S)"}
 
     # Add firewall rules
