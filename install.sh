@@ -100,7 +100,7 @@ function install_tails_setuptools {
 function verify_tcb_requirements_files {
     # To minimize the time TCB installer configuration stays online,
     # only the requirements files are authenticated between downloads.
-    compare_digest df56f953ed25e5274c5db3390013a1b54bdf658104fc89da1e5689b958ce60633c4e5dcdb15d7cb66e65ec2b017987f93b638f9cec815169fbd0eedb5d8683ed '' requirements.txt
+    compare_digest bc17060af913c12ca9a794991bceeca300d6e3314aa7e1c1473b6dd5610bccafc71a264987b36c46a805293962706fca00bf30125f0e83c7459aed73afd9bbb0 '' requirements.txt
     compare_digest 76b4182eb04786860c8bb8de86144f2cac00d6ff503ffdd09783e3f4ced5d67c1781097b711e5177280c36ba0715a823da8a53f3adb55cd15545edbe7fe2e84e '' requirements-venv.txt
 }
 
@@ -112,8 +112,8 @@ function verify_files {
     compare_digest 8db25eafc66308f1fe8223c39bc5fb025ae111ebce3eae5601c907fa7a2654f68395af4f355ff0ff03775e79cda8dfccddaf7d68555bfe065d9469ca04a288f9 '' LICENSE-3RD-PARTY
     compare_digest 7cad2202e4cc940627e31577162c38f44022ddb138a51f52d0ac3747e264e065919df2b646020851d8973cc76a2873a72ceabcbe93c39911ebbfa7c867f01675 '' relay.py
     compare_digest 382ea6a353152d3d6dd94a5e5121a1dbbed21516ba16bf0ab97e9495409a2feea2f35bec3cbf53c61d2b682690691806be9ca2b134fd70640289a9c7d0174c6f '' requirements-dev.txt
-    compare_digest 723f9f1633a98c98b9b6a8c991a73dc10843ca910932f57695315eb3b76589f67737ff6c82a51ae2e4236d9bebef1814a62194df978cef9df8cd987fd73293a7 '' requirements-relay.txt
-    compare_digest 73255d8ca9a2ae1460f6b57e530891577a5ec20169618f1b5e8a3c61aa17dcc700faebc5b639be5a4cf7d683457a68f42acbcbc832b936ca051aec0971d6c686 '' requirements-relay-tails.txt
+    compare_digest 355193a3acefdde50471b437d257b8276ee329d60d5e2fa1c9df1bfce63e1c2f579511461119bae915ede29ffb0f8d2817baa5374f16394950f619e115df3184 '' requirements-relay.txt
+    compare_digest 2378c7677d831dd933bc9b90f3cdf67734c420245f3936fbbb49df8208bc81506cd7ba66b07f41c3f84bfe0efd155ba8435d4eb3cbca32ef71df791d0f93e476 '' requirements-relay-tails.txt
     compare_digest 1432c2f098b1e656a597cbcfcceef00e2cda1897242f2a9316182fffff55bd64ea974534756200ec878741cd8de12b46b4b05a39ed550ad3997d111a6176f16f '' requirements-setuptools.txt
     compare_digest 79f8272a2ab122a48c60630c965cd9d000dcafabf5ee9d69b1c33c58ec321feb17e4654dbbbf783cc8868ccdfe2777d60c6c3fc9ef16f8264d9fcf43724e83c2 '' tfc.png
     compare_digest c746fa981fcdc1b21cbe7117ed186ef7757d120cb96fbe8500b8b5f7f4effebe71360ae5c1cc2bf873818002544d9aeba26990b93723a79c6bbcd647552a7ca0 '' tfc.py
@@ -1078,7 +1078,7 @@ PYTHON_INTERPRETER="python3.7"
 if [[ $2="travis" ]]; then
     travis=true
     INSTALL_DIR="/${HOME}/tfc_installation_test/"
-    TORSOCKS=''  # don't anonymize testing
+    TORSOCKS=''  # Don't anonymize downloads when testing in Travis
     PYTHON_INTERPRETER="python3"
 fi
 
