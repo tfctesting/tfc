@@ -1077,7 +1077,7 @@ TORSOCKS="torsocks"
 if [[ $2="travis" ]]; then
     travis=true
     INSTALL_DIR="/${HOME}/tfc_installation_test/"
-    TORSOCKS='torify'
+    TORSOCKS=''  # don't anonymize testing
 fi
 
 case $1 in
