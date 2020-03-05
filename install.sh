@@ -24,7 +24,7 @@ INSTALL_DIR="/opt/tfc"
 # PIP dependency file names
 
 APPDIRS=appdirs-1.4.3-py2.py3-none-any.whl
-ARGON2=argon2_cffi-19.2.0-cp34-abi3-manylinux1_x86_64.whl
+ARGON2_CFFI=argon2_cffi-19.2.0-cp34-abi3-manylinux1_x86_64.whl
 CERTIFI=certifi-2019.11.28-py2.py3-none-any.whl
 CFFI=cffi-1.14.0-cp37-cp37m-manylinux1_x86_64.whl
 CHARDET=chardet-3.0.4-py2.py3-none-any.whl
@@ -227,7 +227,7 @@ function process_tcb_dependencies {
     # Manage TCB dependencies in batch.
     sudo $1 "${INSTALL_DIR}/${PYCPARSER}"
     sudo $1 "${INSTALL_DIR}/${CFFI}"
-    sudo $1 "${INSTALL_DIR}/${ARGON2}"
+    sudo $1 "${INSTALL_DIR}/${ARGON2_CFFI}"
     sudo $1 "${INSTALL_DIR}/${SETUPTOOLS}"
     sudo $1 "${INSTALL_DIR}/${PYNACL}"
     sudo $1 "${INSTALL_DIR}/${PYSERIAL}"
