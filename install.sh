@@ -333,7 +333,7 @@ function remove_common_files {
 function steps_before_network_kill {
     # These steps are identical in TCB/Relay/Local test configurations.
     # This makes it harder to distinguish from network traffic when the
-    # user is installing TFC for Source or Destination computer: By the
+    # user is installing TFC for Source or Destination Computer: By the
     # time `kill_network` is run, it's too late to compromise the TCB.
     # Hopefully this forces adversaries to attempt compromise of more
     # endpoints during installation, which increases their chances of
@@ -949,7 +949,7 @@ function install_complete {
 
 
 function install_complete_qubes {
-    # Notify the user that the installation is complete.
+    # Notify the user that the installation for Qubes VM is complete.
     clear
     c_echo ''
     c_echo "Installation of TFC on this Qube is now complete."
