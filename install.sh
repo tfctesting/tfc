@@ -46,7 +46,7 @@ REQUESTS=requests-2.23.0-py2.py3-none-any.whl
 SETUPTOOLS=setuptools-45.2.0-py3-none-any.whl
 SIX=six-1.14.0-py2.py3-none-any.whl
 URLLIB3=urllib3-1.25.8-py2.py3-none-any.whl
-VIRTUALENV=virtualenv-20.0.7-py2.py3-none-any.whl
+VIRTUALENV=virtualenv-20.0.8-py2.py3-none-any.whl
 WERKZEUG=Werkzeug-1.0.0-py2.py3-none-any.whl
 ZIPP=zipp-3.1.0-py3-none-any.whl
 
@@ -58,7 +58,7 @@ function verify_tails_dependencies {
     compare_digest 313b954102231d038d52ab58f41e3642579be29f827135b8dd92c06acb362effcb0a7fd5f35de9273372b92d9fe29f38381ae44f8b41aa90d2564d6dd07ecd12 '' ${PYSOCKS}
 
     # Virtualenv
-    compare_digest 523a3b4820794f37784f3681bc8bd22502f2141fb70441bd017ff22bd8fa8d3ace47adc948b650c1ac7eaf3e9dbb511fb20f281259fe8e48e3a03dd043dbed24 '' ${VIRTUALENV}
+    compare_digest 8b85fa635c5ec51881aed2238f1e9229d6607644995e26e3f9fe6f8bb6313c51f7b290a6ac1347738866626b1b49d08c5622836dfe2a39ae60f697888bcea615 '' ${VIRTUALENV}
     compare_digest b79e9fa76eadee595fe47ea7efd35c4cc72f058a9ed16a95cfa4d91a52c330efba50df7a9926900bbced229cca7bbfb05bbf0a8ee1d46bac2362c98ab9a5154d '' ${APPDIRS}
     compare_digest 6f910a9607569c9023a19aee35be15cf8521ec7c07c5d478e6d555a301d024a2ee1db48562707b238a72c631d75d9dc154d38b39ed51746b66c938ac40671e60 '' ${DISTLIB}
     compare_digest a6e7e35921ce8f2f8e79a296ea79a9c3515ff6dd7e777d7892fe4988594f1b3a442a68ffb89cf64530b90a32ceeea00e4ab9069bb697629ab4eb7262c68d1b0f '' ${SIX}
@@ -106,7 +106,7 @@ function verify_tcb_requirements_files {
     # To minimize the time TCB installer configuration stays online,
     # only the requirements files are authenticated between downloads.
     compare_digest 0831d4b14839f232b22d2d2d95d2124fdf5e44dbc56a211ca874e199d117c84dd2521529641b9560c6f52363f5a7e4af3a65e318f8a46ae868078eca014141a9 '' requirements.txt
-    compare_digest 76b4182eb04786860c8bb8de86144f2cac00d6ff503ffdd09783e3f4ced5d67c1781097b711e5177280c36ba0715a823da8a53f3adb55cd15545edbe7fe2e84e '' requirements-venv.txt
+    compare_digest 0e3795239a17a032372f6d81f6c821f9eceff80a80c0314b21e277840a01c0115fca1ae60a53d0110768add5a17088cc9bc23a7a130f84ebc93d54229be7cfd3 '' requirements-venv.txt
 }
 
 
