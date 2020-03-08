@@ -43,10 +43,10 @@ PYNACL=PyNaCl-1.3.0-cp34-abi3-manylinux1_x86_64.whl
 PYSERIAL=pyserial-3.4-py2.py3-none-any.whl
 PYSOCKS=PySocks-1.7.1-py3-none-any.whl
 REQUESTS=requests-2.23.0-py2.py3-none-any.whl
-SETUPTOOLS=setuptools-45.2.0-py3-none-any.whl
+SETUPTOOLS=setuptools-45.3.0-py3-none-any.whl
 SIX=six-1.14.0-py2.py3-none-any.whl
 URLLIB3=urllib3-1.25.8-py2.py3-none-any.whl
-VIRTUALENV=virtualenv-20.0.8-py2.py3-none-any.whl
+VIRTUALENV=virtualenv-20.0.9-py2.py3-none-any.whl
 WERKZEUG=Werkzeug-1.0.0-py2.py3-none-any.whl
 ZIPP=zipp-3.1.0-py3-none-any.whl
 
@@ -58,7 +58,7 @@ function verify_tails_dependencies {
     compare_digest 313b954102231d038d52ab58f41e3642579be29f827135b8dd92c06acb362effcb0a7fd5f35de9273372b92d9fe29f38381ae44f8b41aa90d2564d6dd07ecd12 '' ${PYSOCKS}
 
     # Virtualenv
-    compare_digest 8b85fa635c5ec51881aed2238f1e9229d6607644995e26e3f9fe6f8bb6313c51f7b290a6ac1347738866626b1b49d08c5622836dfe2a39ae60f697888bcea615 '' ${VIRTUALENV}
+    compare_digest f67cba1400bfd49361c989abeaf8b9cf00fa5689e5087ef57559aa1111f479ed1a13106ab0846bd0cfb804a5c102516e7434c878f3b0f668f735e1fb08d2bed1 '' ${VIRTUALENV}
     compare_digest b79e9fa76eadee595fe47ea7efd35c4cc72f058a9ed16a95cfa4d91a52c330efba50df7a9926900bbced229cca7bbfb05bbf0a8ee1d46bac2362c98ab9a5154d '' ${APPDIRS}
     compare_digest 6f910a9607569c9023a19aee35be15cf8521ec7c07c5d478e6d555a301d024a2ee1db48562707b238a72c631d75d9dc154d38b39ed51746b66c938ac40671e60 '' ${DISTLIB}
     compare_digest a6e7e35921ce8f2f8e79a296ea79a9c3515ff6dd7e777d7892fe4988594f1b3a442a68ffb89cf64530b90a32ceeea00e4ab9069bb697629ab4eb7262c68d1b0f '' ${SIX}
@@ -96,7 +96,7 @@ function install_tails_setuptools {
     # Once the package has been authenticated, install it and then remove the install file.
     torsocks python3.7 -m pip download --no-cache-dir -r "${INSTALL_DIR}/requirements-setuptools.txt" --require-hashes --no-deps -d "${HOME}/"
     t_sudo mv "$HOME/${SETUPTOOLS}" "${INSTALL_DIR}/"
-    compare_digest de1ac45cb52e8a28322048e6a2b95015aa6826c49679349a1b579cb46b95cb2ffd62242c861c2fe3e059c0c55d4fdb4384c51b964ca2634b2843263543f8842a '' ${SETUPTOOLS}
+    compare_digest 8d3ac5ac9582e66b180326839296d5f463ad865890293724ae3d715ca90c7cdb75268b30b6e8449e35e8d755745b3980392bb98a4576fe870ca89b9935281af0 '' ${SETUPTOOLS}
     t_sudo python3.7 -m pip install "${INSTALL_DIR}/${SETUPTOOLS}"
     t_sudo -E rm "${INSTALL_DIR}/${SETUPTOOLS}"
 }
@@ -105,8 +105,8 @@ function install_tails_setuptools {
 function verify_tcb_requirements_files {
     # To minimize the time TCB installer configuration stays online,
     # only the requirements files are authenticated between downloads.
-    compare_digest 1a17cd2aa1c3556c5c0b0fc8bc8d073f593c059a966da337990135022cc55543a8f78b950645425d652da165f5e1c06f2d8402976e0876608bb70c034e16b270 '' requirements.txt
-    compare_digest 0e3795239a17a032372f6d81f6c821f9eceff80a80c0314b21e277840a01c0115fca1ae60a53d0110768add5a17088cc9bc23a7a130f84ebc93d54229be7cfd3 '' requirements-venv.txt
+    compare_digest 5a2b491fdf8b6bc6b316c5250807d67bbf2e7049a2164db71aaa75fc114c6cc934db56fe8f4425f33a614ac702fe72b4f233383963299a6a0b04baa0efeabedf '' requirements.txt
+    compare_digest 1b971573955ce2bfcbc0db54272d3da674929656d51747eb2169833a8b391bd8be0e95d66ac0b284f160cd5b87238c2bb2f5d46ec685d675a5dbfd67460ed071 '' requirements-venv.txt
 }
 
 
@@ -116,10 +116,10 @@ function verify_files {
     compare_digest d361e5e8201481c6346ee6a886592c51265112be550d5224f1a7a6e116255c2f1ab8788df579d9b8372ed7bfd19bac4b6e70e00b472642966ab5b319b99a2686 '' LICENSE
     compare_digest 8db25eafc66308f1fe8223c39bc5fb025ae111ebce3eae5601c907fa7a2654f68395af4f355ff0ff03775e79cda8dfccddaf7d68555bfe065d9469ca04a288f9 '' LICENSE-3RD-PARTY
     compare_digest 7cad2202e4cc940627e31577162c38f44022ddb138a51f52d0ac3747e264e065919df2b646020851d8973cc76a2873a72ceabcbe93c39911ebbfa7c867f01675 '' relay.py
-    compare_digest a93162f4b4317c265a5ce46ae2d55370b2d0592d8fa6dccddb9f06cda8a129d8279526aa83aab05600ec17bbefaf5584bb4dd4b771256e84db38192ffc391276 '' requirements-dev.txt
-    compare_digest 1c8505fca5c1191a6aecc28511e5f36c36a137a3fe99cef63500055dc3d85cbf64cdc1cc5d6380a407f22f367e1702a344f66515f3e3bf1f7fa83de0c74be8b0 '' requirements-relay.txt
+    compare_digest 024c42fc4bef12f5b8d16db69f5c0e6e2b482ac41cef767e0768d835cfa8814513d874cf2f9056352d6c6005a40c07786700b89836f9dab2703d9dd7033ccc60 '' requirements-dev.txt
+    compare_digest 6ea6d4eb56f62f9085c3d719992a415d00674cff52815d35686740977d76b6e0351fb43f7ab70048b6d695ba97550b9643a48b280ff1e78126980eb20d95eaf8 '' requirements-relay.txt
     compare_digest 01d022de0db3354da312c8bbefe82f0b032717ea8246186b7cffcd040b25390bd37eea9d9d9a42c199ce8b652bcff750ba37773230a471b43ebd60b468a7a29c '' requirements-relay-tails.txt
-    compare_digest 1432c2f098b1e656a597cbcfcceef00e2cda1897242f2a9316182fffff55bd64ea974534756200ec878741cd8de12b46b4b05a39ed550ad3997d111a6176f16f '' requirements-setuptools.txt
+    compare_digest cbd47aeebd549d1f65565915981988b616d1308f0a0234d9f64b324b0236e6cc45b3a8670cd2091cbac12cc032045180a548da1614a8447d5bdc11552c3731d6 '' requirements-setuptools.txt
     compare_digest 79f8272a2ab122a48c60630c965cd9d000dcafabf5ee9d69b1c33c58ec321feb17e4654dbbbf783cc8868ccdfe2777d60c6c3fc9ef16f8264d9fcf43724e83c2 '' tfc.png
     compare_digest c746fa981fcdc1b21cbe7117ed186ef7757d120cb96fbe8500b8b5f7f4effebe71360ae5c1cc2bf873818002544d9aeba26990b93723a79c6bbcd647552a7ca0 '' tfc.py
     compare_digest 62f26d2805570ee70fad3a076579a554008e7d9f2c9ff310f3bb5876d361cc03dbae7ab63b144ac215a35f920ac56d359481352805a356479d622ab00da15f7f '' tfc.yml

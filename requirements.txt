@@ -11,7 +11,7 @@ six==1.14.0         --hash=sha512:a6e7e35921ce8f2f8e79a296ea79a9c3515ff6dd7e777d
 
 # PyNaCl (Handles TCB-side XChaCha20-Poly1305 symmetric encryption)
 PyNaCl==1.3.0       --hash=sha512:c4017c38b026a5c531b15839b8d61d1fae9907ba1960c2f97f4cd67fe0827729346d5186a6d6927ba84f64b4cbfdece12b287aa7750a039f4160831be871cea3
-setuptools==45.2.0  --hash=sha512:de1ac45cb52e8a28322048e6a2b95015aa6826c49679349a1b579cb46b95cb2ffd62242c861c2fe3e059c0c55d4fdb4384c51b964ca2634b2843263543f8842a
+setuptools==45.3.0  --hash=sha512:8d3ac5ac9582e66b180326839296d5f463ad865890293724ae3d715ca90c7cdb75268b30b6e8449e35e8d755745b3980392bb98a4576fe870ca89b9935281af0
 # Duplicate sub-dependencies: cffi, pycparser, six
 
 # Cryptography (Handles TCB-side X448 key exchange)
