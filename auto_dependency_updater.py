@@ -305,9 +305,9 @@ def update_dependency_in_requirements_dev_file() -> None:
 
 
 def update_dependency(package_name: str) -> None:
-    file_start_str    = package_file_name_start_dict[package_name][0]
+    file_start_str = package_file_name_start_dict[package_name][0]
     try:
-        new_file_name     = [filename for filename in os.listdir('.') if filename.startswith(file_start_str)][0]
+        new_file_name = [filename for filename in os.listdir('.') if filename.startswith(file_start_str)][0]
     except IndexError:
         print(f"Error: Could not find file name for package '{package_name}'.")
         exit(1)
