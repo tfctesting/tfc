@@ -309,8 +309,8 @@ def update_dependency(package_name: str) -> None:
     try:
         new_file_name = [filename for filename in os.listdir('.') if filename.startswith(file_start_str)][0]
     except IndexError:
-        print(f"Error: Could not find file name for package '{package_name}'.")
-        exit(1)
+        raise FileNotFoundError(f"Error: Could not find file name for package '{package_name}'.")
+
     new_sha512_digest = get_file_sha512_digest(new_file_name)
 
     change_dependency_file_name_in_installer(package_name, new_file_name)
