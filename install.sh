@@ -34,7 +34,7 @@ DISTLIB=distlib-0.3.0.zip
 FILELOCK=filelock-3.0.12-py3-none-any.whl
 FLASK=Flask-1.1.2-py2.py3-none-any.whl
 IDNA=idna-2.9-py2.py3-none-any.whl
-IMPORTLIB_METADATA=importlib_metadata-1.5.0-py2.py3-none-any.whl
+IMPORTLIB_METADATA=importlib_metadata-1.6.0-py2.py3-none-any.whl
 ITSDANGEROUS=itsdangerous-1.1.0-py2.py3-none-any.whl
 JINJA2=Jinja2-2.11.1-py2.py3-none-any.whl
 MARKUPSAFE=MarkupSafe-1.1.1-cp37-cp37m-manylinux1_x86_64.whl
@@ -62,7 +62,7 @@ function verify_tails_dependencies {
     compare_digest b79e9fa76eadee595fe47ea7efd35c4cc72f058a9ed16a95cfa4d91a52c330efba50df7a9926900bbced229cca7bbfb05bbf0a8ee1d46bac2362c98ab9a5154d '' ${APPDIRS}
     compare_digest 6f910a9607569c9023a19aee35be15cf8521ec7c07c5d478e6d555a301d024a2ee1db48562707b238a72c631d75d9dc154d38b39ed51746b66c938ac40671e60 '' ${DISTLIB}
     compare_digest a6e7e35921ce8f2f8e79a296ea79a9c3515ff6dd7e777d7892fe4988594f1b3a442a68ffb89cf64530b90a32ceeea00e4ab9069bb697629ab4eb7262c68d1b0f '' ${SIX}
-    compare_digest 53e51d4b75c1df19fcb6b32e57fa73ffcb00eede86fee7ac9634f02661360538a74d3546b65a641b68ee84c0d78293fe03d09b65cb85359780822b56f813b926 '' ${IMPORTLIB_METADATA}
+    compare_digest 8bf2b8ccbc501526c30115bf417d67440701c3793cec0caa0f778b5216788cc8c58e692bcb818aa34cc4dd6208595345669d710e8ddc5af521532a1b9c7f2837 '' ${IMPORTLIB_METADATA}
     compare_digest d13edd50779bca9842694e0da157ca1fdad9d28166771275049f41dea4b8d8466fc5604b610b6ad64552cdf4c1d3cada9977ca37c6b775c4cc92f333709e8ea3 '' ${FILELOCK}
     compare_digest 89170b91cfdc0ef4d85b5316b484c8d6e01985f19bb9f545b11d648e122392efa68d40c66e056b8998fb69af49f4e18707f783be8d500b8957ce3a885662d27c '' ${ZIPP}
 

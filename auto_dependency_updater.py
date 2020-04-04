@@ -31,6 +31,11 @@ update_dir        = 'update_dir'
 repo_path         = '/home/user/tfc'  # (no slash at end!)
 print_up_to_dates = False             # When True, prints notifications on up-to-date deps
 persistent        = True              # When True, only downloads deps once and reuses them (for faster debugging)
+debug             = True              # Enable debug messages
+
+def dprint(msg: str):
+    if debug:
+        print(msg)
 
 # Dependency tree in reverse order
 package_file_name_start_dict = {
@@ -82,8 +87,8 @@ package_file_name_start_dict = {
     # pytest
         'wcwidth': ('wcwidth-', 'NOT_IN_USE'),
         'py': ('py-', 'NOT_IN_USE'),
-                'zipp': ('zipp-', 'NOT_IN_USE'),
-            'importlib-metadata': ('importlib_metadata-', 'NOT_IN_USE'),
+                # 'zipp': ('zipp-', 'NOT_IN_USE'),
+            # 'importlib-metadata': ('importlib_metadata-', 'NOT_IN_USE'),
         'pluggy': ('pluggy-', 'NOT_IN_USE'),
             # 'six': ('six-', 'NOT_IN_USE'),
             'pyparsing': ('pyparsing-', 'NOT_IN_USE'),
@@ -120,8 +125,8 @@ package_file_name_start_dict = {
 
     # Virtualenv
     # 'six': ('six-', 'SIX'),
-    #     'zipp': ('zipp-', 'ZIPP'),
-    # 'importlib-metadata': ('importlib_metadata-', 'IMPORTLIB_METADATA'),
+        'zipp': ('zipp-', 'ZIPP'),
+    'importlib-metadata': ('importlib_metadata-', 'IMPORTLIB_METADATA'),
     'filelock': ('filelock-', 'FILELOCK'),
     'distlib': ('distlib-', 'DISTLIB'),
     'appdirs': ('appdirs-', 'APPDIRS'),
@@ -157,6 +162,7 @@ def change_dependency_file_name_in_installer(package_name: str, new_file_name: s
 
     # Change file name in memory
     static = package_file_name_start_dict[package_name][1]
+    dprint(f"Installer dependency static is '{static}'")
 
     for index, line in enumerate(data):
         if line.startswith(static + '='):
@@ -167,7 +173,7 @@ def change_dependency_file_name_in_installer(package_name: str, new_file_name: s
                 print(f"install.sh:                   Updated {package_name}'s file name to '{new_file_name}'")
                 break
     else:
-        if print_up_to_dates:
+        if print_up_to_dates or debug:
             print(f"install.sh:                   Up-to-date f name for {package_name}")
 
     # Write new file name from memory to install.sh
@@ -310,12 +316,16 @@ def update_dependency_in_requirements_dev_file() -> None:
 
 def update_dependency(package_name: str) -> None:
     file_start_str = package_file_name_start_dict[package_name][0]
+    dprint(f"Using file start string '{file_start_str}'")
+
     try:
         new_file_name = [filename for filename in os.listdir('.') if filename.startswith(file_start_str)][0]
+        dprint(f"Using new file name '{new_file_name}'")
     except IndexError:
         raise FileNotFoundError(f"Error: Could not find file name for package '{package_name}'.")
 
     new_sha512_digest = get_file_sha512_digest(new_file_name)
+    dprint(f"New SHA512 digest is '{new_sha512_digest}'")
 
     change_dependency_file_name_in_installer(package_name, new_file_name)
     update_dependency_digest_in_installer(package_name, new_sha512_digest)
@@ -327,14 +337,19 @@ def main():
     download_deps = move_to_temp_update_dir()
 
     if download_deps:
+        dprint("Downloading dependencies")
         for dep in package_file_name_start_dict.keys():
+            dprint(f"Downloading {dep.lower()}")
             subprocess.Popen(f"python3.7 -m pip download {dep.lower()}", shell=True).wait()
 
     for dep in package_file_name_start_dict.keys():
+        dprint(f"\n\n---\nUpdating '{dep}'")
         update_dependency(dep)
 
+    dprint("\n\n---\nUpdating digestless dependencies in requirements-dev.txt")
     update_dependency_in_requirements_dev_file()
 
+    dprint(f"Changing dir to {repo_path}/")
     os.chdir(repo_path+'/')
 
     if not persistent:
@@ -345,4 +360,6 @@ def main():
 
 
 if __name__ == '__main__':
+    dprint("Program start")
     main()
+    dprint("Program completed")
