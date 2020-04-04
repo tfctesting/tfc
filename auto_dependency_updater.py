@@ -27,9 +27,10 @@ import subprocess
 from typing import Dict, Tuple
 
 
-update_dir = 'update_dir'
-repo_path  = '/home/user/tfc'  # (no slash at end!)
-print_up_to_dates = False
+update_dir        = 'update_dir'
+repo_path         = '/home/user/tfc'  # (no slash at end!)
+print_up_to_dates = False             # When True, prints notifications on up-to-date deps
+persistent        = True              # When True, only downloads deps once and reuses them (for faster debugging)
 
 # Dependency tree in reverse order
 package_file_name_start_dict = {
@@ -128,14 +129,17 @@ package_file_name_start_dict = {
 }  # type: Dict[str, Tuple[str, str]]
 
 
-def move_to_temp_update_dir():
+def move_to_temp_update_dir() -> bool:
     """Move to clean temporary directory for the update."""
     try:
         os.mkdir(update_dir)
     except FileExistsError:
-        shutil.rmtree(update_dir)
-        os.mkdir(update_dir)
+        if not persistent:
+            shutil.rmtree(update_dir)
+            os.mkdir(update_dir)
+            return True
     os.chdir(update_dir)
+    return False
 
 
 def get_file_sha512_digest(file_name: str) -> str:
@@ -320,9 +324,11 @@ def update_dependency(package_name: str) -> None:
 
 def main():
     os.chdir(repo_path+'/')
-    move_to_temp_update_dir()
-    for dep in package_file_name_start_dict.keys():
-        subprocess.Popen(f"python3.7 -m pip download {dep.lower()}", shell=True).wait()
+    download_deps = move_to_temp_update_dir()
+
+    if download_deps:
+        for dep in package_file_name_start_dict.keys():
+            subprocess.Popen(f"python3.7 -m pip download {dep.lower()}", shell=True).wait()
 
     for dep in package_file_name_start_dict.keys():
         update_dependency(dep)
@@ -330,7 +336,9 @@ def main():
     update_dependency_in_requirements_dev_file()
 
     os.chdir(repo_path+'/')
-    shutil.rmtree(update_dir)
+
+    if not persistent:
+        shutil.rmtree(update_dir)
 
     print("\nUpdates completed. Remember to check for cryptography updates "
           "manually due to inconsistent manylinux wheel problem!\n")
