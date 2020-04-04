@@ -32,7 +32,7 @@ CLICK=click-7.1.1-py2.py3-none-any.whl
 CRYPTOGRAPHY=cryptography-2.8-cp34-abi3-manylinux1_x86_64.whl
 DISTLIB=distlib-0.3.0.zip
 FILELOCK=filelock-3.0.12-py3-none-any.whl
-FLASK=Flask-1.1.1-py2.py3-none-any.whl
+FLASK=Flask-1.1.2-py2.py3-none-any.whl
 IDNA=idna-2.9-py2.py3-none-any.whl
 IMPORTLIB_METADATA=importlib_metadata-1.5.0-py2.py3-none-any.whl
 ITSDANGEROUS=itsdangerous-1.1.0-py2.py3-none-any.whl
@@ -43,11 +43,11 @@ PYNACL=PyNaCl-1.3.0-cp34-abi3-manylinux1_x86_64.whl
 PYSERIAL=pyserial-3.4-py2.py3-none-any.whl
 PYSOCKS=PySocks-1.7.1-py3-none-any.whl
 REQUESTS=requests-2.23.0-py2.py3-none-any.whl
-SETUPTOOLS=setuptools-46.0.0-py3-none-any.whl
+SETUPTOOLS=setuptools-46.1.3-py3-none-any.whl
 SIX=six-1.14.0-py2.py3-none-any.whl
 URLLIB3=urllib3-1.25.8-py2.py3-none-any.whl
-VIRTUALENV=virtualenv-20.0.10-py2.py3-none-any.whl
-WERKZEUG=Werkzeug-1.0.0-py2.py3-none-any.whl
+VIRTUALENV=virtualenv-20.0.16-py2.py3-none-any.whl
+WERKZEUG=Werkzeug-1.0.1-py2.py3-none-any.whl
 ZIPP=zipp-3.1.0-py3-none-any.whl
 
 
@@ -58,7 +58,7 @@ function verify_tails_dependencies {
     compare_digest 313b954102231d038d52ab58f41e3642579be29f827135b8dd92c06acb362effcb0a7fd5f35de9273372b92d9fe29f38381ae44f8b41aa90d2564d6dd07ecd12 '' ${PYSOCKS}
 
     # Virtualenv
-    compare_digest 38d2cfb0f51d64f2ed683f694b3cd7b98b6dc142297deeb4316c5eeb2d8cffca00b3ea177c99bb05ed31a7a2223d88a70cb242bd5d924f15bb432970637e4022 '' ${VIRTUALENV}
+    compare_digest c5ce8c9f788ac74bfa53092dd7bc5479b9235ce8c14a326b89cccef82dc99f19cb82836437078d1738ab5a852d0c641839ed541d9e0cc6d467d5fe0cd52e04a7 '' ${VIRTUALENV}
     compare_digest b79e9fa76eadee595fe47ea7efd35c4cc72f058a9ed16a95cfa4d91a52c330efba50df7a9926900bbced229cca7bbfb05bbf0a8ee1d46bac2362c98ab9a5154d '' ${APPDIRS}
     compare_digest 6f910a9607569c9023a19aee35be15cf8521ec7c07c5d478e6d555a301d024a2ee1db48562707b238a72c631d75d9dc154d38b39ed51746b66c938ac40671e60 '' ${DISTLIB}
     compare_digest a6e7e35921ce8f2f8e79a296ea79a9c3515ff6dd7e777d7892fe4988594f1b3a442a68ffb89cf64530b90a32ceeea00e4ab9069bb697629ab4eb7262c68d1b0f '' ${SIX}
@@ -74,12 +74,12 @@ function verify_tails_dependencies {
     compare_digest 98e4c9435434b8f63fc37a21133adbbfeb471bfb8b40d60f04bded5cbe328c14a22527d54ab2a55a81d93110d627bacc26943e55ec338b7bed8708b55e15fff3 '' ${REQUESTS}
 
     # Flask
-    compare_digest 82a0f1776820d07e929daa60bfa0a3e746464b0f2923376330f8ae5abf535bcb756c7384757b2ff8e0076f299fe85d96ef34b3a8eede21c11df9aba8cc58cb77 '' ${WERKZEUG}
+    compare_digest 8f05b3632d00b1a9c3d85f46dccc7eb55c032bc8cc7b688219865487c96127ecccdd44f9724159299d14db98c1951b552b478811d292d93aa2d12817c88c8527 '' ${WERKZEUG}
     compare_digest 69e9b9c9ac4fdf3cfa1a3de23d14964b843989128f8cc6ea58617fc5d6ef937bcc3eae9cb32b5164b5f54b06f96bdff9bc249529f20671cc26adc9e6ce8f6bec '' ${MARKUPSAFE}
     compare_digest 461bbd517560f1c4dbf7309bdf0cf33b468938fddfa2c3385fab07343269732d8ce68d8827148645113267d48e7d67b03f1663cc64839dd1fcec723ea606aaf4 '' ${JINJA2}
     compare_digest 891c294867f705eb9c66274bd04ac5d93140d6e9beea6cbf9a44e7f9c13c0e2efa3554bdf56620712759a5cd579e112a782d25f3f91ba9419d60b2b4d2bc5b7c '' ${ITSDANGEROUS}
     compare_digest 0b0997b10fc6bcb46cd00bc5a2f65a74aae153fa41978413464f2e6ccf1948272181573178ebcf22ded3f94c9a9c37f58339454699b9f72e171b09afe7a1afcf '' ${CLICK}
-    compare_digest bd49cb364307569480196289fa61fbb5493e46199620333f67617367278e1f56b20fc0d40fd540bef15642a8065e488c24e97f50535e8ec143875095157d8069 '' ${FLASK}
+    compare_digest 3bcd417e5b93590944ebdba05ff4ae37aab31aadcda2e4514d8be275d52877191ffbc58d89ea603900afe39264c899fc1e4fd77cd5e24880c03601551d8f1aac '' ${FLASK}
 
     # Cryptography
     compare_digest 06dc9cefdcde6b97c96d0452a77db42a629c48ee545edd7ab241763e50e3b3c56d21f9fcce4e206817aa1a597763d948a10ccc73572490d739c89eea7fede0a1 '' ${PYCPARSER}
@@ -96,7 +96,7 @@ function install_tails_setuptools {
     # Once the package has been authenticated, install it and then remove the install file.
     torsocks python3.7 -m pip download --no-cache-dir -r "${INSTALL_DIR}/requirements-setuptools.txt" --require-hashes --no-deps -d "${HOME}/"
     t_sudo mv "$HOME/${SETUPTOOLS}" "${INSTALL_DIR}/"
-    compare_digest edc9c2f36e94bc4a6f8e256459dab0552d09338659e5e506f48ed5820af3ecf209579e4e62146159883fcab0bb4d482bf4538153d05e9bb1aa1c2c3bc322ebff '' ${SETUPTOOLS}
+    compare_digest 24641b46913f15eebdd600405990b6a1a8a40ae3733d05d21e153fad8509284d78b2f297392224d3e52248f23a5b92f154e2458121b94038a4bb603717b77208 '' ${SETUPTOOLS}
     t_sudo python3.7 -m pip install "${INSTALL_DIR}/${SETUPTOOLS}"
     t_sudo -E rm "${INSTALL_DIR}/${SETUPTOOLS}"
 }
