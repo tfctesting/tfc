@@ -28,7 +28,7 @@ from typing import Dict, Tuple
 
 
 update_dir = 'update_dir'
-repo_path  = '/home/maqp/tfc'  # (no slash at end!)
+repo_path  = '/home/user/tfc'  # (no slash at end!)
 print_up_to_dates = False
 
 # Dependency tree in reverse order
