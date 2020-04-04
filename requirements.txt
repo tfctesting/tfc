@@ -15,6 +15,6 @@ setuptools==46.1.3  --hash=sha512:24641b46913f15eebdd600405990b6a1a8a40ae3733d05
 # Duplicate sub-dependencies: cffi, pycparser, six
 
 # Cryptography (Handles TCB-side X448 key exchange)
-cryptography==2.8   --hash=sha512:184003c89fee74892de25c3e5ec366faea7a5f1fcca3c82b0d5e5f9f797286671a820ca54da5266d6f879ab342c97e25bce9db366c5fb1178690cd5978d4d622 \
-                    --hash=sha512:d8ddabe127ae8d7330d219e284de68b37fa450a27b4cf05334e9115388295b00148d9861c23b1a2e5ea9df0c33a2d27f3e4b25ce9abd3c334f1979920b19c902
+cryptography==2.9   --hash=sha512:9a01aa8a087a0bb480fa870ab10ca8479a974c7e536440e8637d490a2e424c93c7cf5acbb0fc2b5166cbb8666baf35798d855405a8761021e89a1dc5ea0e94fe \
+                    --hash=sha512:8884015d17afb7a4117f2327df2c99ecab74d5ea86b8a480a61d91ccc7712e7ca35ae22040da81777fb133aa8981e1824c22e50adc35adcbc43545f137484ff8
 # Duplicate sub-dependencies: cffi, pycparser, six
