@@ -27,6 +27,7 @@ APPDIRS=appdirs-1.4.3-py2.py3-none-any.whl
 ARGON2_CFFI=argon2_cffi-19.2.0-cp34-abi3-manylinux1_x86_64.whl
 CERTIFI=certifi-2019.11.28-py2.py3-none-any.whl
 CFFI=cffi-1.14.0-cp37-cp37m-manylinux1_x86_64.whl
+CFFI38=cffi-1.14.0-cp38-cp38-manylinux1_x86_64.whl
 CHARDET=chardet-3.0.4-py2.py3-none-any.whl
 CLICK=click-7.1.1-py2.py3-none-any.whl
 CRYPTOGRAPHY=cryptography-2.9-cp35-abi3-manylinux1_x86_64.whl
@@ -378,11 +379,12 @@ function install_tcb {
     # Remove unnecessary files
     remove_common_files             "sudo"
     process_virtualenv_dependencies "rm"
-    process_tcb_dependencies        "rm"
-    sudo rm -r ${INSTALL_DIR}/src/relay/
-    sudo rm    ${INSTALL_DIR}/dd.py
-    sudo rm    ${INSTALL_DIR}/relay.py
-    sudo rm    ${INSTALL_DIR}/tfc.yml
+    process_tcb_dependencies        "rm -f"
+    sudo rm -f "${INSTALL_DIR}/${CFFI38}"
+    sudo rm -r "${INSTALL_DIR}/src/relay/"
+    sudo rm    "${INSTALL_DIR}/dd.py"
+    sudo rm    "${INSTALL_DIR}/relay.py"
+    sudo rm    "${INSTALL_DIR}/tfc.yml"
 
     add_serial_permissions
 
@@ -410,7 +412,8 @@ function install_relay {
     # Remove unnecessary files
     remove_common_files             "sudo"
     process_virtualenv_dependencies "rm"
-    process_tcb_dependencies        "rm"
+    process_tcb_dependencies        "rm -f"
+    sudo rm -f  ${INSTALL_DIR}/${CFFI38}
     sudo rm -r "${INSTALL_DIR}/src/receiver/"
     sudo rm -r "${INSTALL_DIR}/src/transmitter/"
     sudo rm    "${INSTALL_DIR}/dd.py"
@@ -500,11 +503,12 @@ function install_qubes_src {
     # Remove unnecessary files
     remove_common_files             "sudo"
     process_virtualenv_dependencies "rm"
-    process_tcb_dependencies        "rm"
-    sudo rm -r ${INSTALL_DIR}/src/relay/
-    sudo rm    ${INSTALL_DIR}/dd.py
-    sudo rm    ${INSTALL_DIR}/relay.py
-    sudo rm    ${INSTALL_DIR}/tfc.yml
+    process_tcb_dependencies        "rm -f"
+    sudo rm -f "${INSTALL_DIR}/${CFFI38}"
+    sudo rm -r "${INSTALL_DIR}/src/relay/"
+    sudo rm    "${INSTALL_DIR}/dd.py"
+    sudo rm    "${INSTALL_DIR}/relay.py"
+    sudo rm    "${INSTALL_DIR}/tfc.yml"
 
     install_complete_qubes
 }
@@ -533,11 +537,12 @@ function install_qubes_dst {
     # Remove unnecessary files
     remove_common_files             "sudo"
     process_virtualenv_dependencies "rm"
-    process_tcb_dependencies        "rm"
-    sudo rm -r ${INSTALL_DIR}/src/relay/
-    sudo rm    ${INSTALL_DIR}/dd.py
-    sudo rm    ${INSTALL_DIR}/relay.py
-    sudo rm    ${INSTALL_DIR}/tfc.yml
+    process_tcb_dependencies        "rm -f"
+    sudo rm -f "${INSTALL_DIR}/${CFFI38}"
+    sudo rm -r "${INSTALL_DIR}/src/relay/"
+    sudo rm    "${INSTALL_DIR}/dd.py"
+    sudo rm    "${INSTALL_DIR}/relay.py"
+    sudo rm    "${INSTALL_DIR}/tfc.yml"
 
     install_complete_qubes
 }
@@ -688,8 +693,9 @@ function install_local_test {
     # Remove unnecessary files
     remove_common_files             "sudo"
     process_virtualenv_dependencies "rm"
-    process_tcb_dependencies        "rm"
-    sudo rm ${INSTALL_DIR}/tfc.yml
+    process_tcb_dependencies        "rm -f"
+    sudo rm -f "${INSTALL_DIR}/${CFFI38}"
+    sudo rm    "${INSTALL_DIR}/tfc.yml"
 
     install_complete "Installation of TFC for local testing is now complete."
 }
@@ -968,9 +974,9 @@ function arg_error {
     clear
     echo -e "\nUsage: bash install.sh [OPTION]\n"
     echo    "Mandatory arguments"
-    echo    "  tcb      Install Transmitter/Receiver Program (Debian 10 / PureOS 9.0+ *buntu 19.10+ / LMDE 4)"
-    echo    "  relay    Install Relay Program                (Debian 10 / PureOS 9.0+ *buntu 19.10+ / LMDE 4 / Tails 4.0+)"
-    echo -e "  local    Install insecure local testing mode  (Debian 10 / PureOS 9.0+ *buntu 19.10+ / LMDE 4)\n"
+    echo    "  tcb      Install Transmitter/Receiver Program (Debian 10 / PureOS 9.0+ / *buntu 20.04+ / LMDE 4)"
+    echo    "  relay    Install Relay Program                (Debian 10 / PureOS 9.0+ / *buntu 20.04+ / LMDE 4 / Tails 4.0+)"
+    echo -e "  local    Install insecure local testing mode  (Debian 10 / PureOS 9.0+ / *buntu 20.04+ / LMDE 4)\n"
     echo    "  qsrc     Install Transmitter Program          (Qubes 4.0.3)"
     echo    "  qdst     Install Receiver Program             (Qubes 4.0.3)"
     echo -e "  qnet     Install Relay Program                (Qubes 4.0.3)\n"
