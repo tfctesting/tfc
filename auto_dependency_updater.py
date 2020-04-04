@@ -167,6 +167,7 @@ def change_dependency_file_name_in_installer(package_name: str, new_file_name: s
     for index, line in enumerate(data):
         if line.startswith(static + '='):
             old_file_name = line.split('=')[1]
+            dprint(f"install.sh: Comparing old filename '{old_file_name}' with new file name '{new_file_name}'")
             if old_file_name != new_file_name:
                 new_line = '='.join([static, new_file_name])
                 data[index] = new_line
@@ -196,13 +197,14 @@ def update_dependency_digest_in_installer(package_name: str, new_digest: str) ->
             line_data  = line.split(' ')
             old_digest = line_data[5]
 
+            dprint(f"install.sh: Comparing old digest '{old_digest}' with new digest '{new_digest}'")
             if old_digest != new_digest:
                 line_data[5] = new_digest
                 new_line     = ' '.join(line_data)
                 data[index]  = new_line
                 print(f"install:sh:                   Updated digest for {package_name} to '{new_digest}'")
     else:
-        if print_up_to_dates:
+        if print_up_to_dates or debug:
             print(f"install.sh:                   Up-to-date digest for {package_name}")
 
     # Write new digest from memory to install.sh
@@ -218,6 +220,7 @@ def update_dependency_version_in_requirements_files(package_name: str, new_diges
                              'requirements-relay-tails.txt',
                              'requirements-setuptools.txt',
                              'requirements-venv.txt']:
+        dprint(f"\nProcessing requirements file {requirement_file}")
 
         with open(f'{repo_path}/{requirement_file}') as f:
             requirements_data = f.read().splitlines()
@@ -242,6 +245,8 @@ def update_dependency_version_in_requirements_files(package_name: str, new_diges
             if purp_package_name != package_name:
                 continue
 
+            dprint(f"Prased dep '{package_name}' version '{old_version}'")
+
             final_index = line_index
             old_digest  = fields[-1].split(':')[1]
             break
@@ -252,6 +257,7 @@ def update_dependency_version_in_requirements_files(package_name: str, new_diges
             if line.startswith(f"{installer_static}="):
                 pinned_file_name = line.split('=')[1]
                 latest_version   = pinned_file_name.split('-')[1].strip('.zip')
+                dprint(f"Parsed latest version for dep '{package_name}' from downloaded file as '{latest_version}'")
                 break
 
         # Check that version and digest are correct
@@ -278,7 +284,7 @@ def update_dependency_version_in_requirements_files(package_name: str, new_diges
                     print(f"{requirement_file}:{spacing} Updated {package_name}'s digest  to '{new_digest}'")
 
             else:
-                if print_up_to_dates:
+                if print_up_to_dates or debug:
                     spacing = (28-len(requirement_file)) * ' '
                     print(f"{requirement_file}:{spacing} Up-to-date vers.  for {package_name}")
                     print(f"{requirement_file}:{spacing} Up-to-date digest for {package_name}")
