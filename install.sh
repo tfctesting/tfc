@@ -94,10 +94,10 @@ function verify_tails_dependencies {
 function install_tails_setuptools {
     # Download setuptools package for Tails, and move it to /opt/tfc so it can't be edited.
     # Once the package has been authenticated, install it and then remove the install file.
-    torsocks python3.7 -m pip download --no-cache-dir -r "${INSTALL_DIR}/requirements-setuptools.txt" --require-hashes --no-deps -d "${HOME}/"
+    torsocks python3 -m pip download --no-cache-dir -r "${INSTALL_DIR}/requirements-setuptools.txt" --require-hashes --no-deps -d "${HOME}/"
     t_sudo mv "$HOME/${SETUPTOOLS}" "${INSTALL_DIR}/"
     compare_digest 24641b46913f15eebdd600405990b6a1a8a40ae3733d05d21e153fad8509284d78b2f297392224d3e52248f23a5b92f154e2458121b94038a4bb603717b77208 '' ${SETUPTOOLS}
-    t_sudo python3.7 -m pip install "${INSTALL_DIR}/${SETUPTOOLS}"
+    t_sudo python3 -m pip install "${INSTALL_DIR}/${SETUPTOOLS}"
     t_sudo -E rm "${INSTALL_DIR}/${SETUPTOOLS}"
 }
 
@@ -105,8 +105,8 @@ function install_tails_setuptools {
 function verify_tcb_requirements_files {
     # To minimize the time TCB installer configuration stays online,
     # only the requirements files are authenticated between downloads.
-    compare_digest ae85a80b58e0f6fd2fcfa6d39756172a8b377a6e1a653e12d92bd063711083de616c046815d3ca35ccb8ba300e84b4fd28ad263f03fe69b10c9ce8acc39f3fcf '' requirements.txt
-    compare_digest d7ca7678f408cf25a629b913b2c4fb30d18d4a9d2e9e846653dfa6e8f2b29cfc04dd8a7632aaf33d7ac289ce7f85e61d0bd73d778a1839ee7a42ea8d8bbabd1b '' requirements-venv.txt
+    compare_digest 3ac0d98e09283b09a5672b038322bf7afd8ca26ade28ce476299407165325d28f6cc0f35b07075f96dcd23e0e69f71e1eb448c049d87ca38208381909ba79a40 '' requirements.txt
+    compare_digest eacae136ba326b36412ab18e9956ff2618a5190d39e703be76c9e221034662a84d90cbc53423c7af20791c92b292f21ef39bd5f91d130d2b21adc1c4a2c09384 '' requirements-venv.txt
 }
 
 
@@ -116,10 +116,10 @@ function verify_files {
     compare_digest d361e5e8201481c6346ee6a886592c51265112be550d5224f1a7a6e116255c2f1ab8788df579d9b8372ed7bfd19bac4b6e70e00b472642966ab5b319b99a2686 '' LICENSE
     compare_digest 8db25eafc66308f1fe8223c39bc5fb025ae111ebce3eae5601c907fa7a2654f68395af4f355ff0ff03775e79cda8dfccddaf7d68555bfe065d9469ca04a288f9 '' LICENSE-3RD-PARTY
     compare_digest 7cad2202e4cc940627e31577162c38f44022ddb138a51f52d0ac3747e264e065919df2b646020851d8973cc76a2873a72ceabcbe93c39911ebbfa7c867f01675 '' relay.py
-    compare_digest 07157314554b5d0ab1324949c551bb8ecf989714fcb259ac58637e518523965465a2cbe28fd12d4188c5872589c3e3c5477d1990ee187276dad18f42c467f582 '' requirements-dev.txt
-    compare_digest 3e3f8b56ae259e7e743baa2623758726bcc6477a63c5746cde9ab09757e7fe5e8edcc77e78e36ce58fb4bcb849a4956e15f1d2a754fb8c8137ab15c138c3bc5e '' requirements-relay.txt
-    compare_digest b062d2d83f66bee7ae1c74acef0a1a00f3adf61874c38423a2e4f9038f96f14dd5a7123258bc2992b3e3d63a614163da75d75e6f28595e759459c909778ec5b5 '' requirements-relay-tails.txt
-    compare_digest cf4ca58adabafbe04de2d03cd1d85d1a6b8b10dea9445dc7e4596f9aef40368eeaa92d11f557ec33ce291eec2f93cc3353ebf7dced8561ff39a3fab0d16e84f2 '' requirements-setuptools.txt
+    compare_digest ab5fb6e127316071709be1825fce720e2ddf7ab755dfb4f4ea78e0ccc0781944f223ef8cf60fde9c7c8c50ac1b1b8a6be42a862b99f8da682b13193d6ea2575d '' requirements-dev.txt
+    compare_digest a66ad30880d41b35364666754a22e37314866e128162040dd371cd2076ea3ea7d4146ff658dcdef7bd813985082c21feeddb2320071ef4f30fc11649a512ed0f '' requirements-relay.txt
+    compare_digest 3f0471311545dc4ea2a1bea030fd002a4d9e3575fa3a7c4b4bba5e40b6086d8ce5a752123c1739b838a0e6cbe6dfeeb52a12e066953a6eac727d31d90980dfa9 '' requirements-relay-tails.txt
+    compare_digest 6faae4866829ff5fa0b298274e56f70c81147b04ff9be29fb651b1b7fa3f5620b12e70a2a636dbe5e081543902898623fce5d939d1dc4d78c7e8ca99c46f9316 '' requirements-setuptools.txt
     compare_digest 79f8272a2ab122a48c60630c965cd9d000dcafabf5ee9d69b1c33c58ec321feb17e4654dbbbf783cc8868ccdfe2777d60c6c3fc9ef16f8264d9fcf43724e83c2 '' tfc.png
     compare_digest c746fa981fcdc1b21cbe7117ed186ef7757d120cb96fbe8500b8b5f7f4effebe71360ae5c1cc2bf873818002544d9aeba26990b93723a79c6bbcd647552a7ca0 '' tfc.py
     compare_digest 62f26d2805570ee70fad3a076579a554008e7d9f2c9ff310f3bb5876d361cc03dbae7ab63b144ac215a35f920ac56d359481352805a356479d622ab00da15f7f '' tfc.yml
@@ -346,8 +346,8 @@ function steps_before_network_kill {
     sudo torsocks git clone --depth 1 https://github.com/tfctesting/tfc.git ${INSTALL_DIR}
 
     verify_tcb_requirements_files
-    sudo torsocks python3.7 -m pip download --no-cache-dir -r "${INSTALL_DIR}/requirements-venv.txt" --require-hashes --no-deps -d ${INSTALL_DIR}/
-    sudo torsocks python3.7 -m pip download --no-cache-dir -r "${INSTALL_DIR}/requirements.txt"      --require-hashes --no-deps -d ${INSTALL_DIR}/
+    sudo torsocks python3 -m pip download --no-cache-dir -r "${INSTALL_DIR}/requirements-venv.txt" --require-hashes --no-deps -d ${INSTALL_DIR}/
+    sudo torsocks python3 -m pip download --no-cache-dir -r "${INSTALL_DIR}/requirements.txt"      --require-hashes --no-deps -d ${INSTALL_DIR}/
 }
 
 
@@ -364,11 +364,11 @@ function install_tcb {
     verify_files
     create_user_data_dir
 
-    process_virtualenv_dependencies "python3.7 -m pip install"
-    sudo python3.7 -m virtualenv  "${INSTALL_DIR}/venv_tcb" --system-site-packages --never-download
+    process_virtualenv_dependencies "python3 -m pip install"
+    sudo python3 -m virtualenv  "${INSTALL_DIR}/venv_tcb" --system-site-packages --never-download
 
     . ${INSTALL_DIR}/venv_tcb/bin/activate
-    process_tcb_dependencies "python3.7 -m pip install"
+    process_tcb_dependencies "python3 -m pip install"
     deactivate
 
     sudo mv ${INSTALL_DIR}/tfc.png                   /usr/share/pixmaps/
@@ -398,10 +398,10 @@ function install_relay {
     create_user_data_dir
 
     install_virtualenv
-    sudo python3.7 -m virtualenv ${INSTALL_DIR}/venv_relay --system-site-packages
+    sudo python3 -m virtualenv ${INSTALL_DIR}/venv_relay --system-site-packages
 
     . ${INSTALL_DIR}/venv_relay/bin/activate
-    sudo torsocks python3.7 -m pip install -r ${INSTALL_DIR}/requirements-relay.txt --require-hashes --no-deps
+    sudo torsocks python3 -m pip install -r ${INSTALL_DIR}/requirements-relay.txt --require-hashes --no-deps
     deactivate
 
     sudo mv ${INSTALL_DIR}/tfc.png                  /usr/share/pixmaps/
@@ -446,16 +446,16 @@ function install_relay_tails {
 
     # Tails doesn't allow downloading over PIP to /opt/tfc, so we first download
     # to $HOME, move the files to /opt/tfc, and then perform the hash verification
-    torsocks python3.7 -m pip download --no-cache-dir -r "${INSTALL_DIR}/requirements-venv.txt"        --require-hashes --no-deps -d "${HOME}/"
-    torsocks python3.7 -m pip download --no-cache-dir -r "${INSTALL_DIR}/requirements-relay-tails.txt" --require-hashes --no-deps -d "${HOME}/"
+    torsocks python3 -m pip download --no-cache-dir -r "${INSTALL_DIR}/requirements-venv.txt"        --require-hashes --no-deps -d "${HOME}/"
+    torsocks python3 -m pip download --no-cache-dir -r "${INSTALL_DIR}/requirements-relay-tails.txt" --require-hashes --no-deps -d "${HOME}/"
     move_tails_dependencies
     verify_tails_dependencies
 
-    process_tails_venv_dependencies "python3.7 -m pip install"
-    t_sudo python3.7 -m virtualenv ${INSTALL_DIR}/venv_relay --system-site-packages
+    process_tails_venv_dependencies "python3 -m pip install"
+    t_sudo python3 -m virtualenv ${INSTALL_DIR}/venv_relay --system-site-packages
 
     . ${INSTALL_DIR}/venv_relay/bin/activate
-    process_tails_dependencies "python3.7 -m pip install"
+    process_tails_dependencies "python3 -m pip install"
     deactivate
 
     t_sudo mv ${INSTALL_DIR}/tfc.png                        /usr/share/pixmaps/
@@ -486,11 +486,11 @@ function install_qubes_src {
 
     verify_files
 
-    process_virtualenv_dependencies "python3.7 -m pip install"
-    sudo python3.7 -m virtualenv "${INSTALL_DIR}/venv_tcb" --system-site-packages --never-download
+    process_virtualenv_dependencies "python3 -m pip install"
+    sudo python3 -m virtualenv "${INSTALL_DIR}/venv_tcb" --system-site-packages --never-download
 
     . ${INSTALL_DIR}/venv_tcb/bin/activate
-    process_tcb_dependencies "python3.7 -m pip install"
+    process_tcb_dependencies "python3 -m pip install"
     deactivate
 
     sudo mv ${INSTALL_DIR}/tfc.png                         /usr/share/pixmaps/
@@ -519,11 +519,11 @@ function install_qubes_dst {
 
     verify_files
 
-    process_virtualenv_dependencies "python3.7 -m pip install"
-    sudo python3.7 -m virtualenv "${INSTALL_DIR}/venv_tcb" --system-site-packages --never-download
+    process_virtualenv_dependencies "python3 -m pip install"
+    sudo python3 -m virtualenv "${INSTALL_DIR}/venv_tcb" --system-site-packages --never-download
 
     . ${INSTALL_DIR}/venv_tcb/bin/activate
-    process_tcb_dependencies "python3.7 -m pip install"
+    process_tcb_dependencies "python3 -m pip install"
     deactivate
 
     sudo mv ${INSTALL_DIR}/tfc.png                         /usr/share/pixmaps/
@@ -552,11 +552,11 @@ function install_qubes_net {
 
     verify_files
 
-    process_virtualenv_dependencies "python3.7 -m pip install"
-    sudo python3.7 -m virtualenv ${INSTALL_DIR}/venv_relay --system-site-packages
+    process_virtualenv_dependencies "python3 -m pip install"
+    sudo python3 -m virtualenv ${INSTALL_DIR}/venv_relay --system-site-packages
 
     . ${INSTALL_DIR}/venv_relay/bin/activate
-    sudo torsocks python3.7 -m pip install -r ${INSTALL_DIR}/requirements-relay.txt --require-hashes --no-deps
+    sudo torsocks python3 -m pip install -r ${INSTALL_DIR}/requirements-relay.txt --require-hashes --no-deps
     deactivate
 
     sudo mv ${INSTALL_DIR}/tfc.png                        /usr/share/pixmaps/
@@ -673,11 +673,11 @@ function install_local_test {
     sudo torsocks apt install terminator -y
 
     install_virtualenv
-    sudo python3.7 -m virtualenv ${INSTALL_DIR}/venv_tfc --system-site-packages
+    sudo python3 -m virtualenv ${INSTALL_DIR}/venv_tfc --system-site-packages
 
     . ${INSTALL_DIR}/venv_tfc/bin/activate
-    sudo torsocks python3.7 -m pip install -r ${INSTALL_DIR}/requirements.txt       --require-hashes --no-deps
-    sudo torsocks python3.7 -m pip install -r ${INSTALL_DIR}/requirements-relay.txt --require-hashes --no-deps
+    sudo torsocks python3 -m pip install -r ${INSTALL_DIR}/requirements.txt       --require-hashes --no-deps
+    sudo torsocks python3 -m pip install -r ${INSTALL_DIR}/requirements-relay.txt --require-hashes --no-deps
     deactivate
 
     sudo mv ${INSTALL_DIR}/tfc.png                                /usr/share/pixmaps/
@@ -713,12 +713,12 @@ function install_developer {
 
     torsocks git clone https://github.com/tfctesting/tfc.git "${HOME}/tfc"
 
-    torsocks python3.7 -m pip install -r "${HOME}/tfc/requirements-venv.txt" --require-hashes --no-deps
+    torsocks python3 -m pip install -r "${HOME}/tfc/requirements-venv.txt" --require-hashes --no-deps
 
-    python3.7 -m virtualenv "${HOME}/tfc/venv_tfc" --system-site-packages
+    python3 -m virtualenv "${HOME}/tfc/venv_tfc" --system-site-packages
 
     . "${HOME}/tfc/venv_tfc/bin/activate"
-    torsocks python3.7 -m pip install -r "${HOME}/tfc/requirements-dev.txt"
+    torsocks python3 -m pip install -r "${HOME}/tfc/requirements-dev.txt"
     deactivate
 
     sudo cp "${HOME}/tfc/tfc.png"                   "/usr/share/pixmaps/"
@@ -817,8 +817,8 @@ function t_sudo {
 function install_virtualenv {
     # Some distros want virtualenv installed as sudo and other don't.
     # Install as both users to improve the chances of compatibility.
-    sudo torsocks python3.7 -m pip install -r ${INSTALL_DIR}/requirements-venv.txt --require-hashes --no-deps
-    torsocks      python3.7 -m pip install -r ${INSTALL_DIR}/requirements-venv.txt --require-hashes --no-deps
+    sudo torsocks python3 -m pip install -r ${INSTALL_DIR}/requirements-venv.txt --require-hashes --no-deps
+    torsocks      python3 -m pip install -r ${INSTALL_DIR}/requirements-venv.txt --require-hashes --no-deps
 }
 
 

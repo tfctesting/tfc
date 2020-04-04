@@ -16,7 +16,7 @@
 # You should have received a copy of the GNU General Public License
 # along with TFC. If not, see <https://www.gnu.org/licenses/>.
 
-cd $HOME/tfctesting/
+cd $HOME/tfc/
 find . -type f -name "*.py[co]" -delete -or -type d -name "__pycache__" -delete
 find . -type f -exec sha512sum "{}" + > SHA512.list
 python3.7 hash_replacer.py

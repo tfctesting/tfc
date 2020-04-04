@@ -63,7 +63,7 @@ def generate_hash_file_hash_dict(working_dir: str) -> Dict[str, str]:
 
 def main() -> None:
     """Replace the pinned SHA512 hashes of TFC files in the installer."""
-    working_dir = f'{os.getenv("HOME")}/tfctesting'
+    working_dir = f'{os.getenv("HOME")}/tfc'
 
     installer_hashes = generate_installer_hash_dict(working_dir)
     hash_file_hashes = generate_hash_file_hash_dict(working_dir)
