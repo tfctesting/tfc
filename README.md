@@ -211,7 +211,7 @@ rules. This intermediate isolation mechanism runs on a single computer which mea
 #### Source/Destination Computer
 - Debian 10
 - PureOS 9.0
-- *buntu 19.10
+- *buntu 20.04 LTS
 - LMDE 4
 - Qubes 4 (Debian 10 VM)
 
@@ -219,7 +219,7 @@ rules. This intermediate isolation mechanism runs on a single computer which mea
 - Tails 4.0
 - Debian 10
 - PureOS 9.0
-- *buntu 19.10
+- *buntu 20.04 LTS
 - LMDE 4
 - Qubes 4 (Debian 10 VM)
 
