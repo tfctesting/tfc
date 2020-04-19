@@ -21,23 +21,26 @@
 INSTALL_DIR="/opt/tfc"
 
 
+# ----------------------------------------------------------------------------------------
+
 # PIP dependency file names
 
 APPDIRS=appdirs-1.4.3-py2.py3-none-any.whl
 ARGON2_CFFI=argon2_cffi-19.2.0-cp34-abi3-manylinux1_x86_64.whl
-CERTIFI=certifi-2019.11.28-py2.py3-none-any.whl
-CFFI=cffi-1.14.0-cp37-cp37m-manylinux1_x86_64.whl
+CERTIFI=certifi-2020.4.5.1-py2.py3-none-any.whl
+CFFI37=cffi-1.14.0-cp37-cp37m-manylinux1_x86_64.whl
 CFFI38=cffi-1.14.0-cp38-cp38-manylinux1_x86_64.whl
 CHARDET=chardet-3.0.4-py2.py3-none-any.whl
 CLICK=click-7.1.1-py2.py3-none-any.whl
-CRYPTOGRAPHY=cryptography-2.9-cp35-abi3-manylinux1_x86_64.whl
+CRYPTOGRAPHY37=cryptography-2.9-cp35-abi3-manylinux1_x86_64.whl
+CRYPTOGRAPHY38=cryptography-2.9-cp35-abi3-manylinux2010_x86_64.whl
 DISTLIB=distlib-0.3.0.zip
 FILELOCK=filelock-3.0.12-py3-none-any.whl
 FLASK=Flask-1.1.2-py2.py3-none-any.whl
 IDNA=idna-2.9-py2.py3-none-any.whl
 IMPORTLIB_METADATA=importlib_metadata-1.6.0-py2.py3-none-any.whl
 ITSDANGEROUS=itsdangerous-1.1.0-py2.py3-none-any.whl
-JINJA2=Jinja2-2.11.1-py2.py3-none-any.whl
+JINJA2=Jinja2-2.11.2-py2.py3-none-any.whl
 MARKUPSAFE=MarkupSafe-1.1.1-cp37-cp37m-manylinux1_x86_64.whl
 PYCPARSER=pycparser-2.20-py2.py3-none-any.whl
 PYNACL=PyNaCl-1.3.0-cp34-abi3-manylinux1_x86_64.whl
@@ -46,62 +49,56 @@ PYSOCKS=PySocks-1.7.1-py3-none-any.whl
 REQUESTS=requests-2.23.0-py2.py3-none-any.whl
 SETUPTOOLS=setuptools-46.1.3-py3-none-any.whl
 SIX=six-1.14.0-py2.py3-none-any.whl
-URLLIB3=urllib3-1.25.8-py2.py3-none-any.whl
-VIRTUALENV=virtualenv-20.0.16-py2.py3-none-any.whl
+URLLIB3=urllib3-1.25.9-py2.py3-none-any.whl
+VIRTUALENV=virtualenv-20.0.18-py2.py3-none-any.whl
 WERKZEUG=Werkzeug-1.0.1-py2.py3-none-any.whl
 ZIPP=zipp-3.1.0-py3-none-any.whl
 
 
+# ----------------------------------------------------------------------------------------
+
+# Pinned Tails dependencies
+
+DIGEST_PYSERIAL=8333ac2843fd136d5d0d63b527b37866f7d18afc3bb33c4938b63af077492aeb118eb32a89ac78547f14d59a2adb1e5d00728728275de62317da48dadf6cdff9
+DIGEST_PYSOCKS=313b954102231d038d52ab58f41e3642579be29f827135b8dd92c06acb362effcb0a7fd5f35de9273372b92d9fe29f38381ae44f8b41aa90d2564d6dd07ecd12
+
+# Virtualenv
+DIGEST_ZIPP=89170b91cfdc0ef4d85b5316b484c8d6e01985f19bb9f545b11d648e122392efa68d40c66e056b8998fb69af49f4e18707f783be8d500b8957ce3a885662d27c
+DIGEST_FILELOCK=d13edd50779bca9842694e0da157ca1fdad9d28166771275049f41dea4b8d8466fc5604b610b6ad64552cdf4c1d3cada9977ca37c6b775c4cc92f333709e8ea3
+DIGEST_IMPORTLIB_METADATA=8bf2b8ccbc501526c30115bf417d67440701c3793cec0caa0f778b5216788cc8c58e692bcb818aa34cc4dd6208595345669d710e8ddc5af521532a1b9c7f2837
+DIGEST_SIX=a6e7e35921ce8f2f8e79a296ea79a9c3515ff6dd7e777d7892fe4988594f1b3a442a68ffb89cf64530b90a32ceeea00e4ab9069bb697629ab4eb7262c68d1b0f
+DIGEST_DISTLIB=6f910a9607569c9023a19aee35be15cf8521ec7c07c5d478e6d555a301d024a2ee1db48562707b238a72c631d75d9dc154d38b39ed51746b66c938ac40671e60
+DIGEST_APPDIRS=b79e9fa76eadee595fe47ea7efd35c4cc72f058a9ed16a95cfa4d91a52c330efba50df7a9926900bbced229cca7bbfb05bbf0a8ee1d46bac2362c98ab9a5154d
+DIGEST_VIRTUALENV=7fe96bee57c4336cdeac0e6be512c50717db4d31091c6906a50f2fd622ff290757a109e1fb3b4936e7dbff61e756033990fb7a04d6304473c40e52da2dc97b9e
+
+# Requests
+DIGEST_URLLIB3=b20687b4ce06164c5b932b43c5b758efd864668ee2b60f6cd6ce6c27f0ea16b9d1222ec0c061618fc3f0de362c0f18be95864bd91ecaa73fdfa92bd666fb4378
+DIGEST_IDNA=be96b782728404acec374f446b11811f8e76d5ed42d4673a07e883220f5ba2a099a8124cda5898c3f5da7d92b87b36127e8fd42e9edb240b587a380ed73cce93
+DIGEST_CHARDET=bfae58c8ea19c87cc9c9bf3d0b6146bfdb3630346bd954fe8e9f7da1f09da1fc0d6943ff04802798a665ea3b610ee2d65658ce84fe5a89f9e93625ea396a17f4
+DIGEST_CERTIFI=3fb450a6feba8865cd83ae0d7ba0d60ccc7ba456676e2c1f739058878df2ea9e222c200902e6409fbeee88f9d3825c2074de3531ab2977135efefd793e550e8e
+DIGEST_REQUESTS=98e4c9435434b8f63fc37a21133adbbfeb471bfb8b40d60f04bded5cbe328c14a22527d54ab2a55a81d93110d627bacc26943e55ec338b7bed8708b55e15fff3
+
+# Flask
+DIGEST_WERKZEUG=8f05b3632d00b1a9c3d85f46dccc7eb55c032bc8cc7b688219865487c96127ecccdd44f9724159299d14db98c1951b552b478811d292d93aa2d12817c88c8527
+DIGEST_MARKUPSAFE=69e9b9c9ac4fdf3cfa1a3de23d14964b843989128f8cc6ea58617fc5d6ef937bcc3eae9cb32b5164b5f54b06f96bdff9bc249529f20671cc26adc9e6ce8f6bec
+DIGEST_JINJA2=715456e053af748fd04b7357f61c4fe457f511b4802180b01164b647081c7de30f2d5215de4ed2a6a83cd4241e03bcf0d247ddf13dc3878962539855b80344d2
+DIGEST_ITSDANGEROUS=891c294867f705eb9c66274bd04ac5d93140d6e9beea6cbf9a44e7f9c13c0e2efa3554bdf56620712759a5cd579e112a782d25f3f91ba9419d60b2b4d2bc5b7c
+DIGEST_CLICK=0b0997b10fc6bcb46cd00bc5a2f65a74aae153fa41978413464f2e6ccf1948272181573178ebcf22ded3f94c9a9c37f58339454699b9f72e171b09afe7a1afcf
+DIGEST_FLASK=3bcd417e5b93590944ebdba05ff4ae37aab31aadcda2e4514d8be275d52877191ffbc58d89ea603900afe39264c899fc1e4fd77cd5e24880c03601551d8f1aac
+
+# Cryptography
+DIGEST_PYCPARSER=06dc9cefdcde6b97c96d0452a77db42a629c48ee545edd7ab241763e50e3b3c56d21f9fcce4e206817aa1a597763d948a10ccc73572490d739c89eea7fede0a1
+DIGEST_CFFI=5b315a65fc8f40622ceef35466546620aaca9dd304f5491a845239659b4066469c5fb3f1683c382eb57f8975caf318e5d88852e3dbb049cde193c9189b88c9c0
+DIGEST_CRYPTOGRAPHY=9a01aa8a087a0bb480fa870ab10ca8479a974c7e536440e8637d490a2e424c93c7cf5acbb0fc2b5166cbb8666baf35798d855405a8761021e89a1dc5ea0e94fe
+
+# PyNaCl
+DIGEST_SETUPTOOLS=24641b46913f15eebdd600405990b6a1a8a40ae3733d05d21e153fad8509284d78b2f297392224d3e52248f23a5b92f154e2458121b94038a4bb603717b77208
+DIGEST_PYNACL=c4017c38b026a5c531b15839b8d61d1fae9907ba1960c2f97f4cd67fe0827729346d5186a6d6927ba84f64b4cbfdece12b287aa7750a039f4160831be871cea3
+
+
+# ----------------------------------------------------------------------------------------
+
 # Functions with pinned hashes
-
-function verify_tails_dependencies {
-    compare_digest 8333ac2843fd136d5d0d63b527b37866f7d18afc3bb33c4938b63af077492aeb118eb32a89ac78547f14d59a2adb1e5d00728728275de62317da48dadf6cdff9 '' ${PYSERIAL}
-    compare_digest 313b954102231d038d52ab58f41e3642579be29f827135b8dd92c06acb362effcb0a7fd5f35de9273372b92d9fe29f38381ae44f8b41aa90d2564d6dd07ecd12 '' ${PYSOCKS}
-
-    # Virtualenv
-    compare_digest c5ce8c9f788ac74bfa53092dd7bc5479b9235ce8c14a326b89cccef82dc99f19cb82836437078d1738ab5a852d0c641839ed541d9e0cc6d467d5fe0cd52e04a7 '' ${VIRTUALENV}
-    compare_digest b79e9fa76eadee595fe47ea7efd35c4cc72f058a9ed16a95cfa4d91a52c330efba50df7a9926900bbced229cca7bbfb05bbf0a8ee1d46bac2362c98ab9a5154d '' ${APPDIRS}
-    compare_digest 6f910a9607569c9023a19aee35be15cf8521ec7c07c5d478e6d555a301d024a2ee1db48562707b238a72c631d75d9dc154d38b39ed51746b66c938ac40671e60 '' ${DISTLIB}
-    compare_digest a6e7e35921ce8f2f8e79a296ea79a9c3515ff6dd7e777d7892fe4988594f1b3a442a68ffb89cf64530b90a32ceeea00e4ab9069bb697629ab4eb7262c68d1b0f '' ${SIX}
-    compare_digest 8bf2b8ccbc501526c30115bf417d67440701c3793cec0caa0f778b5216788cc8c58e692bcb818aa34cc4dd6208595345669d710e8ddc5af521532a1b9c7f2837 '' ${IMPORTLIB_METADATA}
-    compare_digest d13edd50779bca9842694e0da157ca1fdad9d28166771275049f41dea4b8d8466fc5604b610b6ad64552cdf4c1d3cada9977ca37c6b775c4cc92f333709e8ea3 '' ${FILELOCK}
-    compare_digest 89170b91cfdc0ef4d85b5316b484c8d6e01985f19bb9f545b11d648e122392efa68d40c66e056b8998fb69af49f4e18707f783be8d500b8957ce3a885662d27c '' ${ZIPP}
-
-    # Requests
-    compare_digest f7fd3b54b7c555c0e74eb445e543763d233b5c6f8021ccf46a45d452c334953276d43ecd8f3d0eafefa35103a7d1874e291216fc9a41362eb6f1250a2a670f16 '' ${URLLIB3}
-    compare_digest be96b782728404acec374f446b11811f8e76d5ed42d4673a07e883220f5ba2a099a8124cda5898c3f5da7d92b87b36127e8fd42e9edb240b587a380ed73cce93 '' ${IDNA}
-    compare_digest bfae58c8ea19c87cc9c9bf3d0b6146bfdb3630346bd954fe8e9f7da1f09da1fc0d6943ff04802798a665ea3b610ee2d65658ce84fe5a89f9e93625ea396a17f4 '' ${CHARDET}
-    compare_digest fe5b05c29c1e1d9079150aaea28b09d84f0dd15907e276ccabb314433cfaac948a9615e10d6d01cbd537f99eed8072fbda7cb901e932fbab4f1286ae8c50471b '' ${CERTIFI}
-    compare_digest 98e4c9435434b8f63fc37a21133adbbfeb471bfb8b40d60f04bded5cbe328c14a22527d54ab2a55a81d93110d627bacc26943e55ec338b7bed8708b55e15fff3 '' ${REQUESTS}
-
-    # Flask
-    compare_digest 8f05b3632d00b1a9c3d85f46dccc7eb55c032bc8cc7b688219865487c96127ecccdd44f9724159299d14db98c1951b552b478811d292d93aa2d12817c88c8527 '' ${WERKZEUG}
-    compare_digest 69e9b9c9ac4fdf3cfa1a3de23d14964b843989128f8cc6ea58617fc5d6ef937bcc3eae9cb32b5164b5f54b06f96bdff9bc249529f20671cc26adc9e6ce8f6bec '' ${MARKUPSAFE}
-    compare_digest 461bbd517560f1c4dbf7309bdf0cf33b468938fddfa2c3385fab07343269732d8ce68d8827148645113267d48e7d67b03f1663cc64839dd1fcec723ea606aaf4 '' ${JINJA2}
-    compare_digest 891c294867f705eb9c66274bd04ac5d93140d6e9beea6cbf9a44e7f9c13c0e2efa3554bdf56620712759a5cd579e112a782d25f3f91ba9419d60b2b4d2bc5b7c '' ${ITSDANGEROUS}
-    compare_digest 0b0997b10fc6bcb46cd00bc5a2f65a74aae153fa41978413464f2e6ccf1948272181573178ebcf22ded3f94c9a9c37f58339454699b9f72e171b09afe7a1afcf '' ${CLICK}
-    compare_digest 3bcd417e5b93590944ebdba05ff4ae37aab31aadcda2e4514d8be275d52877191ffbc58d89ea603900afe39264c899fc1e4fd77cd5e24880c03601551d8f1aac '' ${FLASK}
-
-    # Cryptography
-    compare_digest 06dc9cefdcde6b97c96d0452a77db42a629c48ee545edd7ab241763e50e3b3c56d21f9fcce4e206817aa1a597763d948a10ccc73572490d739c89eea7fede0a1 '' ${PYCPARSER}
-    compare_digest 5b315a65fc8f40622ceef35466546620aaca9dd304f5491a845239659b4066469c5fb3f1683c382eb57f8975caf318e5d88852e3dbb049cde193c9189b88c9c0 '' ${CFFI}
-    compare_digest 184003c89fee74892de25c3e5ec366faea7a5f1fcca3c82b0d5e5f9f797286671a820ca54da5266d6f879ab342c97e25bce9db366c5fb1178690cd5978d4d622 '' ${CRYPTOGRAPHY}
-
-    # PyNaCl
-    compare_digest c4017c38b026a5c531b15839b8d61d1fae9907ba1960c2f97f4cd67fe0827729346d5186a6d6927ba84f64b4cbfdece12b287aa7750a039f4160831be871cea3 '' ${PYNACL}
-}
-
-
-function install_tails_setuptools {
-    # Download setuptools package for Tails, and move it to /opt/tfc so it can't be edited.
-    # Once the package has been authenticated, install it and then remove the install file.
-    torsocks python3 -m pip download --no-cache-dir -r "${INSTALL_DIR}/requirements-setuptools.txt" --require-hashes --no-deps -d "${HOME}/"
-    t_sudo mv "$HOME/${SETUPTOOLS}" "${INSTALL_DIR}/"
-    compare_digest 24641b46913f15eebdd600405990b6a1a8a40ae3733d05d21e153fad8509284d78b2f297392224d3e52248f23a5b92f154e2458121b94038a4bb603717b77208 '' ${SETUPTOOLS}
-    t_sudo python3 -m pip install "${INSTALL_DIR}/${SETUPTOOLS}"
-    t_sudo -E rm "${INSTALL_DIR}/${SETUPTOOLS}"
-}
-
 
 function verify_tcb_requirements_files {
     # To minimize the time TCB installer configuration stays online,
@@ -236,6 +233,82 @@ function process_tcb_dependencies {
 }
 
 
+function verify_tails_dependencies {
+    compare_digest ${DIGEST_PYSERIAL} '' ${PYSERIAL}
+    compare_digest ${DIGEST_PYSOCKS}  '' ${PYSOCKS}
+
+    # Virtualenv
+    compare_digest ${DIGEST_ZIPP}               '' ${ZIPP}
+    compare_digest ${DIGEST_FILELOCK}           '' ${FILELOCK}
+    compare_digest ${DIGEST_IMPORTLIB_METADATA} '' ${IMPORTLIB_METADATA}
+    compare_digest ${DIGEST_SIX}                '' ${SIX}
+    compare_digest ${DIGEST_DISTLIB}            '' ${DISTLIB}
+    compare_digest ${DIGEST_APPDIRS}            '' ${APPDIRS}
+    compare_digest ${DIGEST_VIRTUALENV}         '' ${VIRTUALENV}
+
+    # Requests
+    compare_digest ${DIGEST_URLLIB3}  '' ${URLLIB3}
+    compare_digest ${DIGEST_IDNA}     '' ${IDNA}
+    compare_digest ${DIGEST_CHARDET}  '' ${CHARDET}
+    compare_digest ${DIGEST_CERTIFI}  '' ${CERTIFI}
+    compare_digest ${DIGEST_REQUESTS} '' ${REQUESTS}
+
+    # Flask
+    compare_digest ${DIGEST_WERKZEUG}     '' ${WERKZEUG}
+    compare_digest ${DIGEST_MARKUPSAFE}   '' ${MARKUPSAFE}
+    compare_digest ${DIGEST_JINJA2}       '' ${JINJA2}
+    compare_digest ${DIGEST_ITSDANGEROUS} '' ${ITSDANGEROUS}
+    compare_digest ${DIGEST_CLICK}        '' ${CLICK}
+    compare_digest ${DIGEST_FLASK}        '' ${FLASK}
+
+    # Cryptography
+    compare_digest ${DIGEST_PYCPARSER}    '' ${PYCPARSER}
+    compare_digest ${DIGEST_CFFI}         '' ${CFFI37}
+    compare_digest ${DIGEST_CRYPTOGRAPHY} '' ${CRYPTOGRAPHY37}
+
+    # PyNaCl
+    compare_digest ${DIGEST_PYNACL} '' ${PYNACL}
+}
+
+
+function move_tails_dependencies {
+    # Move Tails dependencies in batch.
+    t_sudo mv "$HOME/${PYSERIAL}" "${INSTALL_DIR}/"
+    t_sudo mv "$HOME/${PYSOCKS}"  "${INSTALL_DIR}/"
+
+    # Virtualenv
+    t_sudo mv "$HOME/${ZIPP}"               "${INSTALL_DIR}/"
+    t_sudo mv "$HOME/${FILELOCK}"           "${INSTALL_DIR}/"
+    t_sudo mv "$HOME/${IMPORTLIB_METADATA}" "${INSTALL_DIR}/"
+    t_sudo mv "$HOME/${SIX}"                "${INSTALL_DIR}/"
+    t_sudo mv "$HOME/${DISTLIB}"            "${INSTALL_DIR}/"
+    t_sudo mv "$HOME/${APPDIRS}"            "${INSTALL_DIR}/"
+    t_sudo mv "$HOME/${VIRTUALENV}"         "${INSTALL_DIR}/"
+
+    # Requests
+    t_sudo mv "$HOME/${URLLIB3}"  "${INSTALL_DIR}/"
+    t_sudo mv "$HOME/${IDNA}"     "${INSTALL_DIR}/"
+    t_sudo mv "$HOME/${CHARDET}"  "${INSTALL_DIR}/"
+    t_sudo mv "$HOME/${CERTIFI}"  "${INSTALL_DIR}/"
+    t_sudo mv "$HOME/${REQUESTS}" "${INSTALL_DIR}/"
+
+    # Flask
+    t_sudo mv "$HOME/${WERKZEUG}"     "${INSTALL_DIR}/"
+    t_sudo mv "$HOME/${MARKUPSAFE}"   "${INSTALL_DIR}/"
+    t_sudo mv "$HOME/${JINJA2}"       "${INSTALL_DIR}/"
+    t_sudo mv "$HOME/${ITSDANGEROUS}" "${INSTALL_DIR}/"
+    t_sudo mv "$HOME/${CLICK}"        "${INSTALL_DIR}/"
+    t_sudo mv "$HOME/${FLASK}"        "${INSTALL_DIR}/"
+
+    # Cryptography
+    t_sudo mv "$HOME/${PYCPARSER}"      "${INSTALL_DIR}/"
+    t_sudo mv "$HOME/${CFFI37}"         "${INSTALL_DIR}/"
+    t_sudo mv "$HOME/${CRYPTOGRAPHY37}" "${INSTALL_DIR}/"
+
+    # PyNaCl
+    t_sudo mv "$HOME/${PYNACL}" "${INSTALL_DIR}/"
+}
+
 function process_tails_dependencies {
     # Manage Tails dependencies in batch.
     t_sudo -E $1 "${INSTALL_DIR}/${PYSERIAL}"
@@ -258,50 +331,22 @@ function process_tails_dependencies {
 
     # Cryptography
     t_sudo -E $1 "${INSTALL_DIR}/${PYCPARSER}"
-    t_sudo -E $1 "${INSTALL_DIR}/${CFFI}"
-    t_sudo -E $1 "${INSTALL_DIR}/${CRYPTOGRAPHY}"
+    t_sudo -E $1 "${INSTALL_DIR}/${CFFI37}"
+    t_sudo -E $1 "${INSTALL_DIR}/${CRYPTOGRAPHY37}"
 
     # PyNaCl
     t_sudo -E $1 "${INSTALL_DIR}/${PYNACL}"
 }
 
 
-function move_tails_dependencies {
-    # Move Tails dependencies in batch.
-    t_sudo mv "$HOME/${PYSERIAL}" "${INSTALL_DIR}/"
-    t_sudo mv "$HOME/${PYSOCKS}"  "${INSTALL_DIR}/"
-
-    # Virtualenv
-    t_sudo mv "$HOME/${VIRTUALENV}"         "${INSTALL_DIR}/"
-    t_sudo mv "$HOME/${APPDIRS}"            "${INSTALL_DIR}/"
-    t_sudo mv "$HOME/${DISTLIB}"            "${INSTALL_DIR}/"
-    t_sudo mv "$HOME/${FILELOCK}"           "${INSTALL_DIR}/"
-    t_sudo mv "$HOME/${IMPORTLIB_METADATA}" "${INSTALL_DIR}/"
-    t_sudo mv "$HOME/${SIX}"                "${INSTALL_DIR}/"
-    t_sudo mv "$HOME/${ZIPP}"               "${INSTALL_DIR}/"
-
-    # Requests
-    t_sudo mv "$HOME/${URLLIB3}"  "${INSTALL_DIR}/"
-    t_sudo mv "$HOME/${IDNA}"     "${INSTALL_DIR}/"
-    t_sudo mv "$HOME/${CHARDET}"  "${INSTALL_DIR}/"
-    t_sudo mv "$HOME/${CERTIFI}"  "${INSTALL_DIR}/"
-    t_sudo mv "$HOME/${REQUESTS}" "${INSTALL_DIR}/"
-
-    # Flask
-    t_sudo mv "$HOME/${WERKZEUG}"     "${INSTALL_DIR}/"
-    t_sudo mv "$HOME/${MARKUPSAFE}"   "${INSTALL_DIR}/"
-    t_sudo mv "$HOME/${JINJA2}"       "${INSTALL_DIR}/"
-    t_sudo mv "$HOME/${ITSDANGEROUS}" "${INSTALL_DIR}/"
-    t_sudo mv "$HOME/${CLICK}"        "${INSTALL_DIR}/"
-    t_sudo mv "$HOME/${FLASK}"        "${INSTALL_DIR}/"
-
-    # Cryptography
-    t_sudo mv "$HOME/${PYCPARSER}"    "${INSTALL_DIR}/"
-    t_sudo mv "$HOME/${CFFI}"         "${INSTALL_DIR}/"
-    t_sudo mv "$HOME/${CRYPTOGRAPHY}" "${INSTALL_DIR}/"
-
-    # PyNaCl
-    t_sudo mv "$HOME/${PYNACL}" "${INSTALL_DIR}/"
+function install_tails_setuptools {
+    # Download setuptools package for Tails, and move it to /opt/tfc so it can't be edited.
+    # Once the package has been authenticated, install it and then remove the install file.
+    torsocks python3 -m pip download --no-cache-dir -r "${INSTALL_DIR}/requirements-setuptools.txt" --require-hashes --no-deps -d "${HOME}/"
+    t_sudo mv "$HOME/${SETUPTOOLS}" "${INSTALL_DIR}/"
+    compare_digest ${DIGEST_SETUPTOOLS} '' ${SETUPTOOLS}
+    t_sudo python3 -m pip install "${INSTALL_DIR}/${SETUPTOOLS}"
+    t_sudo -E rm "${INSTALL_DIR}/${SETUPTOOLS}"
 }
 
 
@@ -1058,12 +1103,28 @@ function sudoer_check {
 }
 
 
+function python_version_check {
+    python_minor_version=`python3 -c 'import sys; version=sys.version_info[:3]; print("{1}".format(*version))'`
+
+    if (( ${python_minor_version} == 7 )); then
+        CFFI=${CFFI37}
+        CRYPTOGRAPHY=${CRYPTOGRAPHY37}
+    elif (( ${python_minor_version} == 8 )); then
+        CFFI=${CFFI38}
+        CRYPTOGRAPHY=${CRYPTOGRAPHY38}
+    else
+        exit_with_message "Invalid Python version (3.${python_minor_version}). Only 3.7 and 3.8 are supported."
+    fi
+}
+
+
 # Main routine
 
 set -e
 architecture_check
 root_check
 sudoer_check
+python_version_check
 sudo_pwd=''
 
 case $1 in
