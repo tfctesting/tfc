@@ -74,7 +74,7 @@ for minor_v in ${minor_versions}; do
     # Run unit tests
     if ((${minor_v} == 7)); then
         rm -rf /home/user/tfc/.pytest_cache 2>/dev/null;
-        ${interpreter} -m pytest --cov=src --cov-report=html -d --tx 16*popen//python=${interpreter} tests/
+        ${interpreter} -m pytest --cov=src --cov-report=html -d --tx 8*popen//python=${interpreter} tests/
     fi
     rm -rf /home/user/tfc/.pytest_cache 2>/dev/null;
 
@@ -102,3 +102,5 @@ rm -f SHA512.list
 
 # Sign installer
 gpg --detach-sign --armor install.sh
+
+echo 'Publish script completed successfully.'
