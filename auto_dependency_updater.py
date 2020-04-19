@@ -366,22 +366,6 @@ def update_installer_digests(dependency_dict):
             f.write(line + '\n')
 
 
-def test_files():
-    subprocess.Popen(f"python3.7 -m pip install --ignore-installed -r {WORKING_DIR}/{TESTING_DIR}{REQ_FILE_VENV}", shell=True).wait()
-    subprocess.Popen(f"python3.7 -m pip install --ignore-installed -r {WORKING_DIR}/{TESTING_DIR}{REQ_FILE_TCB}", shell=True).wait()
-    subprocess.Popen(f"python3.7 -m pip install --ignore-installed -r {WORKING_DIR}/{TESTING_DIR}{REQ_FILE_NET}", shell=True).wait()
-    subprocess.Popen(f"python3.7 -m pip install --ignore-installed -r {WORKING_DIR}/{TESTING_DIR}{REQ_FILE_TAILS}", shell=True).wait()
-    subprocess.Popen(f"python3.7 -m pip install --ignore-installed -r {WORKING_DIR}/{TESTING_DIR}{REQ_FILE_DEV}", shell=True).wait()
-    subprocess.Popen(f"python3.7 -m pip install --ignore-installed -r {WORKING_DIR}/{TESTING_DIR}{REQ_FILE_SUT}", shell=True).wait()
-
-    subprocess.Popen(f"python3.8 -m pip install --ignore-installed -r {WORKING_DIR}/{TESTING_DIR}{REQ_FILE_VENV}", shell=True).wait()
-    subprocess.Popen(f"python3.8 -m pip install --ignore-installed -r {WORKING_DIR}/{TESTING_DIR}{REQ_FILE_TCB}", shell=True).wait()
-    subprocess.Popen(f"python3.8 -m pip install --ignore-installed -r {WORKING_DIR}/{TESTING_DIR}{REQ_FILE_NET}", shell=True).wait()
-    subprocess.Popen(f"python3.8 -m pip install --ignore-installed -r {WORKING_DIR}/{TESTING_DIR}{REQ_FILE_TAILS}", shell=True).wait()
-    subprocess.Popen(f"python3.8 -m pip install --ignore-installed -r {WORKING_DIR}/{TESTING_DIR}{REQ_FILE_DEV}", shell=True).wait()
-    subprocess.Popen(f"python3.8 -m pip install --ignore-installed -r {WORKING_DIR}/{TESTING_DIR}{REQ_FILE_SUT}", shell=True).wait()
-
-
 def main() -> None:
 
     create_and_change_to_download_directory()
@@ -544,7 +528,6 @@ def main() -> None:
     update_installer_file_names(dependency_dict)
     update_installer_digests(dependency_dict)
 
-    # test_files()
 
 if __name__ == '__main__':
     main()
