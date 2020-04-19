@@ -10,7 +10,7 @@
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/4a3de2a3691f44029d9c779a01b912e1)](https://www.codacy.com/manual/tfctesting/tfc?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=tfctesting/tfc&amp;utm_campaign=Badge_Grade)
 [![CodeFactor](https://www.codefactor.io/repository/github/tfctesting/tfc/badge)](https://www.codefactor.io/repository/github/tfctesting/tfc)
 [![Requirements Status](https://requires.io/github/tfctesting/tfc/requirements.svg?branch=master)](https://requires.io/github/tfctesting/tfc/requirements/?branch=master)
-[![Known Vulnerabilities](https://snyk.io/test/github/tfctesting/tfc/badge.svg)](https://snyk.io/test/github/tfctesting/tfc) 
+[![Snyk Report](https://snyk.io/test/github/tfctesting/tfc/badge.svg)](https://snyk.io/test/github/tfctesting/tfc) 
 
 # THIS IS TFC's PUBLIC TESTING REPOSITORY. THE CODE HOSTED HERE IS NOT STABLE AND IT IS SIGNED WITH AN INSECURELY STORED KEY!
 # DO NOT USE THIS CODE FOR ANYTHING SERIOUS. USE THE [OFFICIAL REPOSITORY](https://github.com/maqp/tfc) INSTEAD!
