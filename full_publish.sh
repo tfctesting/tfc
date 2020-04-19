@@ -26,28 +26,11 @@ cd /home/user/tfc/
 # Update dependencies
 python3.7 /home/user/tfc/auto_dependency_updater.py
 
-
-
-
-
-# Test python3.8 compatible requirements-files with pinned hashes
-requirements_files="requirements.txt"
-for req_file in ${requirements_files}; do
-    rm -rf venv_test38
-    python3.8 -m virtualenv venv_test38
-    python3.8 -m pip install -r ${req_file} --require-hashes
-    python3.8 -m pip download -r ${req_file} --require-hashes  # Check that downloading also works
-done
-rm -rf venv_test38
-
-
-# Run tests on python 3.7 and 3.8
+# Run tests on Python 3.7 and 3.8
 minor_versions="7 8"
-
 for minor_v in ${minor_versions}; do
-    interpreter = python3.${minor_v}
-    venv_name   = venv_tfc_py3${minor_v}
-
+    interpreter=python3.${minor_v}
+    venv_name=venv_tfc_py3${minor_v}
 
     # Test requirements-files with pinned hashes
     requirements_files="requirements.txt requirements-relay.txt requirements-relay-tails.txt requirements-setuptools.txt"
@@ -60,9 +43,9 @@ for minor_v in ${minor_versions}; do
 
         # Test
         ${interpreter} -m virtualenv ${venv_name}
-        . /home/user/tfc/${venv_name}/bin/activate
-        ${interpreter} -m pip install  -r "${req_file}" --require-hashes  --no-cache-dir
-        ${interpreter} -m pip download -r "${req_file}" --require-hashes  --no-cache-dir  # Check that downloading also works
+        . /home/user/tfc/req_test/${venv_name}/bin/activate
+        ${interpreter} -m pip install  -r "/home/user/tfc/${req_file}" --require-hashes  --no-cache-dir
+        ${interpreter} -m pip download -r "/home/user/tfc/${req_file}" --require-hashes  --no-cache-dir  # Check that downloading also works
         deactivate
 
         # Teardown
@@ -71,15 +54,17 @@ for minor_v in ${minor_versions}; do
 
     done
 
+    echo 'Req tests complete'
+
     rm -rf ${venv_name}
     find . -type f -name "*.py[co]" -delete -or -type d -name "__pycache__" -delete
 
-    ${interpreter} -m pip install -r requirements-venv.txt --require-hashes
+    ${interpreter} -m pip install -r "/home/user/tfc/requirements-venv.txt" --require-hashes
     ${interpreter} -m virtualenv ${venv_name} --system-site-packages
 
     # Install up-to-date dependencies
-    . $HOME/tfctesting/${venv_name}/bin/activate
-    ${interpreter} -m pip install --no-cache-dir -r requirements-dev.txt
+    . /home/user/tfc/${venv_name}/bin/activate
+    ${interpreter} -m pip install --no-cache-dir -r "/home/user/tfc/requirements-dev.txt"
 
     # Run type checks
     rm -rf /home/user/tfc/.mypy_cache 2>/dev/null;
@@ -88,7 +73,7 @@ for minor_v in ${minor_versions}; do
 
     # Run unit tests
     rm -rf /home/user/tfc/.pytest_cache 2>/dev/null;
-    p${interpreter} -m pytest --cov=src --cov-report=html -d --tx 16*popen//python=${interpreter} tests/
+    ${interpreter} -m pytest --cov=src --cov-report=html -d --tx 16*popen//python=${interpreter} tests/
     rm -rf /home/user/tfc/.pytest_cache 2>/dev/null;
 
     # Run style checks
