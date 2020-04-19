@@ -72,8 +72,10 @@ for minor_v in ${minor_versions}; do
     rm -rf /home/user/tfc/.mypy_cache 2>/dev/null;
 
     # Run unit tests
-    rm -rf /home/user/tfc/.pytest_cache 2>/dev/null;
-    ${interpreter} -m pytest --cov=src --cov-report=html -d --tx 16*popen//python=${interpreter} tests/
+    if ((${minor_v} == 7)); then
+        rm -rf /home/user/tfc/.pytest_cache 2>/dev/null;
+        ${interpreter} -m pytest --cov=src --cov-report=html -d --tx 16*popen//python=${interpreter} tests/
+    fi
     rm -rf /home/user/tfc/.pytest_cache 2>/dev/null;
 
     # Run style checks
@@ -83,10 +85,14 @@ for minor_v in ${minor_versions}; do
 
     # Cleanup
     deactivate
-    cd ..
     rm -rf ${venv_name}
     find . -type f -name "*.py[co]" -delete -or -type d -name "__pycache__" -delete
 done
+
+# Update normal virtualenv too
+rm -rf venv_tfc
+python3.7 -m virtualenv venv_tfc --system-site-packages
+python3.7 -m pip install --no-cache-dir -r "/home/user/tfc/requirements-dev.txt" --no-cache-dir
 
 # Update digests
 rm -f install.sh.asc SHA512.list
