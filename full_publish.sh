@@ -24,21 +24,14 @@ set -e
 cd /home/user/tfc/
 
 # Update dependencies
-python3.7 /home/user/auto_dependency_updater.py
+python3.7 /home/user/tfc/auto_dependency_updater.py
 
 
-# Test python3.7 compatible requirements-files
-requirements_files="requirements.txt requirements-relay.txt requirements-relay-tails.txt requirements-setuptools.txt requirements-dev.txt"
-for req_file in ${requirements_files}; do
-    rm -rf venv_test37
-    python3.7 -m virtualenv venv_test37
-    python3.7 -m pip install -r ${req_file} --require-hashes
-    python3.7 -m pip download -r ${req_file} --require-hashes  # Check that downloading also works
-done
-rm -rf venv_test37
 
-# Test python3.8 compatible requirements-files
-requirements_files="requirements.txt requirements-dev.txt"
+
+
+# Test python3.8 compatible requirements-files with pinned hashes
+requirements_files="requirements.txt"
 for req_file in ${requirements_files}; do
     rm -rf venv_test38
     python3.8 -m virtualenv venv_test38
@@ -54,6 +47,29 @@ minor_versions="7 8"
 for minor_v in ${minor_versions}; do
     interpreter = python3.${minor_v}
     venv_name   = venv_tfc_py3${minor_v}
+
+
+    # Test requirements-files with pinned hashes
+    requirements_files="requirements.txt requirements-relay.txt requirements-relay-tails.txt requirements-setuptools.txt"
+    for req_file in ${requirements_files}; do
+
+        # Setup
+        rm -rf req_test
+        mkdir req_test
+        cd req_test
+
+        # Test
+        ${interpreter} -m virtualenv ${venv_name}
+        . /home/user/tfc/${venv_name}/bin/activate
+        ${interpreter} -m pip install  -r "${req_file}" --require-hashes  --no-cache-dir
+        ${interpreter} -m pip download -r "${req_file}" --require-hashes  --no-cache-dir  # Check that downloading also works
+        deactivate
+
+        # Teardown
+        cd ..
+        rm -rf req_test
+
+    done
 
     rm -rf ${venv_name}
     find . -type f -name "*.py[co]" -delete -or -type d -name "__pycache__" -delete
@@ -85,7 +101,6 @@ for minor_v in ${minor_versions}; do
     cd ..
     rm -rf ${venv_name}
     find . -type f -name "*.py[co]" -delete -or -type d -name "__pycache__" -delete
-
 done
 
 # Update digests
