@@ -27,6 +27,7 @@ from tests.utils import cd_unit_test, cleanup
 
 REPOSITORY = "https://raw.github.com/tfctesting/tfc/master/"
 
+
 class TestDependencyHashes(unittest.TestCase):
 
     def setUp(self) -> None:
