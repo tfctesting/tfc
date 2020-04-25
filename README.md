@@ -22,7 +22,7 @@ messaging system that relies on high assurance hardware architecture to protect 
 [passive collection](https://en.wikipedia.org/wiki/Upstream_collection), 
 [MITM attacks](https://en.wikipedia.org/wiki/Man-in-the-middle_attack)
 and most importantly,
-[remote key exfiltration](https://www.youtube.com/watch?v=3euYBPlX9LM). 
+[remote key exfiltration](https://en.wikipedia.org/wiki/Data_exfiltration). 
 TFC is designed for people with one of the most complex threat models: organized crime 
 groups and nation state hackers who bypass end-to-end encryption of traditional secure 
 messaging apps by hacking the endpoint.
@@ -119,10 +119,11 @@ Optical repeater inside the
 of the data diode enforce direction of data transmission with the fundamental laws of 
 physics. This protection is so strong, the certified implementations of data diodes are 
 typically found in critical infrastructure protection and government networks where the
-classification level of data varies. A data diode might e.g. allow access to a nuclear 
-power plant's safety system readings, while preventing attackers from exploiting these 
-critical systems. An alternative use case is to allow importing data from less secure 
-systems to ones that contain classified documents that must be protected from exfiltration.
+classification level of data varies between systems. A data diode might e.g. allow access 
+to a nuclear power plant's safety system readings, while at the same time preventing 
+attackers from exploiting these critical systems. An alternative use case is to allow 
+importing data from less secure systems to ones that contain classified documents that 
+must be protected from exfiltration.
 
 In TFC the hardware data diode ensures that neither of the TCB-halves can be accessed 
 bidirectionally. Since the protection relies on physical limitations of the hardware's
@@ -203,7 +204,8 @@ To meet these users' needs, TFC can also be run in three dedicated
 virtual machines. With the Qubes configuration, the isolation is provided by the 
 [Xen hypervisor](https://xenproject.org/users/security/), 
 and the unidirectionality of data flow between the VMs is enforced with strict firewall 
-rules. This intermediate isolation mechanism runs on a single computer which means no hardware data diode is needed. 
+rules. This intermediate isolation mechanism runs on a single computer which means no 
+hardware data diode is needed. 
 
 
 ### Supported Operating Systems
@@ -236,10 +238,9 @@ Hardware Data Diode<Br>
 
 How to use<br>
 &nbsp;&nbsp;&nbsp;&nbsp;[Installation](https://github.com/maqp/tfc/wiki/Installation)<br>
-&nbsp;&nbsp;&nbsp;&nbsp;[Launching TFC](https://github.com/maqp/tfc/wiki/Launching-TFC)<br>
-&nbsp;&nbsp;&nbsp;&nbsp;[Setup master password](https://github.com/maqp/tfc/wiki/Master-Password)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;[Master password setup](https://github.com/maqp/tfc/wiki/Master-Password)<br>
 &nbsp;&nbsp;&nbsp;&nbsp;[Local key setup](https://github.com/maqp/tfc/wiki/Local-Key-Setup)<br>
-&nbsp;&nbsp;&nbsp;&nbsp;[Launch Onion Service](https://github.com/maqp/tfc/wiki/Onion-Service-Setup)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;[Onion Service setup](https://github.com/maqp/tfc/wiki/Onion-Service-Setup)<br>
 &nbsp;&nbsp;&nbsp;&nbsp;[X448 key exchange](https://github.com/maqp/tfc/wiki/X448)<br>
 &nbsp;&nbsp;&nbsp;&nbsp;[Pre-shared keys](https://github.com/maqp/tfc/wiki/PSK)<br>
 &nbsp;&nbsp;&nbsp;&nbsp;[Commands](https://github.com/maqp/tfc/wiki/Commands)<br>

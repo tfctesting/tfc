@@ -114,9 +114,9 @@ function verify_files {
     compare_digest d361e5e8201481c6346ee6a886592c51265112be550d5224f1a7a6e116255c2f1ab8788df579d9b8372ed7bfd19bac4b6e70e00b472642966ab5b319b99a2686 '' LICENSE
     compare_digest 8db25eafc66308f1fe8223c39bc5fb025ae111ebce3eae5601c907fa7a2654f68395af4f355ff0ff03775e79cda8dfccddaf7d68555bfe065d9469ca04a288f9 '' LICENSE-3RD-PARTY
     compare_digest 7cad2202e4cc940627e31577162c38f44022ddb138a51f52d0ac3747e264e065919df2b646020851d8973cc76a2873a72ceabcbe93c39911ebbfa7c867f01675 '' relay.py
-    compare_digest 5c90b5d3b363a5efd5d2f491c2986920ef28af04b06903f98638ca20d050a40657eac788bd48ffbeadc345bee60f379c8976e7fb06d359c43cd71f68f4e7037c '' requirements-dev.txt
-    compare_digest 8ea38212edbe2f702020d465e05ecc7db92a392be21cb349008669bd2070200789c9e0bc2fede4759e2c9d10c494937892c07dee46d8852541ff7522ad01ceb4 '' requirements-relay.txt
-    compare_digest 83b0fd19e4aeb3ce7e80b2abc43a96027a441e9ff9be4c442c6f89272f8b62f2f0b7a2ca6a7013625a85163a0b995e7fbc2154c3acc2647e7da73f744e37306b '' requirements-relay-tails.txt
+    compare_digest 5ddc1dbfad32747c743ff769463bc53f0c42bc2d0060f254f7b57bc94297b9d270dee705427c2752a0cc9e13205f5481bfe813541734151ab4d90692bef92aa2 '' requirements-dev.txt
+    compare_digest 6652b1a17e7fc1b15e47e0f482dc85bfb3da3d943a07560ee8a90163eab0dff893a8f5dacc6bf113f467aafe6690b3a92e1c2c53199db2dd234fa2aa2d123806 '' requirements-relay.txt
+    compare_digest a30f20a10939eecb8f826322c8a68288d7e3bde1a6153deeedbfdb1490aad1821ab5072980b247c2f26f5f46a02c661e57d835933879aea2e1bdb1b5221bf982 '' requirements-relay-tails.txt
     compare_digest 8744a7155fd3c0a9f5e32a82b6ca372d6463569c6963d02872f595c7d3e41884c3f97e66d0bb16be82284f0fad4861f4eb0ac8f51944ebaa751c7aa0e0c4fe84 '' requirements-setuptools.txt
     compare_digest 79f8272a2ab122a48c60630c965cd9d000dcafabf5ee9d69b1c33c58ec321feb17e4654dbbbf783cc8868ccdfe2777d60c6c3fc9ef16f8264d9fcf43724e83c2 '' tfc.png
     compare_digest c746fa981fcdc1b21cbe7117ed186ef7757d120cb96fbe8500b8b5f7f4effebe71360ae5c1cc2bf873818002544d9aeba26990b93723a79c6bbcd647552a7ca0 '' tfc.py
@@ -165,7 +165,7 @@ function verify_files {
     compare_digest acfa0b7ac684b5a2747e1db315386ada28cf077c5fbedfc13a89d9912682b5020ae8da98fc65aef7fcbe3e3180184a7f787eba10b5617666bc43f4e4ba40231c src/receiver/ key_exchanges.py
     compare_digest 6ebd6c0638525997949783b7623ce9a78683169e95f572ea65dcec52da150b0473a25e928862cab34eac44b0e0991a0969c5252c03cf4dc8f49d1aa9809b43bd src/receiver/ messages.py
     compare_digest eabe1695cd0fe04346e49ed91b64a11ad74ff60b636333140f9a3c6745b9c408d77aae8f45256b5d74b241324a5d429249b2be6c732205ab729a38049b8631f7 src/receiver/ output_loop.py
-    compare_digest a03b146f1b6d7ea665fa225927ebebc90f2f5415189b2c80b2aec05b819be53f62f4d50a62ee9f356215392d34a1bf095d895e588ccdfabca781c77882992787 src/receiver/ packet.py
+    compare_digest b5f64d5c00681912be163120e465409f015a52b39fd66850d43bf9ee07302370b92b84b145683ad1ffa12d53a79c26477f2b971428aef2bc2882532cc5cbe251 src/receiver/ packet.py
     compare_digest 002c960023393bec10da3de6d9a218c8e2c27da1635fd1a7f99e02a9a28792428a2c0e6cd030d1cc1fac1124c58f397f63d60b7af4c384367a8c293978125539 src/receiver/ receiver_loop.py
     compare_digest fd125c2092c217c74f1e070ba266a807c6bebea54cea2b41488ab4ecc48c91e7f60fbdc16c152704c66916ee06cecdda1a20b8c350d22a1148d83a17f8b414b8 src/receiver/ windows.py
 
@@ -425,7 +425,6 @@ function install_tcb {
     remove_common_files             "sudo"
     process_virtualenv_dependencies "rm"
     process_tcb_dependencies        "rm -f"
-    sudo rm -f "${INSTALL_DIR}/${CFFI38}"
     sudo rm -r "${INSTALL_DIR}/src/relay/"
     sudo rm    "${INSTALL_DIR}/dd.py"
     sudo rm    "${INSTALL_DIR}/relay.py"
@@ -458,7 +457,6 @@ function install_relay {
     remove_common_files             "sudo"
     process_virtualenv_dependencies "rm"
     process_tcb_dependencies        "rm -f"
-    sudo rm -f  ${INSTALL_DIR}/${CFFI38}
     sudo rm -r "${INSTALL_DIR}/src/receiver/"
     sudo rm -r "${INSTALL_DIR}/src/transmitter/"
     sudo rm    "${INSTALL_DIR}/dd.py"
@@ -549,7 +547,6 @@ function install_qubes_src {
     remove_common_files             "sudo"
     process_virtualenv_dependencies "rm"
     process_tcb_dependencies        "rm -f"
-    sudo rm -f "${INSTALL_DIR}/${CFFI38}"
     sudo rm -r "${INSTALL_DIR}/src/relay/"
     sudo rm    "${INSTALL_DIR}/dd.py"
     sudo rm    "${INSTALL_DIR}/relay.py"
@@ -583,7 +580,6 @@ function install_qubes_dst {
     remove_common_files             "sudo"
     process_virtualenv_dependencies "rm"
     process_tcb_dependencies        "rm -f"
-    sudo rm -f "${INSTALL_DIR}/${CFFI38}"
     sudo rm -r "${INSTALL_DIR}/src/relay/"
     sudo rm    "${INSTALL_DIR}/dd.py"
     sudo rm    "${INSTALL_DIR}/relay.py"
@@ -739,8 +735,7 @@ function install_local_test {
     remove_common_files             "sudo"
     process_virtualenv_dependencies "rm"
     process_tcb_dependencies        "rm -f"
-    sudo rm -f "${INSTALL_DIR}/${CFFI38}"
-    sudo rm    "${INSTALL_DIR}/tfc.yml"
+    sudo rm "${INSTALL_DIR}/tfc.yml"
 
     install_complete "Installation of TFC for local testing is now complete."
 }
@@ -1104,6 +1099,7 @@ function sudoer_check {
 
 
 function python_version_check {
+    # Check Python version and select file names based on it.
     python_minor_version=`python3 -c 'import sys; version=sys.version_info[:3]; print("{1}".format(*version))'`
 
     if (( ${python_minor_version} == 7 )); then
