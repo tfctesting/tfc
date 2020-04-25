@@ -362,7 +362,6 @@ function remove_common_files {
     $1 rm    ${INSTALL_DIR}/install.sh
     $1 rm    ${INSTALL_DIR}/install.sh.asc
     $1 rm    ${INSTALL_DIR}/pubkey.asc
-    $1 rm    ${INSTALL_DIR}/pytest.ini
     $1 rm    ${INSTALL_DIR}/README.md
     $1 rm    ${INSTALL_DIR}/requirements.txt
     $1 rm    ${INSTALL_DIR}/requirements-dev.txt
