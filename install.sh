@@ -1000,7 +1000,7 @@ function install_complete_qubes {
     c_echo "Installation of TFC on this Qube is now complete."
     c_echo ''
     c_echo "Press any key to close the installer."
-    read -n 1 -s -p ''
+    read -r -n 1 -s -p ''
     clear
 
     kill -9 $PPID
@@ -1099,7 +1099,7 @@ function sudoer_check {
 
 function python_version_check {
     # Check Python version and select file names based on it.
-    python_minor_version=`python3 -c 'import sys; version=sys.version_info[:3]; print("{1}".format(*version))'`
+    python_minor_version=$(python3 -c 'import sys; version=sys.version_info[:3]; print("{1}".format(*version))')
 
     if (( ${python_minor_version} == 7 )); then
         CFFI=${CFFI37}
