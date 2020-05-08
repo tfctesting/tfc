@@ -11,7 +11,7 @@ cryptography>=2.9.2
 
 # Flask (Onion Service web server that serves TFC public keys and ciphertexts to contacts)
 Flask>=1.1.2
-click>=7.1.1
+click>=7.1.2
 itsdangerous>=1.1.0
 Jinja2>=2.11.2
 MarkupSafe>=1.1.1
@@ -41,7 +41,7 @@ pyserial>=3.4
 PySocks>=1.7.1
 
 # pytest (Test framework)
-pytest>=5.4.1
+pytest>=5.4.2
 attrs>=19.3.0
 importlib-metadata>=1.6.0
 zipp>=3.1.0
@@ -57,7 +57,7 @@ pytest-cov>=2.8.1
 coverage>=5.1
 
 # xdist (Pytest distributed testing plugin)
-pytest-xdist>=1.31.0
+pytest-xdist>=1.32.0
 execnet>=1.7.1
 apipkg>=1.5
 pytest-forked>=1.1.3
