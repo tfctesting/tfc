@@ -25,9 +25,9 @@ INSTALL_DIR="/opt/tfc"
 
 # PIP dependency file names
 
-APPDIRS=appdirs-1.4.3-py2.py3-none-any.whl
-ARGON2_CFFI=argon2_cffi-19.2.0-cp34-abi3-manylinux1_x86_64.whl
-CERTIFI=certifi-2020.4.5.1-py2.py3-none-any.whl
+APPDIRS=appdirs-1.4.4-py2.py3-none-any.whl
+ARGON2_CFFI=argon2_cffi-20.1.0-cp35-abi3-manylinux1_x86_64.whl
+CERTIFI=certifi-2020.6.20-py2.py3-none-any.whl
 CFFI37=cffi-1.14.0-cp37-cp37m-manylinux1_x86_64.whl
 CFFI38=cffi-1.14.0-cp38-cp38-manylinux1_x86_64.whl
 CHARDET=chardet-3.0.4-py2.py3-none-any.whl
@@ -38,19 +38,19 @@ DISTLIB=distlib-0.3.0.zip
 FILELOCK=filelock-3.0.12-py3-none-any.whl
 FLASK=Flask-1.1.2-py2.py3-none-any.whl
 IDNA=idna-2.9-py2.py3-none-any.whl
-IMPORTLIB_METADATA=importlib_metadata-1.6.0-py2.py3-none-any.whl
+IMPORTLIB_METADATA=importlib_metadata-1.6.1-py2.py3-none-any.whl
 ITSDANGEROUS=itsdangerous-1.1.0-py2.py3-none-any.whl
 JINJA2=Jinja2-2.11.2-py2.py3-none-any.whl
 MARKUPSAFE=MarkupSafe-1.1.1-cp37-cp37m-manylinux1_x86_64.whl
 PYCPARSER=pycparser-2.20-py2.py3-none-any.whl
-PYNACL=PyNaCl-1.3.0-cp34-abi3-manylinux1_x86_64.whl
+PYNACL=PyNaCl-1.4.0-cp35-abi3-manylinux1_x86_64.whl
 PYSERIAL=pyserial-3.4-py2.py3-none-any.whl
 PYSOCKS=PySocks-1.7.1-py3-none-any.whl
-REQUESTS=requests-2.23.0-py2.py3-none-any.whl
-SETUPTOOLS=setuptools-46.1.3-py3-none-any.whl
-SIX=six-1.14.0-py2.py3-none-any.whl
+REQUESTS=requests-2.24.0-py2.py3-none-any.whl
+SETUPTOOLS=setuptools-47.3.1-py3-none-any.whl
+SIX=six-1.15.0-py2.py3-none-any.whl
 URLLIB3=urllib3-1.25.9-py2.py3-none-any.whl
-VIRTUALENV=virtualenv-20.0.20-py2.py3-none-any.whl
+VIRTUALENV=virtualenv-20.0.25-py2.py3-none-any.whl
 WERKZEUG=Werkzeug-1.0.1-py2.py3-none-any.whl
 ZIPP=zipp-3.1.0-py3-none-any.whl
 
@@ -65,18 +65,18 @@ DIGEST_PYSOCKS=313b954102231d038d52ab58f41e3642579be29f827135b8dd92c06acb362effc
 # Virtualenv
 DIGEST_ZIPP=89170b91cfdc0ef4d85b5316b484c8d6e01985f19bb9f545b11d648e122392efa68d40c66e056b8998fb69af49f4e18707f783be8d500b8957ce3a885662d27c
 DIGEST_FILELOCK=d13edd50779bca9842694e0da157ca1fdad9d28166771275049f41dea4b8d8466fc5604b610b6ad64552cdf4c1d3cada9977ca37c6b775c4cc92f333709e8ea3
-DIGEST_IMPORTLIB_METADATA=8bf2b8ccbc501526c30115bf417d67440701c3793cec0caa0f778b5216788cc8c58e692bcb818aa34cc4dd6208595345669d710e8ddc5af521532a1b9c7f2837
-DIGEST_SIX=a6e7e35921ce8f2f8e79a296ea79a9c3515ff6dd7e777d7892fe4988594f1b3a442a68ffb89cf64530b90a32ceeea00e4ab9069bb697629ab4eb7262c68d1b0f
+DIGEST_IMPORTLIB_METADATA=dfeec89361e48f7ea978aa2dd4c6a45dce49c66aec6846e51b38f9284657295e677b60f29feabb9966ad3fc96b4a12ed4848bb9ba153ea34ff16c935a21ff5ef
+DIGEST_SIX=0416d59434623604de755601c919722c2b800042612a2a7b221ecd3ccf556aca3a78f0f926fd640032a3d74d153457628a89c25065dfcdbb96892d5bf7279904
 DIGEST_DISTLIB=6f910a9607569c9023a19aee35be15cf8521ec7c07c5d478e6d555a301d024a2ee1db48562707b238a72c631d75d9dc154d38b39ed51746b66c938ac40671e60
-DIGEST_APPDIRS=b79e9fa76eadee595fe47ea7efd35c4cc72f058a9ed16a95cfa4d91a52c330efba50df7a9926900bbced229cca7bbfb05bbf0a8ee1d46bac2362c98ab9a5154d
-DIGEST_VIRTUALENV=84c19b8f879dd396c00b2f55885f5dc4d29bba898362259259cc81e9a2e9dec47588e45e9c42b9c634a7de80792f01b95df54b6625a68dca5688165e774d344a
+DIGEST_APPDIRS=8e6c1ea544013ea2567cda2d8b8c7b441bc50ac689aa7f95de67e3795aa083e9592c687d74fdbb37f5a75e0beab398fe47df5bced14ee9c204cfe5ecc364ef44
+DIGEST_VIRTUALENV=812cc4b096e4357936d94c0e4f768e943eaf3b5ce1edd5ca309fc4433a3bf03ee7385cdeaf1a277408d250ecf28eb0e1d871da0818cf764d65109be42007e94e
 
 # Requests
 DIGEST_URLLIB3=b20687b4ce06164c5b932b43c5b758efd864668ee2b60f6cd6ce6c27f0ea16b9d1222ec0c061618fc3f0de362c0f18be95864bd91ecaa73fdfa92bd666fb4378
 DIGEST_IDNA=be96b782728404acec374f446b11811f8e76d5ed42d4673a07e883220f5ba2a099a8124cda5898c3f5da7d92b87b36127e8fd42e9edb240b587a380ed73cce93
 DIGEST_CHARDET=bfae58c8ea19c87cc9c9bf3d0b6146bfdb3630346bd954fe8e9f7da1f09da1fc0d6943ff04802798a665ea3b610ee2d65658ce84fe5a89f9e93625ea396a17f4
-DIGEST_CERTIFI=3fb450a6feba8865cd83ae0d7ba0d60ccc7ba456676e2c1f739058878df2ea9e222c200902e6409fbeee88f9d3825c2074de3531ab2977135efefd793e550e8e
-DIGEST_REQUESTS=98e4c9435434b8f63fc37a21133adbbfeb471bfb8b40d60f04bded5cbe328c14a22527d54ab2a55a81d93110d627bacc26943e55ec338b7bed8708b55e15fff3
+DIGEST_CERTIFI=960f1cbe72443230ecba527b5bc4bb8a45a33feb646b0ad01dcb606b9ec3729d27dff5cfa04655d92efd4dec691d61c62d80f8fd39a82fc21528727eeb5c9991
+DIGEST_REQUESTS=64c49592455abbcd1168f5e1908a8db77bbeb373264b1cf6db8a1fefe65f9a0879e30066d34b041e7f013c7fc1ccdd87b91bc637f2a53972be45bb984364fa0d
 
 # Flask
 DIGEST_WERKZEUG=8f05b3632d00b1a9c3d85f46dccc7eb55c032bc8cc7b688219865487c96127ecccdd44f9724159299d14db98c1951b552b478811d292d93aa2d12817c88c8527
@@ -92,8 +92,8 @@ DIGEST_CFFI=5b315a65fc8f40622ceef35466546620aaca9dd304f5491a845239659b4066469c5f
 DIGEST_CRYPTOGRAPHY=251d1ce022ac969516e54eae62b383bc113cc023a5459a030fa4c3d3d67c5ff4daa5d23bcf6a334845315ab71532e7aa3db28c882bbfed5260dd1ab01429ca6a
 
 # PyNaCl
-DIGEST_SETUPTOOLS=24641b46913f15eebdd600405990b6a1a8a40ae3733d05d21e153fad8509284d78b2f297392224d3e52248f23a5b92f154e2458121b94038a4bb603717b77208
-DIGEST_PYNACL=c4017c38b026a5c531b15839b8d61d1fae9907ba1960c2f97f4cd67fe0827729346d5186a6d6927ba84f64b4cbfdece12b287aa7750a039f4160831be871cea3
+DIGEST_SETUPTOOLS=c86448d2348b4f58e3eb4c55f8133675f3a20315ee11e829a55f414c07c05f84afe4991d95625a8f0ed62e924b34bff29fd8e67a6929298ec53f69e6fcc4454b
+DIGEST_PYNACL=bf1bb46d23419cb375bcf620a37b5e9ce925cb0dd55eadf851a4bbb9039c8846ed13ae33966436a96655ea41ad1fc282f9139a958fd55ea10597fd3859635a2f
 
 
 # ----------------------------------------------------------------------------------------
@@ -103,8 +103,8 @@ DIGEST_PYNACL=c4017c38b026a5c531b15839b8d61d1fae9907ba1960c2f97f4cd67fe082772934
 function verify_tcb_requirements_files {
     # To minimize the time TCB installer configuration stays online,
     # only the requirements files are authenticated between downloads.
-    compare_digest 6c4696cbcf71411ffbf7c82ea27d0e9b8d6f5958669a752e8560d559a24ee3306b6769eeeb86763b14db62265d22557321e82fb1aeb253d1b99c0a05452000fe '' requirements.txt
-    compare_digest 1ec1dcfac7cbdcf615dbc6c6093c609144e318ee077e219928c0ae2f962d6890bdbb418b3992c7efedee060e8b3ed8b75dffc4a6baef11e7ce708bfacf2566b2 '' requirements-venv.txt
+    compare_digest 01b139e85415cd60125eef077dd7bcac68952f605780ae91d3938dc2c8a80d7b7f06f2066c0d0aed1229ef2c69679f984919313dc4749db434b507902531e061 '' requirements.txt
+    compare_digest aaaf690d7e0a120c8cf57187bdb63f67d01ff4dfa566734f8846455ff706af2ed0df19403b680e7a63c7506f7c64407424027e8422623750441b3eee72d85eb8 '' requirements-venv.txt
 }
 
 
@@ -114,10 +114,10 @@ function verify_files {
     compare_digest d361e5e8201481c6346ee6a886592c51265112be550d5224f1a7a6e116255c2f1ab8788df579d9b8372ed7bfd19bac4b6e70e00b472642966ab5b319b99a2686 '' LICENSE
     compare_digest 8db25eafc66308f1fe8223c39bc5fb025ae111ebce3eae5601c907fa7a2654f68395af4f355ff0ff03775e79cda8dfccddaf7d68555bfe065d9469ca04a288f9 '' LICENSE-3RD-PARTY
     compare_digest 7cad2202e4cc940627e31577162c38f44022ddb138a51f52d0ac3747e264e065919df2b646020851d8973cc76a2873a72ceabcbe93c39911ebbfa7c867f01675 '' relay.py
-    compare_digest 4f486dd60cb7e48c844a22afd2aaf80eb49b54ad8fecd84bab07a2c961ff11d9706a5bf943ded395f02951937baab6752a15d61867add9ee2d11c5ce477ad7ab '' requirements-dev.txt
-    compare_digest d155a8bd9ae10febc15b657a398fd0129bec21b3cbe25c0e2ac6e0addf866580b129ecd061494b6b3db11d7fe3f1797b62b94b95df50bb5bcede15e5d377ab34 '' requirements-relay.txt
-    compare_digest 213e145b332fae1b7aedaed8031072ade371f70bc80431b773136d21f48245f8838b5b8c29caf1c03169b74bc82f426166468361e1e3b1d2d7b8d43cf884ae4f '' requirements-relay-tails.txt
-    compare_digest 8744a7155fd3c0a9f5e32a82b6ca372d6463569c6963d02872f595c7d3e41884c3f97e66d0bb16be82284f0fad4861f4eb0ac8f51944ebaa751c7aa0e0c4fe84 '' requirements-setuptools.txt
+    compare_digest 821b319f419c34ab0d10f7c68ef964383b143cc3886d68100fd3dac353df1a471d1bd9cbe0ed0a8fba2b50638144d85490fe16581ae8731bbbc361e6ca45600e '' requirements-dev.txt
+    compare_digest 93b91c5fc6748f174cec5004b5a7812e72adeff9f71eec21b97691687faf49a555c8d6be38a4e83fda1a7e50002dd94d30a43e161e8b672b19258b07700daa2f '' requirements-relay.txt
+    compare_digest 9224ab623f995ebe47ea1b551e78f3de8078d81bee970551d9d6d977a55c27d6f5b600a94c26029a56d7d366f85209f48ae0c53b5e8d982aeb290015b120e6aa '' requirements-relay-tails.txt
+    compare_digest 20868b92578a7063851f98dbc3dacf0f9c7b317cb2a8f1497594092a9328a996666535ff1698021d8f9de2055c39a8019f565c49453b8400ce8db98897d280c9 '' requirements-setuptools.txt
     compare_digest 79f8272a2ab122a48c60630c965cd9d000dcafabf5ee9d69b1c33c58ec321feb17e4654dbbbf783cc8868ccdfe2777d60c6c3fc9ef16f8264d9fcf43724e83c2 '' tfc.png
     compare_digest c746fa981fcdc1b21cbe7117ed186ef7757d120cb96fbe8500b8b5f7f4effebe71360ae5c1cc2bf873818002544d9aeba26990b93723a79c6bbcd647552a7ca0 '' tfc.py
     compare_digest 62f26d2805570ee70fad3a076579a554008e7d9f2c9ff310f3bb5876d361cc03dbae7ab63b144ac215a35f920ac56d359481352805a356479d622ab00da15f7f '' tfc.yml
