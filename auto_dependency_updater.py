@@ -173,11 +173,11 @@ class Dependency(object):
         self.manual_py38_url  = manual_py38_url
         self.sub_dependencies = sub_dependencies
 
-        self.latest_file_name_py37  = None  # type: Optional[str]
-        self.latest_file_name_py38  = None  # type: Optional[str]
-        self.latest_version         = None  # type: Optional[str]
-        self.latest_digest_py37     = None  # type: Optional[str]
-        self.latest_digest_py38     = None  # type: Optional[str]
+        self.latest_file_name_py37 = None  # type: Optional[str]
+        self.latest_file_name_py38 = None  # type: Optional[str]
+        self.latest_version        = None  # type: Optional[str]
+        self.latest_digest_py37    = None  # type: Optional[str]
+        self.latest_digest_py38    = None  # type: Optional[str]
 
     def fetch_attributes(self) -> None:
         """Download packages from PyPI and parse attributes."""
@@ -202,8 +202,10 @@ class Dependency(object):
             os.remove(self.latest_file_name_py37)
             self.latest_file_name_py38 = os.listdir('.')[0]
             self.latest_digest_py38    = create_file_digest(self.latest_file_name_py38)
-            assert self.get_latest_version_from_file_name(self.latest_file_name_py38) == self.latest_version
-
+            py38_version = self.get_latest_version_from_file_name(self.latest_file_name_py38)
+            if py38_version != self.latest_version:
+                print(f"Python3.8 version {py38_version} of {self.stylized_name} "
+                      f"did not match Python 3.7 version ({self.latest_version}).")
         self.teardown()
 
     def generate_dev_string(self, file_name: str) -> str:
@@ -387,8 +389,8 @@ def main() -> None:
                                                          REQ_FILE_TCB:   'cryptography (pyca) (Handles TCB-side X448 key exchange)',
                                                          REQ_FILE_NET:   'cryptography (pyca) (Handles URL token derivation)',
                                                          REQ_FILE_TAILS: 'cryptography (pyca) (Handles URL token derivation)'},
-                                       manual_py37_url="https://files.pythonhosted.org/packages/58/95/f1282ca55649b60afcf617e1e2ca384a2a3e7a5cf91f724cf83c8fbe76a1/cryptography-2.9.2-cp35-abi3-manylinux1_x86_64.whl",
-                                       manual_py38_url="https://files.pythonhosted.org/packages/3c/04/686efee2dcdd25aecf357992e7d9362f443eb182ecd623f882bc9f7a6bba/cryptography-2.9.2-cp35-abi3-manylinux2010_x86_64.whl"),
+                                       manual_py37_url="https://files.pythonhosted.org/packages/43/2e/8d2de0d73d177184bc9a15137cd9aae46c1b3a59842b5fde30c8b80a5b4e/cryptography-3.1-cp35-abi3-manylinux1_x86_64.whl",
+                                       manual_py38_url="https://files.pythonhosted.org/packages/c0/9c/647e559a6e8be493dc2a7a5d15d26cb501ca60ec299b356f23839a673a83/cryptography-3.1-cp35-abi3-manylinux2010_x86_64.whl"),
         DISTLIB:            Dependency(uid=DISTLIB,            stylized_name='distlib',            pip_name='distlib',            sub_dependencies=None),
         EXECNET:            Dependency(uid=EXECNET,            stylized_name='execnet',            pip_name='execnet',            sub_dependencies=[APIPKG]),
         FILELOCK:           Dependency(uid=FILELOCK,           stylized_name='py-filelock',        pip_name='filelock',           sub_dependencies=None),
