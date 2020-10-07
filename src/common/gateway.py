@@ -108,7 +108,7 @@ class Gateway(object):
                 self.client_establish_socket()
             if self.settings.software_operation in [NC, RX]:
                 self.server_establish_socket()
-        else:
+        elif not self.settings.qubes:
             self.establish_serial()
 
     def establish_serial(self) -> None:
