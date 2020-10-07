@@ -210,7 +210,7 @@ class Gateway(object):
         """Read packet from oldest buffer file."""
         ensure_dir(BUFFER_FILE_DIR)
 
-        if not any([f for f in os.listdir(BUFFER_FILE_DIR) if f.startswith(BUFFER_FILE_NAME)]):
+        while not any([f for f in os.listdir(BUFFER_FILE_DIR) if f.startswith(BUFFER_FILE_NAME)]):
             time.sleep(0.001)
 
         tfc_buffer_file_numbers   = [f[(len(BUFFER_FILE_NAME)+len('.')):] for f in os.listdir(BUFFER_FILE_DIR) if f.startswith(BUFFER_FILE_NAME)]
