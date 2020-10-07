@@ -151,6 +151,9 @@ class Gateway(object):
         """Send packet content over the Qubes qrexec RPC.
 
         More information at https://www.qubes-os.org/doc/qrexec/
+
+        The packet is encoded with ASCII85 to ensure e.g. 0x0a
+        byte is not interpreted as line feed by the RPC service.
         """
         target_vm   = QUBES_NET_VM_NAME    if self.settings.software_operation == TX else QUBES_DST_VM_NAME
         dom0_policy = QUBES_SRC_NET_POLICY if self.settings.software_operation == TX else QUBES_NET_DST_POLICY
@@ -159,7 +162,7 @@ class Gateway(object):
                          stdin=subprocess.PIPE,
                          stdout=subprocess.DEVNULL,
                          stderr=subprocess.DEVNULL
-                         ).communicate(packet)
+                         ).communicate(base64.b85encode(packet))
 
     def write(self, orig_packet: bytes) -> None:
         """Add error correction data and output data via socket/serial interface.
@@ -218,6 +221,11 @@ class Gateway(object):
 
         with open(f"{BUFFER_FILE_DIR}/{oldest_buffer_file}", 'rb') as f:
             packet = f.read()
+
+        try:
+            packet = base64.b85decode(packet)
+        except ValueError:
+            raise SoftError("Error: Received packet had invalid Base85 encoding.")
 
         os.remove(f"{BUFFER_FILE_DIR}/{oldest_buffer_file}")
 
@@ -282,10 +290,7 @@ class Gateway(object):
         if self.settings.session_serial_error_correction and not self.settings.qubes:
             packet = self.rs.encode(packet)
         else:
-            checksum = hashlib.blake2b(packet, digest_size=PACKET_CHECKSUM_LENGTH).digest()
-            print(packet.hex())  # TODO REMOVE
-            print(checksum.hex())  # TODO REMOVE
-            packet = packet + checksum
+            packet = packet + hashlib.blake2b(packet, digest_size=PACKET_CHECKSUM_LENGTH).digest()
         return packet
 
     def detect_errors(self, packet: bytes) -> bytes:
@@ -304,8 +309,7 @@ class Gateway(object):
                 raise SoftError("Error: Reed-Solomon failed to correct errors in the received packet.", bold=True)
         else:
             packet, checksum = separate_trailer(packet, PACKET_CHECKSUM_LENGTH)
-            print(packet.hex())  # TODO REMOVE
-            print(checksum.hex())  # TODO REMOVE
+
             if hashlib.blake2b(packet, digest_size=PACKET_CHECKSUM_LENGTH).digest() != checksum:
                 raise SoftError("Warning! Received packet had an invalid checksum.", bold=True)
             return packet
