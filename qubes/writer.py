@@ -26,6 +26,7 @@ import sys
 BUFFER_FILE_DIR  = '/home/user/tfc/.buffered_incoming_packets'
 BUFFER_FILE_NAME = 'buffered_incoming_packet'
 
+
 def ensure_dir(directory: str) -> None:
     """Ensure directory exists."""
     name = os.path.dirname(directory)
