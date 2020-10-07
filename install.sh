@@ -428,7 +428,7 @@ function install_tcb {
     process_virtualenv_dependencies "rm"
     process_tcb_dependencies        "rm -f"
     sudo rm -r "${INSTALL_DIR}/src/relay/"
-    sudo rm -r "${INSTALL_DIR}/src/qubes/"
+    sudo rm -r "${INSTALL_DIR}/qubes/"
     sudo rm    "${INSTALL_DIR}/dd.py"
     sudo rm    "${INSTALL_DIR}/relay.py"
     sudo rm    "${INSTALL_DIR}/tfc.yml"
@@ -462,7 +462,7 @@ function install_relay {
     process_tcb_dependencies        "rm -f"
     sudo rm -r "${INSTALL_DIR}/src/receiver/"
     sudo rm -r "${INSTALL_DIR}/src/transmitter/"
-    sudo rm -r "${INSTALL_DIR}/src/qubes/"
+    sudo rm -r "${INSTALL_DIR}/qubes/"
     sudo rm    "${INSTALL_DIR}/dd.py"
     sudo rm    "${INSTALL_DIR}/tfc.py"
     sudo rm    "${INSTALL_DIR}/tfc.yml"
@@ -518,7 +518,7 @@ function install_relay_tails {
     process_tails_dependencies      "rm"
     t_sudo rm -r "${INSTALL_DIR}/src/receiver/"
     t_sudo rm -r "${INSTALL_DIR}/src/transmitter/"
-    t_sudo rm -r "${INSTALL_DIR}/src/qubes/"
+    t_sudo rm -r "${INSTALL_DIR}/qubes/"
     t_sudo rm    "${INSTALL_DIR}/dd.py"
     t_sudo rm    "${INSTALL_DIR}/tfc.py"
 
@@ -552,7 +552,7 @@ function install_qubes_src {
     process_virtualenv_dependencies "rm"
     process_tcb_dependencies        "rm -f"
     sudo rm -r "${INSTALL_DIR}/src/relay/"
-    sudo rm -r "${INSTALL_DIR}/src/qubes/"  # Listening service only needed on NET/DST
+    sudo rm -r "${INSTALL_DIR}/qubes/"  # Listening service only needed on NET/DST
     sudo rm    "${INSTALL_DIR}/dd.py"
     sudo rm    "${INSTALL_DIR}/relay.py"
     sudo rm    "${INSTALL_DIR}/tfc.yml"
@@ -664,7 +664,7 @@ function install_local_test {
     remove_common_files             "sudo"
     process_virtualenv_dependencies "rm"
     process_tcb_dependencies        "rm -f"
-    sudo rm -r "${INSTALL_DIR}/src/qubes/"
+    sudo rm -r "${INSTALL_DIR}/qubes/"
     sudo rm    "${INSTALL_DIR}/tfc.yml"
 
     install_complete "Installation of TFC for local testing is now complete."
