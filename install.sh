@@ -573,7 +573,6 @@ function install_qubes_dst {
     sudo ln -sf /opt/tfc/qubes/service.sh /etc/qubes-rpc/tfc.NetworkerDestination
     sudo chmod a+x /opt/tfc/qubes/writer.py
     sudo chmod a+x /opt/tfc/qubes/service.sh
-    mkdir -p /home/user/tfc/.buffered_incoming_packets
 
     process_virtualenv_dependencies "python3 -m pip install"
     sudo python3 -m virtualenv "${INSTALL_DIR}/venv_tcb" --system-site-packages --never-download
@@ -611,7 +610,6 @@ function install_qubes_net {
     sudo ln -sf /opt/tfc/qubes/service.sh /etc/qubes-rpc/tfc.SourceNetworker
     sudo chmod a+x /opt/tfc/qubes/writer.py
     sudo chmod a+x /opt/tfc/qubes/service.sh
-    mkdir -p /home/user/tfc/.buffered_incoming_packets
 
     process_virtualenv_dependencies "python3 -m pip install"
     sudo python3 -m virtualenv ${INSTALL_DIR}/venv_relay --system-site-packages
