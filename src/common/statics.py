@@ -504,8 +504,8 @@ DD_ANIMATION_LENGTH   = 16
 DD_OFFSET_FROM_CENTER = 4
 
 # Qubes related
-QUBES_NET_VM_NAME       = 'NetworkerVM'
-QUBES_DST_VM_NAME       = 'DestinationVM'
+QUBES_NET_VM_NAME       = 'TFC-Networker'
+QUBES_DST_VM_NAME       = 'TFC-Destination'
 QUBES_SRC_NET_POLICY    = 'tfc.SourceNetworker'
 QUBES_NET_DST_POLICY    = 'tfc.NetworkerDestination'
 BUFFER_FILE_DIR         = '/home/user/.tfc'
