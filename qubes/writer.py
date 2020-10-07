@@ -23,7 +23,7 @@ import base64
 import os
 import sys
 
-BUFFER_FILE_DIR  = '/home/user/.tfc/'
+BUFFER_FILE_DIR  = '/home/user/tfc/.buffered_incoming_packets'
 BUFFER_FILE_NAME = 'buffered_incoming_packet'
 
 def ensure_dir(directory: str) -> None:
@@ -39,7 +39,7 @@ def ensure_dir(directory: str) -> None:
 def store_unique(file_data: bytes,  # File data to store
                  file_dir:  str,    # Directory to store file
                  file_name: str     # Preferred name for the file.
-                 ) -> str:
+                 ) -> None:
     """Store file under a unique filename.
 
     If file exists, add trailing counter .# with value as large as
@@ -55,16 +55,19 @@ def store_unique(file_data: bytes,  # File data to store
             ctr += 1
         file_name += f'.{ctr}'
 
-    with open(file_dir + file_name, 'wb+') as f:
+    with open(f"{file_dir}/{file_name}", 'wb+') as f:
         f.write(file_data)
         f.flush()
         os.fsync(f.fileno())
 
-    return file_name
-
 
 def main() -> None:
-    """Store data from STDIN to unique file for Relay/Receiver Program."""
+    """Store data from STDIN to unique file for Relay/Receiver Program.
+
+    To prevent adversaries from delivering malicious binaries on DestinationVM,
+    this utility encodes received raw bytes with Base85, that is decoded by the
+    Receiver Program prior to further authentication.
+    """
     data = sys.stdin.buffer.read()
 
     store_unique(file_data=base64.b85encode(data),

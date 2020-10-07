@@ -154,13 +154,12 @@ class Gateway(object):
         """
         target_vm   = QUBES_NET_VM_NAME    if self.settings.software_operation == TX else QUBES_DST_VM_NAME
         dom0_policy = QUBES_SRC_NET_POLICY if self.settings.software_operation == TX else QUBES_NET_DST_POLICY
-        enc_packet  = base64.b85encode(packet)
 
         subprocess.Popen(['qrexec-client-vm', target_vm, dom0_policy],
                          stdin=subprocess.PIPE,
                          stdout=subprocess.DEVNULL,
                          stderr=subprocess.DEVNULL
-                         ).communicate(enc_packet)
+                         ).communicate(packet)
 
     def write(self, orig_packet: bytes) -> None:
         """Add error correction data and output data via socket/serial interface.
@@ -219,11 +218,10 @@ class Gateway(object):
 
         with open(f"{BUFFER_FILE_DIR}/{oldest_buffer_file}", 'rb') as f:
             packet = f.read()
-        dec_packet = base64.b85decode(packet)
 
         os.remove(f"{BUFFER_FILE_DIR}/{oldest_buffer_file}")
 
-        return dec_packet
+        return packet
 
     def read_serial(self) -> bytes:
         """Read packet from serial interface.

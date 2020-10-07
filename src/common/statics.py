@@ -508,7 +508,7 @@ QUBES_NET_VM_NAME       = 'TFC-Networker'
 QUBES_DST_VM_NAME       = 'TFC-Destination'
 QUBES_SRC_NET_POLICY    = 'tfc.SourceNetworker'
 QUBES_NET_DST_POLICY    = 'tfc.NetworkerDestination'
-BUFFER_FILE_DIR         = '/home/user/.tfc'
+BUFFER_FILE_DIR         = '/home/user/tfc/.buffered_incoming_packets'
 BUFFER_FILE_NAME        = 'buffered_incoming_packet'
 
 # Field lengths
