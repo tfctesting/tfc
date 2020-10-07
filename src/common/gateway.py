@@ -207,7 +207,7 @@ class Gateway(object):
     @staticmethod
     def read_qubes_buffer_file() -> bytes:
         """Read packet from oldest buffer file."""
-        ensure_dir(BUFFER_FILE_DIR)
+        ensure_dir(f"{BUFFER_FILE_DIR}/")
 
         while not any([f for f in os.listdir(BUFFER_FILE_DIR) if f.startswith(BUFFER_FILE_NAME)]):
             time.sleep(0.001)

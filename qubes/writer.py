@@ -45,17 +45,13 @@ def store_unique(file_data: bytes,  # File data to store
     If file exists, add trailing counter .# with value as large as
     needed to ensure existing file is not overwritten.
     """
-    ensure_dir(file_dir)
+    ensure_dir(f'{file_dir}/')
 
     ctr = 0
-    file_name += f'.{ctr}'
+    while os.path.isfile(f"{file_dir}/{file_name}.{ctr}"):
+        ctr += 1
 
-    if os.path.isfile(file_dir + file_name):
-        while os.path.isfile(file_dir + file_name + f'.{ctr}'):
-            ctr += 1
-        file_name += f'.{ctr}'
-
-    with open(f"{file_dir}/{file_name}", 'wb+') as f:
+    with open(f"{file_dir}/{file_name}.{ctr}", 'wb+') as f:
         f.write(file_data)
         f.flush()
         os.fsync(f.fileno())

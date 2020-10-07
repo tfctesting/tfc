@@ -137,7 +137,7 @@ function verify_files {
     compare_digest 7dc114d5c6cc94b427a8c99c1bc10763ff5f42f2351d6a4d5058697a4d4d904106fc8f8382ad6d8632289fc9ae2d196aa8a1cc3514cb88dfd12e32ab3501a400 launchers/ TFC-TxP-Qubes.desktop
 
     compare_digest b5393d094dce97a8e12a36438c56e92da8dc01555aa18a85b138411d18a3e47384a2dc56b184f8d18745db55495d6f2e22e4aa0038a5b2917856a1ba13fca06a qubes/ service.sh
-    compare_digest 9eb4fc9753bddcd3877256d16f5bed8b13842e536e6db7fc4b4b94829b7381e7e691f6f025b7e6e88451738bfb0902b2189df9d3c8bf85ec29a70a3f42ecec51 qubes/ writer.py
+    compare_digest 2a462e8688ffcdbcebcec1d3abd567d8ea271a670ef8da8dfd738fc83d0d1e755420da5a3fc86dcc3b2b03a6faf19dcd933eb428985c26de65ad228daa3ec6a8 qubes/ writer.py
 
     compare_digest 3ee90ee305382d80da801f047a6e58e5b763f9f6bc08dce531d5c620f2748c6bba59a1528eee5d721decb8e724f53b28fc7609f5b20472f679f554b78b5d4cc6 src/ __init__.py
     compare_digest 3ee90ee305382d80da801f047a6e58e5b763f9f6bc08dce531d5c620f2748c6bba59a1528eee5d721decb8e724f53b28fc7609f5b20472f679f554b78b5d4cc6 src/common/ __init__.py
@@ -152,7 +152,7 @@ function verify_files {
     compare_digest 4ef757ba877ee6b74632af3a0d3567c9483a62b9063ec0e7fe7b6abc7e82b490ec52279198f0be22866595dae1948bb1ef9ef556c88b3c320c5316fd59fc0743 src/common/ db_settings.py
     compare_digest 60fb4c922af286307865b29f0cadab53a5a575a9f820cd5ad99ea116c841b54dd1d1be1352bf7c3ab51d2fd223077217bcda1b442d44d2b9f1bf614e15c4a14d src/common/ encoding.py
     compare_digest ccd522408ad2e8e21f01038f5f49b9d82d5288717f1a1acf6cda278c421c05472827ee5928fbf56121c2dfc4f2cc49986e32c493e892bd6ae584be38ba381edd src/common/ exceptions.py
-    compare_digest 385dc1842aaa01495ece307b0741b6eec903288521b31e00a9d161622e2dbc26fbad85e2f5b5bb786d5396b455fa20b1d3aea6b440610ea0b1cdf199948f875b src/common/ gateway.py
+    compare_digest 94f03b13db8683ba1a515b957ca2ab051b7b8efdaadfa54af96a64ad2f7c35870007c64f283dd5300ee6cec7d001ae88deffcf64116d5799981d8bc08e0f14bb src/common/ gateway.py
     compare_digest d4021175fba75649fa1b8b65116b0acc98cedccd2a012986037a78e799908329694ee6f4c50617f92f5df279cfe5e719e38cada5f3775a8ea912a541f1dbf438 src/common/ input.py
     compare_digest 8045671a2d180271ea873e91e478a0b3ba766cda195a0755060ba14fb50d089b7007b6134c002e8d25255e47376c2e394c76a7593e68ea45f1cc1f8e109869e9 src/common/ misc.py
     compare_digest 6329bbdc9d24c1342d0996009a8cd4d852d5a800cbf6a582c047c0fc13e6ca9be28251b783325adffca100d2a372616088cedff2441cc103b8c18540828445ef src/common/ output.py
@@ -573,7 +573,7 @@ function install_qubes_dst {
     sudo ln -sf /opt/tfc/qubes/service.sh /etc/qubes-rpc/tfc.NetworkerDestination
     sudo chmod a+x /opt/tfc/qubes/writer.py
     sudo chmod a+x /opt/tfc/qubes/service.sh
-    mkdir -p /home/user/.tfc
+    mkdir -p /home/user/tfc/.buffered_incoming_packets
 
     process_virtualenv_dependencies "python3 -m pip install"
     sudo python3 -m virtualenv "${INSTALL_DIR}/venv_tcb" --system-site-packages --never-download
@@ -611,7 +611,7 @@ function install_qubes_net {
     sudo ln -sf /opt/tfc/qubes/service.sh /etc/qubes-rpc/tfc.SourceNetworker
     sudo chmod a+x /opt/tfc/qubes/writer.py
     sudo chmod a+x /opt/tfc/qubes/service.sh
-    mkdir -p /home/user/.tfc
+    mkdir -p /home/user/tfc/.buffered_incoming_packets
 
     process_virtualenv_dependencies "python3 -m pip install"
     sudo python3 -m virtualenv ${INSTALL_DIR}/venv_relay --system-site-packages
