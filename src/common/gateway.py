@@ -282,7 +282,10 @@ class Gateway(object):
         if self.settings.session_serial_error_correction and not self.settings.qubes:
             packet = self.rs.encode(packet)
         else:
-            packet = packet + hashlib.blake2b(packet, digest_size=PACKET_CHECKSUM_LENGTH).digest()
+            checksum = hashlib.blake2b(packet, digest_size=PACKET_CHECKSUM_LENGTH).digest()
+            print(packet.hex())  # TODO REMOVE
+            print(checksum.hex())  # TODO REMOVE
+            packet = packet + checksum
         return packet
 
     def detect_errors(self, packet: bytes) -> bytes:
@@ -301,6 +304,8 @@ class Gateway(object):
                 raise SoftError("Error: Reed-Solomon failed to correct errors in the received packet.", bold=True)
         else:
             packet, checksum = separate_trailer(packet, PACKET_CHECKSUM_LENGTH)
+            print(packet.hex())  # TODO REMOVE
+            print(checksum.hex())  # TODO REMOVE
             if hashlib.blake2b(packet, digest_size=PACKET_CHECKSUM_LENGTH).digest() != checksum:
                 raise SoftError("Warning! Received packet had an invalid checksum.", bold=True)
             return packet
