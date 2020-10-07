@@ -208,18 +208,25 @@ class Gateway(object):
                 raise CriticalError("Relay IPC client disconnected.", exit_code=0)
 
     @staticmethod
-    def read_qubes_buffer_file() -> bytes:
+    def read_qubes_buffer_file(buffer_file_dir: str = '') -> bytes:
         """Read packet from oldest buffer file."""
-        ensure_dir(f"{BUFFER_FILE_DIR}/")
+        buffer_file_dir = buffer_file_dir if buffer_file_dir else BUFFER_FILE_DIR
 
-        while not any([f for f in os.listdir(BUFFER_FILE_DIR) if f.startswith(BUFFER_FILE_NAME)]):
+        ensure_dir(f"{buffer_file_dir}/")
+
+        while not any([f for f in os.listdir(buffer_file_dir) if f.startswith(BUFFER_FILE_NAME)]):
             time.sleep(0.001)
 
-        tfc_buffer_file_numbers   = [f[(len(BUFFER_FILE_NAME)+len('.')):] for f in os.listdir(BUFFER_FILE_DIR) if f.startswith(BUFFER_FILE_NAME)]
+        tfc_buffer_file_numbers   = [f[(len(BUFFER_FILE_NAME)+len('.')):] for f in os.listdir(buffer_file_dir) if f.startswith(BUFFER_FILE_NAME)]
+        tfc_buffer_file_numbers   = [n for n in tfc_buffer_file_numbers if n.isdigit()]
         tfc_buffer_files_in_order = [f"{BUFFER_FILE_NAME}.{n}" for n in sorted(tfc_buffer_file_numbers, key=int)]
-        oldest_buffer_file        = tfc_buffer_files_in_order[0]
 
-        with open(f"{BUFFER_FILE_DIR}/{oldest_buffer_file}", 'rb') as f:
+        try:
+            oldest_buffer_file = tfc_buffer_files_in_order[0]
+        except IndexError:
+            raise SoftError("No packet was available.", output=False)
+
+        with open(f"{buffer_file_dir}/{oldest_buffer_file}", 'rb') as f:
             packet = f.read()
 
         try:
@@ -227,7 +234,7 @@ class Gateway(object):
         except ValueError:
             raise SoftError("Error: Received packet had invalid Base85 encoding.")
 
-        os.remove(f"{BUFFER_FILE_DIR}/{oldest_buffer_file}")
+        os.remove(f"{buffer_file_dir}/{oldest_buffer_file}")
 
         return packet
 
@@ -264,12 +271,12 @@ class Gateway(object):
             except (OSError, SerialException):
                 self.establish_serial()
 
-    def read(self) -> bytes:
+    def read(self, buffer_file_dir: str = '') -> bytes:
         """Read data via socket/serial interface."""
         if self.settings.local_testing_mode:
             return self.read_socket()
         if self.settings.qubes:
-            return self.read_qubes_buffer_file()
+            return self.read_qubes_buffer_file(buffer_file_dir)
         return self.read_serial()
 
     def add_error_correction(self, packet: bytes) -> bytes:
