@@ -570,7 +570,7 @@ function install_qubes_dst {
     verify_files
 
     # Configure listening service for qrexec RPC
-    sudo ln -s /opt/tfc/qubes/service.sh /etc/qubes-rpc/tfc.NetworkerDestination
+    sudo ln -sf /opt/tfc/qubes/service.sh /etc/qubes-rpc/tfc.NetworkerDestination
     sudo chmod a+x /opt/tfc/qubes/writer.py
     sudo chmod a+x /opt/tfc/qubes/service.sh
     mkdir -p /home/user/.tfc
@@ -608,7 +608,7 @@ function install_qubes_net {
     verify_files
 
     # Configure listening service for qrexec RPC
-    sudo ln -s /opt/tfc/qubes/service.sh /etc/qubes-rpc/tfc.SourceNetworker
+    sudo ln -sf /opt/tfc/qubes/service.sh /etc/qubes-rpc/tfc.SourceNetworker
     sudo chmod a+x /opt/tfc/qubes/writer.py
     sudo chmod a+x /opt/tfc/qubes/service.sh
     mkdir -p /home/user/.tfc
