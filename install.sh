@@ -136,6 +136,9 @@ function verify_files {
     compare_digest e51703df0106368858832936ef7f5048221ca2b1eb2bc3a41c06e1bfb055f5f9f00a712b1195511f3e7fbbf6c04b22752b3ad54d8ef68c75ebdbd145e310b98a launchers/ TFC-TxP.desktop
     compare_digest 7dc114d5c6cc94b427a8c99c1bc10763ff5f42f2351d6a4d5058697a4d4d904106fc8f8382ad6d8632289fc9ae2d196aa8a1cc3514cb88dfd12e32ab3501a400 launchers/ TFC-TxP-Qubes.desktop
 
+    compare_digest b5393d094dce97a8e12a36438c56e92da8dc01555aa18a85b138411d18a3e47384a2dc56b184f8d18745db55495d6f2e22e4aa0038a5b2917856a1ba13fca06a qubes/ service.sh
+    compare_digest f24a6aa48402dc392fa1973783997d59e9a2d8911151985b1ab0370b779c8c53c08d8ed61b2f7ad8e4fd4c9ead8ece8096adecf5e40fb2d66859ef2fede068b4 qubes/ writer.py
+
     compare_digest 3ee90ee305382d80da801f047a6e58e5b763f9f6bc08dce531d5c620f2748c6bba59a1528eee5d721decb8e724f53b28fc7609f5b20472f679f554b78b5d4cc6 src/ __init__.py
     compare_digest 3ee90ee305382d80da801f047a6e58e5b763f9f6bc08dce531d5c620f2748c6bba59a1528eee5d721decb8e724f53b28fc7609f5b20472f679f554b78b5d4cc6 src/common/ __init__.py
     compare_digest f6572b3e2b446405a4af1a1a197787d40bf980f80c19569b33ff503f0b3a312a1e78076ee19095ad149930d7919b9fb468d3937eef44012fd9a926a8bf0658c7 src/common/ crypto.py
@@ -149,13 +152,13 @@ function verify_files {
     compare_digest 4ef757ba877ee6b74632af3a0d3567c9483a62b9063ec0e7fe7b6abc7e82b490ec52279198f0be22866595dae1948bb1ef9ef556c88b3c320c5316fd59fc0743 src/common/ db_settings.py
     compare_digest 60fb4c922af286307865b29f0cadab53a5a575a9f820cd5ad99ea116c841b54dd1d1be1352bf7c3ab51d2fd223077217bcda1b442d44d2b9f1bf614e15c4a14d src/common/ encoding.py
     compare_digest ccd522408ad2e8e21f01038f5f49b9d82d5288717f1a1acf6cda278c421c05472827ee5928fbf56121c2dfc4f2cc49986e32c493e892bd6ae584be38ba381edd src/common/ exceptions.py
-    compare_digest 6a0b92cc259f7f0b4d1b65663ea633cc49590ff3562e1fedb096b59b49eddcbffa5e1892a6a5873a879f13b666192d3986f2c010de2e994ae7f6f6119b49ab60 src/common/ gateway.py
+    compare_digest bb7b9216d05ba7a32b1b016c73f72b51e51b1438b18e05fc3500cd30ed66b8054bfebe8957e34856e240a280bd39994a5d2699ffb728327c116f853163750691 src/common/ gateway.py
     compare_digest d4021175fba75649fa1b8b65116b0acc98cedccd2a012986037a78e799908329694ee6f4c50617f92f5df279cfe5e719e38cada5f3775a8ea912a541f1dbf438 src/common/ input.py
     compare_digest 8045671a2d180271ea873e91e478a0b3ba766cda195a0755060ba14fb50d089b7007b6134c002e8d25255e47376c2e394c76a7593e68ea45f1cc1f8e109869e9 src/common/ misc.py
     compare_digest 6329bbdc9d24c1342d0996009a8cd4d852d5a800cbf6a582c047c0fc13e6ca9be28251b783325adffca100d2a372616088cedff2441cc103b8c18540828445ef src/common/ output.py
     compare_digest c96d7cb1b76650a49accc3ea007254e73e2e697895790ff6c14351520f4a7b1baec76d6055e3bddb14a687c0641fd15e361c93737afe7a8924b420ca67c31140 src/common/ path.py
     compare_digest 39e48b0b55f4f1a48bc558f47b5f7c872583f3f3925fd829de28710024b000fcb03799cb36da3a31806143bc3cbb98e5d357a8d62674c23e1e8bf957aece79f6 src/common/ reed_solomon.py
-    compare_digest a047c5e4dde0c5a85917fdaa76800913de90eed983685599c8b1c6376114111e0cd4eaa8dc89069f85f7d01c2926d8a856cc1edc8b672b7c22ad9c19528522cb src/common/ statics.py
+    compare_digest 611fce6a9166d1aa10cb79343860be1021094b18c33b95783d70903f189b4b0c3fbc7bd764b3b3981a03ca1d558a2f4a1255a78f84b59729a19a1ec9cb78a95f src/common/ statics.py
     compare_digest a57d5525a570a78d15c75e79702289cf8571c1b3c142fae57f32bf3ed8bb784c7f63ce2e805d295b4a505fdeaf9d59094ebe67d8979c92dc11e2534474505b0e src/common/ word_list.py
 
     compare_digest 3ee90ee305382d80da801f047a6e58e5b763f9f6bc08dce531d5c620f2748c6bba59a1528eee5d721decb8e724f53b28fc7609f5b20472f679f554b78b5d4cc6 src/receiver/ __init__.py
@@ -425,6 +428,7 @@ function install_tcb {
     process_virtualenv_dependencies "rm"
     process_tcb_dependencies        "rm -f"
     sudo rm -r "${INSTALL_DIR}/src/relay/"
+    sudo rm -r "${INSTALL_DIR}/src/qubes/"
     sudo rm    "${INSTALL_DIR}/dd.py"
     sudo rm    "${INSTALL_DIR}/relay.py"
     sudo rm    "${INSTALL_DIR}/tfc.yml"
@@ -458,6 +462,7 @@ function install_relay {
     process_tcb_dependencies        "rm -f"
     sudo rm -r "${INSTALL_DIR}/src/receiver/"
     sudo rm -r "${INSTALL_DIR}/src/transmitter/"
+    sudo rm -r "${INSTALL_DIR}/src/qubes/"
     sudo rm    "${INSTALL_DIR}/dd.py"
     sudo rm    "${INSTALL_DIR}/tfc.py"
     sudo rm    "${INSTALL_DIR}/tfc.yml"
@@ -513,6 +518,7 @@ function install_relay_tails {
     process_tails_dependencies      "rm"
     t_sudo rm -r "${INSTALL_DIR}/src/receiver/"
     t_sudo rm -r "${INSTALL_DIR}/src/transmitter/"
+    t_sudo rm -r "${INSTALL_DIR}/src/qubes/"
     t_sudo rm    "${INSTALL_DIR}/dd.py"
     t_sudo rm    "${INSTALL_DIR}/tfc.py"
 
@@ -527,7 +533,6 @@ function install_qubes_src {
     create_user_data_dir
 
     steps_before_network_kill
-    qubes_src_firewall_config
 
     verify_files
 
@@ -547,6 +552,7 @@ function install_qubes_src {
     process_virtualenv_dependencies "rm"
     process_tcb_dependencies        "rm -f"
     sudo rm -r "${INSTALL_DIR}/src/relay/"
+    sudo rm -r "${INSTALL_DIR}/src/qubes/"  # Listening service only needed on NET/DST
     sudo rm    "${INSTALL_DIR}/dd.py"
     sudo rm    "${INSTALL_DIR}/relay.py"
     sudo rm    "${INSTALL_DIR}/tfc.yml"
@@ -560,9 +566,14 @@ function install_qubes_dst {
     create_user_data_dir
 
     steps_before_network_kill
-    qubes_dst_firewall_config
 
     verify_files
+
+    # Configure listening service for qrexec RPC
+    sudo ln -s /opt/tfc/qubes/service.sh /etc/qubes-rpc/tfc.NetworkerDestination
+    sudo chmod a+x /opt/tfc/qubes/writer.py
+    sudo chmod a+x /opt/tfc/qubes/service.sh
+    mkdir -p /home/user/.tfc
 
     process_virtualenv_dependencies "python3 -m pip install"
     sudo python3 -m virtualenv "${INSTALL_DIR}/venv_tcb" --system-site-packages --never-download
@@ -593,9 +604,14 @@ function install_qubes_net {
     create_user_data_dir
 
     steps_before_network_kill
-    qubes_net_firewall_config
 
     verify_files
+
+    # Configure listening service for qrexec RPC
+    sudo ln -s /opt/tfc/qubes/service.sh /etc/qubes-rpc/tfc.SourceNetworker
+    sudo chmod a+x /opt/tfc/qubes/writer.py
+    sudo chmod a+x /opt/tfc/qubes/service.sh
+    mkdir -p /home/user/.tfc
 
     process_virtualenv_dependencies "python3 -m pip install"
     sudo python3 -m virtualenv ${INSTALL_DIR}/venv_relay --system-site-packages
@@ -619,92 +635,6 @@ function install_qubes_net {
 
     install_complete_qubes
 }
-
-
-# Qubes firewall configurations
-
-function add_fw_rule {
-    # Add a firewall rule that takes effect immediately
-    sudo ${1}
-
-    # Make the firewall rule persistent
-    echo "${1}" | sudo tee -a /rw/config/rc.local
-}
-
-
-function qubes_src_firewall_config {
-    # Edit Source VM's firewall rules to block all incoming connections,
-    # and to only allow UDP packets to Networked VM's TFC port.
-
-    # Create backup of the current rc.local file (firewall rules)
-    sudo mv /rw/config/rc.local{,.backup."$(date +%Y-%m-%d-%H_%M_%S)"}
-
-    # Add firewall rules that block all incoming/outgoing connections
-    add_fw_rule "iptables --flush"
-    add_fw_rule "iptables -t filter -P INPUT DROP"
-    add_fw_rule "iptables -t filter -P OUTPUT DROP"
-    add_fw_rule "iptables -t filter -P FORWARD DROP"
-
-    src_ip=$(sudo ifconfig eth0 | grep "inet" | cut -d: -f2 | awk '{print $2}')
-    net_ip=$(get_net_ip)
-
-    # Allow export of data to the Networked VM
-    add_fw_rule "iptables -I OUTPUT -s ${src_ip} -d ${net_ip} -p udp --dport 2063 -j ACCEPT"
-    sudo chmod a+x /rw/config/rc.local
-
-    # Store Networked VM IP address so Transmitter Program can configure itself
-    echo ${net_ip} > $HOME/tfc/rx_ip_addr
-}
-
-
-function qubes_dst_firewall_config {
-    # Edit Destination VM's firewall rules to block all outgoing connections,
-    # and to only allow UDP packets from Networked VM to Receiver Programs' port.
-
-    # Create backup of the current rc.local file (firewall rules)
-    sudo mv /rw/config/rc.local{,.backup."$(date +%Y-%m-%d-%H_%M_%S)"}
-
-    # Add firewall rules that block all connections
-    add_fw_rule "iptables --flush"
-    add_fw_rule "iptables -t filter -P INPUT DROP"
-    add_fw_rule "iptables -t filter -P OUTPUT DROP"
-    add_fw_rule "iptables -t filter -P FORWARD DROP"
-
-    net_ip=$(get_net_ip)
-    dst_ip=$(sudo ifconfig eth0 | grep "inet" | cut -d: -f2 | awk '{print $2}')
-
-    # Allow import of data from the Networked VM
-    add_fw_rule "iptables -I INPUT -s ${net_ip} -d ${dst_ip} -p udp --dport 2064 -j ACCEPT"
-    sudo chmod a+x /rw/config/rc.local
-}
-
-
-function qubes_net_firewall_config {
-    # Edit Networked VM's firewall rules to accept UDP
-    # packets from Source VM to the Relay Program's port.
-    net_ip=$(sudo ifconfig eth0 | grep "inet" | cut -d: -f2 | awk '{print $2}')
-    tcb_ips=$(get_tcb_ips)
-    src_ip=$(echo ${tcb_ips} | awk -F "|" '{print $1}')
-    dst_ip=$(echo ${tcb_ips} | awk -F "|" '{print $2}')
-
-    # Store Destination VM IP address so Relay Program can configure itself
-    echo ${dst_ip} > $HOME/tfc/rx_ip_addr
-
-    # Create backup of the current rc.local file (firewall rules)
-    sudo cp /rw/config/rc.local{,.backup."$(date +%Y-%m-%d-%H_%M_%S)"}
-
-    # Add firewall rules
-    add_fw_rule "iptables -t filter -P INPUT DROP"
-    add_fw_rule "iptables -t filter -P OUTPUT ACCEPT"
-    add_fw_rule "iptables -t filter -P FORWARD DROP"
-    add_fw_rule "iptables -I INPUT -s ${src_ip} -d ${net_ip} -p udp --dport 2063 -j ACCEPT"  # 5. Whitelist UDP packets from SRC VM to NET VM's TFC port (2063)
-    add_fw_rule "iptables -I OUTPUT -d ${dst_ip} -p udp ! --dport 2064 -j DROP"              # 4. Blacklist all UDP packets from NET VM to DST VM that don't have destination port 2064
-    add_fw_rule "iptables -I OUTPUT -d ${dst_ip} ! -p udp -j DROP"                           # 3. Blacklist all non-UDP packets from NET VM to DST VM
-    add_fw_rule "iptables -I OUTPUT ! -s ${net_ip} -d ${dst_ip} -j DROP"                     # 2. Blacklist all packets to DST VM that do not originate from NET VM
-    add_fw_rule "iptables -I OUTPUT -d ${src_ip} -p all -j DROP"                             # 1. Blacklist all packets to SRC VM
-    sudo chmod a+x /rw/config/rc.local
-}
-
 
 # Tiling terminal emulator configurations for single OS
 
@@ -734,7 +664,8 @@ function install_local_test {
     remove_common_files             "sudo"
     process_virtualenv_dependencies "rm"
     process_tcb_dependencies        "rm -f"
-    sudo rm "${INSTALL_DIR}/tfc.yml"
+    sudo rm -r "${INSTALL_DIR}/src/qubes/"
+    sudo rm    "${INSTALL_DIR}/tfc.yml"
 
     install_complete "Installation of TFC for local testing is now complete."
 }
@@ -798,57 +729,6 @@ function compare_digest {
         echo "Expected following hash:"
         echo "${1}"
         exit 1
-    fi
-}
-
-
-function valid_ip() {
-    # Validate an IP-address. (Borrowed from https://www.linuxjournal.com/content/validating-ip-address-bash-script)
-    local ip=$1
-    local valid=1
-
-    if [[ ${ip} =~ ^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$ ]]; then
-        OIFS=$IFS
-        IFS='.'
-        ip=(${ip})
-        IFS=${OIFS}
-        [[ ${ip[0]} -le 255 && ${ip[1]} -le 255 && ${ip[2]} -le 255 && ${ip[3]} -le 255 ]]
-        valid=$?
-    fi
-    return ${valid}
-}
-
-
-function get_net_ip {
-    # Get the IP-address of the Networker VM from the user.
-    ip=$(zenity --entry --title="TFC Installer" --text="Enter the IP-address of the Networked Computer VM:")
-    if valid_ip ${ip}; then
-        echo ${ip}
-        return
-    else
-        zenity --info --title='TFC installer' --text='Error: Invalid IP'
-        get_net_ip
-    fi
-}
-
-
-function get_tcb_ips {
-    # Get the Source and Destination VM IP-addresses from the user.
-    ips=$(zenity --forms \
-    --title="TFC Installer" \
-    --text="Enter the IP-addresses of the TCB VMs" \
-    --add-entry="Source Computer VM IP:" \
-    --add-entry="Destination Computer VM IP:")
-
-    first_ip=$(echo ${ips} | awk -F "|" '{print $1}')
-    second_ip=$(echo ${ips} | awk -F "|" '{print $2}')
-
-    if valid_ip ${first_ip} && valid_ip ${second_ip}; then
-        echo ${ips}
-        return
-    else
-        zenity --info --title='TFC installer' --text='Error: Invalid IP'
-        get_tcb_ips
     fi
 }
 

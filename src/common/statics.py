@@ -504,10 +504,12 @@ DD_ANIMATION_LENGTH   = 16
 DD_OFFSET_FROM_CENTER = 4
 
 # Qubes related
-QUBES_SRC_LISTEN_SOCKET = 2063
-QUBES_DST_LISTEN_SOCKET = 2064
-SOCKET_BUFFER_SIZE      = 4096
-QUBES_RX_IP_ADDR_FILE   = 'rx_ip_addr'
+QUBES_NET_VM_NAME       = 'NetworkerVM'
+QUBES_DST_VM_NAME       = 'DestinationVM'
+QUBES_SRC_NET_POLICY    = 'tfc.SourceNetworker'
+QUBES_NET_DST_POLICY    = 'tfc.NetworkerDestination'
+BUFFER_FILE_DIR         = '/home/user/.tfc'
+BUFFER_FILE_NAME        = 'buffered_incoming_packet'
 
 # Field lengths
 ENCODED_BOOLEAN_LENGTH  = 1
