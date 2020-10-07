@@ -70,3 +70,7 @@ def main() -> None:
     store_unique(file_data=base64.b85encode(data),
                  file_dir=BUFFER_FILE_DIR,
                  file_name=BUFFER_FILE_NAME)
+
+
+if __name__ == '__main__':
+    main()
