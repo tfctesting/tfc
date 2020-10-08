@@ -404,7 +404,7 @@ TRAFFIC_MASKING = 'traffic_masking'
 DIR_USER_DATA  = 'user_data/'
 DIR_RECV_FILES = 'received_files/'
 DIR_TFC        = 'tfc/'
-TEMP_POSTFIX   = '_temp'
+TEMP_SUFFIX    = '_temp'
 
 
 """Key exchange status states"""

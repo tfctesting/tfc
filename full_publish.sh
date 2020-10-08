@@ -72,7 +72,7 @@ for minor_v in ${minor_versions}; do
     rm -rf /home/user/tfc/.mypy_cache 2>/dev/null;
 
     # Run unit tests
-    if ((${minor_v} == 7)); then
+    if ((minor_v == 7)); then
         rm -rf /home/user/tfc/.pytest_cache 2>/dev/null;
         ${interpreter} -m pytest --cov=src --cov-report=html -d --tx 8*popen//python=${interpreter} tests/
     fi

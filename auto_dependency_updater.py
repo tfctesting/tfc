@@ -191,7 +191,9 @@ class Dependency(object):
         self.latest_file_name_py37 = os.listdir('.')[0]
         self.latest_digest_py37    = create_file_digest(self.latest_file_name_py37)
         self.latest_version        = self.get_latest_version_from_file_name(self.latest_file_name_py37)
-        assert len(os.listdir('.')) == 1
+
+        if len(os.listdir('.')) != 1:
+            raise SystemExit("There needs to be exactly one dependency in the directory.")
 
         if self.manual_py38_url is None:
             subprocess.Popen(f"python3.8 -m pip download {self.pip_name} --no-deps", shell=True).wait()

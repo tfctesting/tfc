@@ -142,11 +142,11 @@ function verify_files {
     compare_digest 3ee90ee305382d80da801f047a6e58e5b763f9f6bc08dce531d5c620f2748c6bba59a1528eee5d721decb8e724f53b28fc7609f5b20472f679f554b78b5d4cc6 src/ __init__.py
     compare_digest 3ee90ee305382d80da801f047a6e58e5b763f9f6bc08dce531d5c620f2748c6bba59a1528eee5d721decb8e724f53b28fc7609f5b20472f679f554b78b5d4cc6 src/common/ __init__.py
     compare_digest f6572b3e2b446405a4af1a1a197787d40bf980f80c19569b33ff503f0b3a312a1e78076ee19095ad149930d7919b9fb468d3937eef44012fd9a926a8bf0658c7 src/common/ crypto.py
-    compare_digest b87ad9321dedc59fd17d1a60866ed061925870156a458861d5c51d5825f8c5562c9a33d8f8d14a46c6b054a6542c8aa5d97c06ce78442f66913e8ab043fa20de src/common/ database.py
+    compare_digest e1f77d17164d6879695adb0ad9d32c61f7447f36db73e398e161956140a142c40a9972970d89873d2febd4dc1c2b57ddd838eccd3437fa28c83285a0179aeb45 src/common/ database.py
     compare_digest dfef16b30d75bbe270c4b7df1369b3eeb2347b931e7bb3a974965cc916a6ffb20aaa40d14532ecb4a8cabdb71598fb53d86589aa475dbb02030bdf9489d71429 src/common/ db_contacts.py
     compare_digest 7c0214208857174b43092eaf61d14c16e60d6ebb68ba25b260f84546ce39f1fed8b21aceb58833920c8d939304b313c0ad95c554210ae3d5d0547143f7dd704c src/common/ db_groups.py
     compare_digest c49231429824d8133de7efad667c2bdde694a6c7a2e34e3b015ddb8cf59a150574cdd7099aaad02a4993a1669cd631f5af4cc611fac7d538d3ecd141d9295d0d src/common/ db_keys.py
-    compare_digest 04e0c0d53bcfc71476410bbdfcacee2ba3df6d7761d02111aca69a56cac848e4fb0178ee572b181b1a925bd45aae005b31b9e2afcce7416f7bd8c5dad96bc615 src/common/ db_logs.py
+    compare_digest 59affc49355ee6c3be47fde56434142ec87ce49554194744b67fa7f7f9e24e9008fe23ad5ee196b74adc49a1daf555d42762630e44be5b55294f7bd223b77883 src/common/ db_logs.py
     compare_digest 82286a267814ba58fee37477a44ecd87090ce4878535bd98f626ef9b853965f6f18d082109713856ef19c80ec892fc26ad4a5c08775a0a0ca65134a9d3ed86d5 src/common/ db_masterkey.py
     compare_digest 325298cd6cb7e68d27681c18f29e635f46222e34015ba3c8fe55e6718e6907b4257bbe12d71fd344b557aff302ae9d7fca2b581b4208e59ac7923e57aca23fe5 src/common/ db_onion.py
     compare_digest 4ef757ba877ee6b74632af3a0d3567c9483a62b9063ec0e7fe7b6abc7e82b490ec52279198f0be22866595dae1948bb1ef9ef556c88b3c320c5316fd59fc0743 src/common/ db_settings.py
@@ -158,7 +158,7 @@ function verify_files {
     compare_digest 6329bbdc9d24c1342d0996009a8cd4d852d5a800cbf6a582c047c0fc13e6ca9be28251b783325adffca100d2a372616088cedff2441cc103b8c18540828445ef src/common/ output.py
     compare_digest c96d7cb1b76650a49accc3ea007254e73e2e697895790ff6c14351520f4a7b1baec76d6055e3bddb14a687c0641fd15e361c93737afe7a8924b420ca67c31140 src/common/ path.py
     compare_digest 39e48b0b55f4f1a48bc558f47b5f7c872583f3f3925fd829de28710024b000fcb03799cb36da3a31806143bc3cbb98e5d357a8d62674c23e1e8bf957aece79f6 src/common/ reed_solomon.py
-    compare_digest df839f8c8085dbbbd9326b30cee57e3aa319b28bf348a3e0c5174cc64cfbf278ee18da4817b3d70dad5d017bea827dfba391b4fb3761b06edf10ff7628c79775 src/common/ statics.py
+    compare_digest 04127f6615143806cee59140b325021fcccc3852d0f2eb6fda84f55268ddc5f4b22af2120a44b3d17e88024807236c97e1a2b60d7dd2c5abf91c521f32b68796 src/common/ statics.py
     compare_digest a57d5525a570a78d15c75e79702289cf8571c1b3c142fae57f32bf3ed8bb784c7f63ce2e805d295b4a505fdeaf9d59094ebe67d8979c92dc11e2534474505b0e src/common/ word_list.py
 
     compare_digest 3ee90ee305382d80da801f047a6e58e5b763f9f6bc08dce531d5c620f2748c6bba59a1528eee5d721decb8e724f53b28fc7609f5b20472f679f554b78b5d4cc6 src/receiver/ __init__.py
@@ -891,9 +891,9 @@ function arg_error {
     clear
     echo -e "\nUsage: bash install.sh [OPTION]\n"
     echo    "Mandatory arguments"
-    echo    "  tcb      Install Transmitter/Receiver Program (Debian 10 / PureOS 9.0+ / *buntu 20.04+ / LMDE 4)"
-    echo    "  relay    Install Relay Program                (Debian 10 / PureOS 9.0+ / *buntu 20.04+ / LMDE 4 / Tails 4.0+)"
-    echo -e "  local    Install insecure local testing mode  (Debian 10 / PureOS 9.0+ / *buntu 20.04+ / LMDE 4)\n"
+    echo    "  tcb      Install Transmitter/Receiver Program (Debian 10 / PureOS 9.0+ / *buntu 20.04+ / LMDE 4 / Mint 20)"
+    echo    "  relay    Install Relay Program                (Debian 10 / PureOS 9.0+ / *buntu 20.04+ / LMDE 4 / Mint 20 / Tails 4.0+)"
+    echo -e "  local    Install insecure local testing mode  (Debian 10 / PureOS 9.0+ / *buntu 20.04+ / LMDE 4 / Mint 20)\n"
     echo    "  qsrc     Install Transmitter Program          (Qubes 4.0.3)"
     echo    "  qdst     Install Receiver Program             (Qubes 4.0.3)"
     echo -e "  qnet     Install Relay Program                (Qubes 4.0.3)\n"
@@ -979,10 +979,10 @@ function python_version_check {
     # Check Python version and select file names based on it.
     python_minor_version=$(python3 -c 'import sys; version=sys.version_info[:3]; print("{1}".format(*version))')
 
-    if (( ${python_minor_version} == 7 )); then
+    if (( python_minor_version == 7 )); then
         CFFI=${CFFI37}
         CRYPTOGRAPHY=${CRYPTOGRAPHY37}
-    elif (( ${python_minor_version} == 8 )); then
+    elif (( python_minor_version == 8 )); then
         CFFI=${CFFI38}
         CRYPTOGRAPHY=${CRYPTOGRAPHY38}
     else
