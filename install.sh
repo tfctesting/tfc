@@ -625,6 +625,7 @@ function install_qubes_net {
     # Remove unnecessary files
     remove_common_files             "sudo"
     process_virtualenv_dependencies "rm"
+    process_tcb_dependencies        "rm -f"
     sudo rm -r "${INSTALL_DIR}/src/receiver/"
     sudo rm -r "${INSTALL_DIR}/src/transmitter/"
     sudo rm    "${INSTALL_DIR}/dd.py"
