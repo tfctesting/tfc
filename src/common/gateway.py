@@ -158,7 +158,7 @@ class Gateway(object):
         target_vm   = QUBES_NET_VM_NAME    if self.settings.software_operation == TX else QUBES_DST_VM_NAME
         dom0_policy = QUBES_SRC_NET_POLICY if self.settings.software_operation == TX else QUBES_NET_DST_POLICY
 
-        subprocess.Popen(['qrexec-client-vm', target_vm, dom0_policy],
+        subprocess.Popen(['/usr/bin/qrexec-client-vm', target_vm, dom0_policy],
                          stdin=subprocess.PIPE,
                          stdout=subprocess.DEVNULL,
                          stderr=subprocess.DEVNULL

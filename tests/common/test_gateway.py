@@ -320,14 +320,14 @@ class TestGatewaySerial(TFCTestCase):
         gateway = Gateway(operation=TX, local_test=False, dd_sockets=False, qubes=True)
         self.assertIsInstance(gateway, Gateway)
         self.assertIsNone(gateway.write(b'data'))
-        mock_popen.assert_called_with(['qrexec-client-vm', QUBES_NET_VM_NAME, QUBES_SRC_NET_POLICY], stderr=-3, stdin=-1, stdout=-3)
+        mock_popen.assert_called_with(['/usr/bin/qrexec-client-vm', QUBES_NET_VM_NAME, QUBES_SRC_NET_POLICY], stderr=-3, stdin=-1, stdout=-3)
 
     @mock.patch('subprocess.Popen')
     def test_qubes_send_to_destinationVM(self, mock_popen) -> None:
         gateway = Gateway(operation=NC, local_test=False, dd_sockets=False, qubes=True)
         self.assertIsInstance(gateway, Gateway)
         self.assertIsNone(gateway.write(b'data'))
-        mock_popen.assert_called_with(['qrexec-client-vm', QUBES_DST_VM_NAME, QUBES_NET_DST_POLICY], stderr=-3, stdin=-1, stdout=-3)
+        mock_popen.assert_called_with(['/usr/bin/qrexec-client-vm', QUBES_DST_VM_NAME, QUBES_NET_DST_POLICY], stderr=-3, stdin=-1, stdout=-3)
 
 
 class TestGatewaySettings(TFCTestCase):
