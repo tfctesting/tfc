@@ -26,6 +26,11 @@ cd /home/user/tfc/
 # Update dependencies
 python3.7 /home/user/tfc/auto_dependency_updater.py
 
+# Update normal virtualenv
+rm -rf venv_tfc
+python3.7 -m virtualenv venv_tfc --system-site-packages
+python3.7 -m pip install --no-cache-dir -r "/home/user/tfc/requirements-dev.txt" --no-cache-dir
+
 # Run tests on Python 3.7 and 3.8
 minor_versions="7 8"
 for minor_v in ${minor_versions}; do
@@ -89,10 +94,6 @@ for minor_v in ${minor_versions}; do
     find . -type f -name "*.py[co]" -delete -or -type d -name "__pycache__" -delete
 done
 
-# Update normal virtualenv too
-rm -rf venv_tfc
-python3.7 -m virtualenv venv_tfc --system-site-packages
-python3.7 -m pip install --no-cache-dir -r "/home/user/tfc/requirements-dev.txt" --no-cache-dir
 
 # Update digests
 rm -f install.sh.asc SHA512.list
