@@ -426,8 +426,3 @@ class MasterKey(object):
             raise SoftError("Authentication aborted.", tail_clear=True, head=2, delay=1)
 
         return authenticated
-
-
-if __name__ == '__main__':
-    pwd = MasterKey.generate_master_password()
-    print(pwd)
