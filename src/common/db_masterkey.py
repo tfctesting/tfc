@@ -93,18 +93,14 @@ class MasterKey(object):
     def generate_master_password() -> Tuple[int, str]:
         """Generate a strong password using the EFF wordlist."""
         word_space = len(eff_wordlist)
-        sys_rand   = random.SystemRandom()
+        pwd_length = math.ceil(math.log(2 ** PASSWORD_MIN_BIT_STRENGTH, word_space))
 
-        pwd_bit_strength = 0.0
-        password_words   = []  # type: List[str]
+        pwd_bit_strength = math.floor(math.log2(word_space ** pwd_length))
 
-        while pwd_bit_strength < PASSWORD_MIN_BIT_STRENGTH:
-            password_words.append(sys_rand.choice(eff_wordlist))
-            pwd_bit_strength = math.log2(word_space ** len(password_words))
+        sys_rand = random.SystemRandom()
+        password = ' '.join(sys_rand.choice(eff_wordlist) for _ in range(pwd_length))
 
-        password = ' '.join(password_words)
-
-        return int(pwd_bit_strength), password
+        return pwd_bit_strength, password
 
     def new_master_key(self, replace: bool = True) -> bytes:
         """Create a new master key from password and salt.
@@ -430,3 +426,8 @@ class MasterKey(object):
             raise SoftError("Authentication aborted.", tail_clear=True, head=2, delay=1)
 
         return authenticated
+
+
+if __name__ == '__main__':
+    pwd = MasterKey.generate_master_password()
+    print(pwd)
