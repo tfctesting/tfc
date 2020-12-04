@@ -101,6 +101,10 @@ find . -type f -exec sha512sum "{}" + > SHA512.list
 python3.7 hash_replacer.py
 rm -f SHA512.list
 
+# Wait for input from user
+echo "Press any key to continue with signing"
+read -n 1
+
 # Sign installer
 gpg --detach-sign --armor install.sh
 
