@@ -68,7 +68,7 @@ def buffer_to_flask(packet:        Union[bytes, str],
     file_dir  = RELAY_BUFFER_OUTGOING_F_DIR if file else RELAY_BUFFER_OUTGOING_M_DIR
     sub_dir   = pub_key_to_onion_address(onion_pub_key)
 
-    store_unique(file_data=packet, file_dir=f"{file_dir}/{sub_dir}", file_name=file_name)
+    store_unique(file_data=packet, file_dir=f"{file_dir}/{sub_dir}/", file_name=file_name)
 
     rp_print(f"{p_type} to contact {pub_key_to_short_address(onion_pub_key)}", ts)
 

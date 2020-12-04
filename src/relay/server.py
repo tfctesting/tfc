@@ -30,12 +30,12 @@ from typing          import Any, Dict, List, Optional
 
 from flask import Flask, send_file
 
-from src.common.encoding import pub_key_to_onion_address
-from src.common.gateway  import Gateway
-from src.common.misc     import ensure_dir, HideRunTime
-from src.common.statics  import (RELAY_BUFFER_OUTGOING_M_DIR, RELAY_BUFFER_OUTGOING_MESSAGE,
-                                 RELAY_BUFFER_OUTGOING_F_DIR, RELAY_BUFFER_OUTGOING_FILE,
-                                 CONTACT_REQ_QUEUE, URL_TOKEN_QUEUE)
+from src.common.encoding   import pub_key_to_onion_address
+from src.common.exceptions import SoftError
+from src.common.misc       import ensure_dir, HideRunTime
+from src.common.statics    import (RELAY_BUFFER_OUTGOING_M_DIR, RELAY_BUFFER_OUTGOING_MESSAGE,
+                                   RELAY_BUFFER_OUTGOING_F_DIR, RELAY_BUFFER_OUTGOING_FILE,
+                                   CONTACT_REQ_QUEUE, URL_TOKEN_QUEUE)
 
 if typing.TYPE_CHECKING:
     QueueDict   = Dict[bytes, Queue[Any]]
@@ -78,6 +78,28 @@ def validate_url_token(purp_url_token: str,
                 valid_url_token |= False
 
     return valid_url_token
+
+
+def read_buffer_file(buffer_file_dir: str, buffer_file_name: str) -> bytes:
+    """Read outgoing packet from oldest buffer file."""
+    ensure_dir(f"{buffer_file_dir}/")
+
+    tfc_buffer_file_numbers   = [f[(len(buffer_file_name) + len('.')):] for f in os.listdir(buffer_file_dir) if f.startswith(buffer_file_name)]
+    tfc_buffer_file_numbers   = [n for n in tfc_buffer_file_numbers if n.isdigit()]
+    tfc_buffer_files_in_order = [f"{buffer_file_name}.{n}" for n in sorted(tfc_buffer_file_numbers, key=int)]
+
+    try:
+        oldest_buffer_file = tfc_buffer_files_in_order[0]
+    except IndexError:
+        raise SoftError("No packet was available.", output=False)
+
+    with open(f"{buffer_file_dir}/{oldest_buffer_file}", 'rb') as f:
+        packet = f.read()
+
+    os.remove(f"{buffer_file_dir}/{oldest_buffer_file}")
+
+    return packet
+
 
 
 def flask_server(queues:               'QueueDict',
@@ -138,7 +160,6 @@ def flask_server(queues:               'QueueDict',
         app.run()
         return None
 
-
 def get_message(purp_url_token: str,
                 queues:         'QueueDict',
                 pub_key_dict:   'PubKeyDict',
@@ -152,12 +173,15 @@ def get_message(purp_url_token: str,
     # Load outgoing messages for all contacts,
     # return the oldest message for contact
 
-    buf_dir = f"{RELAY_BUFFER_OUTGOING_M_DIR}/{pub_key_to_onion_address(identified_onion_pub_key)}"
+    buf_dir = f"{RELAY_BUFFER_OUTGOING_M_DIR}/{pub_key_to_onion_address(identified_onion_pub_key)}/"
     ensure_dir(buf_dir)
 
     packets = []
     while len(os.listdir(buf_dir)) != 0:
-        packet = Gateway.read_buffer_file(buf_dir, RELAY_BUFFER_OUTGOING_MESSAGE, decode_file=False)
+        try:
+            packet = read_buffer_file(buf_dir, RELAY_BUFFER_OUTGOING_MESSAGE)
+        except SoftError:
+            return ''
         packets.append(packet.decode())
 
     if packets:
@@ -177,11 +201,14 @@ def get_file(purp_url_token: str,
 
     identified_onion_pub_key = pub_key_dict[purp_url_token]
 
-    buf_dir = f"{RELAY_BUFFER_OUTGOING_F_DIR}/{pub_key_to_onion_address(identified_onion_pub_key)}"
+    buf_dir = f"{RELAY_BUFFER_OUTGOING_F_DIR}/{pub_key_to_onion_address(identified_onion_pub_key)}/"
     ensure_dir(buf_dir)
 
     if len(os.listdir(buf_dir)) != 0:
-        packet = Gateway.read_buffer_file(buf_dir, RELAY_BUFFER_OUTGOING_FILE, decode_file=False)
+        try:
+            packet = read_buffer_file(buf_dir, RELAY_BUFFER_OUTGOING_FILE)
+        except SoftError:
+            return ''
         mem    = BytesIO()
         mem.write(packet)
         mem.seek(0)

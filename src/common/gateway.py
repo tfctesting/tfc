@@ -210,7 +210,6 @@ class Gateway(object):
     @staticmethod
     def read_buffer_file(buffer_file_dir:  str = BUFFER_FILE_DIR,
                          buffer_file_name: str = BUFFER_FILE_INCOMING,
-                         decode_file:      bool = True
                          ) -> bytes:
         """Read packet from oldest buffer file."""
 
@@ -231,11 +230,10 @@ class Gateway(object):
         with open(f"{buffer_file_dir}/{oldest_buffer_file}", 'rb') as f:
             packet = f.read()
 
-        if decode_file:
-            try:
-                packet = base64.b85decode(packet)
-            except ValueError:
-                raise SoftError("Error: Received packet had invalid Base85 encoding.")
+        try:
+            packet = base64.b85decode(packet)
+        except ValueError:
+            raise SoftError("Error: Received packet had invalid Base85 encoding.")
 
         os.remove(f"{buffer_file_dir}/{oldest_buffer_file}")
 
