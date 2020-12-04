@@ -504,12 +504,18 @@ DD_ANIMATION_LENGTH   = 16
 DD_OFFSET_FROM_CENTER = 4
 
 # Qubes related
-QUBES_NET_VM_NAME       = 'TFC-Networker'
-QUBES_DST_VM_NAME       = 'TFC-Destination'
-QUBES_SRC_NET_POLICY    = 'tfc.SourceNetworker'
-QUBES_NET_DST_POLICY    = 'tfc.NetworkerDestination'
-BUFFER_FILE_DIR         = '/home/user/tfc/.buffered_incoming_packets'
-BUFFER_FILE_NAME        = 'buffered_incoming_packet'
+QUBES_NET_VM_NAME         = 'TFC-Networker'
+QUBES_DST_VM_NAME         = 'TFC-Destination'
+QUBES_SRC_NET_POLICY      = 'tfc.SourceNetworker'
+QUBES_NET_DST_POLICY      = 'tfc.NetworkerDestination'
+BUFFER_FILE_DIR           = '/home/user/tfc/.buffered_incoming_packets'
+BUFFER_FILE_INCOMING      = 'buffered_incoming_packet'
+
+# Relay buffer
+RELAY_BUFFER_OUTGOING_F_DIR   = '.buffered_outgoing_files'
+RELAY_BUFFER_OUTGOING_M_DIR   = '.buffered_outgoing_messages'
+RELAY_BUFFER_OUTGOING_FILE    = 'buffered_file'
+RELAY_BUFFER_OUTGOING_MESSAGE = 'buffered_message'
 
 # Field lengths
 ENCODED_BOOLEAN_LENGTH  = 1

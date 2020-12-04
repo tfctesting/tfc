@@ -37,7 +37,7 @@ from src.common.crypto       import blake2b
 from src.common.gateway      import gateway_loop, Gateway, GatewaySettings
 from src.common.misc         import ensure_dir
 from src.common.reed_solomon import RSCodec
-from src.common.statics      import (BUFFER_FILE_NAME, DIR_USER_DATA, GATEWAY_QUEUE, NC, PACKET_CHECKSUM_LENGTH, RX, TX,
+from src.common.statics      import (BUFFER_FILE_INCOMING, DIR_USER_DATA, GATEWAY_QUEUE, NC, PACKET_CHECKSUM_LENGTH, RX, TX,
                                      QUBES_DST_VM_NAME, QUBES_NET_VM_NAME, QUBES_NET_DST_POLICY, QUBES_SRC_NET_POLICY)
 
 from tests.mock_classes import Settings
@@ -290,12 +290,12 @@ class TestGatewaySerial(TFCTestCase):
             """Create packets one at a time."""
             time.sleep(0.1)
 
-            with open(f"{buffer_file_dir}/{BUFFER_FILE_NAME}.invalid", 'wb+') as f:
+            with open(f"{buffer_file_dir}/{BUFFER_FILE_INCOMING}.invalid", 'wb+') as f:
                 f.write(base64.b85encode(b'data'))
 
             time.sleep(0.1)
 
-            with open(f"{buffer_file_dir}/{BUFFER_FILE_NAME}.0", 'wb+') as f:
+            with open(f"{buffer_file_dir}/{BUFFER_FILE_INCOMING}.0", 'wb+') as f:
                 f.write(base64.b85encode(b'data'))
 
         threading.Thread(target=packet_delayer).start()
@@ -311,7 +311,7 @@ class TestGatewaySerial(TFCTestCase):
         self.assertEqual(gateway.read(buffer_file_dir), b'data')
 
         # Test invalid packet content is handled
-        with open(f"{buffer_file_dir}/{BUFFER_FILE_NAME}.1", 'wb+') as f:
+        with open(f"{buffer_file_dir}/{BUFFER_FILE_INCOMING}.1", 'wb+') as f:
             f.write(os.urandom(32))
         self.assert_se("Error: Received packet had invalid Base85 encoding.", gateway.read, buffer_file_dir)
 

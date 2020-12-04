@@ -19,6 +19,7 @@ You should have received a copy of the GNU General Public License
 along with TFC. If not, see <https://www.gnu.org/licenses/>.
 """
 
+import os
 import logging
 import secrets
 import typing
@@ -29,8 +30,12 @@ from typing          import Any, Dict, List, Optional
 
 from flask import Flask, send_file
 
-from src.common.misc    import HideRunTime
-from src.common.statics import CONTACT_REQ_QUEUE, F_TO_FLASK_QUEUE, M_TO_FLASK_QUEUE, URL_TOKEN_QUEUE
+from src.common.encoding import pub_key_to_onion_address
+from src.common.gateway  import Gateway
+from src.common.misc     import ensure_dir, HideRunTime
+from src.common.statics  import (RELAY_BUFFER_OUTGOING_M_DIR, RELAY_BUFFER_OUTGOING_MESSAGE,
+                                 RELAY_BUFFER_OUTGOING_F_DIR, RELAY_BUFFER_OUTGOING_FILE,
+                                 CONTACT_REQ_QUEUE, URL_TOKEN_QUEUE)
 
 if typing.TYPE_CHECKING:
     QueueDict   = Dict[bytes, Queue[Any]]
@@ -100,8 +105,6 @@ def flask_server(queues:               'QueueDict',
     """
     app          = Flask(__name__)
     pub_key_dict = dict()  # type: Dict[str, bytes]
-    message_dict = dict()  # type: Dict[bytes, List[str]]
-    file_dict    = dict()  # type: Dict[bytes, List[bytes]]
 
     @app.route('/')
     def index() -> str:
@@ -117,12 +120,12 @@ def flask_server(queues:               'QueueDict',
     @app.route('/<purp_url_token>/files/')
     def file_get(purp_url_token: str) -> Any:
         """Validate the URL token and return a queued file."""
-        return get_file(purp_url_token, queues, pub_key_dict, file_dict)
+        return get_file(purp_url_token, queues, pub_key_dict)
 
     @app.route("/<purp_url_token>/messages/")
     def message_get(purp_url_token: str) -> str:
         """Validate the URL token and return queued messages."""
-        return get_message(purp_url_token, queues, pub_key_dict, message_dict)
+        return get_message(purp_url_token, queues, pub_key_dict)
 
     # --------------------------------------------------------------------------
 
@@ -139,7 +142,6 @@ def flask_server(queues:               'QueueDict',
 def get_message(purp_url_token: str,
                 queues:         'QueueDict',
                 pub_key_dict:   'PubKeyDict',
-                message_dict:   'MessageDict'
                 ) -> str:
     """Send queued messages to contact."""
     if not validate_url_token(purp_url_token, queues, pub_key_dict):
@@ -149,21 +151,25 @@ def get_message(purp_url_token: str,
 
     # Load outgoing messages for all contacts,
     # return the oldest message for contact
-    while queues[M_TO_FLASK_QUEUE].qsize():
-        packet, onion_pub_key = queues[M_TO_FLASK_QUEUE].get()
-        message_dict.setdefault(onion_pub_key, []).append(packet)
 
-    if identified_onion_pub_key in message_dict and message_dict[identified_onion_pub_key]:
-        packets = '\n'.join(message_dict[identified_onion_pub_key])  # All messages for contact
-        message_dict[identified_onion_pub_key] = []
-        return packets
+    buf_dir = f"{RELAY_BUFFER_OUTGOING_M_DIR}/{pub_key_to_onion_address(identified_onion_pub_key)}"
+    ensure_dir(buf_dir)
+
+    packets = []
+    while len(os.listdir(buf_dir)) != 0:
+        packet = Gateway.read_buffer_file(buf_dir, RELAY_BUFFER_OUTGOING_MESSAGE, decode_file=False)
+        packets.append(packet.decode())
+
+    if packets:
+        joined_packets = '\n'.join(packets)  # All messages for contact
+        return joined_packets
+
     return ''
 
 
 def get_file(purp_url_token: str,
              queues:         'QueueDict',
              pub_key_dict:   'PubKeyDict',
-             file_dict:      'FileDict'
              ) -> Any:
     """Send queued files to contact."""
     if not validate_url_token(purp_url_token, queues, pub_key_dict):
@@ -171,13 +177,14 @@ def get_file(purp_url_token: str,
 
     identified_onion_pub_key = pub_key_dict[purp_url_token]
 
-    while queues[F_TO_FLASK_QUEUE].qsize():
-        packet, onion_pub_key = queues[F_TO_FLASK_QUEUE].get()
-        file_dict.setdefault(onion_pub_key, []).append(packet)
+    buf_dir = f"{RELAY_BUFFER_OUTGOING_F_DIR}/{pub_key_to_onion_address(identified_onion_pub_key)}"
+    ensure_dir(buf_dir)
 
-    if identified_onion_pub_key in file_dict and file_dict[identified_onion_pub_key]:
-        mem = BytesIO()
-        mem.write(file_dict[identified_onion_pub_key].pop(0))
+    if len(os.listdir(buf_dir)) != 0:
+        packet = Gateway.read_buffer_file(buf_dir, RELAY_BUFFER_OUTGOING_FILE, decode_file=False)
+        mem    = BytesIO()
+        mem.write(packet)
         mem.seek(0)
         return send_file(mem, mimetype="application/octet-stream")
+
     return ''
