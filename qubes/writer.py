@@ -43,8 +43,7 @@ def store_unique(file_data: bytes,  # File data to store
                  ) -> None:
     """Store file under a unique filename.
 
-    If file exists, add trailing counter .# with value as large as
-    needed to ensure existing file is not overwritten.
+    Add trailing counter .# to ensure files are read in order.
     """
     ensure_dir(f'{file_dir}/')
 

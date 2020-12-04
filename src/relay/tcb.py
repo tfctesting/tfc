@@ -19,6 +19,7 @@ You should have received a copy of the GNU General Public License
 along with TFC. If not, see <https://www.gnu.org/licenses/>.
 """
 
+import os
 import time
 import typing
 
@@ -26,7 +27,7 @@ from typing import Any, Dict, List, Tuple, Union
 
 from src.common.encoding   import b85encode, bytes_to_int, int_to_bytes, pub_key_to_short_address, pub_key_to_onion_address
 from src.common.exceptions import SoftError
-from src.common.misc       import ignored, separate_header, split_byte_string, store_unique
+from src.common.misc       import ensure_dir, ignored, separate_header, split_byte_string
 from src.common.output     import rp_print
 from src.common.statics    import (COMMAND_DATAGRAM_HEADER, DATAGRAM_HEADER_LENGTH, DST_COMMAND_QUEUE,
                                    DST_MESSAGE_QUEUE, ENCODED_INTEGER_LENGTH, FILE_DATAGRAM_HEADER,
@@ -43,6 +44,26 @@ if typing.TYPE_CHECKING:
     from multiprocessing    import Queue
     from src.common.gateway import Gateway
     QueueDict = Dict[bytes, Queue[Any]]
+
+
+def store_unique(file_data: bytes,  # File data to store
+                 file_dir:  str,    # Directory to store file
+                 file_name: str     # Preferred name for the file.
+                 ) -> None:
+    """Store file under a unique filename.
+
+    Add trailing counter .# to ensure files are read in order.
+    """
+    ensure_dir(f'{file_dir}/')
+
+    ctr = 0
+    while os.path.isfile(f"{file_dir}/{file_name}.{ctr}"):
+        ctr += 1
+
+    with open(f"{file_dir}/{file_name}.{ctr}", 'wb+') as f:
+        f.write(file_data)
+        f.flush()
+        os.fsync(f.fileno())
 
 
 def buffer_to_flask(packet:        Union[bytes, str],
