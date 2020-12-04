@@ -47,9 +47,11 @@ def store_unique(file_data: bytes,  # File data to store
     """
     ensure_dir(f'{file_dir}/')
 
-    ctr = 0
-    while os.path.isfile(f"{file_dir}/{file_name}.{ctr}"):
-        ctr += 1
+    file_numbers = [f[(len(file_name) + len('.')):] for f in os.listdir(file_name) if f.startswith(file_name)]
+    file_numbers = [n for n in file_numbers if n.isdigit()]
+    greatest_num = sorted(file_numbers, key=int)[-1]
+
+    ctr = int(greatest_num) + 1
 
     with open(f"{file_dir}/{file_name}.{ctr}", 'wb+') as f:
         f.write(file_data)
