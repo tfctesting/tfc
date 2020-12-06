@@ -79,14 +79,14 @@ def src_incoming(queues:    'QueueDict',
                 process_message_datagram(ts, packet, header, buf_key, queues)
 
             elif header == FILE_DATAGRAM_HEADER:
-                process_file_datagram(ts, packet, buf_key, header)
+                process_file_datagram(ts, packet, header, buf_key)
 
             elif header in [GROUP_MSG_INVITE_HEADER,
                             GROUP_MSG_JOIN_HEADER,
                             GROUP_MSG_MEMBER_ADD_HEADER,
                             GROUP_MSG_MEMBER_REM_HEADER,
                             GROUP_MSG_EXIT_GROUP_HEADER]:
-                process_group_management_message(ts, packet, buf_key, header)
+                process_group_management_message(ts, packet, header, buf_key)
 
             if unit_test:
                 break
