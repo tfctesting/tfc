@@ -405,7 +405,7 @@ DIR_USER_DATA  = 'user_data/'
 DIR_RECV_FILES = 'received_files/'
 DIR_TFC        = 'tfc/'
 TEMP_SUFFIX    = '_temp'
-
+DIR_TAILS_PERS = 'Persistent/'
 
 """Key exchange status states"""
 KEX_STATUS_LENGTH     = 1

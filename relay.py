@@ -29,14 +29,14 @@ from cryptography.hazmat.primitives.asymmetric.x448 import X448PrivateKey
 from cryptography.hazmat.primitives.serialization   import Encoding, PublicFormat
 
 from src.common.gateway import Gateway, gateway_loop
-from src.common.misc    import ensure_dir, monitor_processes, process_arguments
+from src.common.misc    import ensure_dir, monitor_processes, platform_is_tails, process_arguments
 from src.common.output  import print_title
 from src.common.statics import (ACCOUNT_CHECK_QUEUE, ACCOUNT_SEND_QUEUE, CONTACT_MGMT_QUEUE, CONTACT_REQ_QUEUE,
-                                C_REQ_MGMT_QUEUE, C_REQ_STATE_QUEUE, DIR_TFC, DST_COMMAND_QUEUE, DST_MESSAGE_QUEUE,
-                                EXIT_QUEUE, GATEWAY_QUEUE, GUI_INPUT_QUEUE, GROUP_MGMT_QUEUE, GROUP_MSG_QUEUE, NC,
-                                ONION_CLOSE_QUEUE, PUB_KEY_CHECK_QUEUE, PUB_KEY_SEND_QUEUE, ONION_KEY_QUEUE,
-                                SRC_TO_RELAY_QUEUE, RX_BUF_KEY_QUEUE, TOR_DATA_QUEUE, TX_BUF_KEY_QUEUE, URL_TOKEN_QUEUE,
-                                USER_ACCOUNT_QUEUE)
+                                C_REQ_MGMT_QUEUE, C_REQ_STATE_QUEUE, DIR_TAILS_PERS, DIR_TFC, DST_COMMAND_QUEUE,
+                                DST_MESSAGE_QUEUE, EXIT_QUEUE, GATEWAY_QUEUE, GUI_INPUT_QUEUE, GROUP_MGMT_QUEUE,
+                                GROUP_MSG_QUEUE, NC, ONION_CLOSE_QUEUE, PUB_KEY_CHECK_QUEUE, PUB_KEY_SEND_QUEUE,
+                                ONION_KEY_QUEUE, SRC_TO_RELAY_QUEUE, RX_BUF_KEY_QUEUE, TOR_DATA_QUEUE, TX_BUF_KEY_QUEUE,
+                                URL_TOKEN_QUEUE, USER_ACCOUNT_QUEUE)
 
 from src.relay.client   import c_req_manager, client_scheduler, g_msg_manager
 from src.relay.commands import relay_command
@@ -131,7 +131,11 @@ def main() -> None:
     value stays on the Relay Program -- the public value is obtained by
     connecting to the root domain of contact's Onion Service.
     """
-    working_dir = f'{os.getenv("HOME")}/{DIR_TFC}'
+    if platform_is_tails():
+        working_dir = f'{os.getenv("HOME")}/{DIR_TAILS_PERS}{DIR_TFC}'
+    else:
+        working_dir = f'{os.getenv("HOME")}/{DIR_TFC}'
+
     ensure_dir(working_dir)
     os.chdir(working_dir)
 

@@ -273,6 +273,13 @@ def monitor_processes(process_list:       List[Process],
                     power_off_system()
 
 
+def platform_is_tails() -> bool:
+    """Return True if Relay Program is running on Tails."""
+    with open('/etc/os-release') as f:
+        data = f.read()
+    return 'TAILS_PRODUCT_NAME="Tails"' in data
+
+
 def power_off_system() -> None:
     """Power off system."""
     os.system(POWEROFF)
