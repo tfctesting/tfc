@@ -29,12 +29,11 @@ from unittest import mock
 from src.common.encoding     import int_to_bytes
 from src.common.reed_solomon import RSCodec
 from src.common.statics      import (COMMAND_DATAGRAM_HEADER, DST_COMMAND_QUEUE, DST_MESSAGE_QUEUE, EXIT,
-                                     FILE_DATAGRAM_HEADER, F_TO_FLASK_QUEUE, GATEWAY_QUEUE, GROUP_ID_LENGTH,
-                                     GROUP_MSG_EXIT_GROUP_HEADER, GROUP_MSG_INVITE_HEADER, GROUP_MSG_JOIN_HEADER,
-                                     GROUP_MSG_MEMBER_ADD_HEADER, GROUP_MSG_MEMBER_REM_HEADER,
-                                     LOCAL_KEY_DATAGRAM_HEADER, MESSAGE_DATAGRAM_HEADER, M_TO_FLASK_QUEUE,
+                                     FILE_DATAGRAM_HEADER, GATEWAY_QUEUE, GROUP_ID_LENGTH, GROUP_MSG_EXIT_GROUP_HEADER,
+                                     GROUP_MSG_INVITE_HEADER, GROUP_MSG_JOIN_HEADER, GROUP_MSG_MEMBER_ADD_HEADER,
+                                     GROUP_MSG_MEMBER_REM_HEADER, LOCAL_KEY_DATAGRAM_HEADER, MESSAGE_DATAGRAM_HEADER,
                                      PUBLIC_KEY_DATAGRAM_HEADER, SRC_TO_RELAY_QUEUE, TFC_PUBLIC_KEY_LENGTH,
-                                     UNENCRYPTED_DATAGRAM_HEADER, UNIT_TEST_QUEUE)
+                                     TX_BUF_KEY_QUEUE, UNENCRYPTED_DATAGRAM_HEADER, UNIT_TEST_QUEUE)
 
 from src.relay.tcb import dst_outgoing, src_incoming
 
@@ -53,6 +52,7 @@ class TestSRCIncoming(unittest.TestCase):
         self.ts            = datetime.now()
         self.queues        = gen_queue_dict()
         self.args          = self.queues, self.gateway
+        self.queues[TX_BUF_KEY_QUEUE].put(32*b'a')
 
     def tearDown(self) -> None:
         """Post-test actions."""
@@ -104,7 +104,6 @@ class TestSRCIncoming(unittest.TestCase):
 
         # Test
         self.assertIsNone(src_incoming(*self.args, unit_test=True))
-        self.assertEqual(self.queues[M_TO_FLASK_QUEUE].qsize(),  1)
         self.assertEqual(self.queues[DST_MESSAGE_QUEUE].qsize(), 1)
 
     def test_public_key_datagram(self) -> None:
@@ -114,7 +113,6 @@ class TestSRCIncoming(unittest.TestCase):
 
         # Test
         self.assertIsNone(src_incoming(*self.args, unit_test=True))
-        self.assertEqual(self.queues[M_TO_FLASK_QUEUE].qsize(), 1)
 
     def test_file_datagram(self) -> None:
         # Setup
@@ -128,7 +126,6 @@ class TestSRCIncoming(unittest.TestCase):
         # Test
         self.assertIsNone(src_incoming(*self.args, unit_test=True))
         self.assertEqual(self.queues[DST_MESSAGE_QUEUE].qsize(), 0)
-        self.assertEqual(self.queues[F_TO_FLASK_QUEUE].qsize(),  2)
 
     def test_group_invitation_datagram(self) -> None:
         # Setup
@@ -141,7 +138,6 @@ class TestSRCIncoming(unittest.TestCase):
         # Test
         self.assertIsNone(src_incoming(*self.args, unit_test=True))
         self.assertEqual(self.queues[DST_MESSAGE_QUEUE].qsize(), 0)
-        self.assertEqual(self.queues[M_TO_FLASK_QUEUE].qsize(),  2)
 
     def test_group_join_datagram(self) -> None:
         # Setup
@@ -154,7 +150,6 @@ class TestSRCIncoming(unittest.TestCase):
         # Test
         self.assertIsNone(src_incoming(*self.args, unit_test=True))
         self.assertEqual(self.queues[DST_MESSAGE_QUEUE].qsize(), 0)
-        self.assertEqual(self.queues[M_TO_FLASK_QUEUE].qsize(),  2)
 
     def test_group_add_datagram(self) -> None:
         # Setup
@@ -168,7 +163,6 @@ class TestSRCIncoming(unittest.TestCase):
         # Test
         self.assertIsNone(src_incoming(*self.args, unit_test=True))
         self.assertEqual(self.queues[DST_MESSAGE_QUEUE].qsize(), 0)
-        self.assertEqual(self.queues[M_TO_FLASK_QUEUE].qsize(),  2)
 
     def test_group_remove_datagram(self) -> None:
         # Setup
@@ -182,7 +176,6 @@ class TestSRCIncoming(unittest.TestCase):
         # Test
         self.assertIsNone(src_incoming(*self.args, unit_test=True))
         self.assertEqual(self.queues[DST_MESSAGE_QUEUE].qsize(), 0)
-        self.assertEqual(self.queues[M_TO_FLASK_QUEUE].qsize(),  2)
 
     def test_group_exit_datagram(self) -> None:
         # Setup
@@ -195,7 +188,6 @@ class TestSRCIncoming(unittest.TestCase):
         # Test
         self.assertIsNone(src_incoming(*self.args, unit_test=True))
         self.assertEqual(self.queues[DST_MESSAGE_QUEUE].qsize(), 0)
-        self.assertEqual(self.queues[M_TO_FLASK_QUEUE].qsize(),  2)
 
 
 class TestDSTOutGoing(unittest.TestCase):

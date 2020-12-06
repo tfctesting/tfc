@@ -22,7 +22,7 @@ along with TFC. If not, see <https://www.gnu.org/licenses/>.
 import unittest
 
 from src.common.crypto  import X448
-from src.common.statics import CONTACT_REQ_QUEUE, F_TO_FLASK_QUEUE, M_TO_FLASK_QUEUE, URL_TOKEN_QUEUE
+from src.common.statics import CONTACT_REQ_QUEUE, URL_TOKEN_QUEUE, RX_BUF_KEY_QUEUE
 
 from src.relay.server import flask_server
 
@@ -45,15 +45,14 @@ class TestFlaskServer(unittest.TestCase):
         packet2               = "packet2"
         packet3               = b"packet3"
 
+        queues[RX_BUF_KEY_QUEUE].put(32*b'a')
+
         # Test
         app = flask_server(queues, url_token_public_key, unit_test=True)
 
         # Test valid URL token returns all queued messages
         queues[URL_TOKEN_QUEUE].put((onion_pub_key, url_token_old))
         queues[URL_TOKEN_QUEUE].put((onion_pub_key, url_token))
-        queues[M_TO_FLASK_QUEUE].put((packet1, onion_pub_key))
-        queues[M_TO_FLASK_QUEUE].put((packet2, onion_pub_key))
-        queues[F_TO_FLASK_QUEUE].put((packet3, onion_pub_key))
 
         with app.test_client() as c:
             # Test root domain returns public key of server.
