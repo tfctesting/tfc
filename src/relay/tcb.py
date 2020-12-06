@@ -58,12 +58,14 @@ def src_incoming(queues:    'QueueDict',
     commands_to_relay = queues[SRC_TO_RELAY_QUEUE]
     buf_key_queue     = queues[TX_BUF_KEY_QUEUE]
 
-    while buf_key_queue.qsize() == 0:
-        time.sleep(0.01)
-    buf_key = buf_key_queue.get()
+    buf_key = None
 
     while True:
         with ignored(EOFError, KeyboardInterrupt, SoftError):
+
+            if buf_key is None and buf_key_queue.qsize() > 0:
+                buf_key = buf_key_queue.get()
+
             ts, packet     = load_packet_from_queue(queues, gateway)
             header, packet = separate_header(packet, DATAGRAM_HEADER_LENGTH)
 
@@ -241,6 +243,9 @@ def buffer_to_flask(packet:        Union[bytes, str],
               GROUP_MSG_MEMBER_ADD_HEADER: 'G add    ',
               GROUP_MSG_MEMBER_REM_HEADER: 'G remove ',
               GROUP_MSG_EXIT_GROUP_HEADER: 'G exit   '}[header]
+
+    if buf_key is None:
+        raise SoftError("Error: No buffer key available for packet buffering.")
 
     if isinstance(packet, str):
         packet = packet.encode()
