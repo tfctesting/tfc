@@ -39,7 +39,7 @@ def ensure_dir(directory: str) -> None:
 
 def store_unique(file_data: bytes,  # File data to store
                  file_dir:  str,    # Directory to store file
-                 file_name: str     # Preferred name for the file.
+                 file_name: str     # Name of the file.
                  ) -> None:
     """Store file under a unique filename.
 

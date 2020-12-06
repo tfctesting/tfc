@@ -445,9 +445,9 @@ WINDOW_SELECT_QUEUE     = b'window_select'
 # Relay
 DST_COMMAND_QUEUE   = b'dst_command'
 DST_MESSAGE_QUEUE   = b'dst_message'
-M_TO_FLASK_QUEUE    = b'm_to_flask'
-F_TO_FLASK_QUEUE    = b'f_to_flask'
 SRC_TO_RELAY_QUEUE  = b'src_to_relay'
+RX_BUF_KEY_QUEUE    = b'rx_buf_key'
+TX_BUF_KEY_QUEUE    = b'tx_buf_key'
 URL_TOKEN_QUEUE     = b'url_token'
 GROUP_MGMT_QUEUE    = b'group_mgmt'
 GROUP_MSG_QUEUE     = b'group_msg'
@@ -511,7 +511,7 @@ QUBES_NET_DST_POLICY      = 'tfc.NetworkerDestination'
 BUFFER_FILE_DIR           = '/home/user/tfc/.buffered_incoming_packets'
 BUFFER_FILE_INCOMING      = 'buffered_incoming_packet'
 
-# Relay buffer
+# Relay Program's ciphertext buffering
 RELAY_BUFFER_OUTGOING_F_DIR   = '.buffered_outgoing_files'
 RELAY_BUFFER_OUTGOING_M_DIR   = '.buffered_outgoing_messages'
 RELAY_BUFFER_OUTGOING_FILE    = 'buffered_file'
@@ -585,6 +585,7 @@ ENCODED_B58_KDK_LENGTH           = 51
 MESSAGE_KEY = b'message_key'
 HEADER_KEY  = b'header_key'
 FINGERPRINT = b'fingerprint'
+BUFFER_KEY  = b'buffer_key'
 
 # Forward secrecy
 INITIAL_HARAC        = 0

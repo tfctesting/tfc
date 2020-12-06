@@ -19,9 +19,11 @@ You should have received a copy of the GNU General Public License
 along with TFC. If not, see <https://www.gnu.org/licenses/>.
 """
 
-import os
+import hashlib
 import logging
+import os
 import secrets
+import time
 import typing
 
 from io              import BytesIO
@@ -30,12 +32,11 @@ from typing          import Any, Dict, List, Optional
 
 from flask import Flask, send_file
 
-from src.common.encoding   import pub_key_to_onion_address
 from src.common.exceptions import SoftError
 from src.common.misc       import ensure_dir, HideRunTime
-from src.common.statics    import (RELAY_BUFFER_OUTGOING_M_DIR, RELAY_BUFFER_OUTGOING_MESSAGE,
-                                   RELAY_BUFFER_OUTGOING_F_DIR, RELAY_BUFFER_OUTGOING_FILE,
-                                   CONTACT_REQ_QUEUE, URL_TOKEN_QUEUE)
+from src.common.statics    import (BLAKE2_DIGEST_LENGTH, CONTACT_REQ_QUEUE, RX_BUF_KEY_QUEUE,
+                                   RELAY_BUFFER_OUTGOING_M_DIR, RELAY_BUFFER_OUTGOING_MESSAGE,
+                                   RELAY_BUFFER_OUTGOING_F_DIR, RELAY_BUFFER_OUTGOING_FILE, URL_TOKEN_QUEUE)
 
 if typing.TYPE_CHECKING:
     QueueDict   = Dict[bytes, Queue[Any]]
@@ -81,7 +82,7 @@ def validate_url_token(purp_url_token: str,
 
 
 def read_buffer_file(buffer_file_dir: str, buffer_file_name: str) -> bytes:
-    """Read outgoing packet from oldest buffer file."""
+    """Read outgoing datagram from oldest buffer file."""
     ensure_dir(f"{buffer_file_dir}/")
 
     tfc_buffer_file_numbers   = [f[(len(buffer_file_name) + len('.')):] for f in os.listdir(buffer_file_dir) if f.startswith(buffer_file_name)]
@@ -101,7 +102,6 @@ def read_buffer_file(buffer_file_dir: str, buffer_file_name: str) -> bytes:
     return packet
 
 
-
 def flask_server(queues:               'QueueDict',
                  url_token_public_key: str,
                  unit_test:            bool = False
@@ -110,23 +110,31 @@ def flask_server(queues:               'QueueDict',
 
     This process runs Flask web server from where clients of contacts
     can load messages sent to them. Making such requests requires the
-    clients know the secret path, that is, the X448 shared secret
-    derived from Relay Program's private key, and the public key
-    obtained from the Onion Service of the contact.
+    clients know the secret path (i.e. URL token), that is, the X448
+    shared secret derived from Relay Program's private key, and the
+    public key obtained from the Onion Service of the contact.
 
-    Note that this private key does not handle E2EE of messages, it only
+    Note that this private key is not part of E2EE of messages, it only
     manages E2EE sessions between Relay Programs of conversing parties.
     It prevents anyone without the Relay Program's ephemeral private key
-    from requesting ciphertexts from the user.
+    from requesting ciphertexts from contact that do not belong to the
+    user.
 
     The connection between the requests client and Flask server is
-    end-to-end encrypted: No Tor relay between them can see the content
-    of the traffic; With Onion Services, there is no exit node. The
-    connection is strongly authenticated by the Onion Service domain
-    name, that is, the TFC account pinned by the user.
+    end-to-end encrypted by the Tor Onion Service protocol: No Tor relay
+    between them can see the content of the traffic; With Onion
+    Services, there is no exit node. The connection is strongly
+    authenticated by the Onion Service domain name, that is, the TFC
+    account pinned by the user.
     """
     app          = Flask(__name__)
     pub_key_dict = dict()  # type: Dict[str, bytes]
+
+    buf_key_queue = queues[RX_BUF_KEY_QUEUE]
+
+    while buf_key_queue.qsize() == 0:
+        time.sleep(0.01)
+    buf_key = buf_key_queue.get()
 
     @app.route('/')
     def index() -> str:
@@ -142,12 +150,12 @@ def flask_server(queues:               'QueueDict',
     @app.route('/<purp_url_token>/files/')
     def file_get(purp_url_token: str) -> Any:
         """Validate the URL token and return a queued file."""
-        return get_file(purp_url_token, queues, pub_key_dict)
+        return get_file(purp_url_token, queues, pub_key_dict, buf_key)
 
     @app.route("/<purp_url_token>/messages/")
     def message_get(purp_url_token: str) -> str:
         """Validate the URL token and return queued messages."""
-        return get_message(purp_url_token, queues, pub_key_dict)
+        return get_message(purp_url_token, queues, pub_key_dict, buf_key)
 
     # --------------------------------------------------------------------------
 
@@ -163,6 +171,7 @@ def flask_server(queues:               'QueueDict',
 def get_message(purp_url_token: str,
                 queues:         'QueueDict',
                 pub_key_dict:   'PubKeyDict',
+                buf_key:        bytes
                 ) -> str:
     """Send queued messages to contact."""
     if not validate_url_token(purp_url_token, queues, pub_key_dict):
@@ -173,11 +182,12 @@ def get_message(purp_url_token: str,
     # Load outgoing messages for all contacts,
     # return the oldest message for contact
 
-    buf_dir = f"{RELAY_BUFFER_OUTGOING_M_DIR}/{pub_key_to_onion_address(identified_onion_pub_key)}/"
+    sub_dir = hashlib.blake2b(identified_onion_pub_key, key=buf_key, digest_size=BLAKE2_DIGEST_LENGTH).hexdigest()
+    buf_dir = f"{RELAY_BUFFER_OUTGOING_M_DIR}/{sub_dir}/"
     ensure_dir(buf_dir)
 
     packets = []
-    while len(os.listdir(buf_dir)) != 0:
+    while len(os.listdir(buf_dir)) > 0:
         try:
             packet = read_buffer_file(buf_dir, RELAY_BUFFER_OUTGOING_MESSAGE)
         except SoftError:
@@ -185,8 +195,8 @@ def get_message(purp_url_token: str,
         packets.append(packet.decode())
 
     if packets:
-        joined_packets = '\n'.join(packets)  # All messages for contact
-        return joined_packets
+        all_message_packets = '\n'.join(packets)
+        return all_message_packets
 
     return ''
 
@@ -194,6 +204,7 @@ def get_message(purp_url_token: str,
 def get_file(purp_url_token: str,
              queues:         'QueueDict',
              pub_key_dict:   'PubKeyDict',
+             buf_key:        bytes,
              ) -> Any:
     """Send queued files to contact."""
     if not validate_url_token(purp_url_token, queues, pub_key_dict):
@@ -201,15 +212,16 @@ def get_file(purp_url_token: str,
 
     identified_onion_pub_key = pub_key_dict[purp_url_token]
 
-    buf_dir = f"{RELAY_BUFFER_OUTGOING_F_DIR}/{pub_key_to_onion_address(identified_onion_pub_key)}/"
+    sub_dir = hashlib.blake2b(identified_onion_pub_key, key=buf_key, digest_size=BLAKE2_DIGEST_LENGTH).hexdigest()
+    buf_dir = f"{RELAY_BUFFER_OUTGOING_F_DIR}/{sub_dir}/"
     ensure_dir(buf_dir)
 
-    if len(os.listdir(buf_dir)) != 0:
+    if len(os.listdir(buf_dir)) > 0:
         try:
             packet = read_buffer_file(buf_dir, RELAY_BUFFER_OUTGOING_FILE)
         except SoftError:
             return ''
-        mem    = BytesIO()
+        mem = BytesIO()
         mem.write(packet)
         mem.seek(0)
         return send_file(mem, mimetype="application/octet-stream")
