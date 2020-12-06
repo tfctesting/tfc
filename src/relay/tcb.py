@@ -26,6 +26,7 @@ import typing
 
 from typing import Any, Dict, List, Tuple, Union
 
+from src.common.crypto     import encrypt_and_sign
 from src.common.encoding   import (b85encode, bytes_to_int, int_to_bytes,
                                    pub_key_to_short_address)
 from src.common.exceptions import SoftError
@@ -254,7 +255,9 @@ def buffer_to_flask(packet:        Union[bytes, str],
     file_dir  = RELAY_BUFFER_OUTGOING_F_DIR if file else RELAY_BUFFER_OUTGOING_M_DIR
     sub_dir   = hashlib.blake2b(onion_pub_key, key=buf_key, digest_size=BLAKE2_DIGEST_LENGTH).hexdigest()
 
-    store_unique(packet, f"{file_dir}/{sub_dir}/", file_name)
+    enc_packet = encrypt_and_sign(packet, key=buf_key)
+
+    store_unique(enc_packet, f"{file_dir}/{sub_dir}/", file_name)
 
     rp_print(f"{p_type} to contact {pub_key_to_short_address(onion_pub_key)}", ts)
 

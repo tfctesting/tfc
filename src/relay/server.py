@@ -32,6 +32,7 @@ from typing          import Any, Dict, List, Optional
 
 from flask import Flask, send_file
 
+from src.common.crypto     import auth_and_decrypt
 from src.common.exceptions import SoftError
 from src.common.misc       import ensure_dir, HideRunTime
 from src.common.statics    import (BLAKE2_DIGEST_LENGTH, CONTACT_REQ_QUEUE, RX_BUF_KEY_QUEUE,
@@ -189,7 +190,8 @@ def get_message(purp_url_token: str,
     packets = []
     while len(os.listdir(buf_dir)) > 0:
         try:
-            packet = read_buffer_file(buf_dir, RELAY_BUFFER_OUTGOING_MESSAGE)
+            packet_ct = read_buffer_file(buf_dir, RELAY_BUFFER_OUTGOING_MESSAGE)
+            packet = auth_and_decrypt(packet_ct, key=buf_key)
         except SoftError:
             return ''
         packets.append(packet.decode())
@@ -218,7 +220,8 @@ def get_file(purp_url_token: str,
 
     if len(os.listdir(buf_dir)) > 0:
         try:
-            packet = read_buffer_file(buf_dir, RELAY_BUFFER_OUTGOING_FILE)
+            packet_ct = read_buffer_file(buf_dir, RELAY_BUFFER_OUTGOING_FILE)
+            packet    = auth_and_decrypt(packet_ct, key=buf_key)
         except SoftError:
             return ''
         mem = BytesIO()
