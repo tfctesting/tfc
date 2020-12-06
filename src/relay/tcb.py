@@ -265,7 +265,7 @@ def store_unique(file_data: bytes,  # File data to store
                  ) -> None:
     """Store file under a unique filename.
 
-    Add trailing counter .# to ensure buffered files are read in order.
+    Add trailing counter .# to ensure buffered packets are read in order.
     """
     ensure_dir(file_dir)
 
