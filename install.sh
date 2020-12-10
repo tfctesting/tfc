@@ -95,6 +95,8 @@ DIGEST_CRYPTOGRAPHY=499005344fbb0d756b1810f763668c00a53d4f69ccc0c83d66a49504fff6
 DIGEST_SETUPTOOLS=b32c82749f178c9815fbb1d3af2008ebb04a122febbae1eb16be7385670adb60ca86ef0be066bccbce932482f51bf377551aab00bc42e9fb54d9c40c4f8c1b7e
 DIGEST_PYNACL=bf1bb46d23419cb375bcf620a37b5e9ce925cb0dd55eadf851a4bbb9039c8846ed13ae33966436a96655ea41ad1fc282f9139a958fd55ea10597fd3859635a2f
 
+# Argon2
+DIGEST_ARGON2_CFFI=4427657e9be95b4b68ec8d26e5571042068da3308b91ad82f289cfe94de196ecef71f437cf3f2e8f106fb7e743d85a69f24eece5257393e8bf5b1a6bbf9286cc
 
 # ----------------------------------------------------------------------------------------
 
@@ -271,6 +273,9 @@ function verify_tails_dependencies {
 
     # PyNaCl
     compare_digest ${DIGEST_PYNACL} '' ${PYNACL}
+
+    # Argon2
+    compare_digest ${DIGEST_ARGON2} '' ${ARGON2_CFFI}
 }
 
 
@@ -308,6 +313,9 @@ function move_tails_dependencies {
     t_sudo mv "$HOME/${CFFI37}"         "${INSTALL_DIR}/"
     t_sudo mv "$HOME/${CRYPTOGRAPHY37}" "${INSTALL_DIR}/"
 
+    # Argon2
+    t_sudo mv "$HOME/${ARGON2_CFFI}" "${INSTALL_DIR}/"
+
     # PyNaCl
     t_sudo mv "$HOME/${PYNACL}" "${INSTALL_DIR}/"
 }
@@ -339,6 +347,9 @@ function process_tails_dependencies {
 
     # PyNaCl
     t_sudo -E $1 "${INSTALL_DIR}/${PYNACL}"
+
+    # Argon2
+    t_sudo -E $1 "${INSTALL_DIR}/${ARGON2_CFFI}"
 }
 
 
