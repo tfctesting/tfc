@@ -5,7 +5,7 @@
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 [![Python 3.7|3.8](https://img.shields.io/badge/python-3.7%20%7C%C2%A03.8-blue)](https://img.shields.io/badge/python-3.7%20%7C%C2%A03.8-blue)
 [![Checked with mypy](http://www.mypy-lang.org/static/mypy_badge.svg)](http://mypy-lang.org/)
-[![Build Status](https://travis-ci.org/tfctesting/tfc.svg?branch=master)](https://travis-ci.org/tfctesting/tfc) 
+[![Build Status](https://travis-ci.com/tfctesting/tfc.svg?branch=master)](https://travis-ci.com/tfctesting/tfc) 
 [![Coverage Status](https://coveralls.io/repos/github/tfctesting/tfc/badge.svg?branch=master)](https://coveralls.io/github/tfctesting/tfc?branch=master)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/4a3de2a3691f44029d9c779a01b912e1)](https://www.codacy.com/manual/tfctesting/tfc?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=tfctesting/tfc&amp;utm_campaign=Badge_Grade)
 [![CodeFactor](https://www.codefactor.io/repository/github/tfctesting/tfc/badge)](https://www.codefactor.io/repository/github/tfctesting/tfc)
