@@ -28,7 +28,7 @@ import typing
 
 from io              import BytesIO
 from multiprocessing import Queue
-from typing          import Any, Dict, List, Optional
+from typing          import Any, Dict, List, Optional, Tuple
 
 from flask import Flask, send_file
 
@@ -82,25 +82,21 @@ def validate_url_token(purp_url_token: str,
     return valid_url_token
 
 
-def read_buffer_file(buffer_file_dir: str, buffer_file_name: str) -> bytes:
+def read_buffer_file(buffer_file_dir: str, buffer_file_name: str) -> Tuple[bytes, str]:
     """Read outgoing datagram from oldest buffer file."""
     ensure_dir(f"{buffer_file_dir}/")
 
     tfc_buffer_file_numbers   = [f[(len(buffer_file_name) + len('.')):] for f in os.listdir(buffer_file_dir) if f.startswith(buffer_file_name)]
     tfc_buffer_file_numbers   = [n for n in tfc_buffer_file_numbers if n.isdigit()]
     tfc_buffer_files_in_order = [f"{buffer_file_name}.{n}" for n in sorted(tfc_buffer_file_numbers, key=int)]
-
-    try:
-        oldest_buffer_file = tfc_buffer_files_in_order[0]
-    except IndexError:
-        raise SoftError("No packet was available.", output=False)
+    oldest_buffer_file        = tfc_buffer_files_in_order[0]
 
     with open(f"{buffer_file_dir}/{oldest_buffer_file}", 'rb') as f:
         packet = f.read()
 
     os.remove(f"{buffer_file_dir}/{oldest_buffer_file}")
 
-    return packet
+    return packet, oldest_buffer_file
 
 
 def flask_server(queues:               'QueueDict',
@@ -190,11 +186,8 @@ def get_message(purp_url_token: str,
 
     packets = []
     while len(os.listdir(buf_dir)) > 0:
-        try:
-            packet_ct = read_buffer_file(buf_dir, RELAY_BUFFER_OUTGOING_MESSAGE)
-            packet = auth_and_decrypt(packet_ct, key=buf_key)
-        except SoftError:
-            return ''
+        packet_ct, db = read_buffer_file(buf_dir, RELAY_BUFFER_OUTGOING_MESSAGE)
+        packet        = auth_and_decrypt(packet_ct, key=buf_key, database=f"{buf_dir}{db}")
         packets.append(packet.decode())
 
     if packets:
@@ -220,11 +213,8 @@ def get_file(purp_url_token: str,
     ensure_dir(buf_dir)
 
     if len(os.listdir(buf_dir)) > 0:
-        try:
-            packet_ct = read_buffer_file(buf_dir, RELAY_BUFFER_OUTGOING_FILE)
-            packet    = auth_and_decrypt(packet_ct, key=buf_key)
-        except SoftError:
-            return ''
+        packet_ct, db = read_buffer_file(buf_dir, RELAY_BUFFER_OUTGOING_FILE)
+        packet        = auth_and_decrypt(packet_ct, key=buf_key, database=f"{buf_dir}{db}")
         mem = BytesIO()
         mem.write(packet)
         mem.seek(0)

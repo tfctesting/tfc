@@ -20,6 +20,8 @@ along with TFC. If not, see <https://www.gnu.org/licenses/>.
 """
 
 import hashlib
+import threading
+import time
 import unittest
 
 from src.common.crypto  import X448, encrypt_and_sign
@@ -82,7 +84,12 @@ class TestFlaskServer(unittest.TestCase):
                                           RELAY_BUFFER_OUTGOING_FILE + '.0',
                                           test_key)
 
-        queues[RX_BUF_KEY_QUEUE].put(test_key)
+        def queue_delayer() -> None:
+            """Place buffer key to queue after a delay."""
+            time.sleep(0.1)
+            queues[RX_BUF_KEY_QUEUE].put(test_key)
+
+        threading.Thread(target=queue_delayer).start()
 
         # Test
         app = flask_server(queues, url_token_public_key, unit_test=True)
@@ -114,7 +121,7 @@ class TestFlaskServer(unittest.TestCase):
             resp = c.get(f'/{url_token}/files/')
             self.assertEqual(b'packet3', resp.data)
 
-        # Test valid URL token returns nothing as queues are empty
+        # Test valid URL token returns nothing as buffers are empty
         with app.test_client() as c:
             resp = c.get(f'/{url_token}/messages/')
             self.assertEqual(b'', resp.data)

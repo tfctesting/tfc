@@ -276,7 +276,7 @@ def store_unique(file_data: bytes,  # File data to store
         file_numbers = [f[(len(file_name) + len('.')):] for f in os.listdir(file_dir) if f.startswith(file_name)]
         file_numbers = [n for n in file_numbers if n.isdigit()]
         greatest_num = sorted(file_numbers, key=int)[-1]
-        ctr = int(greatest_num) + 1
+        ctr          = int(greatest_num) + 1
     except IndexError:
         ctr = 0
 
