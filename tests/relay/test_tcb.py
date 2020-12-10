@@ -40,7 +40,7 @@ from src.common.statics      import (BLAKE2_DIGEST_LENGTH, COMMAND_DATAGRAM_HEAD
                                      SYMMETRIC_KEY_LENGTH, TFC_PUBLIC_KEY_LENGTH, TX_BUF_KEY_QUEUE,
                                      UNENCRYPTED_DATAGRAM_HEADER, UNIT_TEST_QUEUE)
 
-from src.relay.tcb import dst_outgoing, src_incoming, buffer_to_flask, store_unique
+from src.relay.tcb import dst_outgoing, src_incoming, buffer_to_flask
 
 from tests.mock_classes import Gateway, nick_to_pub_key, Settings
 from tests.utils        import cd_unit_test, cleanup, gen_queue_dict, tear_queues, TFCTestCase
@@ -106,14 +106,11 @@ class TestSRCIncoming(unittest.TestCase):
         # Setup
         packet = self.create_packet(MESSAGE_DATAGRAM_HEADER + 344 * b'a' + nick_to_pub_key('bob'))
         self.queues[GATEWAY_QUEUE].put((self.ts, packet))
-        self.queues[GATEWAY_QUEUE].put((self.ts, packet))
         self.queues[TX_BUF_KEY_QUEUE].put(SYMMETRIC_KEY_LENGTH*b'a')
 
         # Test
         self.assertIsNone(src_incoming(*self.args, unit_test=True))
-        self.assertIsNone(src_incoming(*self.args, unit_test=True))
-
-        self.assertEqual(self.queues[DST_MESSAGE_QUEUE].qsize(), 2)
+        self.assertEqual(self.queues[DST_MESSAGE_QUEUE].qsize(), 1)
 
     def test_public_key_datagram(self) -> None:
         # Setup

@@ -33,11 +33,10 @@ from typing          import Any, Dict, List, Optional, Tuple
 from flask import Flask, send_file
 
 from src.common.crypto     import auth_and_decrypt
-from src.common.exceptions import SoftError
 from src.common.misc       import ensure_dir, HideRunTime
-from src.common.statics    import (BLAKE2_DIGEST_LENGTH, CONTACT_REQ_QUEUE, RX_BUF_KEY_QUEUE,
-                                   RELAY_BUFFER_OUTGOING_M_DIR, RELAY_BUFFER_OUTGOING_MESSAGE,
-                                   RELAY_BUFFER_OUTGOING_F_DIR, RELAY_BUFFER_OUTGOING_FILE, URL_TOKEN_QUEUE)
+from src.common.statics    import (BLAKE2_DIGEST_LENGTH, CONTACT_REQ_QUEUE, RELAY_BUFFER_OUTGOING_M_DIR,
+                                   RELAY_BUFFER_OUTGOING_MESSAGE, RELAY_BUFFER_OUTGOING_F_DIR,
+                                   RELAY_BUFFER_OUTGOING_FILE, RX_BUF_KEY_QUEUE, URL_TOKEN_QUEUE)
 
 if typing.TYPE_CHECKING:
     QueueDict   = Dict[bytes, Queue[Any]]

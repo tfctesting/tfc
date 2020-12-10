@@ -25,7 +25,7 @@ import os.path
 import random
 import time
 
-from typing import List, Optional, Tuple
+from typing import Optional, Tuple
 
 from src.common.crypto     import argon2_kdf, blake2b, csprng
 from src.common.database   import TFCUnencryptedDatabase

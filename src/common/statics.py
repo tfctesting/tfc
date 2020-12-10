@@ -504,12 +504,12 @@ DD_ANIMATION_LENGTH   = 16
 DD_OFFSET_FROM_CENTER = 4
 
 # Qubes related
-QUBES_NET_VM_NAME         = 'TFC-Networker'
-QUBES_DST_VM_NAME         = 'TFC-Destination'
-QUBES_SRC_NET_POLICY      = 'tfc.SourceNetworker'
-QUBES_NET_DST_POLICY      = 'tfc.NetworkerDestination'
-BUFFER_FILE_DIR           = '/home/user/tfc/.buffered_incoming_packets'
-BUFFER_FILE_INCOMING      = 'buffered_incoming_packet'
+QUBES_NET_VM_NAME            = 'TFC-Networker'
+QUBES_DST_VM_NAME            = 'TFC-Destination'
+QUBES_SRC_NET_POLICY         = 'tfc.SourceNetworker'
+QUBES_NET_DST_POLICY         = 'tfc.NetworkerDestination'
+QUBES_BUFFER_INCOMING_DIR    = '.buffered_incoming_packets'
+QUBES_BUFFER_INCOMING_PACKET = 'buffered_incoming_packet'
 
 # Relay Program's ciphertext buffering
 RELAY_BUFFER_OUTGOING_F_DIR   = '.buffered_outgoing_files'
