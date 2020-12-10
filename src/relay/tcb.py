@@ -76,17 +76,17 @@ def src_incoming(queues:    'QueueDict',
             elif header in [COMMAND_DATAGRAM_HEADER, LOCAL_KEY_DATAGRAM_HEADER]:
                 process_command_datagram(ts, packet, header, queues)
 
-            elif header in [MESSAGE_DATAGRAM_HEADER, PUBLIC_KEY_DATAGRAM_HEADER]:
+            elif header in [MESSAGE_DATAGRAM_HEADER, PUBLIC_KEY_DATAGRAM_HEADER] and buf_key is not None:
                 process_message_datagram(ts, packet, header, buf_key, queues)
 
-            elif header == FILE_DATAGRAM_HEADER:
+            elif header == FILE_DATAGRAM_HEADER and buf_key is not None:
                 process_file_datagram(ts, packet, header, buf_key)
 
             elif header in [GROUP_MSG_INVITE_HEADER,
                             GROUP_MSG_JOIN_HEADER,
                             GROUP_MSG_MEMBER_ADD_HEADER,
                             GROUP_MSG_MEMBER_REM_HEADER,
-                            GROUP_MSG_EXIT_GROUP_HEADER]:
+                            GROUP_MSG_EXIT_GROUP_HEADER] and buf_key is not None:
                 process_group_management_message(ts, packet, header, buf_key)
 
             if unit_test:

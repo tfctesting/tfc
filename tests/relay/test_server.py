@@ -19,17 +19,32 @@ You should have received a copy of the GNU General Public License
 along with TFC. If not, see <https://www.gnu.org/licenses/>.
 """
 
+import hashlib
 import unittest
 
-from src.common.crypto  import X448
-from src.common.statics import CONTACT_REQ_QUEUE, URL_TOKEN_QUEUE, RX_BUF_KEY_QUEUE
+from src.common.crypto  import X448, encrypt_and_sign
+from src.common.misc    import ensure_dir
+from src.common.statics import (BLAKE2_DIGEST_LENGTH, CONTACT_REQ_QUEUE, URL_TOKEN_QUEUE, RX_BUF_KEY_QUEUE,
+                                RELAY_BUFFER_OUTGOING_M_DIR, RELAY_BUFFER_OUTGOING_MESSAGE,
+                                RELAY_BUFFER_OUTGOING_F_DIR, RELAY_BUFFER_OUTGOING_FILE, SYMMETRIC_KEY_LENGTH)
 
 from src.relay.server import flask_server
 
-from tests.utils import gen_queue_dict, nick_to_onion_address, nick_to_pub_key, tear_queues
+from tests.utils import cd_unit_test, cleanup, gen_queue_dict, nick_to_onion_address, nick_to_pub_key, tear_queues
 
 
 class TestFlaskServer(unittest.TestCase):
+
+    def setUp(self) -> None:
+        self.test_dir = cd_unit_test()
+
+    def tearDown(self) -> None:
+        cleanup(self.test_dir)
+
+    @staticmethod
+    def store_test_packet(plaintext: bytes, file_dir: str, file_name: str, key: bytes):
+        with open(f"{file_dir}/{file_name}", 'wb+') as f:
+            f.write(encrypt_and_sign(plaintext, key))
 
     def test_flask_server(self) -> None:
         # Setup
@@ -41,11 +56,33 @@ class TestFlaskServer(unittest.TestCase):
         url_token_invalid     = 'ääääääääääääääääääääääääääääääääääääääääääääääääääääääääääääääää'
         onion_pub_key         = nick_to_pub_key('Alice')
         onion_address         = nick_to_onion_address('Alice')
-        packet1               = "packet1"
-        packet2               = "packet2"
+        packet1               = b"packet1"
+        packet2               = b"packet2"
         packet3               = b"packet3"
+        test_key              = SYMMETRIC_KEY_LENGTH * b'a'
 
-        queues[RX_BUF_KEY_QUEUE].put(32*b'a')
+        sub_dir = hashlib.blake2b(onion_pub_key, key=test_key, digest_size=BLAKE2_DIGEST_LENGTH).hexdigest()
+
+        buf_dir_m = f"{RELAY_BUFFER_OUTGOING_M_DIR}/{sub_dir}"
+        buf_dir_f = f"{RELAY_BUFFER_OUTGOING_F_DIR}/{sub_dir}"
+
+        ensure_dir(f"{buf_dir_m}/")
+        ensure_dir(f"{buf_dir_f}/")
+
+        packet_list = [packet1, packet2]
+
+        for i, packet in enumerate(packet_list):
+            TestFlaskServer.store_test_packet(packet,
+                                              buf_dir_m,
+                                              RELAY_BUFFER_OUTGOING_MESSAGE + f".{i}",
+                                              test_key)
+
+        TestFlaskServer.store_test_packet(packet3,
+                                          buf_dir_f,
+                                          RELAY_BUFFER_OUTGOING_FILE + '.0',
+                                          test_key)
+
+        queues[RX_BUF_KEY_QUEUE].put(test_key)
 
         # Test
         app = flask_server(queues, url_token_public_key, unit_test=True)

@@ -169,6 +169,7 @@ def flask_server(queues:               'QueueDict',
         app.run()
         return None
 
+
 def get_message(purp_url_token: str,
                 queues:         'QueueDict',
                 pub_key_dict:   'PubKeyDict',

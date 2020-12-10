@@ -213,7 +213,7 @@ hardware data diode is needed.
 ### Supported Operating Systems
 
 #### Source/Destination Computer
-- Debian 10.6
+- Debian 10.7
 - PureOS 9.0
 - *buntu 20.04 LTS / 20.10
 - Pop!_OS 20.04 LTS / 20.10
@@ -222,8 +222,8 @@ hardware data diode is needed.
 - Qubes 4.0.3 (Debian 10 VM)
 
 #### Networked Computer
-- Tails 4.12
-- Debian 10.6
+- Tails 4.13
+- Debian 10.7
 - PureOS 9.0
 - *buntu 20.04 LTS / 20.10
 - Pop!_OS 20.04 LTS / 20.10
