@@ -25,9 +25,7 @@ import sys
 from multiprocessing import Process, Queue
 from typing          import Any, Dict
 
-from cryptography.hazmat.primitives.asymmetric.x448 import X448PrivateKey
-from cryptography.hazmat.primitives.serialization   import Encoding, PublicFormat
-
+from src.common.crypto  import X448
 from src.common.gateway import Gateway, gateway_loop
 from src.common.misc    import ensure_dir, monitor_processes, platform_is_tails, process_arguments
 from src.common.output  import print_title
@@ -145,9 +143,8 @@ def main() -> None:
 
     print_title(NC)
 
-    url_token_private_key = X448PrivateKey.generate()
-    url_token_public_key  = url_token_private_key.public_key().public_bytes(encoding=Encoding.Raw,
-                                                                            format=PublicFormat.Raw).hex()  # type: str
+    url_token_private_key = X448.generate_private_key()
+    url_token_public_key  = X448.derive_public_key(url_token_private_key).hex()
 
     queues = \
         {GATEWAY_QUEUE:       Queue(),  # All     datagrams           from `gateway_loop`          to `src_incoming`

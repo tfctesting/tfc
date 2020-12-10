@@ -378,8 +378,10 @@ def main() -> None:
         APIPKG:             Dependency(uid=APIPKG,             stylized_name='apipkg',             pip_name='apipkg',             sub_dependencies=None),
         APPDIRS:            Dependency(uid=APPDIRS,            stylized_name='appdirs',            pip_name='appdirs',            sub_dependencies=None),
         ARGON2_CFFI:        Dependency(uid=ARGON2_CFFI,        stylized_name='argon2-cffi',        pip_name='argon2-cffi',        sub_dependencies=[CFFI, SIX],
-                                       description_dict={REQ_FILE_DEV: 'Argon2 Password Hashing Function (Derives keys that protect persistent user data)',
-                                                         REQ_FILE_TCB: 'Argon2 Password Hashing Function (Derives keys that protect persistent user data)'}),
+                                       description_dict={REQ_FILE_DEV:   'Argon2 Password Hashing Function (Derives keys that protect persistent user data)',
+                                                         REQ_FILE_TCB:   'Argon2 Password Hashing Function (Derives keys that protect persistent user data)',
+                                                         REQ_FILE_NET:   'Argon2 Password Hashing Function (Not needed but allows importing from src.common.crypto)',
+                                                         REQ_FILE_TAILS: 'Argon2 Password Hashing Function (Not needed but allows importing from src.common.crypto)'}),
         ATTRS:              Dependency(uid=ATTRS,              stylized_name='attrs',              pip_name='attrs',              sub_dependencies=None),
         CERTIFI:            Dependency(uid=CERTIFI,            stylized_name='Certifi',            pip_name='certifi',            sub_dependencies=None),
         CFFI:               Dependency(uid=CFFI,               stylized_name='CFFI',               pip_name='cffi',               sub_dependencies=[PYCPARSER]),
@@ -484,7 +486,8 @@ def main() -> None:
                                                     FLASK,
                                                     CRYPTOGRAPHY,
                                                     PYNACL,
-                                                    SETUPTOOLS
+                                                    SETUPTOOLS,
+                                                    ARGON2_CFFI
                                                     ])
 
     requirements_rt = RequirementsFile(file_name=REQ_FILE_TAILS,
@@ -496,7 +499,8 @@ def main() -> None:
                                                      FLASK,
                                                      CRYPTOGRAPHY,
                                                      PYNACL,
-                                                     SETUPTOOLS
+                                                     SETUPTOOLS,
+                                                     ARGON2_CFFI
                                                      ])
 
     requirements_setuptools = RequirementsFile(file_name=REQ_FILE_SUT,
